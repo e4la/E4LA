@@ -152,7 +152,7 @@ ul,ol{list-style:none}
 .hero__eyebrow::before{content:'';width:18px;height:1px;background:var(--gold);opacity:.7}
 
 .hero__h1{
-  font-family:'Manrope','Instrument Serif',sans-serif;
+  font-family:'Manrope',sans-serif;
   font-size:clamp(38px,3.8vw,54px);
   font-weight:700;
   line-height:1.1;letter-spacing:-.5px;
@@ -317,7 +317,7 @@ ul,ol{list-style:none}
   color:var(--purple-lt);margin-bottom:var(--s3)
 }
 .services-top__h2{
-  font-family:'Instrument Serif',Georgia,serif;
+  font-family:'Manrope',sans-serif;
   font-size:clamp(24px,2.2vw,30px);line-height:1.18;color:var(--text-ink)
 }
 .services-top__link{
@@ -383,7 +383,7 @@ ul,ol{list-style:none}
   color:rgba(255,255,255,.3);margin-bottom:var(--s3)
 }
 .approach__h2{
-  font-family:'Instrument Serif',Georgia,serif;
+  font-family:'Manrope',sans-serif;
   font-size:clamp(22px,2.2vw,29px);line-height:1.22;color:#fff;margin-bottom:var(--s4)
 }
 .approach__h2 em{color:var(--gold);font-style:italic}
@@ -420,7 +420,7 @@ ul,ol{list-style:none}
 .tstep__circle{
   width:52px;height:52px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-family:'Instrument Serif',Georgia,serif;font-size:15px;font-style:italic;color:#fff;
+  font-family:'Manrope',sans-serif;font-size:15px;font-style:italic;color:#fff;
   border:1px solid;background:var(--bg-dark2);
   margin-bottom:var(--s4);
   transition:transform .22s
@@ -482,7 +482,7 @@ ul,ol{list-style:none}
   color:rgba(255,255,255,.3);margin-bottom:var(--s3)
 }
 .why__h2{
-  font-family:'Instrument Serif',Georgia,serif;
+  font-family:'Manrope',sans-serif;
   font-size:clamp(22px,2.1vw,28px);line-height:1.22;color:#fff
 }
 .why__rule{width:24px;height:1.5px;background:var(--gold);opacity:.7;margin-top:var(--s5)}
@@ -522,7 +522,7 @@ ul,ol{list-style:none}
   color:var(--purple-lt);margin-bottom:var(--s4)
 }
 .coaching__h2{
-  font-family:'Instrument Serif',Georgia,serif;
+  font-family:'Manrope',sans-serif;
   font-size:clamp(22px,2.2vw,29px);line-height:1.2;color:var(--text-ink);margin-bottom:var(--s4)
 }
 .coaching__desc{
@@ -619,7 +619,7 @@ ul,ol{list-style:none}
   display:flex;flex-direction:column;justify-content:center
 }
 .cta-dark__h2{
-  font-family:'Instrument Serif',Georgia,serif;
+  font-family:'Manrope',sans-serif;
   font-size:clamp(24px,2.5vw,33px);line-height:1.18;color:#fff
 }
 .cta-warm{
@@ -812,7 +812,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
 .nav__link{font-size:9px;letter-spacing:0;font-weight:600;color:#fff}
 .nav__cta{border-radius:5px;padding:10px 14px;font-size:9px;letter-spacing:0;border-color:rgba(255,255,255,.45)}
 
-.hero{height:calc(100vh - 76px);min-height:540px;max-height:720px;grid-template-columns:46% 54%;padding:12px var(--pad-x) 14px;background:linear-gradient(90deg,#02050d 0%,#02050d 30%,rgba(2,5,13,.8) 43%,rgba(2,5,13,.24) 62%,#02050d 100%),radial-gradient(ellipse at 70% 52%,rgba(124,58,237,.18),transparent 56%),url('e4la-hero-highres.jpeg') #02050d;background-repeat:no-repeat;background-size:auto auto,auto auto,cover;background-position:center,right center,center center}
+.hero{height:calc(100vh - 76px);min-height:540px;max-height:720px;grid-template-columns:46% 54%;padding:12px var(--pad-x) 14px;background:linear-gradient(90deg,#02050d 0%,#02050d 30%,rgba(2,5,13,.8) 43%,rgba(2,5,13,.24) 62%,#02050d 100%),radial-gradient(ellipse at 70% 52%,rgba(124,58,237,.18),transparent 56%),url('assets/e4la-hero-highres.jpeg') #02050d;background-repeat:no-repeat;background-size:auto auto,auto auto,cover;background-position:center,right center,center center}
 .hero::before{display:none}
 .hero__left{padding-right:18px;transform:translateY(-28px)}
 .hero__eyebrow{display:none}
@@ -934,7 +934,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
 .hero{
   background:
     linear-gradient(90deg,#02050d 0%,rgba(2,5,13,.96) 24%,rgba(2,5,13,.68) 42%,rgba(2,5,13,.16) 64%,rgba(2,5,13,.12) 100%),
-    url('e4la-hero-highres.jpeg') #02050d !important;
+    url('assets/e4la-hero-highres.jpeg') #02050d !important;
   background-repeat:no-repeat !important;
   background-size:auto calc(100% - 18px) !important;
   background-position:right center !important;
@@ -965,7 +965,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
   padding:clamp(36px,4vw,64px) var(--pad-x) clamp(32px,4vw,56px) !important;
   background:
     linear-gradient(90deg,rgba(2,5,13,.98) 0%,rgba(2,5,13,.92) 28%,rgba(2,5,13,.58) 46%,rgba(2,5,13,.12) 66%,rgba(2,5,13,.05) 100%),
-    url('e4la-hero-highres.jpeg') #02050d !important;
+    url('assets/e4la-hero-highres.jpeg') #02050d !important;
   background-repeat:no-repeat !important;
   background-size:cover !important;
   background-position:center center !important;
@@ -1008,7 +1008,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
     padding:34px 24px !important;
     background:
       linear-gradient(180deg,rgba(2,5,13,.98) 0%,rgba(2,5,13,.82) 48%,rgba(2,5,13,.2) 100%),
-      url('e4la-hero-highres.jpeg') #02050d !important;
+      url('assets/e4la-hero-highres.jpeg') #02050d !important;
     background-size:cover !important;
     background-position:center bottom !important;
   }
@@ -1035,7 +1035,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
   padding:clamp(28px,3.2vw,52px) var(--pad-x) clamp(24px,3vw,44px) !important;
   background:
     linear-gradient(90deg,rgba(2,5,13,.99) 0%,rgba(2,5,13,.94) 25%,rgba(2,5,13,.62) 45%,rgba(2,5,13,.18) 68%,rgba(2,5,13,.06) 100%),
-    url('e4la-hero-highres.jpeg') #02050d !important;
+    url('assets/e4la-hero-highres.jpeg') #02050d !important;
   background-repeat:no-repeat !important;
   background-size:auto 100% !important;
   background-position:right center !important;
@@ -1067,7 +1067,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
     padding:30px 24px !important;
     background:
       linear-gradient(180deg,rgba(2,5,13,.98) 0%,rgba(2,5,13,.86) 44%,rgba(2,5,13,.28) 100%),
-      url('e4la-hero-highres.jpeg') #02050d !important;
+      url('assets/e4la-hero-highres.jpeg') #02050d !important;
     background-size:auto 46% !important;
     background-position:right bottom !important;
   }
@@ -2402,7 +2402,7 @@ main#main{
 .hero{
   background:
     linear-gradient(90deg,rgba(2,5,13,.99) 0%,rgba(2,5,13,.94) 24%,rgba(2,5,13,.58) 43%,rgba(2,5,13,.12) 66%,rgba(2,5,13,.04) 100%),
-    url('e4la-hero-highres.jpeg') #02050d !important;
+    url('assets/e4la-hero-highres.jpeg') #02050d !important;
   background-repeat:no-repeat !important;
   background-size:auto 100% !important;
   background-position:right center !important;
@@ -2460,7 +2460,7 @@ main#main{
 
 /* FINAL INTER + REFERENCE SERVICES SECTION */
 html,body,button,input,textarea,select,a,p,h1,h2,h3,h4,h5,h6,span,li,div{
-  font-family:'Inter',Arial,sans-serif !important;
+  font-family:'Manrope',Arial,sans-serif !important;
 }
 .sec-services{
   height:auto !important;
@@ -3598,7 +3598,7 @@ html,body,button,input,textarea,select,a,p,h1,h2,h3,h4,h5,h6,span,li,div{
 
 /* FINAL SERVICES STABLE INTERACTION */
 .sec-services{
-  font-family:Inter,Manrope,"Helvetica Neue",Arial,sans-serif !important;
+  font-family:'Manrope',Arial,sans-serif !important;
 }
 .sec-services .svc-card,
 .sec-services .svc-card.svc-card{
@@ -3774,7 +3774,7 @@ html,body,button,input,textarea,select,a,p,h1,h2,h3,h4,h5,h6,span,li,div{
 .sec-approach .approach__label,
 .sec-why .why__label,
 .sec-coaching .coaching__label{
-  font-family:Inter,Manrope,"Helvetica Neue",Arial,sans-serif !important;
+  font-family:'Manrope',Arial,sans-serif !important;
   font-size:18px !important;
   line-height:1 !important;
   font-weight:800 !important;
@@ -3838,7 +3838,7 @@ html,body,button,input,textarea,select,a,p,h1,h2,h3,h4,h5,h6,span,li,div{
   min-height:74px !important;
   border-width:2px !important;
   margin:0 auto 22px !important;
-  font-family:Inter,Manrope,"Helvetica Neue",Arial,sans-serif !important;
+  font-family:'Manrope',Arial,sans-serif !important;
   font-size:22px !important;
   line-height:1 !important;
   font-weight:600 !important;
@@ -3848,7 +3848,7 @@ html,body,button,input,textarea,select,a,p,h1,h2,h3,h4,h5,h6,span,li,div{
 }
 .sec-approach .tstep__name{
   margin:0 0 14px !important;
-  font-family:Inter,Manrope,"Helvetica Neue",Arial,sans-serif !important;
+  font-family:'Manrope',Arial,sans-serif !important;
   font-size:13px !important;
   line-height:1.15 !important;
   font-weight:800 !important;
@@ -3859,7 +3859,7 @@ html,body,button,input,textarea,select,a,p,h1,h2,h3,h4,h5,h6,span,li,div{
 .sec-approach .tstep__sub{
   max-width:118px !important;
   margin:0 auto !important;
-  font-family:Inter,Manrope,"Helvetica Neue",Arial,sans-serif !important;
+  font-family:'Manrope',Arial,sans-serif !important;
   font-size:14px !important;
   line-height:1.48 !important;
   font-weight:400 !important;
@@ -3985,7 +3985,7 @@ html,body,button,input,textarea,select,a,p,h1,h2,h3,h4,h5,h6,span,li,div{
 .sec-approach .approach__label.section-eyebrow,
 .sec-why .why__label.section-eyebrow,
 .sec-coaching .coaching__label.section-eyebrow{
-  font-family:Inter,Manrope,"Helvetica Neue",Arial,sans-serif !important;
+  font-family:'Manrope',Arial,sans-serif !important;
   font-size:14px !important;
   line-height:1 !important;
   font-weight:700 !important;
@@ -3998,7 +3998,7 @@ html,body,button,input,textarea,select,a,p,h1,h2,h3,h4,h5,h6,span,li,div{
 .sec-approach .approach__h2.section-heading,
 .sec-why .why__h2.section-heading,
 .sec-coaching .coaching__h2.section-heading{
-  font-family:Inter,Manrope,"Helvetica Neue",Arial,sans-serif !important;
+  font-family:'Manrope',Arial,sans-serif !important;
   font-size:clamp(32px,3vw,48px) !important;
   line-height:1.12 !important;
   font-weight:500 !important;
@@ -4009,7 +4009,7 @@ html,body,button,input,textarea,select,a,p,h1,h2,h3,h4,h5,h6,span,li,div{
 .section-description,
 .sec-approach .approach__desc.section-description,
 .sec-coaching .coaching__desc.section-description{
-  font-family:Inter,Manrope,"Helvetica Neue",Arial,sans-serif !important;
+  font-family:'Manrope',Arial,sans-serif !important;
   font-size:15px !important;
   line-height:1.55 !important;
   font-weight:400 !important;
@@ -4026,7 +4026,7 @@ html,body,button,input,textarea,select,a,p,h1,h2,h3,h4,h5,h6,span,li,div{
   min-height:48px !important;
   padding:0 24px !important;
   border-radius:999px !important;
-  font-family:Inter,Manrope,"Helvetica Neue",Arial,sans-serif !important;
+  font-family:'Manrope',Arial,sans-serif !important;
   font-size:12px !important;
   line-height:1 !important;
   font-weight:700 !important;
@@ -4509,7 +4509,7 @@ li{
   grid-row: 1 !important;
   align-self: end !important;
   margin: 0 0 26px !important;
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: 14px !important;
   line-height: 1.1 !important;
   letter-spacing: 0.28em !important;
@@ -4521,7 +4521,7 @@ li{
   grid-row: 2 !important;
   max-width: 360px !important;
   margin: 0 !important;
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: clamp(32px, 2.8vw, 46px) !important;
   line-height: 1.08 !important;
   font-weight: 650 !important;
@@ -4532,7 +4532,7 @@ li{
   grid-row: 3 !important;
   max-width: 340px !important;
   margin: 18px 0 0 !important;
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: 15px !important;
   line-height: 1.55 !important;
   font-weight: 400 !important;
@@ -4566,7 +4566,7 @@ li{
   flex-direction: column !important;
   justify-content: flex-start !important;
   gap: 14px !important;
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
 }
 
 .sec-coaching .aud-card__ico {
@@ -4584,7 +4584,7 @@ li{
 
 .sec-coaching .aud-card__name {
   margin: 10px 0 0 !important;
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: 16px !important;
   line-height: 1.2 !important;
   font-weight: 800 !important;
@@ -4593,7 +4593,7 @@ li{
 
 .sec-coaching .aud-card__desc {
   margin: 0 !important;
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: 14.5px !important;
   line-height: 1.5 !important;
   font-weight: 400 !important;
@@ -4618,7 +4618,7 @@ li{
   display: flex !important;
   flex-direction: column !important;
   justify-content: center !important;
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
 }
 
 .sec-coaching .cal__title {
@@ -4658,7 +4658,7 @@ li{
   width: 100% !important;
   min-height: 54px !important;
   padding: 0 24px !important;
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: 13.5px !important;
   line-height: 1 !important;
   font-weight: 850 !important;
@@ -5544,7 +5544,7 @@ li{
 /* FINAL CTA + FOOTER TYPOGRAPHY CONSISTENCY */
 .sec-cta,
 .footer {
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
 }
 
 .sec-cta {
@@ -5558,7 +5558,7 @@ li{
 }
 
 .sec-cta .cta-dark__h2 {
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: clamp(34px, 3vw, 52px) !important;
   line-height: 1.08 !important;
   font-weight: 520 !important;
@@ -5566,7 +5566,7 @@ li{
 }
 
 .sec-cta .cta-warm__text {
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: 16px !important;
   line-height: 1.5 !important;
   font-weight: 400 !important;
@@ -5582,7 +5582,7 @@ li{
   align-items: center !important;
   justify-content: space-between !important;
   gap: 18px !important;
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: 13px !important;
   line-height: 1 !important;
   font-weight: 800 !important;
@@ -5610,7 +5610,7 @@ li{
 }
 
 .footer__tagline {
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: 14px !important;
   line-height: 1.55 !important;
   font-weight: 400 !important;
@@ -5624,7 +5624,7 @@ li{
 }
 
 .footer__col-head {
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: 12.5px !important;
   line-height: 1.2 !important;
   letter-spacing: 0.1em !important;
@@ -5638,14 +5638,14 @@ li{
 }
 
 .footer__links a {
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: 14px !important;
   line-height: 1.7 !important;
   font-weight: 400 !important;
 }
 
 .footer__nl-note {
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: 14px !important;
   line-height: 1.55 !important;
   font-weight: 400 !important;
@@ -5660,7 +5660,7 @@ li{
 }
 
 .footer__input {
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: 14px !important;
   line-height: 1 !important;
   padding: 0 15px !important;
@@ -5679,7 +5679,7 @@ li{
 
 .footer__copy,
 .footer__made {
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: 12.5px !important;
   line-height: 1.5 !important;
 }
@@ -5878,7 +5878,7 @@ li{
 /* FINAL STATS + WHY TYPOGRAPHY CONSISTENCY */
 .sec-stats,
 .sec-why {
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
 }
 
 .sec-stats {
@@ -5903,7 +5903,7 @@ li{
 }
 
 .sec-stats .stat__num {
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: clamp(24px, 2vw, 34px) !important;
   line-height: 1 !important;
   font-weight: 650 !important;
@@ -5911,7 +5911,7 @@ li{
 }
 
 .sec-stats .stat__label {
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: 14px !important;
   line-height: 1.35 !important;
   font-weight: 400 !important;
@@ -5920,7 +5920,7 @@ li{
 }
 
 .sec-why .why__label.section-eyebrow {
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: 14px !important;
   line-height: 1.1 !important;
   letter-spacing: 0.28em !important;
@@ -5929,7 +5929,7 @@ li{
 }
 
 .sec-why .why__h2.section-heading {
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: clamp(34px, 2.6vw, 48px) !important;
   line-height: 1.12 !important;
   font-weight: 520 !important;
@@ -5942,7 +5942,7 @@ li{
 }
 
 .sec-why .why-item__title {
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: 19px !important;
   line-height: 1.25 !important;
   font-weight: 800 !important;
@@ -5950,7 +5950,7 @@ li{
 }
 
 .sec-why .why-item__body {
-  font-family: Inter, Manrope, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
   font-size: 15px !important;
   line-height: 1.55 !important;
   font-weight: 400 !important;
@@ -6362,7 +6362,7 @@ body * {
 
 /* FINAL HOMEPAGE TYPOGRAPHY + SPACING POLISH */
 :root {
-  --e4la-font: Inter, Manrope, "Helvetica Neue", Arial, sans-serif;
+  --e4la-font: 'Manrope', Arial, sans-serif;
   --e4la-container-max: 1520px;
   --e4la-container-pad: clamp(24px, 4vw, 72px);
   --e4la-section-y: clamp(64px, 7vw, 112px);
@@ -6633,7 +6633,7 @@ a {
     max-width: 100% !important;
     position: relative !important;
     overflow: visible !important;
-    background-image: url('e4la-hero-highres.jpeg') !important;
+    background-image: url('assets/e4la-hero-highres.jpeg') !important;
     background-repeat: no-repeat !important;
     background-size: contain !important;
     background-position: center center !important;
@@ -6719,4 +6719,3136 @@ a {
     font-size: 13px !important;
     font-weight: 400 !important;
   }
+}
+
+/* FINAL SERVICES CARD GRID + 3D HOVER */
+.sec-services {
+  width: min(calc(100% - 48px), 1520px) !important;
+  max-width: 1520px !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: clamp(56px, 7vw, 96px) auto !important;
+  padding: clamp(56px, 6vw, 86px) clamp(24px, 4vw, 44px) clamp(44px, 5vw, 64px) !important;
+  display: block !important;
+  overflow: visible !important;
+  border-radius: clamp(24px, 3vw, 36px) !important;
+  background: linear-gradient(112deg, #ebe9ff 0%, #fff7f8 52%, #ffe1d8 100%) !important;
+  box-shadow: 0 28px 80px rgba(83, 56, 132, 0.14) !important;
+  color: #11121b !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
+  isolation: isolate !important;
+}
+
+.sec-services .services-top {
+  display: block !important;
+  width: min(100%, 820px) !important;
+  max-width: 820px !important;
+  margin: 0 auto clamp(36px, 5vw, 58px) !important;
+  padding: 0 !important;
+  text-align: center !important;
+}
+
+.sec-services .services-top > div {
+  display: block !important;
+  padding: 0 !important;
+  max-width: none !important;
+}
+
+.sec-services .label-tag,
+.sec-services .label-tag.section-eyebrow {
+  display: block !important;
+  margin: 0 0 20px !important;
+  color: #4f35bf !important;
+  font-size: clamp(12px, 1vw, 14px) !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0.32em !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+}
+
+.sec-services .services-top__h2,
+.sec-services .services-top__h2.section-heading {
+  max-width: 720px !important;
+  margin: 0 auto !important;
+  color: #11121b !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
+  font-size: clamp(40px, 4.2vw, 66px) !important;
+  line-height: 1.04 !important;
+  letter-spacing: -0.035em !important;
+  font-weight: 850 !important;
+  text-align: center !important;
+}
+
+.sec-services .services-top > p {
+  display: block !important;
+  max-width: 660px !important;
+  margin: 22px auto 0 !important;
+  color: rgba(17, 18, 27, 0.72) !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
+  font-size: clamp(16px, 1.35vw, 21px) !important;
+  line-height: 1.55 !important;
+  font-weight: 400 !important;
+  text-align: center !important;
+}
+
+.sec-services .services-top__link,
+.sec-services .services-top__link.section-cta {
+  display: none !important;
+}
+
+.sec-services .services-grid,
+.sec-services .services-grid.services-grid {
+  width: 100% !important;
+  max-width: none !important;
+  height: auto !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: clamp(14px, 1.5vw, 22px) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+  overflow: visible !important;
+  perspective: 1200px !important;
+}
+
+.sec-services .svc-card,
+.sec-services .svc-card.svc-card {
+  position: relative !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: clamp(360px, 32vw, 500px) !important;
+  padding: clamp(24px, 2.2vw, 34px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  gap: 24px !important;
+  border: 1px solid rgba(255, 255, 255, 0.72) !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.72) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.72) !important;
+  border-radius: clamp(18px, 1.7vw, 24px) !important;
+  background: rgba(255, 255, 255, 0.54) !important;
+  box-shadow: 0 20px 50px rgba(75, 58, 110, 0.11) !important;
+  color: #11121b !important;
+  overflow: visible !important;
+  cursor: pointer !important;
+  transform-style: preserve-3d !important;
+  transform: perspective(1200px) rotateX(var(--svc-rx, 0deg)) rotateY(var(--svc-ry, 0deg)) scale(var(--svc-scale, 1)) !important;
+  transition: transform 0.38s cubic-bezier(.22,1,.36,1), box-shadow 0.38s cubic-bezier(.22,1,.36,1), background 0.38s cubic-bezier(.22,1,.36,1), border-color 0.38s cubic-bezier(.22,1,.36,1) !important;
+  will-change: transform !important;
+  contain: layout paint !important;
+}
+
+.sec-services .svc-card:hover,
+.sec-services .svc-card:focus-visible,
+.sec-services .svc-card.is-active {
+  --svc-scale: 1.02;
+  background: rgba(255, 255, 255, 0.68) !important;
+  border-color: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 28px 70px rgba(75, 58, 110, 0.18) !important;
+}
+
+.sec-services .svc-card__content {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  gap: 0 !important;
+  transform-style: preserve-3d !important;
+}
+
+.sec-services .svc-card .svc-icon {
+  width: clamp(92px, 8vw, 142px) !important;
+  height: clamp(92px, 8vw, 142px) !important;
+  flex: 0 0 auto !important;
+  margin: 0 0 clamp(30px, 3vw, 48px) !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 24px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: currentColor !important;
+  transform: translateZ(50px) !important;
+  transition: transform 0.38s cubic-bezier(.22,1,.36,1) !important;
+}
+
+.sec-services .svc-card .svc-icon svg {
+  width: 100% !important;
+  height: 100% !important;
+  stroke-width: 1.15 !important;
+}
+
+.sec-services .svc-card .svc-icon--purple { color: #5f43d3 !important; }
+.sec-services .svc-card .svc-icon--blue { color: #236ec7 !important; }
+.sec-services .svc-card .svc-icon--green { color: #15a28e !important; }
+.sec-services .svc-card .svc-icon--amber { color: #e87516 !important; }
+.sec-services .svc-card .svc-icon--indigo { color: #8d35b2 !important; }
+
+.sec-services .svc-card .svc-card__title {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 0 16px !important;
+  color: #11121b !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
+  font-size: clamp(19px, 1.45vw, 27px) !important;
+  line-height: 1.16 !important;
+  letter-spacing: -0.025em !important;
+  font-weight: 850 !important;
+  text-transform: uppercase !important;
+  transform: translateZ(35px) !important;
+}
+
+.sec-services .svc-card .svc-card__desc {
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  color: rgba(17, 18, 27, 0.74) !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
+  font-size: clamp(14px, 1vw, 16px) !important;
+  line-height: 1.58 !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  transform: translateZ(25px) !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  white-space: normal !important;
+}
+
+.sec-services .svc-card .svc-card__more {
+  display: none !important;
+}
+
+.sec-services .svc-card .svc-card__arr {
+  position: static !important;
+  width: 54px !important;
+  height: 54px !important;
+  min-width: 54px !important;
+  min-height: 54px !important;
+  margin: auto 0 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 999px !important;
+  border: 1px solid currentColor !important;
+  background: rgba(255, 255, 255, 0.24) !important;
+  color: inherit !important;
+  transform: translateZ(35px) !important;
+  transition: transform 0.28s ease, background 0.28s ease !important;
+}
+
+.sec-services .svc-card:hover .svc-card__arr,
+.sec-services .svc-card:focus-visible .svc-card__arr,
+.sec-services .svc-card.is-active .svc-card__arr {
+  transform: translateZ(44px) translateX(3px) !important;
+  background: rgba(255, 255, 255, 0.48) !important;
+}
+
+.sec-services .svc-card .svc-card__arr svg {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+@media (max-width: 1180px) {
+  .sec-services .services-grid,
+  .sec-services .services-grid.services-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .sec-services .svc-card,
+  .sec-services .svc-card.svc-card {
+    min-height: 360px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .sec-services {
+    width: calc(100% - 28px) !important;
+    margin-block: 48px !important;
+    padding: 44px 18px 24px !important;
+    border-radius: 24px !important;
+  }
+
+  .sec-services .services-grid,
+  .sec-services .services-grid.services-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .sec-services .services-top {
+    margin-bottom: 32px !important;
+  }
+
+  .sec-services .services-top__h2,
+  .sec-services .services-top__h2.section-heading {
+    font-size: clamp(32px, 10vw, 44px) !important;
+  }
+
+  .sec-services .svc-card,
+  .sec-services .svc-card.svc-card {
+    min-height: 0 !important;
+    padding: 26px !important;
+    transform: none !important;
+  }
+
+  .sec-services .svc-card .svc-icon {
+    width: 92px !important;
+    height: 92px !important;
+    margin-bottom: 26px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
+  .sec-services .svc-card,
+  .sec-services .svc-card.svc-card {
+    transform: none !important;
+    transition: box-shadow 0.25s ease, background 0.25s ease !important;
+  }
+
+  .sec-services .svc-card:hover,
+  .sec-services .svc-card:focus-visible,
+  .sec-services .svc-card.is-active {
+    transform: none !important;
+  }
+
+  .sec-services .svc-card .svc-icon,
+  .sec-services .svc-card .svc-card__title,
+  .sec-services .svc-card .svc-card__desc,
+  .sec-services .svc-card .svc-card__arr {
+    transform: none !important;
+  }
+}
+
+/* FINAL SERVICES SMOOTH 3D MOTION */
+.sec-services .svc-card,
+.sec-services .svc-card.svc-card {
+  --svc-rx: 0deg;
+  --svc-ry: 0deg;
+  --svc-scale: 1;
+  transform: perspective(1200px) rotateX(var(--svc-rx, 0deg)) rotateY(var(--svc-ry, 0deg)) scale(var(--svc-scale, 1)) !important;
+  transform-style: preserve-3d !important;
+  backface-visibility: hidden !important;
+  will-change: transform !important;
+  transition: box-shadow 650ms cubic-bezier(.22, 1, .36, 1), background 650ms cubic-bezier(.22, 1, .36, 1), border-color 650ms cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+.sec-services .svc-card:hover,
+.sec-services .svc-card:focus-visible,
+.sec-services .svc-card.is-active,
+.sec-services .svc-card.is-hovering,
+.sec-services .svc-card.is-tilting {
+  transform: perspective(1200px) rotateX(var(--svc-rx, 0deg)) rotateY(var(--svc-ry, 0deg)) scale(var(--svc-scale, 1)) !important;
+}
+
+.sec-services .svc-card.is-hovering,
+.sec-services .svc-card.is-tilting {
+  box-shadow: 0 26px 58px rgba(76, 55, 115, .16) !important;
+}
+
+.sec-services .svc-card .svc-icon,
+.sec-services .svc-card .svc-card__title,
+.sec-services .svc-card .svc-card__desc,
+.sec-services .svc-card .svc-card__arr {
+  transform-style: preserve-3d !important;
+  backface-visibility: hidden !important;
+  will-change: transform !important;
+  transition: transform 760ms cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+.sec-services .svc-card .svc-icon {
+  transform: translateZ(50px) !important;
+}
+
+.sec-services .svc-card .svc-card__title {
+  transform: translateZ(35px) !important;
+}
+
+.sec-services .svc-card .svc-card__desc {
+  transform: translateZ(25px) !important;
+}
+
+.sec-services .svc-card .svc-card__arr {
+  transform: translateZ(35px) !important;
+}
+
+.sec-services .svc-card.is-hovering .svc-icon,
+.sec-services .svc-card.is-tilting .svc-icon {
+  transform: translateZ(70px) translateY(-4px) scale(1.08) !important;
+}
+
+.sec-services .svc-card.is-hovering .svc-card__title,
+.sec-services .svc-card.is-tilting .svc-card__title {
+  transform: translateZ(50px) translateY(-3px) scale(1.035) !important;
+}
+
+.sec-services .svc-card.is-hovering .svc-card__desc,
+.sec-services .svc-card.is-tilting .svc-card__desc {
+  transform: translateZ(32px) translateY(-2px) scale(1.015) !important;
+}
+
+.sec-services .svc-card.is-hovering .svc-card__arr,
+.sec-services .svc-card.is-tilting .svc-card__arr {
+  transform: translateZ(55px) translateY(-2px) scale(1.08) !important;
+}
+
+@media (max-width: 899px), (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .sec-services .svc-card,
+  .sec-services .svc-card.svc-card,
+  .sec-services .svc-card:hover,
+  .sec-services .svc-card:focus-visible,
+  .sec-services .svc-card.is-active,
+  .sec-services .svc-card.is-hovering,
+  .sec-services .svc-card.is-tilting {
+    --svc-rx: 0deg !important;
+    --svc-ry: 0deg !important;
+    --svc-scale: 1 !important;
+    transform: none !important;
+    transition: background 320ms ease, border-color 320ms ease, box-shadow 320ms ease !important;
+  }
+
+  .sec-services .svc-card:hover,
+  .sec-services .svc-card:focus-visible,
+  .sec-services .svc-card.is-active {
+    transform: scale(1.01) !important;
+  }
+
+  .sec-services .svc-card .svc-icon,
+  .sec-services .svc-card .svc-card__title,
+  .sec-services .svc-card .svc-card__desc,
+  .sec-services .svc-card .svc-card__arr,
+  .sec-services .svc-card.is-hovering .svc-icon,
+  .sec-services .svc-card.is-hovering .svc-card__title,
+  .sec-services .svc-card.is-hovering .svc-card__desc,
+  .sec-services .svc-card.is-hovering .svc-card__arr {
+    transform: none !important;
+    transition: transform 320ms ease !important;
+  }
+}
+
+/* FINAL SERVICES INNER CONTENT STABILITY FIX */
+.sec-services .services-grid .svc-card.svc-card {
+  justify-content: space-between !important;
+  grid-template-rows: none !important;
+  overflow: visible !important;
+  transform-style: preserve-3d !important;
+}
+
+.sec-services .services-grid .svc-card.svc-card .svc-card__content {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  gap: 0 !important;
+  margin: 0 !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+  transform-style: preserve-3d !important;
+}
+
+.sec-services .services-grid .svc-card.svc-card .svc-icon,
+.sec-services .services-grid .svc-card.svc-card .svc-card__title,
+.sec-services .services-grid .svc-card.svc-card .svc-card__desc,
+.sec-services .services-grid .svc-card.svc-card .svc-card__arr {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  transition: transform 820ms cubic-bezier(.22, 1, .36, 1), background 420ms ease, border-color 420ms ease, color 420ms ease !important;
+  transform-style: preserve-3d !important;
+  backface-visibility: hidden !important;
+  will-change: transform !important;
+}
+
+.sec-services .services-grid .svc-card.svc-card .svc-icon {
+  margin: 0 0 clamp(30px, 3vw, 48px) !important;
+  transform: translateZ(0) translateY(0) scale(1) !important;
+}
+
+.sec-services .services-grid .svc-card.svc-card .svc-card__title {
+  margin: 0 0 16px !important;
+  transform: translateZ(0) translateY(0) scale(1) !important;
+}
+
+.sec-services .services-grid .svc-card.svc-card .svc-card__desc {
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  transform: translateZ(0) translateY(0) scale(1) !important;
+}
+
+.sec-services .services-grid .svc-card.svc-card .svc-card__more {
+  display: none !important;
+  height: auto !important;
+  max-height: none !important;
+  margin: 0 !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+.sec-services .services-grid .svc-card.svc-card .svc-card__arr,
+.sec-services .services-grid .svc-card.svc-card .svc-card__desc + .svc-card__arr,
+.sec-services .services-grid .svc-card.svc-card .svc-card__desc + .svc-card__more + .svc-card__arr,
+.sec-services .services-grid .svc-card.svc-card .svc-card__content + .svc-card__arr {
+  margin: auto 0 0 !important;
+  flex: 0 0 54px !important;
+  transform: translateZ(0) translateY(0) scale(1) !important;
+}
+
+.sec-services .svc-card:hover .svc-icon,
+.sec-services .svc-card:focus-visible .svc-icon,
+.sec-services .svc-card.is-active .svc-icon,
+.sec-services .svc-card.is-hovering .svc-icon,
+.sec-services .svc-card.is-tilting .svc-icon {
+  transform: translateZ(55px) translateY(-3px) scale(1.035) !important;
+}
+
+.sec-services .svc-card:hover .svc-card__title,
+.sec-services .svc-card:focus-visible .svc-card__title,
+.sec-services .svc-card.is-active .svc-card__title,
+.sec-services .svc-card.is-hovering .svc-card__title,
+.sec-services .svc-card.is-tilting .svc-card__title {
+  transform: translateZ(42px) translateY(-2px) scale(1.015) !important;
+}
+
+.sec-services .svc-card:hover .svc-card__desc,
+.sec-services .svc-card:focus-visible .svc-card__desc,
+.sec-services .svc-card.is-active .svc-card__desc,
+.sec-services .svc-card.is-hovering .svc-card__desc,
+.sec-services .svc-card.is-tilting .svc-card__desc {
+  transform: translateZ(28px) translateY(-1px) scale(1) !important;
+}
+
+.sec-services .svc-card:hover .svc-card__arr,
+.sec-services .svc-card:focus-visible .svc-card__arr,
+.sec-services .svc-card.is-active .svc-card__arr,
+.sec-services .svc-card.is-hovering .svc-card__arr,
+.sec-services .svc-card.is-tilting .svc-card__arr {
+  transform: translateZ(38px) translateY(-2px) scale(1.04) !important;
+}
+
+@media (max-width: 899px), (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .sec-services .svc-card .svc-icon,
+  .sec-services .svc-card .svc-card__title,
+  .sec-services .svc-card .svc-card__desc,
+  .sec-services .svc-card .svc-card__arr {
+    transform: none !important;
+    transition: background 320ms ease, border-color 320ms ease, color 320ms ease !important;
+  }
+}
+
+/* FINAL SERVICES CUSTOM ICONS + CTA COLORS */
+.sec-services .services-grid .svc-card.svc-card .svc-icon img {
+ width: 100% !important;
+ height: 100% !important;
+ display: block !important;
+ object-fit: contain !important;
+ mix-blend-mode: multiply !important;
+ filter: contrast(1.08) saturate(1.05) !important;
+ pointer-events: none !important;
+}
+
+.sec-services .services-grid .svc-card:nth-child(1) .svc-card__arr {
+ color: #493481 !important;
+ border-color: #493481 !important;
+}
+
+.sec-services .services-grid .svc-card:nth-child(2) .svc-card__arr {
+ color: #1f3f7a !important;
+ border-color: #1f3f7a !important;
+}
+
+.sec-services .services-grid .svc-card:nth-child(3) .svc-card__arr {
+ color: #0e6f59 !important;
+ border-color: #0e6f59 !important;
+}
+
+.sec-services .services-grid .svc-card:nth-child(4) .svc-card__arr {
+ color: #a94f12 !important;
+ border-color: #a94f12 !important;
+}
+
+.sec-services .services-grid .svc-card:nth-child(5) .svc-card__arr {
+ color: #64206f !important;
+ border-color: #64206f !important;
+}
+
+.sec-services .services-grid .svc-card:nth-child(1):hover .svc-card__arr,
+.sec-services .services-grid .svc-card:nth-child(1):focus-visible .svc-card__arr,
+.sec-services .services-grid .svc-card:nth-child(1).is-active .svc-card__arr,
+.sec-services .services-grid .svc-card:nth-child(1).is-hovering .svc-card__arr {
+ background: rgba(73, 52, 129, .10) !important;
+}
+
+.sec-services .services-grid .svc-card:nth-child(2):hover .svc-card__arr,
+.sec-services .services-grid .svc-card:nth-child(2):focus-visible .svc-card__arr,
+.sec-services .services-grid .svc-card:nth-child(2).is-active .svc-card__arr,
+.sec-services .services-grid .svc-card:nth-child(2).is-hovering .svc-card__arr {
+ background: rgba(31, 63, 122, .10) !important;
+}
+
+.sec-services .services-grid .svc-card:nth-child(3):hover .svc-card__arr,
+.sec-services .services-grid .svc-card:nth-child(3):focus-visible .svc-card__arr,
+.sec-services .services-grid .svc-card:nth-child(3).is-active .svc-card__arr,
+.sec-services .services-grid .svc-card:nth-child(3).is-hovering .svc-card__arr {
+ background: rgba(14, 111, 89, .10) !important;
+}
+
+.sec-services .services-grid .svc-card:nth-child(4):hover .svc-card__arr,
+.sec-services .services-grid .svc-card:nth-child(4):focus-visible .svc-card__arr,
+.sec-services .services-grid .svc-card:nth-child(4).is-active .svc-card__arr,
+.sec-services .services-grid .svc-card:nth-child(4).is-hovering .svc-card__arr {
+ background: rgba(169, 79, 18, .11) !important;
+}
+
+.sec-services .services-grid .svc-card:nth-child(5):hover .svc-card__arr,
+.sec-services .services-grid .svc-card:nth-child(5):focus-visible .svc-card__arr,
+.sec-services .services-grid .svc-card:nth-child(5).is-active .svc-card__arr,
+.sec-services .services-grid .svc-card:nth-child(5).is-hovering .svc-card__arr {
+ background: rgba(100, 32, 111, .10) !important;
+}
+/* FINAL SERVICES INNER MOTION - TRANSFORM ONLY */
+.sec-services .svc-card .svc-icon,
+.sec-services .svc-card .svc-card__title,
+.sec-services .svc-card .svc-card__desc,
+.sec-services .svc-card .svc-card__arr {
+  transform-origin: left center !important;
+  transform-style: preserve-3d !important;
+  backface-visibility: hidden !important;
+  will-change: transform !important;
+  opacity: 1 !important;
+  transition: transform 850ms cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+.sec-services .svc-card .svc-icon {
+  transform: translateZ(0) translateY(0) scale(1) !important;
+}
+
+.sec-services .svc-card .svc-card__title {
+  transform: translateZ(0) translateY(0) scale(1) !important;
+}
+
+.sec-services .svc-card .svc-card__desc {
+  transform: translateZ(0) translateY(0) scale(1) !important;
+}
+
+.sec-services .svc-card .svc-card__arr {
+  transform: translateZ(0) translateY(0) scale(1) !important;
+}
+
+.sec-services .svc-card:hover .svc-icon,
+.sec-services .svc-card.is-hovering .svc-icon,
+.sec-services .svc-card.is-tilting .svc-icon {
+  transform: translateZ(48px) translateY(-5px) scale(1.075) !important;
+}
+
+.sec-services .svc-card:hover .svc-card__title,
+.sec-services .svc-card.is-hovering .svc-card__title,
+.sec-services .svc-card.is-tilting .svc-card__title {
+  transform: translateZ(34px) translateY(-3px) scale(1.015) !important;
+}
+
+.sec-services .svc-card:hover .svc-card__desc,
+.sec-services .svc-card.is-hovering .svc-card__desc,
+.sec-services .svc-card.is-tilting .svc-card__desc {
+  transform: translateZ(22px) translateY(-2px) scale(1) !important;
+}
+
+.sec-services .svc-card:hover .svc-card__arr,
+.sec-services .svc-card.is-hovering .svc-card__arr,
+.sec-services .svc-card.is-tilting .svc-card__arr {
+  transform: translateZ(36px) translateY(-3px) scale(1.06) !important;
+}
+
+@media (max-width: 899px), (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .sec-services .svc-card .svc-icon,
+  .sec-services .svc-card .svc-card__title,
+  .sec-services .svc-card .svc-card__desc,
+  .sec-services .svc-card .svc-card__arr,
+  .sec-services .svc-card:hover .svc-icon,
+  .sec-services .svc-card:hover .svc-card__title,
+  .sec-services .svc-card:hover .svc-card__desc,
+  .sec-services .svc-card:hover .svc-card__arr,
+  .sec-services .svc-card.is-hovering .svc-icon,
+  .sec-services .svc-card.is-hovering .svc-card__title,
+  .sec-services .svc-card.is-hovering .svc-card__desc,
+  .sec-services .svc-card.is-hovering .svc-card__arr,
+  .sec-services .svc-card.is-tilting .svc-icon,
+  .sec-services .svc-card.is-tilting .svc-card__title,
+  .sec-services .svc-card.is-tilting .svc-card__desc,
+  .sec-services .svc-card.is-tilting .svc-card__arr {
+    transform: none !important;
+  }
+}
+/* ================================================================
+   FINAL PATCH — SERVICES 3D CARD + INNER MOTION
+   Keep this as the LAST services block. Do not add service-card rules after it.
+   ================================================================ */
+
+/* Stable Aceternity-style card body: JS controls only these variables. */
+.sec-services .services-grid .svc-card.svc-card,
+.sec-services .services-grid .svc-card.svc-card:hover,
+.sec-services .services-grid .svc-card.svc-card:focus-visible,
+.sec-services .services-grid .svc-card.svc-card.is-active,
+.sec-services .services-grid .svc-card.svc-card.is-hovering,
+.sec-services .services-grid .svc-card.svc-card.is-tilting {
+  --svc-rx: 0deg;
+  --svc-ry: 0deg;
+  --svc-scale: 1;
+
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  grid-template-columns: none !important;
+  grid-template-rows: none !important;
+  gap: 0 !important;
+
+  overflow: visible !important;
+  transform:
+    perspective(1200px)
+    rotateX(var(--svc-rx, 0deg))
+    rotateY(var(--svc-ry, 0deg))
+    scale(var(--svc-scale, 1)) !important;
+  transform-style: preserve-3d !important;
+  transform-origin: center center !important;
+  backface-visibility: hidden !important;
+  will-change: transform !important;
+
+  transition:
+    box-shadow 650ms cubic-bezier(.22, 1, .36, 1),
+    background 650ms cubic-bezier(.22, 1, .36, 1),
+    border-color 650ms cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+.sec-services .services-grid .svc-card.svc-card:hover,
+.sec-services .services-grid .svc-card.svc-card:focus-visible,
+.sec-services .services-grid .svc-card.svc-card.is-hovering,
+.sec-services .services-grid .svc-card.svc-card.is-tilting {
+  box-shadow: 0 30px 70px rgba(58, 35, 120, .18) !important;
+}
+
+/* Kill the old accordion/reveal behavior. Nothing inside the card should collapse. */
+.sec-services .services-grid .svc-card.svc-card .svc-card__content {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  gap: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+  transform: translateZ(0) !important;
+  transform-style: preserve-3d !important;
+}
+
+.sec-services .services-grid .svc-card.svc-card .svc-card__more {
+  display: none !important;
+}
+
+/* Shared inner CardItem behavior. Transform only; no height/margin animation. */
+.sec-services .services-grid .svc-card.svc-card .svc-icon,
+.sec-services .services-grid .svc-card.svc-card .svc-card__title,
+.sec-services .services-grid .svc-card.svc-card .svc-card__desc,
+.sec-services .services-grid .svc-card.svc-card .svc-card__arr {
+  opacity: 1 !important;
+  visibility: visible !important;
+  max-height: none !important;
+  height: auto !important;
+  overflow: visible !important;
+  pointer-events: auto !important;
+  transform-style: preserve-3d !important;
+  backface-visibility: hidden !important;
+  will-change: transform !important;
+  transition:
+    transform 850ms cubic-bezier(.22, 1, .36, 1),
+    background 650ms cubic-bezier(.22, 1, .36, 1),
+    border-color 650ms cubic-bezier(.22, 1, .36, 1),
+    color 650ms cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+/* Icon: centered, larger, visible. */
+.sec-services .services-grid .svc-card.svc-card .svc-icon {
+  width: 82px !important;
+  height: 82px !important;
+  min-width: 82px !important;
+  min-height: 82px !important;
+  flex: 0 0 82px !important;
+  margin: 0 auto 24px !important;
+  align-self: center !important;
+  display: grid !important;
+  place-items: center !important;
+  background: transparent !important;
+  border-radius: 18px !important;
+  box-shadow: none !important;
+  transform-origin: center center !important;
+  transform: translateZ(64px) translateY(0) scale(1) !important;
+}
+
+.sec-services .services-grid .svc-card.svc-card .svc-icon img,
+.sec-services .services-grid .svc-card.svc-card .svc-icon svg {
+  width: 72px !important;
+  height: 72px !important;
+  max-width: 72px !important;
+  max-height: 72px !important;
+  object-fit: contain !important;
+  display: block !important;
+  opacity: 1 !important;
+}
+
+/* Title: less heavy, centered, stable. */
+.sec-services .services-grid .svc-card.svc-card .svc-card__title {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 0 14px !important;
+  padding: 0 !important;
+  flex: 0 0 auto !important;
+  color: #11121b !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
+  font-size: clamp(16px, 1.05vw, 19px) !important;
+  line-height: 1.16 !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.012em !important;
+  text-transform: none !important;
+  text-align: center !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  white-space: normal !important;
+  transform-origin: center center !important;
+  transform: translateZ(44px) translateY(0) scale(1) !important;
+}
+
+/* Description: readable and visible by default. */
+.sec-services .services-grid .svc-card.svc-card .svc-card__desc {
+  width: 100% !important;
+  max-width: 27ch !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  flex: 0 0 auto !important;
+  color: rgba(17, 18, 27, .72) !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
+  font-size: clamp(13px, .88vw, 15px) !important;
+  line-height: 1.55 !important;
+  font-weight: 400 !important;
+  text-align: center !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  white-space: normal !important;
+  transform-origin: center top !important;
+  transform: translateZ(28px) translateY(0) scale(1) !important;
+}
+
+/* Arrow: stable, not part of any reveal. */
+.sec-services .services-grid .svc-card.svc-card .svc-card__arr,
+.sec-services .services-grid .svc-card.svc-card .svc-card__content + .svc-card__arr {
+  width: 54px !important;
+  height: 54px !important;
+  min-width: 54px !important;
+  min-height: 54px !important;
+  flex: 0 0 54px !important;
+  margin: auto auto 0 !important;
+  align-self: center !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 50% !important;
+  transform-origin: center center !important;
+  transform: translateZ(38px) translateY(0) scale(1) !important;
+}
+
+.sec-services .services-grid .svc-card.svc-card .svc-card__arr svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+/* Hover / active inner motion: smooth, visible, no layout shift. */
+.sec-services .services-grid .svc-card.svc-card:hover .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:focus-visible .svc-icon,
+.sec-services .services-grid .svc-card.svc-card.is-hovering .svc-icon,
+.sec-services .services-grid .svc-card.svc-card.is-tilting .svc-icon {
+  transform: translateZ(76px) translateY(-5px) scale(.88) !important;
+}
+
+.sec-services .services-grid .svc-card.svc-card:hover .svc-card__title,
+.sec-services .services-grid .svc-card.svc-card:focus-visible .svc-card__title,
+.sec-services .services-grid .svc-card.svc-card.is-hovering .svc-card__title,
+.sec-services .services-grid .svc-card.svc-card.is-tilting .svc-card__title {
+  transform: translateZ(54px) translateY(-6px) scale(.96) !important;
+}
+
+.sec-services .services-grid .svc-card.svc-card:hover .svc-card__desc,
+.sec-services .services-grid .svc-card.svc-card:focus-visible .svc-card__desc,
+.sec-services .services-grid .svc-card.svc-card.is-hovering .svc-card__desc,
+.sec-services .services-grid .svc-card.svc-card.is-tilting .svc-card__desc {
+  transform: translateZ(40px) translateY(3px) scale(1.045) !important;
+}
+
+.sec-services .services-grid .svc-card.svc-card:hover .svc-card__arr,
+.sec-services .services-grid .svc-card.svc-card:focus-visible .svc-card__arr,
+.sec-services .services-grid .svc-card.svc-card.is-hovering .svc-card__arr,
+.sec-services .services-grid .svc-card.svc-card.is-tilting .svc-card__arr {
+  transform: translateZ(48px) translateY(3px) scale(1.04) !important;
+}
+
+/* Mobile/reduced-motion: keep layout, remove 3D tracking. */
+@media (max-width: 899px), (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .sec-services .services-grid .svc-card.svc-card,
+  .sec-services .services-grid .svc-card.svc-card:hover,
+  .sec-services .services-grid .svc-card.svc-card:focus-visible,
+  .sec-services .services-grid .svc-card.svc-card.is-hovering,
+  .sec-services .services-grid .svc-card.svc-card.is-tilting {
+    --svc-rx: 0deg !important;
+    --svc-ry: 0deg !important;
+    --svc-scale: 1 !important;
+    transform: none !important;
+  }
+
+  .sec-services .services-grid .svc-card.svc-card .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card .svc-card__title,
+  .sec-services .services-grid .svc-card.svc-card .svc-card__desc,
+  .sec-services .services-grid .svc-card.svc-card .svc-card__arr {
+    transform: none !important;
+  }
+}
+
+/* FINAL SERVICES SECTION — ICON SIZE/POSITION + HOVER MOTION */
+/* Single consolidated source of truth for .svc-icon. Only touches the icon inside
+   Services cards. Card tilt, title, desc, arrow, and every other section are untouched. */
+
+.sec-services .services-grid .svc-card.svc-card .svc-icon {
+  display: block !important;
+  position: relative !important;
+  left: 50% !important;
+  right: auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  flex: 0 0 auto !important;
+  margin: 0 0 24px !important;
+  align-self: center !important;
+  justify-self: center !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  transform-origin: center center !important;
+  transform: translateX(-50%) translateY(0) scale(1) !important;
+  transition: transform 800ms cubic-bezier(.22, 1, .36, 1) !important;
+  will-change: transform !important;
+}
+
+.sec-services .services-grid .svc-card.svc-card .svc-icon img,
+.sec-services .services-grid .svc-card.svc-card .svc-icon svg {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  margin: 0 auto !important;
+}
+
+.sec-services .services-grid .svc-card.svc-card:hover .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:focus-visible .svc-icon,
+.sec-services .services-grid .svc-card.svc-card.is-hovering .svc-icon,
+.sec-services .services-grid .svc-card.svc-card.is-tilting .svc-icon {
+  transform: translateX(-50%) translateY(-18px) scale(0.72) !important;
+}
+
+/* Preserve reduced-motion / touch fallback for the icon specifically. */
+@media (max-width: 899px), (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .sec-services .services-grid .svc-card.svc-card .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:hover .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:focus-visible .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card.is-hovering .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card.is-tilting .svc-icon {
+    transform: translateX(-50%) translateY(0) scale(1) !important;
+  }
+}
+
+/* FINAL SERVICES HEADING — gradient accent on "modern businesses." */
+.sec-services .services-top__h2 .grad-text {
+  background: linear-gradient(92deg, #7c3aed 0%, #a855f7 45%, #f97316 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+/* FINAL SERVICES CARD HEIGHT — taller cards, more breathing room before the arrow.
+   The arrow already sits at the bottom via the card's justify-content:space-between
+   + its own margin-top:auto, so a taller card directly widens that gap. */
+.sec-services .services-grid .svc-card.svc-card {
+  min-height: clamp(430px, 36vw, 570px) !important;
+}
+
+@media (max-width: 640px) {
+  .sec-services .services-grid .svc-card.svc-card {
+    min-height: 0 !important;
+  }
+}
+
+/* FINAL SERVICES ICON 1 SIZE FIX — the source artwork for card 1 (assets/1.png)
+   only fills ~70% of its own square canvas, versus ~91-94% for icons 2-5, so it
+   renders visibly smaller than the others despite an identical icon box. Scale
+   just this image up to match the others' apparent size. */
+.sec-services .services-grid .svc-card.svc-card:nth-child(1) .svc-icon img {
+  transform: scale(1.37) !important;
+  transform-origin: center center !important;
+}
+
+/* FINAL SERVICES SECTION FULL-BLEED — remove the "floating rounded card" look.
+   Section now spans edge-to-edge and sits flush against the sections above/below
+   (no side inset, no rounded corners, no vertical margin gap). Inner padding is
+   unchanged so the heading/cards still have breathing room from the edges. */
+.sec-services {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* FINAL MOBILE NAV MENU */
+/* Adds a hamburger + slide-down panel so navigation isn't lost when
+   .nav__links/.nav__cta are hidden at narrow widths (they currently have
+   no replacement, which is a real responsiveness gap). */
+
+.nav__burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  z-index: 60;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav__burger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transition: transform 0.28s cubic-bezier(.22, 1, .36, 1), opacity 0.28s cubic-bezier(.22, 1, .36, 1);
+}
+
+.nav__burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav__burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.nav__burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.nav__mobile {
+  position: fixed;
+  top: 62px;
+  left: 0;
+  right: 0;
+  background: #02050d;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 24px var(--pad-x) 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity 0.32s cubic-bezier(.22, 1, .36, 1), transform 0.32s cubic-bezier(.22, 1, .36, 1), visibility 0s linear 0.32s;
+  z-index: 55;
+  max-height: calc(100vh - 62px);
+  overflow-y: auto;
+}
+
+.nav__mobile.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: opacity 0.32s cubic-bezier(.22, 1, .36, 1), transform 0.32s cubic-bezier(.22, 1, .36, 1);
+}
+
+.nav__mobile-links {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav__mobile-links a {
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 6px 0;
+}
+
+.nav__mobile-links a:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+}
+
+.nav__mobile-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 6px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.nav__mobile-cta svg {
+  width: 12px;
+  height: 12px;
+}
+
+body.nav-open {
+  overflow: hidden;
+}
+
+@media (max-width: 700px) {
+  .nav__burger {
+    display: inline-flex;
+  }
+}
+
+@media (min-width: 701px) {
+  .nav__mobile {
+    display: none !important;
+  }
+}
+
+/* ============================================================
+   FINAL CTA — NEON PALM PILL (permanent, site-wide, reusable).
+   Single shared system, applied via the existing .cta-neon class
+   already present on all 7 CTAs (nav__cta, nav__mobile-cta,
+   btn-outline-white, btn-play, btn-outline-gold.section-cta,
+   cal__cta, cta-warm__btn). Additive only: does not set
+   font-size/width/height, so each button's footprint stays as
+   close as possible to its original size.
+
+   Default: dark pill fill, colored neon stroke (gold or purple,
+   per the --cta-neon--gold/--cta-neon--purple variant already on
+   each button) with a soft static glow — always visible, not
+   hover-only. Left badge is a FILLED circle that stretches to the
+   button's own line-height and is pulled outward via negative
+   margin so it reads flush/plugged-in with the pill's edges
+   (visually very close to full CTA height on every variant, per
+   spec — an exact px-perfect fit differs slightly per button
+   since each has a different base padding). White palm icon
+   inside, text unchanged to the right.
+
+   Hover/focus: glow intensifies, a tiny 1.01 scale (no layout
+   shift, transform never affects box size), and one bright comet
+   continuously traces the exact rounded-rect perimeter (SVG rect
+   + stroke-dasharray, sized live by script.js — mechanism
+   unchanged from before).
+   ============================================================ */
+
+.cta-neon {
+  --neon: #C8A84B;
+  --neon-g1: rgba(200, 168, 75, .3);
+  --neon-g2: rgba(200, 168, 75, .16);
+  --neon-g3: rgba(200, 168, 75, .1);
+  --neon-g1h: rgba(223, 192, 110, .45);
+  --neon-g2h: rgba(223, 192, 110, .28);
+  --neon-g3h: rgba(223, 192, 110, .16);
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  border-radius: 999px !important;
+  background: #0a0612 !important;
+  border: 1.5px solid var(--neon) !important;
+  color: #fff !important;
+  overflow: visible !important;
+  isolation: isolate !important;
+  box-shadow:
+    0 0 8px var(--neon-g1),
+    0 0 18px var(--neon-g2),
+    inset 0 0 8px var(--neon-g3) !important;
+  transition: box-shadow .3s ease, border-color .3s ease, transform .3s ease !important;
+}
+
+.cta-neon:hover,
+.cta-neon:focus-visible {
+  box-shadow:
+    0 0 12px var(--neon-g1h),
+    0 0 26px var(--neon-g2h),
+    inset 0 0 10px var(--neon-g3h) !important;
+  transform: scale(1.01) !important;
+}
+
+.cta-neon--gold {
+  --neon: #C8A84B;
+  --neon-g1: rgba(200, 168, 75, .3);
+  --neon-g2: rgba(200, 168, 75, .16);
+  --neon-g3: rgba(200, 168, 75, .1);
+  --neon-g1h: rgba(223, 192, 110, .45);
+  --neon-g2h: rgba(223, 192, 110, .28);
+  --neon-g3h: rgba(223, 192, 110, .16);
+}
+.cta-neon--purple {
+  --neon: #7c3aed;
+  --neon-g1: rgba(124, 58, 237, .35);
+  --neon-g2: rgba(124, 58, 237, .2);
+  --neon-g3: rgba(124, 58, 237, .12);
+  --neon-g1h: rgba(168, 85, 247, .5);
+  --neon-g2h: rgba(168, 85, 247, .32);
+  --neon-g3h: rgba(168, 85, 247, .18);
+}
+
+.cta-neon > * {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+/* Left badge: diameter = the button's exact rendered height (padding-
+   box, i.e. the full visible pill height minus only the thin border
+   stroke), flush against the left wall. Computed live by script.js
+   from the LABEL's own height + the button's static CSS padding —
+   never from the button's own offsetHeight, which would be circular
+   (see the long comment in script.js: an earlier version measured
+   offsetHeight directly and produced a runaway badge that grew to
+   cover most of the page). max-width/max-height below are a hard
+   safety ceiling — comfortably above every real button on this site,
+   so even if the computed value were ever wrong, the badge still
+   cannot balloon past a sane size. The em-based values are only the
+   fallback for the instant before JS runs on load. */
+.cta-neon .cta-neon__badge,
+.cta-neon .btn-play__ring {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+  flex: 0 0 auto !important;
+  width: var(--badge-d, 2.2em) !important;
+  height: var(--badge-d, 2.2em) !important;
+  min-width: 26px !important;
+  min-height: 26px !important;
+  max-width: 64px !important;
+  max-height: 64px !important;
+  margin: var(--badge-my, 0) .65em var(--badge-my, 0) var(--badge-ml, -.3em) !important;
+  border-radius: 50% !important;
+  background: var(--neon) !important;
+  background: radial-gradient(circle at 35% 28%, color-mix(in srgb, var(--neon) 65%, #fff 35%), var(--neon) 72%) !important;
+  box-shadow: 0 0 8px var(--neon-g1h) !important;
+}
+
+.cta-neon .cta-neon__badge svg,
+.cta-neon .btn-play__ring svg {
+  width: 46% !important;
+  height: 56% !important;
+  object-fit: contain !important;
+  fill: #fff !important;
+  stroke: none !important;
+}
+
+.cta-neon .cta-neon__badge img,
+.cta-neon .btn-play__ring img {
+  width: 58% !important;
+  height: 58% !important;
+  object-fit: contain !important;
+}
+
+.cta-neon .cta-neon__label {
+  white-space: nowrap !important;
+}
+
+/* Beam overlay: sized/positioned to the button in JS (script.js).
+   The rect's stroke covers the button's full perimeter (no dasharray
+   gap — previously it was a short comet). Its color is a repeating
+   gradient built and tinted in JS from THIS button's own --neon
+   (gold or purple) — not white — with exactly 3 bright "shine"
+   peaks evenly spaced around the loop (period = perimeter/3, not a
+   dense sea-wave of many small ripples), continuously traveling
+   together via a native SVG animation. Glow is tinted to --neon too. */
+.cta-neon__beam {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: visible !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+
+.cta-neon__beam-rect {
+  fill: none !important;
+  stroke-linecap: butt !important;
+  opacity: 0 !important;
+  filter: drop-shadow(0 0 4px var(--neon)) !important;
+  transition: opacity .3s ease !important;
+}
+
+.cta-neon:hover .cta-neon__beam-rect,
+.cta-neon:focus-visible .cta-neon__beam-rect {
+  opacity: 1 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-neon:hover,
+  .cta-neon:focus-visible {
+    transform: none !important;
+  }
+  .cta-neon:hover .cta-neon__beam-rect,
+  .cta-neon:focus-visible .cta-neon__beam-rect {
+    opacity: 0 !important;
+  }
+}
+
+/* ============================================================
+   CTA HARDENING — extra-specificity reinforcement for the 5
+   buttons that have many separate historical rules targeting their
+   own class name directly, scattered across this file from past
+   editing passes (.nav__cta: 12 rules, .nav__mobile-cta, .btn-
+   outline-white: 11, .btn-outline-gold: multiple, .cal__cta: 19).
+   .btn-play and .cta-warm__btn already render correctly with the
+   generic .cta-neon rules above and are not repeated here.
+
+   Every selector below is doubled (e.g. .nav__cta.cta-neon) so its
+   specificity is strictly higher than a lone .nav__cta rule
+   anywhere else in the file, not just equal-and-later — this wins
+   regardless of what else is declared for these specific classes,
+   past or future. */
+.nav__cta.cta-neon,
+.nav__mobile-cta.cta-neon,
+.btn-outline-white.cta-neon,
+.btn-outline-gold.cta-neon,
+.cal__cta.cta-neon {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  border-radius: 999px !important;
+  background: #0a0612 !important;
+  border: 1.5px solid var(--neon) !important;
+  color: #fff !important;
+  overflow: visible !important;
+  isolation: isolate !important;
+  box-shadow:
+    0 0 8px var(--neon-g1),
+    0 0 18px var(--neon-g2),
+    inset 0 0 8px var(--neon-g3) !important;
+  transition: box-shadow .3s ease, border-color .3s ease, transform .3s ease !important;
+}
+
+.nav__cta.cta-neon:hover,
+.nav__mobile-cta.cta-neon:hover,
+.btn-outline-white.cta-neon:hover,
+.btn-outline-gold.cta-neon:hover,
+.cal__cta.cta-neon:hover,
+.nav__cta.cta-neon:focus-visible,
+.nav__mobile-cta.cta-neon:focus-visible,
+.btn-outline-white.cta-neon:focus-visible,
+.btn-outline-gold.cta-neon:focus-visible,
+.cal__cta.cta-neon:focus-visible {
+  box-shadow:
+    0 0 12px var(--neon-g1h),
+    0 0 26px var(--neon-g2h),
+    inset 0 0 10px var(--neon-g3h) !important;
+  transform: scale(1.01) !important;
+}
+
+.nav__cta.cta-neon > *,
+.nav__mobile-cta.cta-neon > *,
+.btn-outline-white.cta-neon > *,
+.btn-outline-gold.cta-neon > *,
+.cal__cta.cta-neon > * {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+.nav__cta.cta-neon .cta-neon__badge,
+.nav__mobile-cta.cta-neon .cta-neon__badge,
+.btn-outline-white.cta-neon .cta-neon__badge,
+.btn-outline-gold.cta-neon .cta-neon__badge,
+.cal__cta.cta-neon .cta-neon__badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+  flex: 0 0 auto !important;
+  width: var(--badge-d, 2.2em) !important;
+  height: var(--badge-d, 2.2em) !important;
+  min-width: 26px !important;
+  min-height: 26px !important;
+  max-width: 64px !important;
+  max-height: 64px !important;
+  margin: var(--badge-my, 0) .65em var(--badge-my, 0) var(--badge-ml, -.3em) !important;
+  border-radius: 50% !important;
+  background: var(--neon) !important;
+  background: radial-gradient(circle at 35% 28%, color-mix(in srgb, var(--neon) 65%, #fff 35%), var(--neon) 72%) !important;
+  box-shadow: 0 0 8px var(--neon-g1h) !important;
+}
+
+.nav__cta.cta-neon .cta-neon__badge img,
+.nav__mobile-cta.cta-neon .cta-neon__badge img,
+.btn-outline-white.cta-neon .cta-neon__badge img,
+.btn-outline-gold.cta-neon .cta-neon__badge img,
+.cal__cta.cta-neon .cta-neon__badge img {
+  width: 58% !important;
+  height: 58% !important;
+  object-fit: contain !important;
+}
+
+.nav__cta.cta-neon .cta-neon__label,
+.nav__mobile-cta.cta-neon .cta-neon__label,
+.btn-outline-white.cta-neon .cta-neon__label,
+.btn-outline-gold.cta-neon .cta-neon__label,
+.cal__cta.cta-neon .cta-neon__label {
+  white-space: nowrap !important;
+}
+
+.nav__cta.cta-neon .cta-neon__beam,
+.nav__mobile-cta.cta-neon .cta-neon__beam,
+.btn-outline-white.cta-neon .cta-neon__beam,
+.btn-outline-gold.cta-neon .cta-neon__beam,
+.cal__cta.cta-neon .cta-neon__beam {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: visible !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+
+/* Root cause of the visible square in "Learn Our Approach"'s corner:
+   an old rule scoped to .sec-approach forces ANY svg inside
+   .btn-outline-gold.section-cta down to a fixed 16x16px —
+   `.sec-approach .btn-outline-gold.section-cta svg { width:16px;
+   height:16px !important }` (line ~4039). That selector has higher
+   specificity (3 classes + 1 type) than the hardening rule just
+   above (3 classes + 0 type), so it was winning and shrinking the
+   beam SVG into a tiny square pinned in a corner by the
+   position:absolute + inset:0 + fixed-16px combination. This
+   selector matches that exact scoping with one more class, so it
+   wins outright. */
+.sec-approach .btn-outline-gold.section-cta.cta-neon .cta-neon__beam {
+  width: 100% !important;
+  height: 100% !important;
+  flex: none !important;
+}
+
+.nav__cta.cta-neon .cta-neon__beam-rect,
+.nav__mobile-cta.cta-neon .cta-neon__beam-rect,
+.btn-outline-white.cta-neon .cta-neon__beam-rect,
+.btn-outline-gold.cta-neon .cta-neon__beam-rect,
+.cal__cta.cta-neon .cta-neon__beam-rect {
+  fill: none !important;
+  stroke-linecap: butt !important;
+  opacity: 0 !important;
+  filter: drop-shadow(0 0 4px var(--neon)) !important;
+  transition: opacity .3s ease !important;
+}
+
+.nav__cta.cta-neon:hover .cta-neon__beam-rect,
+.nav__mobile-cta.cta-neon:hover .cta-neon__beam-rect,
+.btn-outline-white.cta-neon:hover .cta-neon__beam-rect,
+.btn-outline-gold.cta-neon:hover .cta-neon__beam-rect,
+.cal__cta.cta-neon:hover .cta-neon__beam-rect,
+.nav__cta.cta-neon:focus-visible .cta-neon__beam-rect,
+.nav__mobile-cta.cta-neon:focus-visible .cta-neon__beam-rect,
+.btn-outline-white.cta-neon:focus-visible .cta-neon__beam-rect,
+.btn-outline-gold.cta-neon:focus-visible .cta-neon__beam-rect,
+.cal__cta.cta-neon:focus-visible .cta-neon__beam-rect {
+  opacity: 1 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav__cta.cta-neon:hover,
+  .nav__mobile-cta.cta-neon:hover,
+  .btn-outline-white.cta-neon:hover,
+  .btn-outline-gold.cta-neon:hover,
+  .cal__cta.cta-neon:hover,
+  .nav__cta.cta-neon:focus-visible,
+  .nav__mobile-cta.cta-neon:focus-visible,
+  .btn-outline-white.cta-neon:focus-visible,
+  .btn-outline-gold.cta-neon:focus-visible,
+  .cal__cta.cta-neon:focus-visible {
+    transform: none !important;
+  }
+  .nav__cta.cta-neon:hover .cta-neon__beam-rect,
+  .nav__mobile-cta.cta-neon:hover .cta-neon__beam-rect,
+  .btn-outline-white.cta-neon:hover .cta-neon__beam-rect,
+  .btn-outline-gold.cta-neon:hover .cta-neon__beam-rect,
+  .cal__cta.cta-neon:hover .cta-neon__beam-rect,
+  .nav__cta.cta-neon:focus-visible .cta-neon__beam-rect,
+  .nav__mobile-cta.cta-neon:focus-visible .cta-neon__beam-rect,
+  .btn-outline-white.cta-neon:focus-visible .cta-neon__beam-rect,
+  .btn-outline-gold.cta-neon:focus-visible .cta-neon__beam-rect,
+  .cal__cta.cta-neon:focus-visible .cta-neon__beam-rect {
+    opacity: 0 !important;
+  }
+}
+
+/* ============================================================
+   #js-book (Book Session / cal__cta) — MAXIMUM-SPECIFICITY fix.
+   An ID selector beats every class-based rule in this file
+   outright, no ambiguity, so this is the definitive word on this
+   one button regardless of anything else declared for .cal__cta
+   anywhere (there are ~19 separate historical rules touching it).
+
+   Also: this is the ONLY CTA sitting on a LIGHT background
+   (.calendar-widget is cream/white — every other CTA sits on a
+   dark section). The same soft colored glow that reads as "neon"
+   against black looks like a hazy smudge against white, which is
+   almost certainly the "fog" being described — so the glow here is
+   tightened (smaller blur radius, lower opacity, no outer bloom)
+   instead of the wider ambient glow used elsewhere. */
+#js-book.cta-neon {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  /* justify-content:center here now only affects the LABEL (the
+     badge is pulled out of flex flow below, so it doesn't
+     participate) — this is what actually centers the button's
+     text while the badge is independently pinned to the left. */
+  justify-content: center !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  border: 1.5px solid var(--neon) !important;
+  color: #0a0612 !important;
+  overflow: visible !important;
+  isolation: isolate !important;
+  box-shadow: 0 0 5px var(--neon-g1), inset 0 0 5px var(--neon-g3) !important;
+  transition: box-shadow .3s ease, border-color .3s ease, transform .3s ease !important;
+}
+
+#js-book.cta-neon:hover,
+#js-book.cta-neon:focus-visible {
+  box-shadow: 0 0 8px var(--neon-g1h), inset 0 0 6px var(--neon-g3h) !important;
+  transform: scale(1.01) !important;
+}
+
+#js-book.cta-neon > * {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+/* Per request: the badge must be pinned flush to the left wall
+   while the label text stays centered in the full pill — those are
+   two different alignment rules for two different elements, which
+   plain flex justify-content can't express at once (it only
+   controls the group as a whole). Fix: take the badge OUT of the
+   flex flow entirely (position:absolute, vertically centered) so
+   it's independent of alignment, pinned via `left` directly against
+   the border's inner edge. With the badge no longer a flex
+   participant, the button's justify-content:center (above) now
+   centers the LABEL ALONE within the full button width — exactly
+   the requested behavior. */
+#js-book.cta-neon .cta-neon__badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: absolute !important;
+  /* For an absolutely positioned child, the containing block is the
+     PADDING box of the nearest positioned ancestor (per spec) — NOT
+     the border box. That padding box already starts ~1.5px in from
+     the true edge (this button's own border-width), so `left:0`
+     alone still leaves a hair of a gap, and the previous `left:2px`
+     added an extra 2px on top of that (~3.5px total) — visible as
+     the persisting gap. Shifting left by the border-width itself
+     lands the circle exactly on the border line, touching it with
+     no gap at all. */
+  left: -1.5px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  flex: none !important;
+  width: var(--badge-d, 2.2em) !important;
+  height: var(--badge-d, 2.2em) !important;
+  min-width: 26px !important;
+  min-height: 26px !important;
+  max-width: 64px !important;
+  max-height: 64px !important;
+  margin: 0 !important;
+  border-radius: 50% !important;
+  background: var(--neon) !important;
+  background: radial-gradient(circle at 35% 28%, color-mix(in srgb, var(--neon) 65%, #fff 35%), var(--neon) 72%) !important;
+  box-shadow: 0 0 6px var(--neon-g1h) !important;
+}
+
+#js-book.cta-neon .cta-neon__badge img {
+  width: 58% !important;
+  height: 58% !important;
+  object-fit: contain !important;
+}
+
+#js-book.cta-neon .cta-neon__label {
+  white-space: nowrap !important;
+}
+
+#js-book.cta-neon .cta-neon__beam {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: visible !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+
+#js-book.cta-neon .cta-neon__beam-rect {
+  fill: none !important;
+  stroke-linecap: butt !important;
+  opacity: 0 !important;
+  filter: drop-shadow(0 0 2px var(--neon)) !important;
+  transition: opacity .3s ease !important;
+}
+
+#js-book.cta-neon:hover .cta-neon__beam-rect,
+#js-book.cta-neon:focus-visible .cta-neon__beam-rect {
+  opacity: 1 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #js-book.cta-neon:hover,
+  #js-book.cta-neon:focus-visible {
+    transform: none !important;
+  }
+  #js-book.cta-neon:hover .cta-neon__beam-rect,
+  #js-book.cta-neon:focus-visible .cta-neon__beam-rect {
+    opacity: 0 !important;
+  }
+}
+
+/* ============================================================
+   FINAL "LET'S CONNECT" (cta-warm__btn) — same hardening pattern.
+   This one was assumed fine earlier (it renders reasonably on the
+   surface), but it was never actually added to the reinforcement
+   block, and it turns out to have the exact same two problems as
+   the other buttons did:
+   1) `.sec-cta .cta-warm__btn { justify-content: space-between
+      !important }` — this button has a forced min-width (220-
+      250px, wider than its natural content), so space-between
+      shoves the badge and label apart with a large gap, unlike
+      every other CTA's tight, consistent spacing.
+   2) `.sec-cta .cta-warm__btn svg { width:18px; height:18px
+      !important }` (2 classes + svg tag) has higher specificity
+      than the generic .cta-neon__beam rule (1 class), so its beam
+      SVG was ALSO being shrunk to an 18x18 square — the same bug
+      already fixed for "Learn Our Approach".
+   Background stays dark (unlike Book Session) since this button
+   sits on the warm gold gradient band, which was already working
+   visually — only alignment + beam sizing needed correcting. */
+.sec-cta .cta-warm__btn.cta-neon,
+.cta-warm__btn.cta-neon {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  border-radius: 999px !important;
+  background: #0a0612 !important;
+  border: 1.5px solid var(--neon) !important;
+  color: #fff !important;
+  overflow: visible !important;
+  isolation: isolate !important;
+  box-shadow:
+    0 0 8px var(--neon-g1),
+    0 0 18px var(--neon-g2),
+    inset 0 0 8px var(--neon-g3) !important;
+  transition: box-shadow .3s ease, border-color .3s ease, transform .3s ease !important;
+}
+
+.sec-cta .cta-warm__btn.cta-neon:hover,
+.cta-warm__btn.cta-neon:hover,
+.sec-cta .cta-warm__btn.cta-neon:focus-visible,
+.cta-warm__btn.cta-neon:focus-visible {
+  box-shadow:
+    0 0 12px var(--neon-g1h),
+    0 0 26px var(--neon-g2h),
+    inset 0 0 10px var(--neon-g3h) !important;
+  transform: scale(1.01) !important;
+}
+
+.sec-cta .cta-warm__btn.cta-neon > *,
+.cta-warm__btn.cta-neon > * {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+.sec-cta .cta-warm__btn.cta-neon .cta-neon__badge,
+.cta-warm__btn.cta-neon .cta-neon__badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+  flex: 0 0 auto !important;
+  width: var(--badge-d, 2.2em) !important;
+  height: var(--badge-d, 2.2em) !important;
+  min-width: 26px !important;
+  min-height: 26px !important;
+  max-width: 64px !important;
+  max-height: 64px !important;
+  margin: var(--badge-my, 0) .65em var(--badge-my, 0) var(--badge-ml, -.3em) !important;
+  border-radius: 50% !important;
+  background: var(--neon) !important;
+  background: radial-gradient(circle at 35% 28%, color-mix(in srgb, var(--neon) 65%, #fff 35%), var(--neon) 72%) !important;
+  box-shadow: 0 0 8px var(--neon-g1h) !important;
+}
+
+.sec-cta .cta-warm__btn.cta-neon .cta-neon__badge img,
+.cta-warm__btn.cta-neon .cta-neon__badge img {
+  width: 58% !important;
+  height: 58% !important;
+  object-fit: contain !important;
+}
+
+.sec-cta .cta-warm__btn.cta-neon .cta-neon__label,
+.cta-warm__btn.cta-neon .cta-neon__label {
+  white-space: nowrap !important;
+}
+
+.sec-cta .cta-warm__btn.cta-neon .cta-neon__beam,
+.cta-warm__btn.cta-neon .cta-neon__beam {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: visible !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+
+.sec-cta .cta-warm__btn.cta-neon .cta-neon__beam-rect,
+.cta-warm__btn.cta-neon .cta-neon__beam-rect {
+  fill: none !important;
+  stroke-linecap: butt !important;
+  opacity: 0 !important;
+  filter: drop-shadow(0 0 4px var(--neon)) !important;
+  transition: opacity .3s ease !important;
+}
+
+.sec-cta .cta-warm__btn.cta-neon:hover .cta-neon__beam-rect,
+.cta-warm__btn.cta-neon:hover .cta-neon__beam-rect,
+.sec-cta .cta-warm__btn.cta-neon:focus-visible .cta-neon__beam-rect,
+.cta-warm__btn.cta-neon:focus-visible .cta-neon__beam-rect {
+  opacity: 1 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sec-cta .cta-warm__btn.cta-neon:hover,
+  .cta-warm__btn.cta-neon:hover,
+  .sec-cta .cta-warm__btn.cta-neon:focus-visible,
+  .cta-warm__btn.cta-neon:focus-visible {
+    transform: none !important;
+  }
+  .sec-cta .cta-warm__btn.cta-neon:hover .cta-neon__beam-rect,
+  .cta-warm__btn.cta-neon:hover .cta-neon__beam-rect,
+  .sec-cta .cta-warm__btn.cta-neon:focus-visible .cta-neon__beam-rect,
+  .cta-warm__btn.cta-neon:focus-visible .cta-neon__beam-rect {
+    opacity: 0 !important;
+  }
+}
+
+/* FINAL CTA TYPOGRAPHY — regular weight for every CTA label.
+   Historical per-button rules across this file set font-weight to
+   700/800/850/900 for nav__cta, nav__mobile-cta, btn-outline-white,
+   btn-outline-gold, cal__cta, cta-warm__btn and btn-play at various
+   breakpoints. .cta-neon is present on all 7 buttons, so this single
+   rule reaches every one of them. The class is repeated to push
+   specificity above any existing selector in this file (max found
+   was 4 classes), and this block is last in source order so it also
+   wins any specificity tie. */
+.cta-neon.cta-neon.cta-neon.cta-neon,
+.cta-neon.cta-neon.cta-neon.cta-neon .cta-neon__label {
+  font-weight: 400 !important;
+}
+
+/* ============================================================
+   FINAL COACHING SECTION REDESIGN — light "book a session" layout
+   matching the reference mockup (soft gradient wash, left content
+   stack: intro + meta row + focus cards + session timeline, right
+   column: calendar + Book Session CTA (unchanged neon style, kept
+   for site-wide consistency) + a new "this session is for you if"
+   checklist card).
+
+   #coaching (ID selector) is used throughout so this block beats
+   every historical .sec-coaching rule anywhere else in this file,
+   regardless of their specificity or source order. */
+
+#coaching {
+  height: auto !important;
+  min-height: 0 !important;
+  padding-top: clamp(32px, 4.5vw, 56px) !important;
+  padding-right: clamp(20px, 4vw, 56px) !important;
+  padding-bottom: clamp(16px, 2.2vw, 26px) !important;
+  padding-left: clamp(20px, 4vw, 56px) !important;
+  background: linear-gradient(120deg, #eef0fb 0%, #f5eefb 38%, #fdeee9 72%, #fdece6 100%) !important;
+  border-radius: 28px !important;
+  margin: clamp(24px, 4vw, 48px) 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+}
+
+#coaching .coaching-layout {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr) !important;
+  gap: clamp(28px, 4vw, 56px) !important;
+  height: auto !important;
+  align-items: stretch !important;
+}
+
+#coaching .coaching-main {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 26px !important;
+}
+
+#coaching .coaching-intro {
+  display: block !important;
+  grid-column: auto !important;
+}
+
+#coaching .coaching__label {
+  display: block !important;
+  grid-column: auto !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.6px !important;
+  text-transform: uppercase !important;
+  color: #6d28d9 !important;
+  margin: 0 0 12px !important;
+}
+
+#coaching .coaching__h2 {
+  display: block !important;
+  grid-column: auto !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
+  font-size: clamp(24px, 2.8vw, 36px) !important;
+  line-height: 1.18 !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.5px !important;
+  color: #16131f !important;
+  margin: 0 0 12px !important;
+  max-width: 560px !important;
+}
+
+#coaching .coaching__desc {
+  display: block !important;
+  grid-column: auto !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  color: #4a4753 !important;
+  max-width: 480px !important;
+  margin: 0 !important;
+}
+
+#coaching .coaching__meta {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 10px 22px !important;
+  list-style: none !important;
+  margin: 4px 0 0 !important;
+  padding: 0 !important;
+}
+#coaching .coaching__meta li {
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  color: #4a4753 !important;
+}
+#coaching .coaching__meta svg {
+  width: 16px !important;
+  height: 16px !important;
+  color: #6d28d9 !important;
+  flex: 0 0 16px !important;
+}
+
+#coaching .coaching__section-label {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.6px !important;
+  text-transform: uppercase !important;
+  color: #16131f !important;
+  margin: 6px 0 2px !important;
+}
+
+#coaching .audience-cards {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  grid-column: auto !important;
+  grid-row: auto !important;
+  gap: 18px !important;
+  list-style: none !important;
+  margin: 10px 0 0 !important;
+  padding: 0 !important;
+}
+#coaching .audience-cards > li { display: block !important; }
+
+#coaching .aud-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 7px !important;
+  height: auto !important;
+  min-height: 0 !important;
+  background: #fff !important;
+  border: 1px solid rgba(20, 12, 40, .08) !important;
+  border-radius: 14px !important;
+  padding: 14px 14px 12px !important;
+  box-shadow: 0 4px 16px rgba(30, 12, 60, .05) !important;
+  cursor: pointer !important;
+  transition: border-color .2s, box-shadow .2s, transform .2s !important;
+}
+#coaching .aud-card:hover,
+#coaching .aud-card:focus-visible {
+  border-color: rgba(109, 40, 217, .35) !important;
+  box-shadow: 0 8px 22px rgba(109, 40, 217, .12) !important;
+  transform: translateY(-2px) !important;
+}
+#coaching .aud-card__ico {
+  width: 36px !important;
+  height: 36px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  background: rgba(109, 40, 217, .09) !important;
+  color: #6d28d9 !important;
+}
+#coaching .aud-card__ico svg { width: 18px !important; height: 18px !important; }
+#coaching .aud-card__name {
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: #16131f !important;
+}
+#coaching .aud-card__desc {
+  font-size: 11.5px !important;
+  line-height: 1.55 !important;
+  color: #6b6875 !important;
+  flex: 1 !important;
+}
+#coaching .aud-card__radio {
+  width: 28px !important;
+  height: 28px !important;
+  margin: 0 !important;
+  border-radius: 50% !important;
+  border: 1px solid rgba(20, 12, 40, .16) !important;
+  background: transparent !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #16131f !important;
+  transition: background .2s, border-color .2s, color .2s !important;
+}
+#coaching .aud-card__radio svg { width: 13px !important; height: 13px !important; }
+#coaching .aud-card[aria-checked="true"] {
+  border-color: #6d28d9 !important;
+  box-shadow: 0 8px 22px rgba(109, 40, 217, .16) !important;
+}
+#coaching .aud-card[aria-checked="true"] .aud-card__radio {
+  background: #6d28d9 !important;
+  border-color: #6d28d9 !important;
+  color: #fff !important;
+}
+
+#coaching .coaching__timeline {
+  display: flex !important;
+  list-style: none !important;
+  margin: 10px 0 0 !important;
+  padding: 0 !important;
+  position: relative !important;
+  gap: 4px !important;
+}
+#coaching .coaching__timeline::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 23px !important;
+  left: 36px !important;
+  right: 36px !important;
+  height: 0 !important;
+  border-top: 1.5px dotted rgba(20, 12, 40, .22) !important;
+}
+#coaching .coaching__timeline li {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  gap: 4px !important;
+  position: relative !important;
+  padding: 0 6px !important;
+}
+#coaching .ctime__ico {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  border: 1px solid rgba(20, 12, 40, .12) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #6d28d9 !important;
+  box-shadow: 0 3px 10px rgba(30, 12, 60, .06) !important;
+}
+#coaching .ctime__ico svg { width: 17px !important; height: 17px !important; }
+#coaching .ctime__num {
+  font-size: 9.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1px !important;
+  color: #a29ab0 !important;
+  margin: 4px 0 0 !important;
+}
+#coaching .ctime__name {
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  color: #16131f !important;
+  margin: 0 !important;
+}
+#coaching .ctime__sub {
+  font-size: 9.5px !important;
+  line-height: 1.4 !important;
+  color: #6b6875 !important;
+  margin: 0 !important;
+  max-width: 108px !important;
+}
+
+#coaching .coaching-side {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+}
+
+#coaching .calendar-widget {
+  background: #fff !important;
+  border: 1px solid rgba(20, 12, 40, .07) !important;
+  border-left: 1px solid rgba(20, 12, 40, .07) !important;
+  border-radius: 18px !important;
+  padding: 22px !important;
+  box-shadow: 0 10px 28px rgba(30, 12, 60, .07) !important;
+}
+#coaching .cal__header { margin-bottom: 14px !important; }
+#coaching .cal__title {
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.4px !important;
+  text-transform: uppercase !important;
+  color: #16131f !important;
+  margin: 0 !important;
+}
+#coaching .cal__nav {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 12px !important;
+}
+#coaching .cal__month {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #16131f !important;
+}
+#coaching .cal__btn {
+  width: 26px !important;
+  height: 26px !important;
+  border: 1px solid rgba(20, 12, 40, .12) !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  color: #16131f !important;
+}
+#coaching .cal__btn:hover { background: rgba(109, 40, 217, .08) !important; }
+#coaching .cal__grid { gap: 4px !important; }
+#coaching .cal__day-name {
+  font-size: 9.5px !important;
+  font-weight: 600 !important;
+  color: #a29ab0 !important;
+  padding-bottom: 6px !important;
+}
+#coaching .cal__date {
+  font-size: 11.5px !important;
+  color: #33303c !important;
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 auto !important;
+}
+#coaching .cal__date:hover { background: rgba(109, 40, 217, .08) !important; }
+#coaching .cal__date--today {
+  background: #6d28d9 !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+}
+#coaching .cal__date--today:hover { background: #5b1fb8 !important; }
+#coaching .cal__footer {
+  margin-top: 16px !important;
+  padding-top: 16px !important;
+  border-top: 1px solid rgba(20, 12, 40, .07) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+#coaching .cal__cta { width: 100% !important; }
+#coaching .cal__note {
+  font-size: 10.5px !important;
+  color: #8f8b98 !important;
+  margin: 0 !important;
+  text-align: center !important;
+}
+
+#coaching .coaching__checklist {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  flex: 1 !important;
+  background: linear-gradient(160deg, #f4effc, #fdf1ee) !important;
+  border: 1px solid rgba(109, 40, 217, .12) !important;
+  border-radius: 18px !important;
+  padding: 24px 26px !important;
+}
+#coaching .coaching__checklist-title {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.2px !important;
+  text-transform: uppercase !important;
+  color: #6d28d9 !important;
+  margin: 0 0 16px !important;
+}
+#coaching .coaching__checklist ul {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+}
+#coaching .coaching__checklist li {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 11px !important;
+  font-size: 14.5px !important;
+  line-height: 1.5 !important;
+  color: #2c2836 !important;
+}
+#coaching .coaching__checklist svg {
+  width: 19px !important;
+  height: 19px !important;
+  flex: 0 0 19px !important;
+  margin-top: 1px !important;
+  color: #6d28d9 !important;
+}
+
+@media (max-width: 960px) {
+  #coaching .coaching-layout {
+    grid-template-columns: 1fr !important;
+  }
+  #coaching .audience-cards {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (max-width: 700px) {
+  #coaching {
+    border-radius: 20px !important;
+    padding: 28px 18px !important;
+  }
+  #coaching .audience-cards {
+    grid-template-columns: 1fr !important;
+  }
+  #coaching .coaching__timeline {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 18px !important;
+  }
+  #coaching .coaching__timeline::before {
+    display: none !important;
+  }
+  #coaching .coaching__timeline li {
+    flex-direction: row !important;
+    text-align: left !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+  #coaching .ctime__num { display: none !important; }
+  #coaching .ctime__sub { max-width: none !important; }
+}
+
+/* FINAL BOOK SESSION CTA — black pill, matching the reference photo.
+   Reverses the earlier gold-neon-glow treatment for this one button:
+   solid black fill, no colored border/glow at rest, hover is a plain
+   elevation (lift + soft dark shadow) instead of the traveling neon
+   beam. Also enlarged: this button reads as the primary action in
+   the booking card, so it should not look like a small thin pill. */
+#js-book.cta-neon {
+  background: #0e0c14 !important;
+  border: 1.5px solid transparent !important;
+  color: #fff !important;
+  box-shadow: 0 3px 8px rgba(14, 12, 20, .22) !important;
+  padding: 18px 26px !important;
+  min-height: 58px !important;
+}
+#js-book.cta-neon .cta-neon__label {
+  color: #fff !important;
+  font-size: 13px !important;
+  letter-spacing: 2px !important;
+}
+#js-book.cta-neon:hover,
+#js-book.cta-neon:focus-visible {
+  box-shadow: 0 8px 18px rgba(14, 12, 20, .38) !important;
+  transform: scale(1.025) !important;
+}
+#js-book.cta-neon .cta-neon__beam,
+#js-book.cta-neon:hover .cta-neon__beam-rect,
+#js-book.cta-neon:focus-visible .cta-neon__beam-rect {
+  opacity: 0 !important;
+}
+
+/* FINAL FOCUS-ON CARD ICONS — user-supplied artwork (target rings /
+   starburst / magnifying glass) replacing the inline SVG icons for
+   the 3 "What We'll Focus On" cards. Used as-is, not redrawn. */
+#coaching .aud-card__ico {
+  background: transparent !important;
+  padding: 0 !important;
+}
+#coaching .aud-card__ico svg { display: none !important; }
+#coaching .coaching__word {
+  background: linear-gradient(90deg, #6d28d9, #db2777) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+#coaching .aud-card__ico {
+  width: 60px !important;
+  height: 60px !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: contain !important;
+}
+#coaching .audience-cards > li:nth-child(1) .aud-card__ico {
+  background-image: url('assets/booking1-01.png') !important;
+}
+#coaching .audience-cards > li:nth-child(2) .aud-card__ico {
+  background-image: url('assets/booking1-02.png') !important;
+}
+#coaching .audience-cards > li:nth-child(3) .aud-card__ico {
+  background-image: url('assets/booking1-03.png') !important;
+}
+
+/* FINAL v4 — "HOW THE SESSION WORKS" TIMELINE ICONS. The uploaded
+   artwork (booking 3-01..05.png) was a RASTER export (1467x1469px)
+   despite looking like clean vector line-art — a raster file is
+   always bound to its pixel grid, so once the browser scales it down
+   into a ~46-54px badge it can look visibly softer than true vector
+   line-art, no matter how high the source resolution is. Traced each
+   PNG into a true vector .svg (assets/booking3-0N.svg) preserving the
+   exact same artwork/colors, so the browser now renders crisp vector
+   edges at any display size instead of downsampling a bitmap. */
+#coaching .ctime__ico {
+  width: 46px !important;
+  height: 46px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: contain !important;
+}
+#coaching .ctime__ico svg { display: none !important; }
+#coaching .coaching__timeline li:nth-child(1) .ctime__ico {
+  background-image: url('assets/booking3-01.svg') !important;
+}
+#coaching .coaching__timeline li:nth-child(2) .ctime__ico {
+  background-image: url('assets/booking3-02.svg') !important;
+}
+#coaching .coaching__timeline li:nth-child(3) .ctime__ico {
+  background-image: url('assets/booking3-03.svg') !important;
+}
+#coaching .coaching__timeline li:nth-child(4) .ctime__ico {
+  background-image: url('assets/booking3-04.svg') !important;
+}
+#coaching .coaching__timeline li:nth-child(5) .ctime__ico {
+  background-image: url('assets/booking3-05.svg') !important;
+}
+
+/* ============================================================
+   FINAL CTA COLOR REFRESH — retiring the flat gold/purple neon
+   colors. The site already has an established gradient identity
+   used on bold accent text (hero word, services heading accent):
+   --g-orange #F97316 -> --g-pink #DB2777 -> --g-purple #7C3AED.
+   Applying that same combination here instead of inventing a new
+   palette. Covers all CTAs except Book Session, which stays a
+   plain black pill per an earlier explicit request. */
+.cta-neon--gold,
+.cta-neon--purple {
+  --neon: #DB2777 !important;
+  --neon-g1: rgba(219, 39, 119, .3) !important;
+  --neon-g2: rgba(219, 39, 119, .16) !important;
+  --neon-g3: rgba(219, 39, 119, .1) !important;
+  --neon-g1h: rgba(236, 72, 153, .45) !important;
+  --neon-g2h: rgba(236, 72, 153, .28) !important;
+  --neon-g3h: rgba(236, 72, 153, .16) !important;
+}
+
+.cta-neon,
+.nav__cta.cta-neon,
+.nav__mobile-cta.cta-neon,
+.btn-outline-white.cta-neon,
+.btn-outline-gold.cta-neon,
+.cal__cta.cta-neon,
+.cta-warm__btn.cta-neon {
+  background:
+    linear-gradient(#0a0612, #0a0612) padding-box,
+    linear-gradient(90deg, #F97316, #DB2777, #7C3AED) border-box !important;
+  border: 1.5px solid transparent !important;
+}
+
+.cta-neon .cta-neon__badge,
+.cta-neon .btn-play__ring,
+.nav__cta.cta-neon .cta-neon__badge,
+.nav__mobile-cta.cta-neon .cta-neon__badge,
+.btn-outline-white.cta-neon .cta-neon__badge,
+.btn-outline-gold.cta-neon .cta-neon__badge,
+.cal__cta.cta-neon .cta-neon__badge,
+.cta-warm__btn.cta-neon .cta-neon__badge {
+  background: radial-gradient(circle at 32% 28%, #fdba74, #F97316 24%, #DB2777 60%, #7C3AED 100%) !important;
+}
+
+/* FINAL BOOK SESSION CTA — remove the palm badge circle entirely,
+   per direct request; the button is now a plain black pill with
+   just its label. */
+#js-book.cta-neon .cta-neon__badge {
+  display: none !important;
+}
+
+/* FINAL "EXPLORE OUR SERVICES" CTA — reversed treatment, per direct
+   request: gradient FILL instead of gradient stroke/border, and a
+   plain black circle badge instead of the gradient-filled badge
+   used on the other CTAs. */
+.btn-outline-white.cta-neon {
+  background: linear-gradient(90deg, #F97316, #DB2777, #7C3AED) !important;
+  border: 1.5px solid transparent !important;
+}
+.btn-outline-white.cta-neon .cta-neon__label {
+  color: #fff !important;
+}
+.btn-outline-white.cta-neon .cta-neon__badge {
+  background: rgba(255, 255, 255, .4) !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+}
+
+/* Paint-wipe reveal: as the badge travels left -> right on hover, a
+   wash of its own color (white, frosted, same tone as the badge)
+   sweeps across the button behind it — like the circle is a brush
+   dragging a new color across the pill. Synced to the exact same
+   duration/easing as the badge's own "left" transition so they
+   visibly move together. */
+.btn-outline-white.cta-neon::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: 999px !important;
+  background: #0a0612 !important;
+  clip-path: inset(0 100% 0 0) !important;
+  transition: clip-path .45s cubic-bezier(.4, 0, .2, 1) !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+}
+.btn-outline-white.cta-neon:hover::before,
+.btn-outline-white.cta-neon:focus-visible::before {
+  clip-path: inset(0 0 0 0) !important;
+}
+
+/* Hover: the black badge travels across and becomes flush with the
+   RIGHT wall instead of sitting still on the left. Taking it out of
+   flex flow (same technique already used for Book Session) so it
+   can move independently of the label; padding-left reserves the
+   same visual gap the badge occupied in flow, so the label doesn't
+   jump when the badge is pulled out of flex. The -1.5px / +1.5px
+   offsets cancel the border-width so the badge sits exactly on the
+   pill's edge on both sides (containing block is the padding box,
+   which is inset from the true border-box edge by the border
+   width). */
+.btn-outline-white.cta-neon {
+  padding-left: calc(var(--badge-d, 2.2em) + 14px) !important;
+}
+.btn-outline-white.cta-neon .cta-neon__badge {
+  position: absolute !important;
+  top: 50% !important;
+  left: -1.5px !important;
+  transform: translateY(-50%) !important;
+  margin: 0 !important;
+  flex: none !important;
+  transition: left .45s cubic-bezier(.4, 0, .2, 1) !important;
+}
+.btn-outline-white.cta-neon:hover .cta-neon__badge,
+.btn-outline-white.cta-neon:focus-visible .cta-neon__badge {
+  left: calc(100% + 1.5px - var(--badge-d, 2.2em)) !important;
+}
+
+/* FINAL "HOW WE WORK" CTA — same badge-travel + paint-wipe mechanism
+   as Explore Our Services (white, 40% opacity, frosted badge sliding
+   left -> right on hover). The one difference: this button's fill
+   starts black at rest, so the wipe it drags reveals the orange-
+   pink-purple gradient instead of white — the CTA itself changes
+   color from black to gradient as the badge passes over it. */
+.btn-play.cta-neon {
+  padding-left: calc(var(--badge-d, 2.2em) + 14px) !important;
+}
+.btn-play.cta-neon .cta-neon__badge {
+  position: absolute !important;
+  top: 50% !important;
+  left: -1.5px !important;
+  transform: translateY(-50%) !important;
+  margin: 0 !important;
+  flex: none !important;
+  background: radial-gradient(circle at 32% 28%, #fdba74, #F97316 24%, #DB2777 60%, #7C3AED 100%) !important;
+  transition: left .45s cubic-bezier(.4, 0, .2, 1) !important;
+}
+.btn-play.cta-neon:hover .cta-neon__badge,
+.btn-play.cta-neon:focus-visible .cta-neon__badge {
+  left: calc(100% + 1.5px - var(--badge-d, 2.2em)) !important;
+}
+.btn-play.cta-neon::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #F97316, #DB2777, #7C3AED) !important;
+  clip-path: inset(0 100% 0 0) !important;
+  transition: clip-path .45s cubic-bezier(.4, 0, .2, 1) !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+}
+.btn-play.cta-neon:hover::before,
+.btn-play.cta-neon:focus-visible::before {
+  clip-path: inset(0 0 0 0) !important;
+}
+
+/* FINAL — enlarge both traveling-badge CTAs (Explore Our Services,
+   How We Work) so the badge has room to slide across without
+   covering the label text; and fade the label to black on hover, in
+   step with the badge/wipe transition, so the text stays readable
+   whatever is now behind it (white wipe or gradient wipe). */
+.btn-outline-white.cta-neon,
+.btn-play.cta-neon {
+  padding-top: 15px !important;
+  padding-bottom: 15px !important;
+  padding-right: 56px !important;
+}
+.btn-outline-white.cta-neon .cta-neon__label,
+.btn-play.cta-neon .cta-neon__label {
+  transition: color .45s cubic-bezier(.4, 0, .2, 1) !important;
+}
+
+/* FINAL — enlarge the top nav "Let's Connect" (desktop + mobile menu)
+   the same way, so its traveling badge has room to slide across on
+   hover without sliding the label text underneath it. */
+.nav__cta.cta-neon,
+.nav__mobile-cta.cta-neon {
+  padding-top: 15px !important;
+  padding-bottom: 15px !important;
+  padding-right: 56px !important;
+}
+.btn-play.cta-neon:hover .cta-neon__label,
+.btn-play.cta-neon:focus-visible .cta-neon__label {
+  color: #0a0612 !important;
+  font-weight: 700 !important;
+}
+.btn-outline-white.cta-neon:hover .cta-neon__label,
+.btn-outline-white.cta-neon:focus-visible .cta-neon__label {
+  color: #fff !important;
+  font-weight: 700 !important;
+}
+
+/* FINAL "LET'S CONNECT" (final section CTA) — reverted back to flat
+   purple per direct request; this one button opts out of the
+   orange-pink-purple gradient treatment applied to the rest. */
+.cta-warm__btn.cta-neon {
+  --neon: #7C3AED !important;
+  --neon-g1: rgba(124, 58, 237, .35) !important;
+  --neon-g2: rgba(124, 58, 237, .2) !important;
+  --neon-g3: rgba(124, 58, 237, .12) !important;
+  --neon-g1h: rgba(168, 85, 247, .5) !important;
+  --neon-g2h: rgba(168, 85, 247, .32) !important;
+  --neon-g3h: rgba(168, 85, 247, .18) !important;
+  background: #0a0612 !important;
+  border: 1.5px solid var(--neon) !important;
+}
+.cta-warm__btn.cta-neon .cta-neon__badge {
+  background: var(--neon) !important;
+  background: radial-gradient(circle at 35% 28%, color-mix(in srgb, var(--neon) 65%, #fff 35%), var(--neon) 72%) !important;
+}
+
+/* ============================================================
+   FINAL HERO VIDEO — square video (960x960) placed on the right
+   side of the hero, on top of the existing hero background image
+   (left untouched, per request). A left-edge gradient mask on the
+   frame itself blends its edge into the hero's own dark vignette
+   color (#02050d) so the transition from text-side to video feels
+   continuous rather than a hard cut. Experimental first pass. */
+.hero {
+  position: relative !important;
+}
+.hero__video-frame {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  height: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  width: auto !important;
+  overflow: hidden !important;
+  z-index: 2 !important;
+}
+.hero__video-frame video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+.hero__video-frame::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(90deg, #02050d 0%, rgba(2, 5, 13, .55) 16%, transparent 42%) !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+}
+
+@media (max-width: 900px) {
+  .hero__video-frame {
+    position: static !important;
+    width: 100% !important;
+    height: min(70vw, 380px) !important;
+    margin: 28px 0 0 !important;
+  }
+  .hero__video-frame::before {
+    background: linear-gradient(180deg, #02050d 0%, transparent 30%) !important;
+  }
+}
+
+/* FINAL — remove the old hero photo entirely now that the video
+   covers that area. The .hero background is set via the `background`
+   shorthand across ~8 different breakpoint rules throughout this
+   file, each bundling its own gradient + the photo url(). Rather
+   than edit all 8, overriding just the background-image longhand
+   here drops the photo layer everywhere at once (a longhand set
+   later always replaces the full value the shorthand assigned to
+   it), leaving a clean dark backdrop with a soft purple glow. */
+.hero {
+  background-image: none !important;
+  background-color: #000 !important;
+}
+
+/* FINAL — the remaining "Let's Connect" CTAs (top nav, mobile nav,
+   final section) now adopt the exact same mechanism as How We Work:
+   black at rest, a gradient badge that travels left -> right on
+   hover, and a gradient paint-wipe reveal. This also undoes the
+   earlier flat-purple-only treatment given to the final section's
+   Let's Connect, per this newer, broader consistency request. */
+.nav__cta.cta-neon,
+.nav__mobile-cta.cta-neon,
+.cta-warm__btn.cta-neon {
+  --neon: #DB2777 !important;
+  --neon-g1: rgba(219, 39, 119, .3) !important;
+  --neon-g2: rgba(219, 39, 119, .16) !important;
+  --neon-g3: rgba(219, 39, 119, .1) !important;
+  --neon-g1h: rgba(236, 72, 153, .45) !important;
+  --neon-g2h: rgba(236, 72, 153, .28) !important;
+  --neon-g3h: rgba(236, 72, 153, .16) !important;
+  background: #0a0612 !important;
+  border: 1.5px solid transparent !important;
+  padding-left: calc(var(--badge-d, 2.2em) + 14px) !important;
+}
+.nav__cta.cta-neon .cta-neon__badge,
+.nav__mobile-cta.cta-neon .cta-neon__badge,
+.cta-warm__btn.cta-neon .cta-neon__badge {
+  position: absolute !important;
+  top: 50% !important;
+  left: -1.5px !important;
+  transform: translateY(-50%) !important;
+  margin: 0 !important;
+  flex: none !important;
+  background: radial-gradient(circle at 32% 28%, #fdba74, #F97316 24%, #DB2777 60%, #7C3AED 100%) !important;
+  transition: left .45s cubic-bezier(.4, 0, .2, 1) !important;
+}
+.nav__cta.cta-neon:hover .cta-neon__badge,
+.nav__cta.cta-neon:focus-visible .cta-neon__badge,
+.nav__mobile-cta.cta-neon:hover .cta-neon__badge,
+.nav__mobile-cta.cta-neon:focus-visible .cta-neon__badge,
+.cta-warm__btn.cta-neon:hover .cta-neon__badge,
+.cta-warm__btn.cta-neon:focus-visible .cta-neon__badge {
+  left: calc(100% + 1.5px - var(--badge-d, 2.2em)) !important;
+}
+.nav__cta.cta-neon::before,
+.nav__mobile-cta.cta-neon::before,
+.cta-warm__btn.cta-neon::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #F97316, #DB2777, #7C3AED) !important;
+  clip-path: inset(0 100% 0 0) !important;
+  transition: clip-path .45s cubic-bezier(.4, 0, .2, 1) !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+}
+.nav__cta.cta-neon:hover::before,
+.nav__cta.cta-neon:focus-visible::before,
+.nav__mobile-cta.cta-neon:hover::before,
+.nav__mobile-cta.cta-neon:focus-visible::before,
+.cta-warm__btn.cta-neon:hover::before,
+.cta-warm__btn.cta-neon:focus-visible::before {
+  clip-path: inset(0 0 0 0) !important;
+}
+
+/* FINAL — APPROACH TIMELINE AUTO-CYCLE. Mirrors the exact "lit" look
+   already defined for :hover, but driven by a JS-toggled class
+   (.tstep--auto-active) instead, so the steps light up one at a
+   time on their own, continuously, without needing the mouse. See
+   the auto-cycle IIFE in script.js. */
+.sec-approach .tstep--auto-active .tstep__circle {
+  transform: scale(1.16) translateY(-3px) translateZ(0) !important;
+  background: radial-gradient(circle at 35% 25%, rgba(255, 255, 255, .28), rgba(255, 255, 255, .06) 35%, #06101b 72%) !important;
+  filter: brightness(1.35) saturate(1.35) !important;
+}
+.sec-approach .tstep--1.tstep--auto-active .tstep__circle { box-shadow: 0 0 0 1px rgba(139, 92, 246, .75), 0 0 18px rgba(139, 92, 246, .65), 0 0 42px rgba(139, 92, 246, .35) !important; }
+.sec-approach .tstep--2.tstep--auto-active .tstep__circle { box-shadow: 0 0 0 1px rgba(47, 125, 255, .75), 0 0 18px rgba(47, 125, 255, .65), 0 0 42px rgba(47, 125, 255, .35) !important; }
+.sec-approach .tstep--3.tstep--auto-active .tstep__circle { box-shadow: 0 0 0 1px rgba(32, 201, 151, .75), 0 0 18px rgba(32, 201, 151, .62), 0 0 42px rgba(32, 201, 151, .32) !important; }
+.sec-approach .tstep--4.tstep--auto-active .tstep__circle { box-shadow: 0 0 0 1px rgba(247, 201, 72, .8), 0 0 18px rgba(247, 201, 72, .66), 0 0 42px rgba(247, 201, 72, .34) !important; }
+.sec-approach .tstep--5.tstep--auto-active .tstep__circle { box-shadow: 0 0 0 1px rgba(255, 79, 163, .78), 0 0 18px rgba(255, 79, 163, .66), 0 0 42px rgba(255, 79, 163, .35) !important; }
+.sec-approach .tstep--6.tstep--auto-active .tstep__circle { box-shadow: 0 0 0 1px rgba(139, 92, 246, .75), 0 0 18px rgba(139, 92, 246, .65), 0 0 42px rgba(139, 92, 246, .35) !important; }
+.sec-approach .tstep--auto-active .tstep__name {
+  color: #ffffff !important;
+  text-shadow: 0 0 18px rgba(255, 255, 255, .18) !important;
+}
+.sec-approach .tstep--auto-active .tstep__sub {
+  color: rgba(255, 255, 255, .94) !important;
+}
+
+/* FINAL — Book Session: taller, and flush with the calendar's own
+   left/right edges (same width as the header/date-grid above it,
+   inside the calendar card's padding, with zero extra margin of its
+   own that could inset it further). */
+#js-book.cta-neon {
+  width: 100% !important;
+  margin: 0 !important;
+  padding-top: 22px !important;
+  padding-bottom: 22px !important;
+  min-height: 66px !important;
+}
+#coaching .cal__footer {
+  align-items: stretch !important;
+}
+
+/* FINAL — "Let's Connect" (final section) reverted to purple, per
+   direct request: keeps the exact same badge-travel + paint-wipe
+   mechanism as How We Work (flush-left at rest, slides to flush-
+   right on hover), just recolored from the orange-pink-purple
+   gradient to a purple-only wash/badge. Also enlarged (taller +
+   more right-side room) so the traveling badge clears the label. */
+.cta-warm__btn.cta-neon {
+  --neon: #7C3AED !important;
+  --neon-g1: rgba(124, 58, 237, .35) !important;
+  --neon-g2: rgba(124, 58, 237, .2) !important;
+  --neon-g3: rgba(124, 58, 237, .12) !important;
+  --neon-g1h: rgba(168, 85, 247, .5) !important;
+  --neon-g2h: rgba(168, 85, 247, .32) !important;
+  --neon-g3h: rgba(168, 85, 247, .18) !important;
+  padding-top: 15px !important;
+  padding-bottom: 15px !important;
+  padding-right: 56px !important;
+}
+.cta-warm__btn.cta-neon .cta-neon__badge {
+  background: radial-gradient(circle at 32% 28%, #c4b5fd, #a855f7 30%, #7C3AED 75%, #5b21b6 100%) !important;
+}
+.cta-warm__btn.cta-neon::before {
+  background: linear-gradient(90deg, #5b21b6, #7C3AED, #a855f7) !important;
+}
+.cta-warm__btn.cta-neon .cta-neon__label {
+  transition: color .45s cubic-bezier(.4, 0, .2, 1) !important;
+}
+.cta-warm__btn.cta-neon:hover .cta-neon__label,
+.cta-warm__btn.cta-neon:focus-visible .cta-neon__label {
+  color: #fff !important;
+  font-weight: 700 !important;
+}
+
+/* ============================================================
+   FINAL — BULLETPROOF BADGE-TRAVEL FIX (all 5 traveling CTAs).
+
+   Root cause of "the badge stops short / floats away from the
+   button, overlapping other page text": this stylesheet has a very
+   long edit history, and somewhere upstream something is preventing
+   each button from reliably being its own positioning container.
+   When an absolutely-positioned child's nearest ancestor isn't
+   actually positioned, the browser walks UP the tree to the next
+   one that is — for these buttons that turned out to be a much
+   bigger, differently-sized ancestor (the whole text+button row),
+   so "left" percentages were being measured against the WRONG box
+   entirely. That also meant the old hover formula
+   `left: calc(100% - var(--badge-d))` was measuring "100%" of the
+   wrong element's width on top of depending on --badge-d being
+   numerically exact.
+
+   Fix, in two parts:
+   1) Re-assert `position: relative` on the button itself at maximum
+      selector specificity (class repeated 4x) so nothing earlier in
+      the file can contest it — the button is now guaranteed to be
+      the badge's containing block.
+   2) Replace the hover math so it no longer needs to know the
+      badge's exact diameter at all: `left: 100%` anchors the
+      badge's left edge to the button's right wall, and
+      `translateX(-100%)` (a transform percentage, which is always
+      relative to the badge's OWN rendered size, whatever that
+      actually is) pulls it back by exactly its own width — landing
+      it flush on the right, correctly, regardless of what
+      --badge-d resolves to. +1.5px mirrors the -1.5px used at rest
+      to cancel the border width on both sides. */
+.btn-outline-white.cta-neon.cta-neon.cta-neon,
+.btn-play.cta-neon.cta-neon.cta-neon,
+.nav__cta.cta-neon.cta-neon.cta-neon,
+.nav__mobile-cta.cta-neon.cta-neon.cta-neon,
+.cta-warm__btn.cta-neon.cta-neon.cta-neon {
+  position: relative !important;
+}
+
+.btn-outline-white.cta-neon.cta-neon.cta-neon .cta-neon__badge,
+.btn-play.cta-neon.cta-neon.cta-neon .cta-neon__badge,
+.nav__cta.cta-neon.cta-neon.cta-neon .cta-neon__badge,
+.nav__mobile-cta.cta-neon.cta-neon.cta-neon .cta-neon__badge,
+.cta-warm__btn.cta-neon.cta-neon.cta-neon .cta-neon__badge {
+  position: absolute !important;
+  top: 50% !important;
+  left: -1.5px !important;
+  margin: 0 !important;
+  flex: none !important;
+  transform: translateY(-50%) translateX(0) !important;
+  transition:
+    left .45s cubic-bezier(.4, 0, .2, 1),
+    transform .45s cubic-bezier(.4, 0, .2, 1) !important;
+}
+
+.btn-outline-white.cta-neon.cta-neon.cta-neon:hover .cta-neon__badge,
+.btn-outline-white.cta-neon.cta-neon.cta-neon:focus-visible .cta-neon__badge,
+.btn-play.cta-neon.cta-neon.cta-neon:hover .cta-neon__badge,
+.btn-play.cta-neon.cta-neon.cta-neon:focus-visible .cta-neon__badge,
+.nav__cta.cta-neon.cta-neon.cta-neon:hover .cta-neon__badge,
+.nav__cta.cta-neon.cta-neon.cta-neon:focus-visible .cta-neon__badge,
+.nav__mobile-cta.cta-neon.cta-neon.cta-neon:hover .cta-neon__badge,
+.nav__mobile-cta.cta-neon.cta-neon.cta-neon:focus-visible .cta-neon__badge,
+.cta-warm__btn.cta-neon.cta-neon.cta-neon:hover .cta-neon__badge,
+.cta-warm__btn.cta-neon.cta-neon.cta-neon:focus-visible .cta-neon__badge {
+  left: 100% !important;
+  transform: translateY(-50%) translateX(calc(-100% + 1.5px)) !important;
+}
+
+/* FINAL — "Explore Our Services" badge: white stroke ring around the
+   circle at rest, and once it finishes traveling to the right wall
+   on hover, its fill switches from frosted white to the same orange-
+   pink-purple gradient used everywhere else on the site. */
+.btn-outline-white.cta-neon .cta-neon__badge {
+  border: 1.5px solid rgba(255, 255, 255, .85) !important;
+}
+.btn-outline-white.cta-neon:hover .cta-neon__badge,
+.btn-outline-white.cta-neon:focus-visible .cta-neon__badge {
+  background: radial-gradient(circle at 32% 28%, #fdba74, #F97316 24%, #DB2777 60%, #7C3AED 100%) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: rgba(255, 255, 255, .5) !important;
+}
+
+/* FINAL v2 — service card hover-video icons (cards 1-4: Experience
+   Strategy, Creative Direction, SEO & GEO Growth, AI & Digital
+   Innovation): the video IS the icon now (no more static <img>, no
+   more swapping between two elements — that swap was what caused
+   the visible size-jump on hover). Each sits paused on its first
+   frame at rest (looks like a normal static icon) and only starts
+   playing while hovered; script.js handles the actual play()/
+   pause(). Same box sizing rule as every other card's icon image,
+   so these line up with card 5's icon (still a static image). */
+.sec-services .services-grid .svc-card.svc-card:nth-child(1) .svc-icon .svc-icon__video,
+.sec-services .services-grid .svc-card.svc-card:nth-child(2) .svc-icon .svc-icon__video,
+.sec-services .services-grid .svc-card.svc-card:nth-child(3) .svc-icon .svc-icon__video,
+.sec-services .services-grid .svc-card.svc-card:nth-child(4) .svc-icon .svc-icon__video,
+.sec-services .services-grid .svc-card.svc-card:nth-child(5) .svc-icon .svc-icon__video {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  margin: 0 auto !important;
+}
+
+/* FINAL — these 4 video icons read ~20% smaller than intended (the
+   source clips are full-bleed line art with no internal padding, so
+   at the same box size they look lighter/smaller than the old flat
+   PNG icons). Scale the icon box itself up 20% so the enlargement
+   also applies correctly to the existing hover shrink+lift animation
+   (rest scale 1 -> 1.2, hover scale 0.72 -> 0.864, same ratio). */
+.sec-services .services-grid .svc-card.svc-card:nth-child(1) .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(2) .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(3) .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(4) .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(5) .svc-icon {
+  transform: translateX(-50%) translateY(0) scale(1.04544) !important;
+}
+.sec-services .services-grid .svc-card.svc-card:nth-child(1):hover .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(1):focus-visible .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(1).is-hovering .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(1).is-tilting .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(2):hover .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(2):focus-visible .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(2).is-hovering .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(2).is-tilting .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(3):hover .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(3):focus-visible .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(3).is-hovering .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(3).is-tilting .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(4):hover .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(4):focus-visible .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(4).is-hovering .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(4).is-tilting .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(5):hover .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(5):focus-visible .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(5).is-hovering .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(5).is-tilting .svc-icon {
+  transform: translateX(-50%) translateY(-18px) scale(1.452) !important;
+}
+
+@media (max-width: 899px), (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .sec-services .services-grid .svc-card.svc-card:nth-child(1) .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(1):hover .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(1):focus-visible .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(1).is-hovering .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(1).is-tilting .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(2) .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(2):hover .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(2):focus-visible .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(2).is-hovering .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(2).is-tilting .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(3) .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(3):hover .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(3):focus-visible .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(3).is-hovering .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(3).is-tilting .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(4) .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(4):hover .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(4):focus-visible .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(4).is-hovering .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(4).is-tilting .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(5) .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(5):hover .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(5):focus-visible .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(5).is-hovering .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(5).is-tilting .svc-icon {
+    transform: translateX(-50%) translateY(0) scale(1.04544) !important;
+  }
+}
+
+/* FINAL — Book Session: robust re-assert that the button spans the
+   exact same left/right edges as the calendar above it (belt-and-
+   braces re-declaration in case anything upstream still constrains
+   its width), plus swap the hover feedback from a soft blurred glow
+   (read as "foggy") to a crisp lift + directional shadow, so it
+   visibly pops off the card instead of just hazing outward. */
+#coaching .cal__footer {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  width: 100% !important;
+}
+#js-book.cta-neon {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  transition: transform .25s cubic-bezier(.2, .8, .2, 1), box-shadow .25s cubic-bezier(.2, .8, .2, 1) !important;
+}
+#js-book.cta-neon:hover,
+#js-book.cta-neon:focus-visible {
+  transform: translateY(-5px) scale(1.015) !important;
+  box-shadow:
+    0 16px 24px -10px rgba(14, 12, 20, .55),
+    0 6px 10px -2px rgba(14, 12, 20, .35) !important;
+}
+
+/* FINAL — kill any leftover forced height on the calendar widget
+   (an earlier layout pass used an internal 3-row grid with a fixed-
+   height middle row for the date grid; if any part of that is still
+   in effect it leaves visible dead space inside the card before the
+   next card below it). The widget's height is now purely content-
+   driven end to end: header, then the date grid, then the footer —
+   nothing forced taller than it needs to be. */
+#coaching .calendar-widget {
+  display: flex !important;
+  flex-direction: column !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+#coaching .cal__body {
+  display: block !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+/* FINAL — real root cause of the huge blank gap at the bottom of the
+   whole coaching card: several old rules from an earlier grid-based
+   layout (.sec-coaching .audience-cards { height: 260px / 288px /
+   340px !important }, scattered across multiple past redesign
+   passes) were never actually overridden — the current #coaching-
+   scoped redesign block sets display/columns/gap on .audience-cards
+   but never touches its height, so those old fixed pixel heights
+   were still winning (class selectors don't need to beat an ID rule
+   that simply never mentions the property). Since .audience-cards
+   and its wrapper are plain transparent layout boxes (no card
+   background of their own), that forced extra height was invisible
+   empty space, not a visible box — reading as "empty space at the
+   bottom" once it pushed the whole section's auto-height taller
+   than its actual visible content. Re-asserted at ID specificity so
+   nothing upstream can reintroduce it. */
+#coaching .audience-cards {
+  height: auto !important;
+  min-height: 0 !important;
+}
+#coaching .coaching-main,
+#coaching .coaching__how {
+  height: auto !important;
+  min-height: 0 !important;
+}
+#coaching .coaching-side,
+#coaching .coaching__checklist {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+
+/* FINAL v2 — bottom-align the two columns again now that the real
+   root cause of the old empty-space bug (a stale grid-template-rows:
+   auto 260px auto reserving a fixed empty row) is fixed below via
+   grid-template-rows:auto. That means align-items:stretch is safe
+   again: the right column's checklist card already has flex:1 inside
+   its flex-column parent (.coaching-side), so when the grid stretches
+   it taller to match the left column, the card's own background
+   grows to fill that space (centering its items) instead of leaving
+   dead air — the timeline and the checklist now end at the same
+   baseline. */
+#coaching .coaching-layout {
+  align-items: stretch !important;
+  grid-template-rows: auto !important;
+}
+
+/* FINAL — the whole coaching section reads as a separate floating
+   rounded card (margin above/below, radius on all 4 corners), unlike
+   every other section on the page (services, approach, why, cta),
+   which are all flush, full-bleed, edge-to-edge. Matching that here:
+   no side/vertical margin, no corner radius, so it sits flush against
+   the sections directly above and below it and reaches the true
+   left/right edges of the page like they do. */
+#coaching {
+  margin: 0 !important;
+  border-radius: 0 !important;
+  padding-bottom: clamp(32px, 4vw, 52px) !important;
+}
+
+/* FINAL — "What We'll Focus On" cards: equalize height + enlarge
+   text. The grid (.audience-cards) already stretches its 3 <li>
+   grid items to equal height by default, but .aud-card itself (the
+   actual visible card box, one level down inside each <li>) had
+   height:auto with no height:100%, so it only ever grew to fit its
+   OWN text — different description lengths meant different card
+   heights despite the equal-height grid row underneath. Filling the
+   full 100% now makes all 3 literally the same height regardless of
+   copy length; .aud-card__desc's existing flex:1 does the rest,
+   pushing the arrow icon down to the same spot on every card. */
+#coaching .aud-card {
+  height: 100% !important;
+  min-height: 225px !important;
+  padding: 20px 16px 18px !important;
+}
+#coaching .aud-card__name {
+  font-size: 17px !important;
+}
+#coaching .aud-card__desc {
+  font-size: 13.5px !important;
+  line-height: 1.5 !important;
+}
+#coaching .aud-card__radio {
+  margin-top: 18px !important;
+}
+
+/* FINAL — "How The Session Works" timeline: everything (icon badge,
+   step number, title, description) was noticeably smaller here than
+   the rest of the page's type scale. Enlarging all of it, and giving
+   the timeline more breathing room to match. */
+#coaching .coaching__timeline {
+  margin-top: 18px !important;
+  gap: 8px !important;
+}
+#coaching .coaching__timeline::before {
+  top: 34px !important;
+}
+#coaching .coaching__timeline li {
+  gap: 10px !important;
+}
+#coaching .ctime__ico {
+  width: 54px !important;
+  height: 54px !important;
+  box-shadow: 0 4px 14px rgba(30, 12, 60, .09) !important;
+}
+#coaching .ctime__num {
+  font-size: 12.5px !important;
+  margin: 8px 0 0 !important;
+}
+#coaching .ctime__name {
+  font-size: 12.8px !important;
+}
+#coaching .ctime__sub {
+  font-size: 12.5px !important;
+  line-height: 1.5 !important;
+  max-width: 140px !important;
+}
+
+/* Per-step glow halo around each icon badge, matching the color
+   language already used for the Approach section's timeline
+   (violet / blue / teal / gold / pink). Icons are the user's own
+   colored PNG artwork on a transparent background, so the glow is
+   layered purely via box-shadow — the artwork itself is untouched.
+   Rest state gets a soft, subtle version of each color; the
+   auto-active state (below, driven by script.js) blooms brighter,
+   mirroring .tstep--auto-active exactly. */
+#coaching .coaching__timeline li:nth-child(1) .ctime__ico { box-shadow: 0 0 0 1px rgba(139, 92, 246, .28), 0 0 16px rgba(139, 92, 246, .22), 0 4px 14px rgba(30, 12, 60, .09) !important; }
+#coaching .coaching__timeline li:nth-child(2) .ctime__ico { box-shadow: 0 0 0 1px rgba(47, 125, 255, .28), 0 0 16px rgba(47, 125, 255, .22), 0 4px 14px rgba(30, 12, 60, .09) !important; }
+#coaching .coaching__timeline li:nth-child(3) .ctime__ico { box-shadow: 0 0 0 1px rgba(32, 201, 151, .28), 0 0 16px rgba(32, 201, 151, .22), 0 4px 14px rgba(30, 12, 60, .09) !important; }
+#coaching .coaching__timeline li:nth-child(4) .ctime__ico { box-shadow: 0 0 0 1px rgba(247, 201, 72, .3), 0 0 16px rgba(247, 201, 72, .22), 0 4px 14px rgba(30, 12, 60, .09) !important; }
+#coaching .coaching__timeline li:nth-child(5) .ctime__ico { box-shadow: 0 0 0 1px rgba(255, 79, 163, .3), 0 0 16px rgba(255, 79, 163, .22), 0 4px 14px rgba(30, 12, 60, .09) !important; }
+
+#coaching .coaching__timeline li.is-ctime-active .ctime__ico {
+  transform: scale(1.1) !important;
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .35s cubic-bezier(.2, .8, .2, 1) !important;
+}
+#coaching .coaching__timeline li .ctime__ico {
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .35s cubic-bezier(.2, .8, .2, 1) !important;
+}
+#coaching .coaching__timeline li:nth-child(1).is-ctime-active .ctime__ico { box-shadow: 0 0 0 1px rgba(139, 92, 246, .8), 0 0 20px rgba(139, 92, 246, .68), 0 0 46px rgba(139, 92, 246, .38) !important; }
+#coaching .coaching__timeline li:nth-child(2).is-ctime-active .ctime__ico { box-shadow: 0 0 0 1px rgba(47, 125, 255, .8), 0 0 20px rgba(47, 125, 255, .68), 0 0 46px rgba(47, 125, 255, .38) !important; }
+#coaching .coaching__timeline li:nth-child(3).is-ctime-active .ctime__ico { box-shadow: 0 0 0 1px rgba(32, 201, 151, .8), 0 0 20px rgba(32, 201, 151, .65), 0 0 46px rgba(32, 201, 151, .35) !important; }
+#coaching .coaching__timeline li:nth-child(4).is-ctime-active .ctime__ico { box-shadow: 0 0 0 1px rgba(247, 201, 72, .82), 0 0 20px rgba(247, 201, 72, .68), 0 0 46px rgba(247, 201, 72, .36) !important; }
+#coaching .coaching__timeline li:nth-child(5).is-ctime-active .ctime__ico { box-shadow: 0 0 0 1px rgba(255, 79, 163, .8), 0 0 20px rgba(255, 79, 163, .68), 0 0 46px rgba(255, 79, 163, .38) !important; }
+#coaching .coaching__timeline li.is-ctime-active .ctime__name {
+  color: #16131f !important;
+}
+
+@media (max-width: 700px) {
+  #coaching .ctime__ico {
+    width: 45px !important;
+    height: 45px !important;
+  }
+  #coaching .ctime__name {
+    font-size: 12px !important;
+  }
+  #coaching .ctime__sub {
+    font-size: 12px !important;
+    max-width: none !important;
+  }
+}
+
+/* FINAL — "Why E4LA" heading: remove the small stray accent rule
+   that sat under "Your strategic partner." (it read as a random,
+   out-of-place underline), and give "strategic partner" the site's
+   signature orange→pink→purple gradient treatment instead, matching
+   the accent already used on the hero's scrambling word. */
+.why__rule {
+  display: none !important;
+}
+.why__h2.section-heading .grad-text {
+  background: linear-gradient(95deg, var(--g-orange) 0%, var(--g-pink) 48%, var(--g-purple) 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  display: inline-block !important;
+}
+
+/* FINAL — real E4LA wordmark (assets/e4la-logo-palm.png, background
+   already removed) replacing the old cropped-photo placeholder in
+   both the header and footer. The previous rules used object-fit:
+   cover + a heavy scale() because they were zooming into a cropped
+   corner of a wide photo to fake a logo chip — wrong approach for an
+   actual logotype, which needs to be shown in FULL and undistorted.
+   Switching to object-fit:contain and dropping the crop/zoom/rounded
+   chip treatment entirely so the real logo just sits cleanly on the
+   nav/footer's own dark background. */
+.nav__logo,
+.footer__brand-logo {
+  border-radius: 0 !important;
+  overflow: visible !important;
+  background: transparent !important;
+}
+.nav__logo {
+  width: 150px !important;
+  height: 46px !important;
+}
+.footer__brand-logo {
+  width: 140px !important;
+  height: 50px !important;
+}
+.nav__logo .brand-asset,
+.footer__brand-logo .brand-asset {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  transform: none !important;
+}
+@media (max-width: 780px) {
+  .nav__logo {
+    width: 120px !important;
+    height: 40px !important;
+  }
+  .footer__brand-logo {
+    width: 120px !important;
+    height: 44px !important;
+  }
+}
+
+/* FINAL v3 — BOOK SESSION hover, take 3. Dropping the translateY
+   lift entirely (it read as the whole button shifting upward,
+   changing its position) in favor of a scale-only "pop toward the
+   viewer" — same spot, just bigger — plus a tighter, closer, more
+   defined shadow instead of a large soft blur radius (which is what
+   was reading as "foggy": a big diffuse blur haze rather than a
+   crisp elevation edge). Re-declared at doubled class specificity so
+   this is guaranteed to beat the earlier shared .cal__cta.cta-neon
+   :hover glow rule for every button also carrying the cal__cta
+   class. */
+#js-book.cta-neon.cta-neon:hover,
+#js-book.cta-neon.cta-neon:focus-visible {
+  transform: scale(1.035) !important;
+  box-shadow:
+    0 6px 10px -4px rgba(14, 12, 20, .55),
+    0 2px 4px -1px rgba(14, 12, 20, .4) !important;
 }
