@@ -425,7 +425,7 @@ ul,ol{list-style:none}
   margin-bottom:var(--s4);
   transition:transform .22s
 }
-.tstep:hover .tstep__circle{transform:scale(1.08)}
+.tstep:hover:not(.tstep--auto-active) .tstep__circle{transform:none !important}
 
 /* Softer glows */
 .tstep--1 .tstep__circle{border-color:rgba(109,40,217,.65);box-shadow:0 0 12px rgba(109,40,217,.15)}
@@ -2019,7 +2019,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
 .sec-approach .tstep--4 .tstep__circle{border-color:#f7c948 !important;box-shadow:0 0 0 1px rgba(247,201,72,.34),0 0 22px rgba(247,201,72,.22) !important;color:#fff8dc !important;}
 .sec-approach .tstep--5 .tstep__circle{border-color:#ff4fa3 !important;box-shadow:0 0 0 1px rgba(255,79,163,.34),0 0 22px rgba(255,79,163,.25) !important;color:#ffeaf5 !important;}
 .sec-approach .tstep--6 .tstep__circle{border-color:#8b5cf6 !important;box-shadow:0 0 0 1px rgba(139,92,246,.35),0 0 22px rgba(139,92,246,.28) !important;color:#f0e9ff !important;}
-.sec-approach .tstep:hover .tstep__circle{filter:brightness(1.18) saturate(1.15) !important;}
+/* Hover no longer lights the circle up (only the auto-cycle does that now). */
 
 /* APPROACH ACTUAL STEP TEXT + SHINE */
 .sec-approach .tstep__name{
@@ -2040,27 +2040,11 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
 .sec-approach .tstep__circle{
   transition:transform .32s cubic-bezier(.22,1,.36,1), box-shadow .32s cubic-bezier(.22,1,.36,1), filter .32s cubic-bezier(.22,1,.36,1), background .32s cubic-bezier(.22,1,.36,1) !important;
 }
-.sec-approach .tstep:hover .tstep__circle,
-.sec-approach .tstep:focus-within .tstep__circle{
-  transform:scale(1.16) translateY(-3px) translateZ(0) !important;
-  background:radial-gradient(circle at 35% 25%,rgba(255,255,255,.28),rgba(255,255,255,.06) 35%,#06101b 72%) !important;
-  filter:brightness(1.35) saturate(1.35) !important;
-}
-.sec-approach .tstep--1:hover .tstep__circle{box-shadow:0 0 0 1px rgba(139,92,246,.75),0 0 18px rgba(139,92,246,.65),0 0 42px rgba(139,92,246,.35) !important;}
-.sec-approach .tstep--2:hover .tstep__circle{box-shadow:0 0 0 1px rgba(47,125,255,.75),0 0 18px rgba(47,125,255,.65),0 0 42px rgba(47,125,255,.35) !important;}
-.sec-approach .tstep--3:hover .tstep__circle{box-shadow:0 0 0 1px rgba(32,201,151,.75),0 0 18px rgba(32,201,151,.62),0 0 42px rgba(32,201,151,.32) !important;}
-.sec-approach .tstep--4:hover .tstep__circle{box-shadow:0 0 0 1px rgba(247,201,72,.8),0 0 18px rgba(247,201,72,.66),0 0 42px rgba(247,201,72,.34) !important;}
-.sec-approach .tstep--5:hover .tstep__circle{box-shadow:0 0 0 1px rgba(255,79,163,.78),0 0 18px rgba(255,79,163,.66),0 0 42px rgba(255,79,163,.35) !important;}
-.sec-approach .tstep--6:hover .tstep__circle{box-shadow:0 0 0 1px rgba(139,92,246,.75),0 0 18px rgba(139,92,246,.65),0 0 42px rgba(139,92,246,.35) !important;}
-.sec-approach .tstep:hover .tstep__name,
-.sec-approach .tstep:focus-within .tstep__name{
-  color:#ffffff !important;
-  text-shadow:0 0 18px rgba(255,255,255,.18) !important;
-}
-.sec-approach .tstep:hover .tstep__sub,
-.sec-approach .tstep:focus-within .tstep__sub{
-  color:rgba(255,255,255,.94) !important;
-}
+/* Hover previously scaled/lifted/brightened the circle and lit up
+   the name/sub text — removed entirely per request. Only the JS
+   auto-cycle's .tstep--auto-active class controls the lit look now;
+   hovering a step (active or not) no longer changes its appearance
+   at all. */
 
 /* APPROACH STEP TEXT BALANCE */
 .sec-approach .tstep__name{
@@ -2387,7 +2371,8 @@ main#main{
 #approach,
 #why,
 #coaching,
-#contact{
+#contact,
+.coaching-more{
   scroll-margin-top:88px !important;
 }
 .nav__link{
@@ -2395,7 +2380,7 @@ main#main{
 }
 @media(max-width:780px){
   main#main{padding-top:62px !important;}
-  #services,#approach,#why,#coaching,#contact{scroll-margin-top:74px !important;}
+  #services,#approach,#why,#coaching,#contact,.coaching-more{scroll-margin-top:74px !important;}
 }
 
 /* HERO ASSET + NAV LOGO SIZE UPDATE */
@@ -9071,7 +9056,7 @@ body.nav-open {
   inset: 0 !important;
   border-radius: 999px !important;
   background: #0a0612 !important;
-  clip-path: inset(0 100% 0 0) !important;
+  clip-path: inset(0 101% 0 -1%) !important;
   transition: clip-path .45s cubic-bezier(.4, 0, .2, 1) !important;
   z-index: 1 !important;
   pointer-events: none !important;
@@ -9137,7 +9122,7 @@ body.nav-open {
   inset: 0 !important;
   border-radius: 999px !important;
   background: linear-gradient(90deg, #F97316, #DB2777, #7C3AED) !important;
-  clip-path: inset(0 100% 0 0) !important;
+  clip-path: inset(0 101% 0 -1%) !important;
   transition: clip-path .45s cubic-bezier(.4, 0, .2, 1) !important;
   z-index: 1 !important;
   pointer-events: none !important;
@@ -9232,7 +9217,14 @@ body.nav-open {
   content: '' !important;
   position: absolute !important;
   inset: 0 !important;
-  background: linear-gradient(90deg, #02050d 0%, rgba(2, 5, 13, .55) 16%, transparent 42%) !important;
+  background: linear-gradient(90deg,
+    #02050d 0%,
+    rgba(2, 5, 13, .92) 10%,
+    rgba(2, 5, 13, .72) 22%,
+    rgba(2, 5, 13, .46) 36%,
+    rgba(2, 5, 13, .24) 50%,
+    rgba(2, 5, 13, .08) 64%,
+    transparent 78%) !important;
   z-index: 1 !important;
   pointer-events: none !important;
 }
@@ -9245,7 +9237,12 @@ body.nav-open {
     margin: 28px 0 0 !important;
   }
   .hero__video-frame::before {
-    background: linear-gradient(180deg, #02050d 0%, transparent 30%) !important;
+    background: linear-gradient(180deg,
+      #02050d 0%,
+      rgba(2, 5, 13, .7) 14%,
+      rgba(2, 5, 13, .35) 26%,
+      rgba(2, 5, 13, .12) 38%,
+      transparent 50%) !important;
   }
 }
 
@@ -9310,7 +9307,7 @@ body.nav-open {
   inset: 0 !important;
   border-radius: 999px !important;
   background: linear-gradient(90deg, #F97316, #DB2777, #7C3AED) !important;
-  clip-path: inset(0 100% 0 0) !important;
+  clip-path: inset(0 101% 0 -1%) !important;
   transition: clip-path .45s cubic-bezier(.4, 0, .2, 1) !important;
   z-index: 1 !important;
   pointer-events: none !important;
@@ -9514,7 +9511,13 @@ body.nav-open {
 .sec-services .services-grid .svc-card.svc-card:nth-child(3) .svc-icon,
 .sec-services .services-grid .svc-card.svc-card:nth-child(4) .svc-icon,
 .sec-services .services-grid .svc-card.svc-card:nth-child(5) .svc-icon {
-  transform: translateX(-50%) translateY(0) scale(1.04544) !important;
+  /* Superseded by FIX v3 below: the icon box is now sized to exactly
+     match the card's content box (100% width, 0 margin), so the old
+     "left:50% + translateX(-50%)" centering trick is not just
+     unnecessary but actively wrong — on a 100%-wide box it shifts the
+     whole element half the card's width to the LEFT, which is exactly
+     the "video is outside the card" bug. Neutralized to no transform. */
+  transform: none !important;
 }
 .sec-services .services-grid .svc-card.svc-card:nth-child(1):hover .svc-icon,
 .sec-services .services-grid .svc-card.svc-card:nth-child(1):focus-visible .svc-icon,
@@ -9536,7 +9539,7 @@ body.nav-open {
 .sec-services .services-grid .svc-card.svc-card:nth-child(5):focus-visible .svc-icon,
 .sec-services .services-grid .svc-card.svc-card:nth-child(5).is-hovering .svc-icon,
 .sec-services .services-grid .svc-card.svc-card:nth-child(5).is-tilting .svc-icon {
-  transform: translateX(-50%) translateY(-18px) scale(1.452) !important;
+  transform: none !important;
 }
 
 @media (max-width: 899px), (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
@@ -9565,7 +9568,7 @@ body.nav-open {
   .sec-services .services-grid .svc-card.svc-card:nth-child(5):focus-visible .svc-icon,
   .sec-services .services-grid .svc-card.svc-card:nth-child(5).is-hovering .svc-icon,
   .sec-services .services-grid .svc-card.svc-card:nth-child(5).is-tilting .svc-icon {
-    transform: translateX(-50%) translateY(0) scale(1.04544) !important;
+    transform: none !important;
   }
 }
 
@@ -9851,4 +9854,1931 @@ body.nav-open {
   box-shadow:
     0 6px 10px -4px rgba(14, 12, 20, .55),
     0 2px 4px -1px rgba(14, 12, 20, .4) !important;
+}
+
+/* FINAL v2 — SERVICES CARDS: ONE continuous gradient border across
+   the whole row, not five independent copies of the same gradient.
+   Each card is a transparent-bordered window (border-box layer) onto
+   ONE shared orange→pink→purple gradient stretched to 5x the row
+   width (background-size:500%), with each card's background-position
+   shifted by exactly one card-width (0/25/50/75/100%) so the color
+   a card shows picks up exactly where its neighbor left off — like
+   cutting one continuous ribbon into 5 pieces. Full-strength colors,
+   no white/opacity mixed into the gradient layer itself (the frosted
+   glass fill is a SEPARATE background layer in the padding-box, so
+   it never dilutes the border color). */
+.sec-services .svc-card.svc-card {
+  border: 2.5px solid transparent !important;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .6), rgba(255, 255, 255, .6)),
+    linear-gradient(90deg, var(--g-orange), var(--g-pink) 50%, var(--g-purple)) !important;
+  background-origin: padding-box, border-box !important;
+  background-clip: padding-box, border-box !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-size: 100% 100%, 500% 100% !important;
+}
+.sec-services .services-grid .svc-card.svc-card:nth-child(1) { background-position: 0% 0 !important; }
+.sec-services .services-grid .svc-card.svc-card:nth-child(2) { background-position: 25% 0 !important; }
+.sec-services .services-grid .svc-card.svc-card:nth-child(3) { background-position: 50% 0 !important; }
+.sec-services .services-grid .svc-card.svc-card:nth-child(4) { background-position: 75% 0 !important; }
+.sec-services .services-grid .svc-card.svc-card:nth-child(5) { background-position: 100% 0 !important; }
+
+.sec-services .svc-card.svc-card:hover,
+.sec-services .svc-card.svc-card:focus-visible,
+.sec-services .svc-card.svc-card.is-active {
+  border: 2.5px solid transparent !important;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .74), rgba(255, 255, 255, .74)),
+    linear-gradient(90deg, var(--g-orange), var(--g-pink) 50%, var(--g-purple)) !important;
+}
+
+/* FINAL v3 — full-strength vivid fill, matching the user's reference
+   swatch (deep indigo → violet → magenta → orange, same intensity as
+   the site's CTA gradient) instead of the previous pastel/white-
+   diluted wash. The white overlay layer is gone entirely — the
+   gradient itself is now the whole card's background, border
+   included, so there's nothing left to mute it. Title/description
+   flip to white/near-white for contrast against the now-saturated
+   background; the arrow circle becomes an outlined white ring to
+   match. Card icons are transparent-background videos with their own
+   baked-in line colors, so they're left as-is (can't be recolored
+   via CSS) — flag if any specific icon reads poorly against its
+   card's segment of the gradient and it can be addressed directly. */
+.sec-services .svc-card.svc-card {
+  border: 0 !important;
+  background-image:
+    linear-gradient(90deg, #2b2170 0%, var(--g-purple) 30%, var(--g-pink) 62%, var(--g-orange) 100%) !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+  background-repeat: no-repeat !important;
+  background-size: 500% 100% !important;
+  box-shadow: 0 20px 50px rgba(75, 58, 110, .28) !important;
+}
+.sec-services .svc-card.svc-card:hover,
+.sec-services .svc-card.svc-card:focus-visible,
+.sec-services .svc-card.svc-card.is-active {
+  border: 0 !important;
+  box-shadow: 0 28px 70px rgba(75, 58, 110, .4) !important;
+}
+
+/* Belt-and-suspenders: explicitly re-assert the exact same gradient
+   (not just leave it to inherit) on hover/active/focus at bumped-up
+   specificity, in case any older hover rule elsewhere in this very
+   long file (e.g. a leftover "background: rgba(255,255,255,.68)"
+   glass-hover treatment from an earlier redesign pass) is still
+   winning the cascade for the `background` property specifically.
+   This guarantees the card reads as the exact same solid color
+   before, during, and after hover — nothing lightens or fades. */
+.sec-services .services-grid .svc-card.svc-card.svc-card:hover,
+.sec-services .services-grid .svc-card.svc-card.svc-card:focus-visible,
+.sec-services .services-grid .svc-card.svc-card.svc-card.is-active,
+.sec-services .services-grid .svc-card.svc-card.svc-card.is-hovering,
+.sec-services .services-grid .svc-card.svc-card.svc-card.is-tilting {
+  background-color: transparent !important;
+  background-image:
+    linear-gradient(90deg, #2b2170 0%, var(--g-purple) 30%, var(--g-pink) 62%, var(--g-orange) 100%) !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+  background-repeat: no-repeat !important;
+  background-size: 500% 100% !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(1):hover,
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(1).is-active,
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(1).is-hovering,
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(1).is-tilting { background-position: 0% 0 !important; }
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(2):hover,
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(2).is-active,
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(2).is-hovering,
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(2).is-tilting { background-position: 25% 0 !important; }
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(3):hover,
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(3).is-active,
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(3).is-hovering,
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(3).is-tilting { background-position: 50% 0 !important; }
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(4):hover,
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(4).is-active,
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(4).is-hovering,
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(4).is-tilting { background-position: 75% 0 !important; }
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(5):hover,
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(5).is-active,
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(5).is-hovering,
+.sec-services .services-grid .svc-card.svc-card.svc-card:nth-child(5).is-tilting { background-position: 100% 0 !important; }
+@media (max-width: 1180px) {
+  .sec-services .services-grid .svc-card.svc-card:nth-child(1),
+  .sec-services .services-grid .svc-card.svc-card:nth-child(2),
+  .sec-services .services-grid .svc-card.svc-card:nth-child(3),
+  .sec-services .services-grid .svc-card.svc-card:nth-child(4),
+  .sec-services .services-grid .svc-card.svc-card:nth-child(5) {
+    background-size: 100% 100% !important;
+    background-position: 0 0 !important;
+  }
+}
+.sec-services .services-grid .svc-card.svc-card .svc-card__title {
+  color: #fff !important;
+}
+.sec-services .services-grid .svc-card.svc-card .svc-card__desc {
+  color: rgba(255, 255, 255, .85) !important;
+}
+.sec-services .services-grid .svc-card.svc-card .svc-card__arr {
+  border: 1.5px solid rgba(255, 255, 255, .75) !important;
+  background: rgba(255, 255, 255, .14) !important;
+  color: #fff !important;
+}
+.sec-services .services-grid .svc-card.svc-card .svc-card__arr svg {
+  color: #fff !important;
+  stroke: #fff !important;
+}
+
+/* FINAL — recolor the service card icons to plain white so they read
+   cleanly against the new vivid gradient fill (previously each was
+   its own theme color — purple/blue/green/amber — which no longer
+   matches). The 4 animated icons are transparent-background <video>
+   elements, and video color can't be changed with `color` the way an
+   inline SVG can; brightness(0) crushes every opaque pixel to black
+   regardless of its original hue while leaving transparent pixels
+   transparent, then invert(1) flips that black to white — the net
+   effect is a clean solid-white version of the line art with the
+   same shape/transparency, no matter what color it was filmed in.
+   All 5 cards use this same video-icon setup, so one rule covers
+   all of them consistently. */
+.sec-services .services-grid .svc-card.svc-card .svc-icon .svc-icon__video,
+.sec-services .services-grid .svc-card.svc-card .svc-icon img,
+.sec-services .services-grid .svc-card.svc-card .svc-icon svg {
+  filter: brightness(0) invert(1) !important;
+}
+.sec-services .services-grid .svc-card.svc-card .svc-icon svg {
+  color: #fff !important;
+}
+
+/* ============================================================
+   SERVICES DETAIL PAGE (services.html) — standalone page,
+   prefixed .svcd- to avoid colliding with the homepage's
+   heavily-scoped .sec-services rules above.
+   ============================================================ */
+.svcd-page{
+  background-color:#07060D;
+  /* Two star layers at deliberately different, non-matching tile sizes
+     (853px / 611px, coprime-ish) so their dots never re-align into an
+     obvious repeating grid the way a single small tile does — the
+     previous single 480x480 tile made the same handful of dots visibly
+     stamp out across the page. */
+  background-image:
+    radial-gradient(1.6px 1.6px at 6% 14%,  rgba(255,255,255,.85) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 18% 63%,  rgba(255,255,255,.6) 50%, transparent 51%),
+    radial-gradient(2px 2px at 29% 30%, rgba(255,255,255,.8) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 41% 82%,  rgba(255,255,255,.55) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 52% 8%,  rgba(255,255,255,.7) 50%, transparent 51%),
+    radial-gradient(1.8px 1.8px at 63% 55%, rgba(255,255,255,.85) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 74% 22%,  rgba(255,255,255,.55) 50%, transparent 51%),
+    radial-gradient(1.9px 1.9px at 85% 71%, rgba(255,255,255,.8) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 95% 40%,  rgba(255,255,255,.55) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 10% 92%, rgba(255,255,255,.65) 50%, transparent 51%),
+    radial-gradient(1.6px 1.6px at 88% 5%,  rgba(255,255,255,.8) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 36% 47%,  rgba(255,255,255,.5) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 23% 8%,  rgba(255,255,255,.5) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 68% 88%, rgba(255,255,255,.5) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 79% 48%, rgba(255,255,255,.5) 50%, transparent 51%),
+
+    radial-gradient(1.4px 1.4px at 15% 45%, rgba(255,255,255,.7) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 33% 92%,  rgba(255,255,255,.55) 50%, transparent 51%),
+    radial-gradient(1.8px 1.8px at 48% 20%, rgba(255,255,255,.8) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 60% 68%,  rgba(255,255,255,.55) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 72% 40%, rgba(255,255,255,.72) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 84% 88%,  rgba(255,255,255,.55) 50%, transparent 51%),
+    radial-gradient(1.6px 1.6px at 93% 15%, rgba(255,255,255,.8) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 5% 70%,   rgba(255,255,255,.55) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 40% 60%, rgba(255,255,255,.5) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 57% 30%, rgba(255,255,255,.5) 50%, transparent 51%),
+
+    radial-gradient(3.5px 3.5px at 22% 20%, rgba(255,255,255,1) 0%, rgba(255,255,255,.35) 40%, transparent 72%),
+    radial-gradient(3px 3px at 68% 12%,  rgba(255,255,255,1) 0%, rgba(255,255,255,.3) 40%, transparent 72%),
+    radial-gradient(3.5px 3.5px at 80% 62%, rgba(255,255,255,1) 0%, rgba(255,255,255,.35) 40%, transparent 72%),
+    radial-gradient(3px 3px at 12% 78%,  rgba(255,255,255,1) 0%, rgba(255,255,255,.3) 40%, transparent 72%),
+    radial-gradient(3.2px 3.2px at 47% 88%, rgba(255,255,255,1) 0%, rgba(255,255,255,.32) 40%, transparent 72%);
+  background-size:
+    853px 853px, 853px 853px, 853px 853px, 853px 853px, 853px 853px, 853px 853px,
+    853px 853px, 853px 853px, 853px 853px, 853px 853px, 853px 853px, 853px 853px,
+    853px 853px, 853px 853px, 853px 853px,
+    611px 611px, 611px 611px, 611px 611px, 611px 611px, 611px 611px, 611px 611px,
+    611px 611px, 611px 611px, 611px 611px, 611px 611px,
+    920px 920px, 920px 920px, 920px 920px, 920px 920px, 920px 920px;
+  background-repeat: repeat;
+  /* Pin the starfield to the viewport itself so it never drifts with
+     scroll anywhere on the page — this is what actually keeps it
+     "fixed" (previous attempt papered over it with an opaque panel
+     instead, which just hid the stars; this keeps them visible AND
+     still). */
+  background-attachment: fixed;
+}
+.svcd-hero{max-width:1100px;margin:0 auto;padding:64px var(--pad-x) 8px}
+.svcd-eyebrow{font-size:12px;font-weight:700;letter-spacing:1.6px;color:var(--g-purple);text-transform:uppercase;margin-bottom:16px}
+.svcd-h1{font-family:'Manrope',sans-serif;font-size:clamp(30px,4vw,46px);line-height:1.12;font-weight:700;letter-spacing:-1px;max-width:640px;margin-bottom:18px}
+.svcd-h1 .is-purple{color:var(--g-purple)}
+.svcd-h1 .is-grad{background:linear-gradient(95deg,var(--g-pink) 0%,var(--g-orange) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.svcd-sub{font-size:15px;line-height:1.7;font-weight:300;color:rgba(255,255,255,.55);max-width:560px;margin-bottom:56px}
+
+/* ── Pinned scroll-step interaction (fantasy.co-style) ──
+   One 100vh "stage" stays pinned in the viewport while a tall
+   wrapper scrolls past it; JS toggles which panel is .is-active
+   based on how far we've scrolled through the wrapper.
+   NOTE: this deliberately does NOT use `position:sticky` — the
+   site's global `body{overflow-x:hidden}` (style.css line 4)
+   breaks sticky positioning for all descendants in Chrome/Safari
+   (a well-known engine quirk: any non-visible overflow on an
+   ancestor can disable sticky down the tree). So instead the JS
+   toggles the stage between static / fixed / absolute-at-bottom
+   — see the "svcd-pin" controller in script.js. On narrow screens
+   the whole thing degrades to a plain stacked list (media query
+   at the bottom) so nothing is scroll-jacked on mobile. */
+.svcd-pin{position:relative;height:100vh}
+.svcd-pin__stage{
+  height:100vh;overflow:hidden;
+  display:flex;align-items:center;
+  /* No background here on purpose — the starfield itself is pinned to
+     the viewport via background-attachment:fixed on .svcd-page below,
+     so the stars stay visible AND stationary, instead of being covered
+     up by an opaque panel (which was the wrong fix — it hid them). */
+}
+.svcd-pin__stage.is-fixed{position:fixed;top:0;left:0;width:100%;z-index:3}
+.svcd-pin__stage.is-end{position:absolute;left:0;bottom:0;width:100%}
+.svcd-pin__list{position:relative;width:100%;height:100%;list-style:none;max-width:1180px;margin:0 auto;overflow:hidden}
+/* Registered as a <color> so transitioning it (see .svcd-pin__blob-wrap)
+   smoothly cross-fades the gradient/shadow built from it, instead of the
+   custom property snapping instantly between colors. */
+@property --row-c {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #7C3AED;
+}
+@property --row-g1 {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #2A1B78;
+}
+@property --row-g2 {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #E02D6F;
+}
+@property --row-g3 {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #8A2FFF;
+}
+
+.svcd-pin__panel{
+  --row-c:#7C3AED;
+  position:absolute;inset:0;height:100%;
+  max-width:1180px;padding:0 var(--pad-x);margin:0 auto;
+  display:grid;grid-template-columns:1.1fr .9fr;align-items:center;column-gap:48px;
+  pointer-events:none;
+  /* transform + opacity are driven per-frame from script.js, continuously
+     coupled to scroll position (no CSS transition — a transition here
+     would make it lag behind the scrubbing instead of tracking 1:1) */
+  transform:translateY(100%);
+  opacity:0;
+}
+.svcd-pin__panel.is-active{pointer-events:auto}
+
+.svcd-pin__num{font-size:80px;font-weight:700;letter-spacing:1.2px;color:var(--row-c);margin-bottom:16px}
+.svcd-pin__icon{display:none}
+.svcd-pin__title{font-family:'Manrope',sans-serif;font-size:clamp(36px,4.2vw,56px);font-weight:700;letter-spacing:-.6px;margin-bottom:16px;color:#fff}
+.svcd-pin__desc{font-size:30px;line-height:1.5;font-weight:300;color:rgba(255,255,255,.55);max-width:520px;margin-bottom:26px}
+/* Tags now sit over the circle itself rather than in the text column —
+   script.js places .svcd-pin__panel's markup so this lands in the same grid
+   cell as .svcd-pin__visual (see grid-column/grid-row below). Plain text,
+   stacked vertically, no more pill/chip styling. */
+.svcd-pin__tags{
+  grid-column:2;grid-row:1;align-self:end;justify-self:start;
+  list-style:none;display:flex;flex-direction:column;gap:16px;padding:0;
+  margin-bottom:64px;pointer-events:none;
+}
+.svcd-pin__tags li{
+  display:flex;align-items:center;gap:14px;
+  font-size:22px;font-weight:500;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.35);
+}
+/* Hollow bullet by default; script.js cycles .is-tag-active through the list
+   automatically (once settled) — bold text, bullet fills in solid. */
+.svcd-pin__tags li::before{
+  content:'';width:12px;height:12px;border-radius:50%;flex-shrink:0;
+  border:2px solid rgba(255,255,255,.55);background:transparent;
+  transition:background-color .25s ease, border-color .25s ease;
+}
+.svcd-pin__tags li.is-tag-active{font-weight:800}
+.svcd-pin__tags li.is-tag-active::before{background:#fff;border-color:#fff}
+
+.svcd-pin__visual{position:relative;height:380px;display:flex;align-items:center;justify-content:center;perspective:1000px}
+/* Outer wrapper: owns the scroll-driven scale/rotate/blur (set live by
+   script.js from the panel's scroll progress). Kept separate from
+   .svcd-pin__blob itself so it never fights with that element's own
+   idle CSS "organic wobble" animation (svcd-blob-morph below), which
+   also animates `transform` — two elements, two independent transforms,
+   no collision. */
+.svcd-pin__blob-wrap{
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  will-change:transform,filter;
+  transition:filter .15s linear, --row-c .5s ease, --row-g1 .5s ease, --row-g2 .5s ease, --row-g3 .5s ease, --row-g4 .5s ease, --row-g5 .5s ease;
+}
+@property --blob-spin {
+  syntax: '<angle>';
+  inherits: true;
+  initial-value: 0deg;
+}
+
+.svcd-pin__blob{
+  width:280px;height:280px;
+  border-radius:48% 52% 55% 45% / 45% 48% 52% 55%;
+  background:
+    radial-gradient(circle at 10% 82%, rgba(0,0,0,.48) 0 17%, transparent 50%),
+    radial-gradient(circle at 88% 88%, rgba(0,0,0,.5) 0 14%, transparent 46%),
+    radial-gradient(circle at 34% 24%, rgba(190,165,255,.24) 0 10%, transparent 34%),
+    radial-gradient(circle at 64% 68%, rgba(255,92,198,.32) 0 16%, transparent 48%),
+    radial-gradient(circle at 28% 62%, rgba(72,112,255,.28) 0 18%, transparent 52%),
+    linear-gradient(calc(var(--blob-spin, 0deg) + 112deg),
+      #4f46e5 0%,
+      #6d35f2 24%,
+      #8b3ff5 43%,
+      #ba34d0 62%,
+      #e23b88 82%,
+      #7c3aed 100%);
+  background-blend-mode:multiply,multiply,screen,screen,screen,normal;
+  box-shadow:
+    inset -82px -94px 118px rgba(0,0,0,.58),
+    inset -28px -34px 66px rgba(0,0,0,.38),
+    inset 28px 22px 58px rgba(150,122,255,.28),
+    0 0 130px rgba(89,70,220,.44),
+    0 0 82px rgba(172,76,224,.28),
+    0 44px 112px rgba(0,0,0,.48);
+  transition:--blob-spin 1200ms cubic-bezier(.22,1,.36,1), box-shadow 650ms cubic-bezier(.22,1,.36,1);
+  animation:svcd-blob-morph 9s ease-in-out infinite;
+}
+.svcd-pin__panel.is-active .svcd-pin__blob{animation-play-state:running}
+.svcd-pin__panel:not(.is-active) .svcd-pin__blob{animation-play-state:paused}
+@keyframes svcd-blob-morph{
+  0%,100%{border-radius:48% 52% 55% 45% / 45% 48% 52% 55%;transform:rotate(0deg) scale(1)}
+  33%{border-radius:55% 45% 48% 52% / 52% 55% 45% 48%;transform:rotate(8deg) scale(1.05)}
+  66%{border-radius:45% 55% 52% 48% / 48% 45% 55% 52%;transform:rotate(-7deg) scale(.96)}
+}
+@keyframes svcd-blob-gradient-orbit{
+  0%{
+    background-position:50% 50%, 50% 50%, 12% 18%, 76% 24%, 50% 68%, 84% 56%, 30% 76%, 44% 48%;
+    background-size:100% 100%, 100% 100%, 145% 145%, 156% 156%, 150% 150%, 142% 142%, 138% 138%, 170% 170%;
+  }
+  20%{
+    background-position:50% 50%, 50% 50%, 42% 16%, 84% 42%, 28% 56%, 66% 78%, 54% 28%, 56% 44%;
+    background-size:100% 100%, 100% 100%, 156% 156%, 142% 142%, 160% 160%, 148% 148%, 144% 144%, 182% 182%;
+  }
+  40%{
+    background-position:50% 50%, 50% 50%, 76% 34%, 58% 74%, 18% 32%, 34% 60%, 80% 64%, 66% 54%;
+    background-size:100% 100%, 100% 100%, 150% 150%, 162% 162%, 144% 144%, 156% 156%, 150% 150%, 176% 176%;
+  }
+  60%{
+    background-position:50% 50%, 50% 50%, 52% 78%, 22% 46%, 72% 22%, 26% 34%, 60% 80%, 50% 62%;
+    background-size:100% 100%, 100% 100%, 162% 162%, 148% 148%, 156% 156%, 142% 142%, 160% 160%, 188% 188%;
+  }
+  80%{
+    background-position:50% 50%, 50% 50%, 20% 52%, 44% 18%, 82% 48%, 72% 28%, 22% 64%, 38% 54%;
+    background-size:100% 100%, 100% 100%, 152% 152%, 158% 158%, 146% 146%, 152% 152%, 142% 142%, 180% 180%;
+  }
+  100%{
+    background-position:50% 50%, 50% 50%, 12% 18%, 76% 24%, 50% 68%, 84% 56%, 30% 76%, 44% 48%;
+    background-size:100% 100%, 100% 100%, 145% 145%, 156% 156%, 150% 150%, 142% 142%, 138% 138%, 170% 170%;
+  }
+}
+
+/* Single persistent blob: lives outside any one panel (script.js moves the
+   real .svcd-pin__blob-wrap node in here on desktop) so panel 0's own
+   scroll-driven transform can't carry it away once it's done rising. Mirrors
+   .svcd-pin__panel's own grid exactly (empty first cell + visual in the
+   second) so it lands in the identical on-screen slot every panel uses. */
+/* align-items:end (rather than center) plus the bottom padding anchors the
+   blob toward the bottom-right instead of filling the full stage height —
+   leaving clear space above it for a future character/illustration to
+   stand on top of it. */
+.svcd-pin__blob-slot{
+  --row-c:#7C3AED;
+  /* Anchored to the VIEWPORT, not the document — this is what keeps the
+     blob's approach purely a scale/rotate/blur/opacity change with zero
+     scroll-linked vertical travel, mirroring the exit exactly. Before this,
+     position:absolute here still scrolled with the page like any other
+     in-flow content until the pinned section's own JS-driven fixed layout
+     kicked in, which is what made the blob visibly "rise up from below"
+     during the approach — a plain absolute position was never going to look
+     like the exit (which happens entirely inside the JS-fixed stage). */
+  position:fixed;inset:0;height:100vh;
+  max-width:1180px;padding:0 var(--pad-x) 48px;margin:0 auto;
+  display:grid;grid-template-columns:1.1fr .9fr;align-items:end;column-gap:48px;
+  pointer-events:none;
+  transform:translateY(20%); /* pushed further down, per request */
+}
+/* Each panel's OWN visual slot is desktop-hidden — panel 0's is emptied by
+   script.js (its blob moved into .svcd-pin__blob-slot above), and panels
+   1-4 keep their unused blob markup only for the mobile fallback below. */
+.svcd-pin__panel .svcd-pin__visual{display:none}
+
+.svcd-pin__progress{
+  position:absolute;right:22px;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:11px;z-index:5;
+}
+.svcd-pin__dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.22);transition:background .3s ease,transform .3s ease}
+.svcd-pin__dot.is-active{background:#fff;transform:scale(1.5)}
+
+@media (prefers-reduced-motion: reduce){
+  .svcd-pin__blob{animation:none}
+  .svcd-pin__blob-wrap{transform:none!important;filter:none!important}
+}
+
+.svcd-cta{max-width:1100px;margin:0 auto;padding:0 var(--pad-x) 80px}
+.svcd-cta__box{
+  position:relative;border-radius:20px;padding:1.5px;
+  background:linear-gradient(95deg,var(--g-purple),var(--g-pink) 50%,var(--g-orange));
+}
+.svcd-cta__inner{
+  border-radius:18.5px;background:#0b0a14;padding:26px 28px;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
+}
+.svcd-cta__left{display:flex;align-items:center;gap:18px}
+.svcd-cta__icon{
+  width:52px;height:52px;border-radius:50%;flex-shrink:0;
+  border:1.5px solid rgba(255,255,255,.5);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;
+}
+.svcd-cta__icon svg{width:20px;height:20px;transform:rotate(-45deg)}
+.svcd-cta__title{font-size:17px;font-weight:700;color:#fff;margin-bottom:3px}
+.svcd-cta__sub{font-size:13px;font-weight:300;color:rgba(255,255,255,.55)}
+.svcd-cta__btn{
+  display:inline-flex;align-items:center;gap:8px;flex-shrink:0;
+  background:linear-gradient(95deg,var(--g-purple),var(--g-pink) 50%,var(--g-orange));
+  color:#fff;font-size:14px;font-weight:600;text-decoration:none;
+  padding:14px 24px;border-radius:999px;white-space:nowrap;
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.svcd-cta__btn svg{width:15px;height:15px}
+.svcd-cta__btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(124,58,237,.35)}
+
+@media (max-width:639px), (pointer:coarse){
+  /* Scroll-jacked pinning is unfriendly on small/touch screens —
+     degrade to a plain stacked list, all panels visible normally.
+     Gated on actual touch (pointer:coarse) OR a genuinely narrow
+     viewport, NOT just "not super wide" — a normal desktop browser
+     window (even a modest, non-maximized one) should still get the
+     pinned interaction; only real phones/tablets and very narrow
+     windows fall back. Must mirror the JS controller's `canPin`
+     check in script.js exactly, or the two will disagree. */
+  .svcd-pin{height:auto}
+  .svcd-pin__stage{position:static;height:auto;display:block;overflow:visible}
+  .svcd-pin__list{display:flex;flex-direction:column;gap:56px;height:auto;padding:40px 0}
+  .svcd-pin__panel{
+    position:static;opacity:1!important;transform:none!important;pointer-events:auto;
+    grid-template-columns:1fr;row-gap:22px;padding:0 var(--pad-x);
+    transition:none;
+  }
+  .svcd-pin__panel .svcd-pin__visual{display:flex;height:220px;order:-1}
+  .svcd-pin__blob-slot{display:none}
+  .svcd-pin__blob-wrap{transform:none!important;filter:none!important}
+  .svcd-pin__blob{width:180px;height:180px;animation-play-state:running!important}
+  .svcd-pin__progress{display:none}
+  .svcd-pin__tags{
+    grid-column:auto;grid-row:auto;align-self:auto;justify-self:auto;
+    flex-direction:row;flex-wrap:wrap;margin-bottom:0;
+    transform:none!important;opacity:1!important;pointer-events:auto;
+  }
+  .svcd-pin__tags li{font-size:14px}
+
+  .svcd-cta__inner{padding:22px}
+  .svcd-cta__btn{width:100%;justify-content:center}
+}
+
+/* CROSS-DOCUMENT VIEW TRANSITIONS — smooths navigation between index.html
+   and services.html (separate documents, so a normal link click is a full
+   page reload). Pure progressive enhancement: unsupported browsers just get
+   today's normal hard navigation, nothing breaks.
+   .nav gets its own named layer, but its transition ANIMATION is switched
+   off entirely (not just left to the default morph) — so it never fades or
+   resizes, it just stays visually put while only the page content underneath
+   cross-fades. This sidesteps the earlier bug where the default per-element
+   morph tried to interpolate old-box -> new-box and visibly resized the nav
+   whenever the two pages' nav boxes weren't pixel-identical (e.g. scrollbar
+   presence differs because services.html has a much taller pinned section). */
+@view-transition {
+  navigation: auto;
+}
+.nav {
+  view-transition-name: site-nav;
+}
+::view-transition-group(site-nav),
+::view-transition-old(site-nav),
+::view-transition-new(site-nav) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* SERVICES ROBOT CHARACTER PATH */
+.svcd-pin__robot{
+  --robot-x:3vw;
+  --robot-y:17vh;
+  --robot-scale:1;
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:auto;
+  width:clamp(132px,15vw,230px);
+  height:auto;
+  z-index:8;
+  pointer-events:none;
+  filter:drop-shadow(0 24px 34px rgba(0,0,0,.34));
+  opacity:0;
+  transform:translate3d(var(--robot-x),var(--robot-y),0) scale(calc(var(--robot-scale) * .96));
+  transition:
+    opacity .45s ease,
+    transform 1050ms cubic-bezier(.22,1,.36,1);
+  will-change:transform,opacity;
+}
+.svcd-pin__robot.is-visible{
+  opacity:.96;
+  transform:translate3d(var(--robot-x),var(--robot-y),0) scale(var(--robot-scale));
+}
+@media (max-width:639px){
+  .svcd-pin__robot{
+    position:relative;
+    left:auto;
+    bottom:auto;
+    width:min(220px,58vw);
+    margin:10px 0 0;
+    order:1;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* HERO ROBOT INTRO - services page only */
+.svcd-hero{
+  position:relative !important;
+  min-height:clamp(360px,48vh,560px) !important;
+  overflow:visible !important;
+  isolation:auto !important;
+}
+.svcd-hero__copy{
+  position:relative !important;
+  z-index:2 !important;
+  max-width:720px !important;
+}
+.svcd-hero__robot{
+  --hero-robot-scale:2.45;
+  --hero-robot-x:58vw;
+  --hero-robot-y:24vh;
+  --hero-robot-opacity:.96;
+  position:fixed !important;
+  left:0 !important;
+  top:0 !important;
+  right:auto !important;
+  bottom:auto !important;
+  width:clamp(132px,15vw,230px) !important;
+  max-height:none !important;
+  height:auto !important;
+  object-fit:contain !important;
+  z-index:9 !important;
+  pointer-events:none !important;
+  opacity:var(--hero-robot-opacity) !important;
+  transform:translate3d(var(--hero-robot-x),var(--hero-robot-y),0) scale(var(--hero-robot-scale)) !important;
+  transform-origin:50% 82% !important;
+  filter:drop-shadow(0 34px 70px rgba(0,0,0,.32)) saturate(1.06) !important;
+  transition:opacity 260ms ease, transform 1050ms cubic-bezier(.22,1,.36,1) !important;
+  will-change:transform,opacity !important;
+}
+@media (max-width:900px){
+  .svcd-hero{min-height:auto !important;}
+  .svcd-hero__robot{display:none !important;}
+}
+@media (prefers-reduced-motion: reduce){
+  .svcd-hero__robot{
+    --hero-robot-scale:1;
+    --hero-robot-x:3vw;
+    --hero-robot-y:17vh;
+    --hero-robot-opacity:.72;
+  }
+}
+
+/* FINAL v4 — HOMEPAGE SERVICE CARDS: back to plain white cards with
+   dark text and full-color icon clips. This replaces the v2/v3 vivid
+   rainbow-gradient card treatment above (~line 9840) — that gradient
+   is exactly what was being reported as unwanted, so every property it
+   set (gradient background/border, white text, white-forced icon
+   filter) is reset here at higher source order. */
+.sec-services .svc-card.svc-card,
+.sec-services .services-grid .svc-card.svc-card {
+  border: 1px solid rgba(15, 14, 24, .08) !important;
+  background-color: #fff !important;
+  background-image: none !important;
+  box-shadow: 0 10px 28px rgba(15, 14, 24, .08) !important;
+}
+.sec-services .services-grid .svc-card.svc-card:nth-child(1),
+.sec-services .services-grid .svc-card.svc-card:nth-child(2),
+.sec-services .services-grid .svc-card.svc-card:nth-child(3),
+.sec-services .services-grid .svc-card.svc-card:nth-child(4),
+.sec-services .services-grid .svc-card.svc-card:nth-child(5) {
+  background-position: 0 0 !important;
+}
+.sec-services .svc-card.svc-card:hover,
+.sec-services .svc-card.svc-card:focus-visible,
+.sec-services .svc-card.svc-card.is-active,
+.sec-services .services-grid .svc-card.svc-card.svc-card:hover,
+.sec-services .services-grid .svc-card.svc-card.svc-card:focus-visible,
+.sec-services .services-grid .svc-card.svc-card.svc-card.is-active,
+.sec-services .services-grid .svc-card.svc-card.svc-card.is-hovering,
+.sec-services .services-grid .svc-card.svc-card.svc-card.is-tilting {
+  border: 1px solid rgba(15, 14, 24, .12) !important;
+  background-color: #fff !important;
+  background-image: none !important;
+  box-shadow: 0 16px 38px rgba(15, 14, 24, .14) !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+.sec-services .services-grid .svc-card.svc-card .svc-card__title,
+.sec-services .svc-card .svc-card__title {
+  color: #0F0E18 !important;
+}
+.sec-services .services-grid .svc-card.svc-card .svc-card__desc,
+.sec-services .svc-card .svc-card__desc {
+  color: rgba(15, 14, 24, .6) !important;
+}
+.sec-services .services-grid .svc-card.svc-card .svc-card__arr {
+  border: 1.5px solid rgba(15, 14, 24, .18) !important;
+  background: rgba(15, 14, 24, .04) !important;
+  color: #0F0E18 !important;
+}
+.sec-services .services-grid .svc-card.svc-card .svc-card__arr svg {
+  color: #0F0E18 !important;
+  stroke: #0F0E18 !important;
+}
+
+/* Icons: show the clips in their native color again instead of the
+   flattened white-silhouette treatment. */
+.sec-services .services-grid .svc-card.svc-card .svc-icon .svc-icon__video,
+.sec-services .services-grid .svc-card.svc-card .svc-icon img,
+.sec-services .services-grid .svc-card.svc-card .svc-icon svg {
+  filter: none !important;
+}
+.sec-services .services-grid .svc-card.svc-card .svc-icon svg {
+  color: inherit !important;
+}
+
+/* FIX — the icon video was growing on hover from a center-anchored
+   transform-origin while also shifting UP 18px, so the enlarged box
+   pushed past the card's own top edge (the card has overflow:visible,
+   so that spillover was fully visible instead of being clipped — read
+   as "the video exits the frame from the top"). Anchoring the scale
+   to the icon's own top edge (transform-origin 50% 0%) keeps that top
+   edge fixed in place no matter how big it grows, so it only ever
+   grows DOWNWARD, into the card, never past the top. Dropping the
+   upward shift (translateY -18px -> a small downward nudge instead)
+   removes the other half of the problem. The icon's bottom margin is
+   increased so the title/description sit lower, opening real room for
+   the enlarged video to grow into before it reaches the text, and the
+   card gets extra top padding + a bit more height so nothing feels
+   cramped. */
+.sec-services .services-grid .svc-card.svc-card {
+  padding-top: clamp(40px, 3.6vw, 58px) !important;
+  min-height: clamp(480px, 39vw, 620px) !important;
+}
+.sec-services .services-grid .svc-card.svc-card .svc-icon {
+  transform-origin: 50% 0% !important;
+  margin: 0 0 68px !important;
+}
+.sec-services .services-grid .svc-card.svc-card:nth-child(1) .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(2) .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(3) .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(4) .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(5) .svc-icon {
+  /* Same root-cause fix as the earlier duplicate block above: no more
+     translateX(-50%) centering on a box that's already 100% width —
+     that was shifting the icon/video half the card's width to the
+     left, i.e. the exact "video is outside the card, should come to
+     the right" bug the user is seeing. */
+  transform: none !important;
+}
+.sec-services .services-grid .svc-card.svc-card:nth-child(1):hover .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(1):focus-visible .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(1).is-hovering .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(1).is-tilting .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(2):hover .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(2):focus-visible .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(2).is-hovering .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(2).is-tilting .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(3):hover .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(3):focus-visible .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(3).is-hovering .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(3).is-tilting .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(4):hover .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(4):focus-visible .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(4).is-hovering .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(4).is-tilting .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(5):hover .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(5):focus-visible .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(5).is-hovering .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:nth-child(5).is-tilting .svc-icon {
+  transform: none !important;
+}
+@media (max-width: 899px), (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .sec-services .services-grid .svc-card.svc-card:nth-child(1) .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(1):hover .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(1):focus-visible .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(1).is-hovering .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(1).is-tilting .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(2) .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(2):hover .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(2):focus-visible .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(2).is-hovering .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(2).is-tilting .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(3) .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(3):hover .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(3):focus-visible .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(3).is-hovering .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(3).is-tilting .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(4) .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(4):hover .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(4):focus-visible .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(4).is-hovering .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(4).is-tilting .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(5) .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(5):hover .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(5):focus-visible .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(5).is-hovering .svc-icon,
+  .sec-services .services-grid .svc-card.svc-card:nth-child(5).is-tilting .svc-icon {
+    transform: none !important;
+  }
+}
+
+/* FIX v3 — icon FRAME truly flush on 3 sides, no calc/guessing.
+   The previous attempt tried to cancel the card's own padding with a
+   matching negative margin on the icon (width: 100% + 2*padding,
+   margin: -padding) — that depends on correctly re-guessing the
+   card's real padding value, and if that guess is even slightly off
+   (or something else in this file's long history still contributes
+   to it) the icon overshoots or undershoots the real edge, which is
+   exactly the "half the video is outside the card" result.
+   Bulletproof fix instead: remove the card's own padding entirely
+   (0 on every side), so .svc-icon (100% width, first child, 0
+   margin) is now GUARANTEED to exactly match the card's real box on
+   the top/left/right with no arithmetic involved — it's simply the
+   card's full content box. The inset that padding used to provide is
+   moved onto the specific elements that still need it (title, desc,
+   the "more" text, and the arrow button), via margin instead. Bottom
+   inset is preserved the same way, now living on the arrow button's
+   bottom margin instead of the card's own bottom padding. */
+.sec-services .services-grid .svc-card.svc-card {
+  --svc-card-pt: clamp(40px, 3.6vw, 58px);
+  --svc-card-px: clamp(24px, 2.2vw, 34px);
+  --svc-card-pb: clamp(24px, 2.2vw, 34px);
+  padding: 0 !important;
+}
+.sec-services .services-grid .svc-card.svc-card .svc-icon {
+  position: relative !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1 !important;
+  margin: 0 !important;
+  left: 0 !important;
+  transform: none !important;
+}
+.sec-services .services-grid .svc-card.svc-card:hover .svc-icon,
+.sec-services .services-grid .svc-card.svc-card:focus-visible .svc-icon,
+.sec-services .services-grid .svc-card.svc-card.is-hovering .svc-icon,
+.sec-services .services-grid .svc-card.svc-card.is-tilting .svc-icon {
+  transform: none !important;
+}
+/* Belt-and-braces: force the <video> itself to exactly fill the icon
+   box no matter what size it would otherwise want to render at.
+   Whatever was making the clip drift left/right before, an absolutely
+   positioned, inset:0, 100%x100% video inside an overflow:hidden box
+   physically cannot render outside that box's edges — this removes
+   the guesswork entirely instead of chasing which upstream rule was
+   responsible for the wrong size. */
+.sec-services .services-grid .svc-card.svc-card .svc-icon .svc-icon__video {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+}
+/* Title/desc keep their own centering (text-align/margin:auto) from
+   the base rules — they must NOT get an explicit width:100% PLUS a
+   fixed left/right margin at the same time, because border-box only
+   excludes padding/border from width, never margin: a 100%-wide box
+   with extra margin-left/right on top overflows the card by 2x that
+   margin, which reads as "shifted/misplaced" text. Constrain the
+   width itself instead, with auto margins doing the centering. */
+.sec-services .services-grid .svc-card.svc-card .svc-card__title {
+  margin-top: var(--svc-card-pt) !important;
+  width: calc(100% - (var(--svc-card-px) * 2)) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+/* Desc/more already center themselves (max-width + margin:0 auto)
+   from the base rules and are narrower than the card, so they don't
+   need — and must not get — an extra explicit left/right margin. */
+
+/* Arrow centers itself horizontally via margin-left/right:auto from
+   its base rule; only the bottom inset needs to be added here. Do
+   NOT set margin-left/right to a fixed value — that replaces the
+   auto-centering with a fixed offset and drags the button off-center.
+
+   Vertical position: the card is `justify-content: space-between`
+   with only 2 flex children (.svc-card__content and .svc-card__arr),
+   AND the arrow's own base rule gives it `margin: auto auto 0`. Auto
+   margins on a flex item always win over justify-content and absorb
+   every pixel of leftover space along the main axis — so as soon as
+   the card's min-height is taller than the actual content (which it
+   now is, since the icon alone is a full-card-width square), the
+   arrow gets shoved all the way down with a big dead gap above it.
+   That's the "CTA went very low" bug. Fix: stop the arrow's own
+   margin-top from being auto (so it can't self-absorb leftover
+   space) and stop the card from distributing leftover space via
+   space-between — both must change together or the other still
+   pushes the arrow down. The selector list here matches (and beats,
+   via the extra combinator entry) the higher-specificity
+   ".svc-card__content + .svc-card__arr" rule that originally set
+   margin: auto auto 0. */
+.sec-services .services-grid .svc-card.svc-card .svc-card__arr,
+.sec-services .services-grid .svc-card.svc-card .svc-card__content + .svc-card__arr {
+  margin: 0 auto var(--svc-card-pb) !important;
+}
+.sec-services .services-grid .svc-card.svc-card {
+  justify-content: flex-start !important;
+}
+
+/* FINAL — service card titles: gradient text instead of flat black,
+   using the same brand gradient already used for the "grad-text"
+   accent in the services heading (purple -> orange), so it matches
+   the existing gold/purple neon system instead of inventing a new
+   palette. */
+.sec-services .services-grid .svc-card.svc-card .svc-card__title {
+  background: linear-gradient(92deg, #7c3aed 0%, #a855f7 45%, #f97316 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+/* ============================================================
+   NEW — "Why E4LA" stats band, rebuilt from scratch and repositioned
+   right after #coaching. Deliberately uses a NEW section class
+   (.sec-why2, keeping the existing id="why" so the footer's "About
+   Us" anchor still works) instead of reusing .sec-why — the old
+   .sec-why class carries a long history of dark-theme overrides
+   (backgrounds, colors, the old 6-item .why-grid layout) scattered
+   across this file; fighting all of them with !important would be
+   fragile, whereas a fresh class sidesteps that history cleanly. The
+   inner .why__label/.why__h2 element classes are kept as-is so they
+   still pick up the shared base .section-eyebrow/.section-heading
+   typography rules (those are unscoped by parent class and harmless
+   to reuse), just not any of the old .sec-why-scoped color/layout
+   rules. */
+.sec-why2 {
+  background: #fffefc;
+  padding: clamp(40px, 4.5vw, 64px) var(--e4la-page-pad);
+}
+.why-card {
+  max-width: var(--e4la-page-max);
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 36px;
+  border: 1.5px solid rgba(124, 58, 237, .24);
+  background: linear-gradient(120deg, rgba(124, 58, 237, .09), rgba(255, 255, 255, .98) 45%, rgba(219, 39, 119, .08));
+  border-radius: var(--r-xl);
+  padding: clamp(28px, 3vw, 44px);
+  box-shadow: 0 18px 46px rgba(76, 29, 149, .12), 0 4px 14px rgba(76, 29, 149, .08);
+}
+.why-card__intro {
+  flex: 1 1 320px;
+  min-width: 280px;
+}
+.sec-why2 .why__label.section-eyebrow {
+  color: #6d28d9;
+  margin-bottom: 14px;
+}
+.sec-why2 .why__h2.section-heading {
+  color: var(--text-ink);
+  max-width: 440px;
+  margin-bottom: 14px;
+}
+.sec-why2 .why__h2 .grad-text {
+  background: linear-gradient(92deg, #7c3aed 0%, #a855f7 45%, #f97316 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.why__desc {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: rgba(15, 14, 24, .62);
+  max-width: 46ch;
+  margin-bottom: 12px;
+}
+.why__attribution {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(15, 14, 24, .5);
+}
+.why-stats {
+  flex: 2 1 480px;
+  display: flex;
+  gap: 18px;
+}
+.why-stat {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+.why-stat__ico {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .35s cubic-bezier(.2, .8, .2, 1);
+}
+.why-stat__ico svg { width: 19px; height: 19px; }
+.why-stat__ico--purple { background: rgba(109, 40, 217, .1); color: #6d28d9; box-shadow: 0 0 0 1px rgba(109, 40, 217, .22), 0 0 14px rgba(109, 40, 217, .16); }
+.why-stat__ico--pink   { background: rgba(219, 39, 119, .1); color: #db2777; box-shadow: 0 0 0 1px rgba(219, 39, 119, .22), 0 0 14px rgba(219, 39, 119, .16); }
+.why-stat__ico--amber  { background: rgba(217, 119, 6, .1);  color: #d97706; box-shadow: 0 0 0 1px rgba(217, 119, 6, .24),  0 0 14px rgba(217, 119, 6, .16); }
+.why-stat__ico--green  { background: rgba(5, 150, 105, .1);  color: #059669; box-shadow: 0 0 0 1px rgba(5, 150, 105, .22),  0 0 14px rgba(5, 150, 105, .16); }
+.why-stat__ico--blue   { background: rgba(37, 99, 235, .1);  color: #2563eb; box-shadow: 0 0 0 1px rgba(37, 99, 235, .22),  0 0 14px rgba(37, 99, 235, .16); }
+
+/* Auto-cycle "light up" state — same mechanism as #coaching
+   .coaching__timeline (is-ctime-active): script.js cycles one
+   .why-stat active every 2s via .is-why-active, the icon blooms
+   brighter + scales up, and the number brightens to match. */
+.why-stat.is-why-active .why-stat__ico {
+  transform: scale(1.12);
+}
+.why-stat:nth-child(1).is-why-active .why-stat__ico { box-shadow: 0 0 0 1px rgba(109, 40, 217, .75), 0 0 20px rgba(109, 40, 217, .55), 0 0 42px rgba(109, 40, 217, .3); }
+.why-stat:nth-child(2).is-why-active .why-stat__ico { box-shadow: 0 0 0 1px rgba(219, 39, 119, .75), 0 0 20px rgba(219, 39, 119, .55), 0 0 42px rgba(219, 39, 119, .3); }
+.why-stat:nth-child(3).is-why-active .why-stat__ico { box-shadow: 0 0 0 1px rgba(217, 119, 6, .78),  0 0 20px rgba(217, 119, 6, .55),  0 0 42px rgba(217, 119, 6, .3); }
+.why-stat:nth-child(4).is-why-active .why-stat__ico { box-shadow: 0 0 0 1px rgba(5, 150, 105, .75),   0 0 20px rgba(5, 150, 105, .55),  0 0 42px rgba(5, 150, 105, .3); }
+.why-stat:nth-child(5).is-why-active .why-stat__ico { box-shadow: 0 0 0 1px rgba(37, 99, 235, .75),   0 0 20px rgba(37, 99, 235, .55),  0 0 42px rgba(37, 99, 235, .3); }
+
+.why-stat__num {
+  font-size: clamp(18px, 1.6vw, 22px);
+  font-weight: 800;
+  line-height: 1.1;
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1);
+}
+.why-stat:nth-child(1) .why-stat__num { color: #6d28d9; }
+.why-stat:nth-child(2) .why-stat__num { color: #db2777; }
+.why-stat:nth-child(3) .why-stat__num { color: #d97706; }
+.why-stat:nth-child(4) .why-stat__num { color: #059669; }
+.why-stat:nth-child(5) .why-stat__num { color: #2563eb; }
+.why-stat.is-why-active .why-stat__num {
+  transform: scale(1.08);
+}
+.why-stat__label {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: rgba(15, 14, 24, .6);
+  max-width: 13ch;
+  transition: color .35s ease;
+}
+.why-stat.is-why-active .why-stat__label {
+  color: var(--text-ink);
+}
+@media (max-width: 900px) {
+  .why-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .why-stats {
+    flex-wrap: wrap;
+  }
+  .why-stat {
+    flex: 1 1 40%;
+  }
+}
+@media (max-width: 560px) {
+  .why-stat {
+    flex: 1 1 100%;
+    flex-direction: row;
+    text-align: left;
+  }
+  .why-stat__label {
+    max-width: none;
+  }
+}
+
+/* ============================================================
+   NEW — post-booking sections: What You'll Gain / How We Work
+   Together / FAQ / final Schedule CTA card. Continues the light
+   (cream/white) theme already used by .sec-coaching immediately
+   above these sections, reusing existing tokens (--purple, --g-pink,
+   --amber, --green, --blue, --pad-x, --section-py, --r-lg/--r-xl,
+   .section-eyebrow, .section-heading, .grad-text, .cta-neon) rather
+   than introducing a new palette or component system.
+   ============================================================ */
+
+.sec-gain,
+.sec-howwork,
+.sec-schedule {
+  background: #fffefc;
+  padding: clamp(40px, 4.5vw, 64px) var(--e4la-page-pad);
+}
+
+.gain-layout,
+.howwork-layout {
+  max-width: var(--e4la-page-max);
+  margin: 0 auto;
+}
+
+.sec-gain .gain__label.section-eyebrow,
+.sec-howwork .howwork__label.section-eyebrow {
+  color: #6d28d9;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* FAQ band: the section itself stays on the light theme like its
+   neighbors — the brand gradient (same one used by the closing
+   "Ready to elevate..." CTA band) is scoped to the card box
+   (.faq-layout) only, sized to the question grid's own content
+   width, NOT full-bleed. The mascot video sits outside/beside that
+   box, on the plain section background, sharing a flex row with it
+   so both stay centered together within the page's max-width. */
+.sec-faq {
+  background: #fffefc;
+  padding: clamp(52px, 6vw, 80px) var(--e4la-page-pad);
+}
+.sec-faq .faq-outer {
+  max-width: var(--e4la-page-max);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: clamp(20px, 3vw, 44px);
+}
+.sec-faq .faq-layout {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+  background: linear-gradient(105deg, #1c2782 0%, #5b1e9d 34%, #c12e70 56%, #e46d16 75%, #171354 100%);
+  border-radius: var(--r-xl);
+  padding: clamp(28px, 3vw, 44px);
+}
+.sec-faq .faq__label.section-eyebrow {
+  color: #fff;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Decorative mascot video — real alpha-transparent WebM (luminance-
+   keyed from the source clip), so it floats cleanly over the plain
+   section background instead of showing a background box. Sits
+   outside the gradient card, sized generously since it now has its
+   own room instead of overlapping the cards. Purely decorative, so
+   it's dropped once the layout narrows and there's no room to show
+   it beside the card without squeezing the questions. */
+.faq-mascot {
+  flex: 0 0 auto;
+  width: clamp(200px, 17vw, 300px);
+  height: auto;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 18px 26px rgba(0, 0, 0, .3));
+}
+@media (max-width: 1180px) {
+  .faq-mascot {
+    display: none;
+  }
+}
+
+.howwork__label-ico {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+  color: #6d28d9;
+}
+
+/* -- What You'll Gain -- */
+.sec-gain {
+  border-top: 1px solid rgba(15, 14, 24, .08);
+}
+.gain-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 28px;
+  margin-top: 28px;
+  border: 1.5px solid rgba(124, 58, 237, .22);
+  background: #fff;
+  border-radius: var(--r-xl);
+  padding: 32px 24px;
+  box-shadow: 0 18px 46px rgba(76, 29, 149, .1), 0 4px 14px rgba(76, 29, 149, .07);
+}
+.gain-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+}
+.gain-item__ico {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .35s cubic-bezier(.2, .8, .2, 1);
+}
+.gain-item__ico svg { width: 22px; height: 22px; }
+.gain-item__ico--purple { background: rgba(109, 40, 217, .1); color: #6d28d9; box-shadow: 0 0 0 1px rgba(109, 40, 217, .26), 0 0 16px rgba(109, 40, 217, .18); }
+.gain-item__ico--pink   { background: rgba(219, 39, 119, .1); color: #db2777; box-shadow: 0 0 0 1px rgba(219, 39, 119, .26), 0 0 16px rgba(219, 39, 119, .18); }
+.gain-item__ico--amber  { background: rgba(217, 119, 6, .1);  color: #d97706; box-shadow: 0 0 0 1px rgba(217, 119, 6, .28),  0 0 16px rgba(217, 119, 6, .18); }
+.gain-item__ico--green  { background: rgba(5, 150, 105, .1);  color: #059669; box-shadow: 0 0 0 1px rgba(5, 150, 105, .26),  0 0 16px rgba(5, 150, 105, .18); }
+.gain-item__ico--blue   { background: rgba(37, 99, 235, .1);  color: #2563eb; box-shadow: 0 0 0 1px rgba(37, 99, 235, .26),  0 0 16px rgba(37, 99, 235, .18); }
+
+/* Auto-cycle "light up" — same mechanism as #coaching
+   .coaching__timeline / .why-stats, driven by script.js toggling
+   .is-gain-active every 2s. */
+.gain-item.is-gain-active .gain-item__ico { transform: scale(1.12); }
+.gain-item:nth-child(1).is-gain-active .gain-item__ico { box-shadow: 0 0 0 1px rgba(109, 40, 217, .78), 0 0 22px rgba(109, 40, 217, .58), 0 0 46px rgba(109, 40, 217, .3); }
+.gain-item:nth-child(2).is-gain-active .gain-item__ico { box-shadow: 0 0 0 1px rgba(219, 39, 119, .78), 0 0 22px rgba(219, 39, 119, .58), 0 0 46px rgba(219, 39, 119, .3); }
+.gain-item:nth-child(3).is-gain-active .gain-item__ico { box-shadow: 0 0 0 1px rgba(217, 119, 6, .8),  0 0 22px rgba(217, 119, 6, .58),  0 0 46px rgba(217, 119, 6, .3); }
+.gain-item:nth-child(4).is-gain-active .gain-item__ico { box-shadow: 0 0 0 1px rgba(5, 150, 105, .78),  0 0 22px rgba(5, 150, 105, .58),  0 0 46px rgba(5, 150, 105, .3); }
+.gain-item:nth-child(5).is-gain-active .gain-item__ico { box-shadow: 0 0 0 1px rgba(37, 99, 235, .78),  0 0 22px rgba(37, 99, 235, .58),  0 0 46px rgba(37, 99, 235, .3); }
+
+.gain-item__text {
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 600;
+  color: var(--text-ink);
+  max-width: 20ch;
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1);
+}
+.gain-item.is-gain-active .gain-item__text {
+  transform: scale(1.04);
+}
+
+/* -- How We Work Together -- */
+.sec-howwork {
+  border-top: 1px solid rgba(15, 14, 24, .08);
+}
+.howwork-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-top: 28px;
+  border: 1.5px solid rgba(219, 39, 119, .22);
+  background: #fff;
+  border-radius: var(--r-xl);
+  padding: 32px 24px;
+  box-shadow: 0 18px 46px rgba(157, 23, 77, .1), 0 4px 14px rgba(157, 23, 77, .07);
+}
+.howwork-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 0 12px;
+}
+/* Connector: a dashed line + arrowhead from THIS step's icon toward
+   the NEXT step's icon (1→2, 2→3, 3→4). Both ends are inset by the
+   icon's radius (27px, since the icon is now 54px) plus a fixed gap,
+   so the line/arrow visibly clears each circle instead of touching
+   it. Math: with equal-width columns, "50%" of one step's own box
+   plus a further "100%" reaches exactly the center of the next
+   column's icon regardless of actual column width — so these
+   offsets work without knowing the column's pixel width. */
+.howwork-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 26px;
+  left: calc(50% + 37px);
+  width: calc(100% - 82px);
+  border-top: 2px dashed rgba(15, 14, 24, .22);
+  z-index: 0;
+}
+.howwork-step:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  top: 21px;
+  left: calc(150% - 44px);
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 7px solid rgba(15, 14, 24, .32);
+  z-index: 0;
+}
+.howwork-step__ico {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 1;
+  background: #fffefc;
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .35s cubic-bezier(.2, .8, .2, 1);
+}
+.howwork-step__ico svg { width: 23px; height: 23px; }
+.howwork-step__ico--purple { background: rgba(109, 40, 217, .1); color: #6d28d9; box-shadow: 0 0 0 1px rgba(109, 40, 217, .26), 0 0 16px rgba(109, 40, 217, .18); }
+.howwork-step__ico--pink   { background: rgba(219, 39, 119, .1); color: #db2777; box-shadow: 0 0 0 1px rgba(219, 39, 119, .26), 0 0 16px rgba(219, 39, 119, .18); }
+.howwork-step__ico--amber  { background: rgba(217, 119, 6, .1);  color: #d97706; box-shadow: 0 0 0 1px rgba(217, 119, 6, .28),  0 0 16px rgba(217, 119, 6, .18); }
+.howwork-step__ico--green  { background: rgba(5, 150, 105, .1);  color: #059669; box-shadow: 0 0 0 1px rgba(5, 150, 105, .26),  0 0 16px rgba(5, 150, 105, .18); }
+
+/* Auto-cycle "light up" — same mechanism as #coaching
+   .coaching__timeline / .why-stats / .gain-item, driven by
+   script.js toggling .is-howwork-active every 2s. */
+.howwork-step.is-howwork-active .howwork-step__ico { transform: scale(1.12); }
+.howwork-step:nth-child(1).is-howwork-active .howwork-step__ico { box-shadow: 0 0 0 1px rgba(109, 40, 217, .78), 0 0 22px rgba(109, 40, 217, .58), 0 0 46px rgba(109, 40, 217, .3); }
+.howwork-step:nth-child(2).is-howwork-active .howwork-step__ico { box-shadow: 0 0 0 1px rgba(219, 39, 119, .78), 0 0 22px rgba(219, 39, 119, .58), 0 0 46px rgba(219, 39, 119, .3); }
+.howwork-step:nth-child(3).is-howwork-active .howwork-step__ico { box-shadow: 0 0 0 1px rgba(217, 119, 6, .8),  0 0 22px rgba(217, 119, 6, .58),  0 0 46px rgba(217, 119, 6, .3); }
+.howwork-step:nth-child(4).is-howwork-active .howwork-step__ico { box-shadow: 0 0 0 1px rgba(5, 150, 105, .78),  0 0 22px rgba(5, 150, 105, .58),  0 0 46px rgba(5, 150, 105, .3); }
+
+.howwork-step__name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-ink);
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1);
+}
+.howwork-step.is-howwork-active .howwork-step__name {
+  transform: scale(1.04);
+}
+.howwork-step__desc {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: rgba(15, 14, 24, .56);
+  max-width: 22ch;
+}
+
+/* -- FAQ -- */
+.faq-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 20px;
+  margin-top: 28px;
+}
+.faq-item {
+  border: 1px solid rgba(255, 255, 255, .5);
+  border-radius: var(--r-md);
+  background: #fff;
+  box-shadow: 0 16px 34px rgba(9, 6, 30, .28), 0 4px 12px rgba(9, 6, 30, .18);
+  transition: box-shadow .28s ease, transform .28s cubic-bezier(.2, .8, .2, 1);
+}
+.faq-item:has(.faq-item__q[aria-expanded="true"]) {
+  border-color: #fff;
+  box-shadow: 0 20px 42px rgba(9, 6, 30, .34), 0 6px 16px rgba(9, 6, 30, .22);
+}
+.faq-item__q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-ink);
+  text-align: left;
+}
+.faq-item__chev {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  color: rgba(15, 14, 24, .5);
+  transition: transform .25s ease;
+}
+.faq-item__q[aria-expanded="true"] .faq-item__chev {
+  transform: rotate(180deg);
+}
+.faq-item__a {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows .3s ease;
+}
+.faq-item__q[aria-expanded="true"] + .faq-item__a {
+  grid-template-rows: 1fr;
+}
+.faq-item__a > p {
+  overflow: hidden;
+  min-height: 0;
+  padding: 0 18px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(15, 14, 24, .62);
+}
+.faq-item__q[aria-expanded="true"] + .faq-item__a > p {
+  padding-bottom: 16px;
+}
+
+/* -- Final schedule CTA card -- */
+.sec-schedule {
+  border-top: 1px solid rgba(15, 14, 24, .08);
+}
+.schedule-card {
+  max-width: var(--e4la-page-max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 24px;
+  border: 1.5px solid rgba(219, 39, 119, .26);
+  background: linear-gradient(120deg, rgba(124, 58, 237, .07), rgba(219, 39, 119, .07));
+  border-radius: var(--r-xl);
+  padding: 32px clamp(24px, 3vw, 40px);
+  box-shadow: 0 18px 46px rgba(157, 23, 77, .12), 0 4px 14px rgba(157, 23, 77, .08);
+}
+.schedule-card__ico {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(124, 58, 237, .1);
+  color: #6d28d9;
+  flex: 0 0 auto;
+}
+.schedule-card__ico svg { width: 24px; height: 24px; }
+.schedule-card__h2 {
+  max-width: none !important;
+  font-size: clamp(22px, 1.8vw, 28px) !important;
+  margin-bottom: 8px;
+  color: var(--text-ink);
+}
+.schedule-card__h2 .grad-text {
+  background: linear-gradient(92deg, #7c3aed 0%, #a855f7 45%, #f97316 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.schedule-card__desc {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: rgba(15, 14, 24, .6);
+  max-width: 46ch;
+}
+.schedule-card__action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+/* Reuse .cta-warm__btn (the exact classes the "Let's Connect" CTA at
+   the bottom of the page uses) so this button gets the identical
+   size, padding, and neon-glow interaction — that class carries one
+   old fixed `width: 184px` sized for "LET'S CONNECT"'s short label;
+   this button's longer label needs to size to its own content
+   instead. */
+.schedule-card__btn.cta-warm__btn {
+  width: auto;
+  white-space: nowrap;
+}
+/* Color: left as the natural .cta-warm__btn.cta-neon treatment
+   (purple/pink glow, matching "Let's Connect" exactly) per direct
+   request — no gold override here. */
+
+/* Right-edge alignment: "Let's Connect" (.sec-cta .cta-warm__btn)
+   sits in a special full-bleed grid built just for the 2-tone CTA
+   band (.sec-cta uses its own smart calc()-based padding formula,
+   unlike the normal max-width+auto-margin content wrapper every
+   other section — including this Schedule card — uses), and per
+   direct visual comparison it currently reaches slightly further
+   right than the Schedule button above it. Pull it in to match. */
+.sec-cta .cta-warm__btn {
+  margin-right: clamp(20px, 2.4vw, 32px) !important;
+}
+.schedule-card__note {
+  font-size: 11.5px;
+  color: rgba(15, 14, 24, .48);
+  white-space: nowrap;
+}
+.schedule-card__meta {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  border-top: 1px solid rgba(15, 14, 24, .1);
+  padding-top: 20px;
+  margin-top: 4px;
+}
+.schedule-card__meta li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(15, 14, 24, .58);
+}
+.schedule-card__meta svg {
+  width: 15px;
+  height: 15px;
+  color: #6d28d9;
+}
+
+@media (max-width: 900px) {
+  .gain-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .howwork-steps {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .howwork-step:not(:last-child)::after,
+  .howwork-step:not(:last-child)::before {
+    display: none;
+  }
+  .faq-grid {
+    grid-template-columns: 1fr;
+  }
+  .schedule-card {
+    grid-template-columns: 1fr;
+    text-align: center;
+    justify-items: center;
+  }
+  .schedule-card__desc {
+    max-width: none;
+  }
+}
+@media (max-width: 560px) {
+  .gain-grid {
+    grid-template-columns: 1fr 1fr;
+    padding: 24px 16px;
+  }
+}
+
+/* -- Coaching "Read More" reveal toggle -- */
+.coaching-more {
+  max-width: var(--e4la-page-max);
+  margin: 0 auto;
+  padding: 28px var(--e4la-page-pad) 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+  background: linear-gradient(105deg, #fffdf9, #fff 60%, #fff8f1);
+}
+.coaching-more__text {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(15, 14, 24, .56);
+}
+.coaching-more__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border: none;
+  border-radius: 999px;
+  padding: 15px 32px;
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(100deg, #6d28d9 0%, #a855f7 55%, #db2777 100%);
+  box-shadow: 0 8px 22px rgba(109, 40, 217, .32), 0 2px 8px rgba(219, 39, 119, .22);
+  transition: transform .28s cubic-bezier(.2, .8, .2, 1),
+    box-shadow .28s cubic-bezier(.2, .8, .2, 1);
+}
+.coaching-more__btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(109, 40, 217, .4), 0 4px 12px rgba(219, 39, 119, .28);
+}
+.coaching-more__chev {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  color: #fff;
+  transition: transform .25s ease;
+}
+.coaching-more__btn[aria-expanded="true"] .coaching-more__chev {
+  transform: rotate(180deg);
+}
+
+/* Smooth open/close for the revealed sections — same grid-template-
+   rows 0fr/1fr trick already used for .faq-item__a, so height animates
+   to the real content height with no JS measurement needed. The
+   .coaching-more button stays in place (not inside this wrapper) and
+   the JS below scrolls it to the top of the viewport at the same time
+   this expands, so it reads as "the button settles near the top while
+   the sections unfold beneath it" rather than an instant jump. */
+.coaching-extra {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows .6s cubic-bezier(.22, 1, .36, 1);
+}
+.coaching-extra.is-open {
+  grid-template-rows: 1fr;
+}
+.coaching-extra__inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+
+/* FINAL SINGLE ROBOT HANDOFF - hero and services use the same video element */
+.svcd-hero__robot.svcd-pin__robot.is-service-mode{
+  --robot-x:3vw;
+  --robot-y:17vh;
+  --robot-scale:1;
+  position:fixed !important;
+  left:0 !important;
+  top:0 !important;
+  right:auto !important;
+  bottom:auto !important;
+  width:clamp(132px,15vw,230px) !important;
+  height:auto !important;
+  z-index:9 !important;
+  pointer-events:none !important;
+  opacity:0 !important;
+  visibility:hidden;
+  transform:translate3d(var(--robot-x),var(--robot-y),0) scale(calc(var(--robot-scale) * .96)) !important;
+  transform-origin:50% 82% !important;
+  filter:drop-shadow(0 24px 34px rgba(0,0,0,.34)) saturate(1.06) !important;
+  transition:opacity .45s ease, transform 1050ms cubic-bezier(.22,1,.36,1) !important;
+}
+.svcd-hero__robot.svcd-pin__robot.is-service-mode.is-visible{
+  opacity:.96 !important;
+  visibility:visible;
+  transform:translate3d(var(--robot-x),var(--robot-y),0) scale(var(--robot-scale)) !important;
+}
+@media (max-width:900px){
+  .svcd-hero__robot.svcd-pin__robot.is-service-mode{display:none !important;}
+}
+
+
+
+/* FINAL UNIFIED ROBOT MOTION - one transform system for hero and services */
+.svcd-hero__robot.svcd-pin__robot,
+.svcd-hero__robot.svcd-pin__robot.is-service-mode,
+.svcd-hero__robot.svcd-pin__robot.is-service-mode.is-visible {
+  --unified-robot-x: 1100px;
+  --unified-robot-y: 408px;
+  --unified-robot-scale: 2.51;
+  --unified-robot-opacity: .96;
+  position: fixed !important;
+  left: 0 !important;
+  top: 0 !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: clamp(132px,15vw,230px) !important;
+  height: auto !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  z-index: 9 !important;
+  pointer-events: none !important;
+  visibility: visible !important;
+  opacity: var(--unified-robot-opacity) !important;
+  transform: translate3d(var(--unified-robot-x), var(--unified-robot-y), 0) scale(var(--unified-robot-scale)) !important;
+  transform-origin: 50% 82% !important;
+  filter: drop-shadow(0 30px 58px rgba(0,0,0,.33)) saturate(1.06) !important;
+  transition: transform 1050ms cubic-bezier(.22,1,.36,1), opacity 320ms ease !important;
+  will-change: transform, opacity !important;
+}
+@media (max-width:900px){
+  .svcd-hero__robot.svcd-pin__robot,
+  .svcd-hero__robot.svcd-pin__robot.is-service-mode,
+  .svcd-hero__robot.svcd-pin__robot.is-service-mode.is-visible { display:none !important; }
+}
+
+/* FINAL AFTER-SERVICES CTA + FOOTER REVEAL */
+.svcd-page .svcd-after-services {
+  width: min(100%, 1280px) !important;
+  max-width: 1280px !important;
+  margin: 0 auto !important;
+  padding: clamp(54px, 8vh, 92px) var(--pad-x) clamp(34px, 6vh, 72px) !important;
+  opacity: 0;
+  transform: translate3d(0, 86px, 0);
+  transition: opacity 720ms ease, transform 1050ms cubic-bezier(.22, 1, .36, 1);
+  will-change: opacity, transform;
+}
+
+.svcd-page .svcd-after-services.is-revealed {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.svcd-page .svcd-after-services .svcd-cta__box {
+  border-radius: 22px !important;
+  padding: 1.5px !important;
+  background: linear-gradient(95deg, #7C3AED 0%, #C026D3 48%, #F02D64 100%) !important;
+  box-shadow: 0 24px 72px rgba(0, 0, 0, .28), 0 0 46px rgba(124, 58, 237, .18) !important;
+}
+
+.svcd-page .svcd-after-services .svcd-cta__inner {
+  min-height: 104px !important;
+  border-radius: 20.5px !important;
+  background: linear-gradient(135deg, rgba(9, 8, 18, .94), rgba(10, 17, 42, .88)) !important;
+  padding: clamp(22px, 2.2vw, 30px) clamp(24px, 3vw, 42px) !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: clamp(22px, 3vw, 42px) !important;
+}
+
+.svcd-page .svcd-after-services .svcd-cta__left {
+  display: flex !important;
+  align-items: center !important;
+  gap: clamp(18px, 2.2vw, 28px) !important;
+  min-width: 0 !important;
+}
+
+.svcd-page .svcd-after-services .svcd-cta__icon {
+  width: clamp(58px, 5vw, 78px) !important;
+  height: clamp(58px, 5vw, 78px) !important;
+  border-radius: 999px !important;
+  border: 1.5px solid rgba(178, 96, 255, .72) !important;
+  color: #fff !important;
+  display: grid !important;
+  place-items: center !important;
+  box-shadow: inset 0 0 20px rgba(124, 58, 237, .18), 0 0 34px rgba(124, 58, 237, .26) !important;
+}
+
+.svcd-page .svcd-after-services .svcd-cta__icon svg {
+  width: clamp(26px, 2.5vw, 36px) !important;
+  height: clamp(26px, 2.5vw, 36px) !important;
+  transform: none !important;
+}
+
+.svcd-page .svcd-after-services .svcd-cta__title,
+.svcd-page .svcd-after-services .svcd-cta__sub {
+  display: block !important;
+  font-family: 'Manrope', Arial, sans-serif !important;
+}
+
+.svcd-page .svcd-after-services .svcd-cta__title {
+  color: #fff !important;
+  font-size: clamp(19px, 1.45vw, 25px) !important;
+  line-height: 1.18 !important;
+  font-weight: 800 !important;
+  margin: 0 0 6px !important;
+}
+
+.svcd-page .svcd-after-services .svcd-cta__sub {
+  color: rgba(255, 255, 255, .68) !important;
+  font-size: clamp(14px, 1vw, 16px) !important;
+  line-height: 1.35 !important;
+  font-weight: 400 !important;
+}
+
+.svcd-page .svcd-after-services .svcd-cta__btn {
+  min-height: 58px !important;
+  padding: 0 clamp(24px, 2.4vw, 34px) !important;
+  border-radius: 9px !important;
+  background: linear-gradient(95deg, #7438FF 0%, #D62B9F 58%, #FF4D64 100%) !important;
+  color: #fff !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 14px !important;
+  font-size: clamp(13px, .9vw, 15px) !important;
+  font-weight: 800 !important;
+  letter-spacing: .01em !important;
+  white-space: nowrap !important;
+  box-shadow: 0 16px 34px rgba(214, 43, 159, .24) !important;
+}
+
+.svcd-page .svcd-after-services .svcd-cta__btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 20px 44px rgba(214, 43, 159, .32) !important;
+}
+
+.svcd-page .footer {
+  opacity: 0;
+  transform: translate3d(0, 88px, 0);
+  transition: opacity 720ms ease, transform 1050ms cubic-bezier(.22, 1, .36, 1);
+  will-change: opacity, transform;
+}
+
+.svcd-page .footer.is-revealed {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+@media (max-width: 720px) {
+  .svcd-page .svcd-after-services {
+    padding: 44px 22px 34px !important;
+  }
+
+  .svcd-page .svcd-after-services .svcd-cta__inner {
+    grid-template-columns: 1fr !important;
+    align-items: start !important;
+  }
+
+  .svcd-page .svcd-after-services .svcd-cta__left {
+    align-items: flex-start !important;
+  }
+
+  .svcd-page .svcd-after-services .svcd-cta__btn {
+    width: 100% !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svcd-page .svcd-after-services,
+  .svcd-page .footer {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* FINAL FIX: after-services CTA/footer must stay in normal page flow */
+.svcd-page .svcd-after-services,
+.svcd-page .footer {
+  position: relative !important;
+  inset: auto !important;
+}
+
+/* FINAL FIX: CTA follows the service-5 exit step, not window scroll reveal */
+.svcd-page .svcd-after-services,
+.svcd-page .footer {
+  position: relative !important;
+  inset: auto !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.svcd-page:not(.is-service-cta-active):not(.is-past-services) .svcd-after-services {
+  opacity: 0 !important;
+  transform: translate3d(0, 110px, 0) scale(.94) !important;
+  pointer-events: none !important;
+}
+
+.svcd-page.is-service-cta-active .svcd-after-services {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: clamp(34px, 5vh, 72px) !important;
+  z-index: 8 !important;
+  width: min(100%, 1280px) !important;
+  max-width: 1280px !important;
+  margin: 0 !important;
+  padding: 0 var(--pad-x) !important;
+  opacity: 1 !important;
+  transform: translate3d(-50%, 0, 0) scale(1) !important;
+  pointer-events: auto !important;
+  transition: opacity 760ms ease, transform 1120ms cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+.svcd-page.is-past-services .svcd-after-services {
+  position: relative !important;
+  width: min(100%, 1280px) !important;
+  max-width: 1280px !important;
+  margin: 0 auto !important;
+  padding: clamp(54px, 8vh, 92px) var(--pad-x) clamp(34px, 6vh, 72px) !important;
+  opacity: 1 !important;
+  transform: none !important;
+  pointer-events: auto !important;
+}
+
+.svcd-page:not(.is-past-services) .footer {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+@media (max-width: 720px) {
+  .svcd-page.is-service-cta-active .svcd-after-services {
+    width: 100% !important;
+    bottom: 24px !important;
+    padding: 0 22px !important;
+  }
+}
+
+/* FINAL CTA STABILITY OVERRIDE: normal section after services, no pin/overlay */
+.svcd-page,
+.svcd-page.is-service-cta-active,
+.svcd-page.is-past-services {
+  /* keep old state classes harmless if browser cache still has them */
+}
+
+.svcd-page .svcd-after-services,
+.svcd-page.is-service-cta-active .svcd-after-services,
+.svcd-page.is-past-services .svcd-after-services,
+.svcd-page:not(.is-service-cta-active):not(.is-past-services) .svcd-after-services {
+  position: relative !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  z-index: auto !important;
+  width: min(100%, 1280px) !important;
+  max-width: 1280px !important;
+  margin: 0 auto !important;
+  padding: clamp(54px, 8vh, 92px) var(--pad-x) clamp(34px, 6vh, 72px) !important;
+  opacity: 1 !important;
+  transform: none !important;
+  pointer-events: auto !important;
+  transition: none !important;
+}
+
+.svcd-page .footer,
+.svcd-page .footer.is-revealed {
+  position: relative !important;
+  inset: auto !important;
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+/* FINAL HARD FIX: bottom CTA/footer are invisible until services fully release */
+.svcd-page .svcd-after-services,
+.svcd-page .footer,
+.svcd-page.is-service-cta-active .svcd-after-services,
+.svcd-page:not(.is-service-cta-active):not(.is-past-services) .svcd-after-services {
+  position: relative !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  z-index: auto !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transform: none !important;
+  pointer-events: none !important;
+  transition: none !important;
+}
+
+.svcd-page.is-past-services .svcd-after-services,
+.svcd-page.is-past-services .footer {
+  position: relative !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  z-index: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  pointer-events: auto !important;
+  transition: none !important;
+}
+
+.svcd-page.is-past-services .svcd-after-services {
+  width: min(100%, 1280px) !important;
+  max-width: 1280px !important;
+  margin: 0 auto !important;
+  padding: clamp(54px, 8vh, 92px) var(--pad-x) clamp(34px, 6vh, 72px) !important;
 }
