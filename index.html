@@ -9,10 +9,13 @@
 <link rel="canonical" href="https://www.e4la.org">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=optional" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="assets/e4la-hero-reference.png">
 <link rel="preload" as="image" href="assets/e4la-hero-highres.jpeg">
-<link rel="stylesheet" href="style.css?v=2026071536">
+<link rel="stylesheet" href="style.css?v=2026071913">
+  <link rel="stylesheet" href="assets/css/nav.css?v=2026071907">
+<link rel=icon type=image/png href=assets/e4la-logo-palm.png?v=2026071916>
+<link rel=apple-touch-icon href=assets/e4la-logo-palm.png?v=2026071916>
 </head>
 <body>
 
@@ -65,23 +68,21 @@
 
 <!-- â•â• NAV â•â• -->
 <header>
-  <nav class="nav" id="js-nav" role="navigation" aria-label="Main navigation">
-    <a class="nav__logo" href="#main" aria-label="E4LA – Elevation for Los Angeles">
-      <img class="brand-asset" src="assets/e4la-logo-palm.png" alt="E4LA — Elevation for Los Angeles" width="1022" height="533">
+  <nav class="nav e4la-site-nav" id="js-nav" role="navigation" aria-label="Main navigation">
+    <a class="nav__logo" href="index.html#main" aria-label="E4LA - Elevation for Los Angeles">
+      <img class="brand-asset" src="assets/e4la-logo-palm.png" alt="E4LA - Elevation for Los Angeles" width="1022" height="533">
     </a>
 
     <ul class="nav__links" role="list">
-      <li>
-        <a class="nav__link" href="services.html">
-          Services
-        </a>
-      </li>
-      <li><a class="nav__link" href="#approach">Approach</a></li>
-      <li><a class="nav__link" href="#coaching">Advisory</a></li>
+      <li><a class="nav__link" href="services.html?v=2026071905">Services</a></li>
+      <li><a class="nav__link" href="about.html?v=2026071901">About Us</a></li>
+      <li><a class="nav__link" href="index.html#approach">Approach</a></li>
+      <li><a class="nav__link" href="index.html#coaching">Advisory</a></li>
     </ul>
 
-    <a class="nav__cta cta-neon cta-neon--gold" href="mailto:info@e4la.org">
+    <a class="nav__cta nav__cta--readmore" href="mailto:info@e4la.org">
       <svg class="cta-neon__beam" aria-hidden="true"><rect class="cta-neon__beam-rect"></rect></svg>
+          <span class="cta-neon__fill" aria-hidden="true"></span>
       <span class="cta-neon__badge" aria-hidden="true"><img class="cta-neon__palm" src="assets/palm-01.png" alt=""></span>
       <span class="cta-neon__label">Let's Connect</span>
     </a>
@@ -93,12 +94,14 @@
 
   <div class="nav__mobile" id="js-nav-mobile" aria-hidden="true">
     <ul class="nav__mobile-links" role="list">
-      <li><a href="services.html">Services</a></li>
-      <li><a href="#approach">Approach</a></li>
-      <li><a href="#coaching">Advisory</a></li>
+      <li><a href="services.html?v=2026071905">Services</a></li>
+      <li><a href="about.html?v=2026071901">About Us</a></li>
+      <li><a href="index.html#approach">Approach</a></li>
+      <li><a href="index.html#coaching">Advisory</a></li>
     </ul>
-    <a class="nav__mobile-cta cta-neon cta-neon--gold" href="mailto:info@e4la.org">
+    <a class="nav__mobile-cta nav__cta--readmore" href="mailto:info@e4la.org">
       <svg class="cta-neon__beam" aria-hidden="true"><rect class="cta-neon__beam-rect"></rect></svg>
+          <span class="cta-neon__fill" aria-hidden="true"></span>
       <span class="cta-neon__badge" aria-hidden="true"><img class="cta-neon__palm" src="assets/palm-01.png" alt=""></span>
       <span class="cta-neon__label">Let's Connect</span>
     </a>
@@ -125,7 +128,7 @@
     </p>
 
     <div class="hero__actions" data-r data-d="3">
-      <a class="btn-outline-white cta-neon cta-neon--gold" href="services.html">
+      <a class="btn-outline-white cta-neon cta-neon--gold" href="services.html?v=2026071905">
         <svg class="cta-neon__beam" aria-hidden="true"><rect class="cta-neon__beam-rect"></rect></svg>
         <span class="cta-neon__badge" aria-hidden="true"><img class="cta-neon__palm" src="assets/palm-01.png" alt=""></span>
         <span class="cta-neon__label">Explore Our Services</span>
@@ -145,7 +148,7 @@
   </div>
 
   <div class="hero__video-frame" aria-hidden="true">
-    <video src="assets/hero-video.mp4?v=2026071504" poster="assets/hero-video-poster.jpg?v=2026071504" autoplay muted loop playsinline preload="auto"></video>
+    <video src="assets/hero-video.mp4?v=2026071843" poster="assets/hero-video-poster.jpg?v=2026071843" autoplay muted loop playsinline preload="auto"></video>
   </div>
 </section>
 
@@ -155,7 +158,7 @@
     <div>
       <p class="label-tag section-eyebrow">WHAT WE DO BEST</p>
       <h2 class="services-top__h2 section-heading" id="svc-h">End-to-end solutions for <span class="grad-text">modern businesses.</span></h2>
-      <a class="services-top__link section-cta" href="services.html">
+      <a class="services-top__link section-cta" href="services.html?v=2026071905">
         View All Services
         <svg aria-hidden="true"><use href="#i-arr"/></svg>
       </a>
@@ -166,34 +169,34 @@
   </div>
 
   <ol class="services-grid">
-    <li class="svc-card" data-r data-d="1" tabindex="0" role="button" aria-expanded="false">
-      <div class="svc-card__content"><div class="svc-icon svc-icon--purple" aria-hidden="true"><video class="svc-icon__video" muted loop playsinline preload="auto"><source src="assets/svc-hover-01.webm?v=2026071506" type="video/webm"><source src="assets/svc-hover-01.mp4?v=2026071506" type="video/mp4"></video></div>
-      <p class="svc-card__title">Experience Strategy</p>
-      <p class="svc-card__desc">Human-centered strategies that create meaningful customer experiences.</p><p class="svc-card__more">We map the customer journey, identify friction points, clarify audience needs, and shape a practical experience roadmap your team can act on.</p></div><button class="svc-card__arr" aria-label="Learn about Experience Strategy">
+    <li class="svc-card" data-service-target="services.html?v=2026071905#strategy-growth" data-r data-d="1" tabindex="0" role="button" aria-expanded="false">
+      <div class="svc-card__content"><div class="svc-icon svc-icon--purple" aria-hidden="true"><video class="svc-icon__video" muted loop playsinline preload="auto" poster="assets/svc-hover-01-poster.jpg?v=2026071827"><source src="assets/svc-hover-01.webm?v=2026071827" type="video/webm"><source src="assets/svc-hover-01.mp4?v=2026071827" type="video/mp4"></video></div>
+      <p class="svc-card__title">Strategy &amp; Growth</p>
+      <p class="svc-card__desc">Helping businesses define direction, identify opportunities, and build sustainable growth.</p><p class="svc-card__more">We map the customer journey, identify friction points, clarify audience needs, and shape a practical experience roadmap your team can act on.</p></div><button class="svc-card__arr" aria-label="Learn about Strategy and Growth">
         <svg><use href="#i-arr"/></svg>
       </button></li>
-    <li class="svc-card" data-r data-d="2" tabindex="0" role="button" aria-expanded="false">
-      <div class="svc-card__content"><div class="svc-icon svc-icon--blue" aria-hidden="true"><video class="svc-icon__video" muted loop playsinline preload="auto"><source src="assets/svc-hover-02.webm?v=2026071506" type="video/webm"><source src="assets/svc-hover-02.mp4?v=2026071506" type="video/mp4"></video></div>
-      <p class="svc-card__title">Creative Direction</p>
-      <p class="svc-card__desc">Brand and content direction that connects deeply and stands out.</p><p class="svc-card__more">We refine your message, visual direction, content themes, and creative system so every touchpoint feels intentional and memorable.</p></div><button class="svc-card__arr" aria-label="Learn about Creative Direction">
+    <li class="svc-card" data-service-target="services.html?v=2026071905#digital-experience" data-r data-d="2" tabindex="0" role="button" aria-expanded="false">
+      <div class="svc-card__content"><div class="svc-icon svc-icon--green" aria-hidden="true"><video class="svc-icon__video" muted loop playsinline preload="auto" poster="assets/svc-hover-03-poster.jpg?v=2026071827"><source src="assets/svc-hover-03.webm?v=2026071827" type="video/webm"><source src="assets/svc-hover-03.mp4?v=2026071827" type="video/mp4"></video></div>
+      <p class="svc-card__title">Digital Experience</p>
+      <p class="svc-card__desc">Everything related to digital products and online presence.</p><p class="svc-card__more">We align technical SEO, content structure, local visibility, and generative search signals so people and AI tools can understand and recommend you.</p></div><button class="svc-card__arr" aria-label="Learn about Digital Experience">
         <svg><use href="#i-arr"/></svg>
       </button></li>
-    <li class="svc-card" data-r data-d="3" tabindex="0" role="button" aria-expanded="false">
-      <div class="svc-card__content"><div class="svc-icon svc-icon--green" aria-hidden="true"><video class="svc-icon__video" muted loop playsinline preload="auto"><source src="assets/svc-hover-03.webm?v=2026071506" type="video/webm"><source src="assets/svc-hover-03.mp4?v=2026071506" type="video/mp4"></video></div>
-      <p class="svc-card__title">SEO &amp; GEO Growth</p>
-      <p class="svc-card__desc">Be visible in search and AI platforms where decisions are made.</p><p class="svc-card__more">We align technical SEO, content structure, local visibility, and generative search signals so people and AI tools can understand and recommend you.</p></div><button class="svc-card__arr" aria-label="Learn about SEO and GEO">
+    <li class="svc-card" data-service-target="services.html?v=2026071905#ai-innovation" data-r data-d="3" tabindex="0" role="button" aria-expanded="false">
+      <div class="svc-card__content"><div class="svc-icon svc-icon--amber" aria-hidden="true"><video class="svc-icon__video" muted loop playsinline preload="auto" poster="assets/svc-hover-04-poster.jpg?v=2026071827"><source src="assets/svc-hover-04.webm?v=2026071827" type="video/webm"><source src="assets/svc-hover-04.mp4?v=2026071827" type="video/mp4"></video></div>
+      <p class="svc-card__title">AI &amp; Innovation</p>
+      <p class="svc-card__desc">Helping businesses adopt AI effectively.</p><p class="svc-card__more">We design lightweight automations, AI-assisted workflows, and digital systems that remove repetitive work and make customer experiences feel smarter.</p></div><button class="svc-card__arr" aria-label="Learn about AI and Innovation">
         <svg><use href="#i-arr"/></svg>
       </button></li>
-    <li class="svc-card" data-r data-d="4" tabindex="0" role="button" aria-expanded="false">
-      <div class="svc-card__content"><div class="svc-icon svc-icon--amber" aria-hidden="true"><video class="svc-icon__video" muted loop playsinline preload="auto"><source src="assets/svc-hover-04.webm?v=2026071506" type="video/webm"><source src="assets/svc-hover-04.mp4?v=2026071506" type="video/mp4"></video></div>
-      <p class="svc-card__title">AI &amp; Digital Innovation</p>
-      <p class="svc-card__desc">Intelligent solutions that automate, personalize and drive growth.</p><p class="svc-card__more">We design lightweight automations, AI-assisted workflows, and digital systems that remove repetitive work and make customer experiences feel smarter.</p></div><button class="svc-card__arr" aria-label="Learn about AI Innovation">
+    <li class="svc-card" data-service-target="services.html?v=2026071905#brand-marketing" data-r data-d="4" tabindex="0" role="button" aria-expanded="false">
+      <div class="svc-card__content"><div class="svc-icon svc-icon--blue" aria-hidden="true"><video class="svc-icon__video" muted loop playsinline preload="auto" poster="assets/svc-hover-02-poster.jpg?v=2026071827"><source src="assets/svc-hover-02.webm?v=2026071827" type="video/webm"><source src="assets/svc-hover-02.mp4?v=2026071827" type="video/mp4"></video></div>
+      <p class="svc-card__title">Brand &amp; Marketing</p>
+      <p class="svc-card__desc">Helping businesses communicate clearly.</p><p class="svc-card__more">We refine your message, visual direction, content themes, and creative system so every touchpoint feels intentional and memorable.</p></div><button class="svc-card__arr" aria-label="Learn about Brand and Marketing">
         <svg><use href="#i-arr"/></svg>
       </button></li>
-    <li class="svc-card" data-r data-d="5" tabindex="0" role="button" aria-expanded="false">
-      <div class="svc-card__content"><div class="svc-icon svc-icon--indigo" aria-hidden="true"><video class="svc-icon__video" muted loop playsinline preload="auto"><source src="assets/svc-hover-05.webm?v=2026071506" type="video/webm"><source src="assets/svc-hover-05.mp4?v=2026071506" type="video/mp4"></video></div>
-      <p class="svc-card__title">Business Experience Audit</p>
-      <p class="svc-card__desc">A 1:1 strategy session to uncover opportunities and create a roadmap to elevate.</p><p class="svc-card__more">A focused diagnostic for your brand, website, content, and customer journey, ending with clear priorities and next-step recommendations.</p></div><button class="svc-card__arr" aria-label="Book an Audit">
+    <li class="svc-card" data-service-target="services.html?v=2026071905#workshops-experiences" data-r data-d="5" tabindex="0" role="button" aria-expanded="false">
+      <div class="svc-card__content"><div class="svc-icon svc-icon--indigo" aria-hidden="true"><video class="svc-icon__video" muted loop playsinline preload="auto" poster="assets/svc-hover-05-poster.jpg?v=2026071903"><source src="assets/svc-hover-05.webm?v=2026071903" type="video/webm"><source src="assets/svc-hover-05.mp4?v=2026071903" type="video/mp4"></video></div>
+      <p class="svc-card__title">Workshops &amp; Experiences</p>
+      <p class="svc-card__desc">Your human-centered experiences, brought to life for teams and communities.</p><p class="svc-card__more">Paint events, corporate workshops, team building, community events, and creativity sessions designed around real connection.</p></div><button class="svc-card__arr" aria-label="Learn about Workshops and Experiences">
         <svg><use href="#i-arr"/></svg>
       </button></li>
   </ol>
@@ -267,7 +270,7 @@
 
       <ul class="coaching__meta">
         <li><svg aria-hidden="true"><use href="#i-clock"/></svg><span>60 minutes</span></li>
-        <li><svg aria-hidden="true"><use href="#i-video"/></svg><span>Via Zoom</span></li>
+        <li><svg aria-hidden="true"><use href="#i-video"/></svg><span>Via Google Meet</span></li>
         <li><svg aria-hidden="true"><use href="#i-target"/></svg><span>Strategic clarity</span></li>
         <li><svg aria-hidden="true"><use href="#i-sparkle"/></svg><span>Actionable insights</span></li>
       </ul>
@@ -416,11 +419,13 @@
 </section>
 
 <!-- â•â• CTA BAND â•â• -->
+<div class="coaching-more-band">
+<div class="coaching-card">
 <div class="coaching-more">
   <p class="coaching-more__text">Want to learn more about my approach and what you'll gain?</p>
   <button class="coaching-more__btn" id="js-coaching-more" type="button" aria-expanded="false" aria-controls="coaching-extra">
     <span class="coaching-more__label">Read More</span>
-    <svg class="coaching-more__chev" aria-hidden="true"><use href="#i-chev"/></svg>
+    <span class='coaching-more__chev' aria-hidden='true'><img class='coaching-more__palm' src='assets/palm-01.png' alt=''></span>
   </button>
 </div>
 
@@ -508,7 +513,7 @@
       </li>
       <li class="howwork-step" data-r data-d="3">
         <div class="howwork-step__ico howwork-step__ico--amber" aria-hidden="true"><svg><use href="#i-video"/></svg></div>
-        <p class="howwork-step__name">3. Meet on Zoom</p>
+        <p class="howwork-step__name">3. Meet via Google Meet</p>
         <p class="howwork-step__desc">A focused 60-minute strategy conversation.</p>
       </li>
       <li class="howwork-step" data-r data-d="4">
@@ -521,10 +526,12 @@
 </section>
 </div>
 </div>
+</div>
+</div>
 
 <section class="sec-faq" id="faq" aria-label="Frequently Asked Questions">
   <div class="faq-outer">
-  <video class="faq-mascot" src="assets/robot-faq.webm?v=1" autoplay muted loop playsinline aria-hidden="true"></video>
+  <video class="faq-mascot" src="assets/robot-faq.webm?v=2" autoplay muted loop playsinline aria-hidden="true"></video>
   <div class="faq-layout">
     <p class="faq__label section-eyebrow">Frequently Asked Questions</p>
     <div class="faq-grid">
@@ -568,7 +575,7 @@
           <span>How long is the session?</span>
           <svg class="faq-item__chev" aria-hidden="true"><use href="#i-chev"/></svg>
         </button>
-        <div class="faq-item__a"><p>60 minutes, held over Zoom.</p></div>
+        <div class="faq-item__a"><p>60 minutes, held over Google Meet.</p></div>
       </div>
     </div>
   </div>
@@ -583,16 +590,14 @@
       <p class="schedule-card__desc">Book your Vision Strategy Session and discover where your next opportunity begins.</p>
     </div>
     <div class="schedule-card__action">
-      <a class="schedule-card__btn cta-warm__btn cta-neon" href="#coaching" data-scroll-to="#coaching">
-        <svg class="cta-neon__beam" aria-hidden="true"><rect class="cta-neon__beam-rect"></rect></svg>
-        <span class="cta-neon__badge" aria-hidden="true"><img class="cta-neon__palm" src="assets/palm-01.png" alt=""></span>
-        <span class="cta-neon__label">Schedule Your Session</span>
+      <a class="schedule-card__btn" href="#coaching" data-scroll-to="#coaching">
+        Schedule Your Session <svg aria-hidden="true"><use href="#i-arr"/></svg>
       </a>
       <p class="schedule-card__note">No cost. No obligation. Just clarity.</p>
     </div>
     <ul class="schedule-card__meta">
       <li><svg aria-hidden="true"><use href="#i-clock"/></svg><span>60 minutes</span></li>
-      <li><svg aria-hidden="true"><use href="#i-video"/></svg><span>Via Zoom</span></li>
+      <li><svg aria-hidden="true"><use href="#i-video"/></svg><span>Via Google Meet</span></li>
       <li><svg aria-hidden="true"><use href="#i-target"/></svg><span>Strategic clarity</span></li>
       <li><svg aria-hidden="true"><use href="#i-sparkle"/></svg><span>Actionable insights</span></li>
       <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>No obligation</span></li>
@@ -672,11 +677,50 @@
 {"@context":"https://schema.org","@type":"ProfessionalService","name":"E4LA","alternateName":"Elevation for Los Angeles","description":"Strategy and creative consultancy in Los Angeles.","url":"https://www.e4la.org","email":"info@e4la.org","foundingDate":"2017","address":{"@type":"PostalAddress","addressLocality":"Los Angeles","addressRegion":"CA","addressCountry":"US"}}
 </script>
 
-<script src="script.js?v=2026071518"></script>
+<script src="script.js?v=2026071841"></script>
 <script type="module" src="motion.js"></script>
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

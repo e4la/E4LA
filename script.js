@@ -125,12 +125,15 @@ if(nlForm){
   // traces its own genuinely different Lissajous-style path instead
   // of all 5 looking like copies of one wave offset in time. Cycled
   // by index so it also holds up if more/fewer cards are ever added.
+  /* Amplitudes roughly halved from the original 3.5-4.5deg range —
+     the full-strength drift read as too much motion at rest; the
+     halved range keeps the alive feel but stays subtle. */
   const personalities = [
-    { fx: 1.00, fy: 0.83, phase: 0.0,  amp: 8  },
-    { fx: 0.64, fy: 1.21, phase: 1.7,  amp: 7  },
-    { fx: 1.35, fy: 0.58, phase: 3.4,  amp: 9  },
-    { fx: 0.82, fy: 1.46, phase: 5.0,  amp: 7.5 },
-    { fx: 1.18, fy: 0.71, phase: 2.4,  amp: 8.5 }
+    { fx: 1.00, fy: 0.83, phase: 0.0,  amp: 2    },
+    { fx: 0.64, fy: 1.21, phase: 1.7,  amp: 1.75 },
+    { fx: 1.35, fy: 0.58, phase: 3.4,  amp: 2.25 },
+    { fx: 0.82, fy: 1.46, phase: 5.0,  amp: 1.9  },
+    { fx: 1.18, fy: 0.71, phase: 2.4,  amp: 2.1  }
   ];
 
   const states = new WeakMap();
@@ -139,18 +142,26 @@ if(nlForm){
     card.style.setProperty('--svc-rx', state.currentX.toFixed(3) + 'deg');
     card.style.setProperty('--svc-ry', state.currentY.toFixed(3) + 'deg');
     card.style.setProperty('--svc-scale', state.currentScale.toFixed(4));
+    card.style.setProperty('--svc-lift', state.currentLift.toFixed(2) + 'px');
   }
 
   function animate(card) {
     const state = states.get(card);
     if (!state) return;
 
-    if (state.hovering || reduceMotion.matches || !canTilt.matches) {
-      // Hovered (or motion disabled/no fine pointer): ease to
-      // perfectly flat and hold still.
+    if (reduceMotion.matches || !canTilt.matches) {
+      // Motion disabled/no fine pointer: stay perfectly flat, no pop.
       state.targetX = 0;
       state.targetY = 0;
       state.targetScale = 1;
+      state.targetLift = 0;
+    } else if (state.hovering) {
+      // Hovered: ease to flat (no tilt) but pop the card outward —
+      // a bit larger and lifted up, instead of just freezing flat.
+      state.targetX = 0;
+      state.targetY = 0;
+      state.targetScale = 1.021;
+      state.targetLift = -6;
     } else {
       // Idle: slow autonomous drift, each card on its own frequency
       // ratio + phase so no two ever move the same way at once.
@@ -159,11 +170,13 @@ if(nlForm){
       state.targetX = Math.sin(state.t * p.fx + p.phase) * p.amp;
       state.targetY = Math.cos(state.t * p.fy + p.phase) * p.amp;
       state.targetScale = 1;
+      state.targetLift = 0;
     }
 
     state.currentX += (state.targetX - state.currentX) * ease;
     state.currentY += (state.targetY - state.currentY) * ease;
     state.currentScale += (state.targetScale - state.currentScale) * ease;
+    state.currentLift += (state.targetLift - state.currentLift) * ease;
 
     writeVars(card, state);
     state.raf = requestAnimationFrame(() => animate(card));
@@ -185,9 +198,11 @@ if(nlForm){
       currentX: 0,
       currentY: 0,
       currentScale: 1,
+      currentLift: 0,
       targetX: 0,
       targetY: 0,
-      targetScale: 1
+      targetScale: 1,
+      targetLift: 0
     };
 
     states.set(card, state);
@@ -582,7 +597,28 @@ if(nlForm){
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   // Rest-frame offset (seconds) for each card, in DOM order —
   // explicit values requested by the user.
-  var REST_OFFSETS = [3, 0.6, 4.5, 3.4, 3.4];
+  var REST_OFFSETS = [4.9, 4.3, 2.8, 2.4, 4];
+  // No real hover on touch devices, so the mouseenter/mouseleave pair
+  // below never fires there — the clip just sat on its rest frame
+  // forever, which read as "no video at all" on mobile. On these
+  // devices, play the clip once its card scrolls prominently into
+  // view instead, and drop it back to rest once it scrolls back out.
+  var isTouch = window.matchMedia && window.matchMedia('(hover: none), (pointer: coarse)').matches;
+  var cardIO = (isTouch && !reduceMotion && window.IntersectionObserver)
+    ? new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          var v = entry.target._svcVideo;
+          var rest = entry.target._svcGoToRest;
+          if (!v || !rest) return;
+          if (entry.isIntersecting) {
+            var playPromise = v.play();
+            if (playPromise && playPromise.catch) playPromise.catch(function () {});
+          } else {
+            rest();
+          }
+        });
+      }, { threshold: 0.6 })
+    : null;
 
   document.querySelectorAll('.svc-card').forEach(function (card, i) {
     var video = card.querySelector('.svc-icon__video');
@@ -604,15 +640,21 @@ if(nlForm){
 
     if (reduceMotion) return;
 
-    function play() {
-      var playPromise = video.play();
-      if (playPromise && playPromise.catch) playPromise.catch(function () {});
-    }
+    if (isTouch) {
+      card._svcVideo = video;
+      card._svcGoToRest = goToRest;
+      if (cardIO) cardIO.observe(card);
+    } else {
+      function play() {
+        var playPromise = video.play();
+        if (playPromise && playPromise.catch) playPromise.catch(function () {});
+      }
 
-    card.addEventListener('mouseenter', play);
-    card.addEventListener('focus', play, true);
-    card.addEventListener('mouseleave', goToRest);
-    card.addEventListener('blur', goToRest, true);
+      card.addEventListener('mouseenter', play);
+      card.addEventListener('focus', play, true);
+      card.addEventListener('mouseleave', goToRest);
+      card.addEventListener('blur', goToRest, true);
+    }
 
     document.addEventListener('visibilitychange', function () {
       if (document.hidden) video.pause();
@@ -685,6 +727,7 @@ if(nlForm){
 
   var stage = pin.querySelector('.svcd-pin__stage');
   var pageBody = document.body;
+  var afterServicesCta = document.querySelector('.svcd-after-services');
   var heroCopy = document.querySelector('.svcd-hero__copy');
   var panels = Array.prototype.slice.call(pin.querySelectorAll('.svcd-pin__panel'));
   var dots = Array.prototype.slice.call(pin.querySelectorAll('.svcd-pin__dot'));
@@ -779,7 +822,16 @@ if(nlForm){
     // a plain stylesheet rule of the same importance). Never touch the DOM
     // here at all once we're not on desktop.
     if (!isDesktop.matches) return;
+    // During a hash/deep-link entry hold (see openServiceFromHash), the
+    // target panel is displayed by a pure-CSS rule and must not be
+    // repainted from panelState — a queued frame carrying stale "hidden"
+    // values would stamp inline !important opacity over it and blank the
+    // very content the visitor came to read. The hold lifts on the first
+    // real step change (goToStep) and painting resumes seamlessly from
+    // state that was synced to the visible values at entry.
+    var hashHold = pin.classList.contains('is-hash-entry');
     panels.forEach(function (p, i) {
+      if (hashHold && p.classList.contains('is-hash-active')) return;
       var s = panelState[i];
       set(p, 'transform', 'translateY(' + s.curTy.toFixed(3) + '%)');
       set(p, 'opacity', String(Math.max(0, s.curOp)));
@@ -825,8 +877,23 @@ if(nlForm){
     else smoothRunning = false;
   }
 
+  /* Self-healing restart, not a guard. The old "only start if not
+     already running" version had a fatal failure mode, confirmed from a
+     screen recording of a deep-link visit: if the smoothTick rAF chain
+     ever dies while smoothRunning is still true (an exception mid-tick,
+     a cancel that raced a queued frame, browser rAF starvation during
+     heavy page load being resumed inconsistently...), every later
+     ensureSmoothing() call became a silent no-op — steps kept advancing
+     (dots, robot, blob colors are all painted directly, not via this
+     loop) but panel text froze at whatever opacity the last painted
+     frame left it (~0.1 = invisible). Unconditionally cancelling and
+     re-queueing makes every step change revive the painter no matter
+     how it previously died; cost is one cancel+queue per step, nothing
+     per-frame. */
   function ensureSmoothing() {
-    if (!smoothRunning) { smoothRunning = true; smoothRafId = requestAnimationFrame(smoothTick); }
+    if (smoothRafId) cancelAnimationFrame(smoothRafId);
+    smoothRunning = true;
+    smoothRafId = requestAnimationFrame(smoothTick);
   }
 
   // Bug fix: without this, a still-running smoothTick loop would keep
@@ -1093,6 +1160,64 @@ if(nlForm){
     manageTagCycle(step);
   }
 
+  function serviceStepFromHash() {
+    var hash = (window.location.hash || '').replace('#', '');
+    if (!hash) return null;
+    for (var i = 0; i < panels.length; i += 1) {
+      if (panels[i].id === hash) return i + STEP_PANEL_BASE;
+    }
+    return null;
+  }
+
+  /* Deep links from home enter the normal pinned interaction (a static
+     bypass was tried and reverted at the owner's request); the target
+     service's text is guaranteed by the CSS-owned hash-entry hold below. */
+  function openServiceFromHash() {
+    var step = serviceStepFromHash();
+    if (step === null) return;
+    // Mobile has its own locked-step controller further down this file
+    // (see "MOBILE LOCKED-STEP SERVICES CONTROLLER"), which reads the
+    // hash itself.
+    if (!isDesktop.matches) return;
+    window.scrollTo({ top: pin.getBoundingClientRect().top + window.scrollY, behavior: 'auto' });
+    engage(step, true);
+    snapAll();
+    // HASH-ENTRY HOLD: the target panel's visibility is handed to a pure
+    // CSS rule (.is-hash-entry/.is-hash-active in style.css) instead of
+    // the JS paint pipeline. Every previous JS-side guarantee (snap,
+    // self-healing rAF, direct inline writes) still intermittently lost
+    // to *something* stamping the panel back to hidden on real machines —
+    // so at entry the panel's inline styles are stripped entirely (an
+    // inline !important always beats the stylesheet, even a stale one)
+    // and paintFrame explicitly skips this panel while the hold is on.
+    // Stylesheet-only display cannot be killed by any JS failure mode.
+    // The hold lifts on the user's first step (goToStep) / disengage.
+    var active = panels[step - STEP_PANEL_BASE];
+    pin.classList.add('is-hash-entry');
+    panels.forEach(function (p) { p.classList.toggle('is-hash-active', p === active); });
+    if (active) {
+      set(active, 'transform', '');
+      set(active, 'opacity', '');
+      set(active, 'filter', '');
+    }
+    var tags = tagsEls[step - STEP_PANEL_BASE];
+    if (tags) {
+      set(tags, 'transform', '');
+      set(tags, 'opacity', '');
+    }
+    // Sync the tween bookkeeping to the visible values so the moment the
+    // hold lifts, painting resumes from exactly what's on screen — no jump.
+    var s = panelState[step - STEP_PANEL_BASE];
+    if (s) { s.curTy = s.ty = 0; s.curOp = s.op = 1; s.curBlur = s.blur = 0; }
+    var ts = tagsState[step - STEP_PANEL_BASE];
+    if (ts) { ts.curTx = ts.tx = 0; ts.curOp = ts.op = 1; }
+  }
+
+  function liftHashEntryHold() {
+    if (!pin.classList.contains('is-hash-entry')) return;
+    pin.classList.remove('is-hash-entry');
+    panels.forEach(function (p) { p.classList.remove('is-hash-active'); });
+  }
   function scheduleUnlock() {
     clearTimeout(unlockTimer);
     var elapsed = performance.now() - lastStepAt;
@@ -1103,11 +1228,27 @@ if(nlForm){
     }, delay);
   }
 
+  var settleGuard = 0;
   function goToStep(next) {
     next = Math.max(0, Math.min(LAST_STEP, next));
     if (next === currentStep) return;
+    // First real step change after a deep-link entry: hand display back
+    // to the normal paint pipeline (its state was synced at entry, so
+    // there is no visual jump).
+    liftHashEntryHold();
     currentStep = next;
     applyStep(currentStep);
+    // Watchdog for the same painter-death failure mode ensureSmoothing's
+    // self-healing restart addresses: if ~a second after a step change
+    // the eased values still haven't been painted through (tween died
+    // mid-flight), force-complete this step's visuals in one snap. When
+    // the tween is healthy the values have already converged by now, so
+    // the snap is a visually-identical no-op.
+    clearTimeout(settleGuard);
+    settleGuard = setTimeout(function () {
+      if (!engaged) return;
+      snapAll();
+    }, 950);
   }
 
   function onWheel(e) {
@@ -1139,6 +1280,11 @@ if(nlForm){
     var dir = wheelAccum > 0 ? 1 : -1;
     wheelAccum = 0;
 
+
+    if (dir > 0 && currentStep === LAST_STEP - 1) {
+      exitToAfterServices();
+      return;
+    }
     if (dir > 0 && currentStep >= LAST_STEP) {
       disengage(true);
       return;
@@ -1153,11 +1299,22 @@ if(nlForm){
     scheduleUnlock();
   }
 
+  function exitToAfterServices() {
+    clearTimeout(unlockTimer);
+    locked = true;
+    wheelAccum = 0;
+    lastStepAt = performance.now();
+    goToStep(LAST_STEP);
+    window.setTimeout(function () {
+      if (engaged && currentStep === LAST_STEP) disengage(true);
+    }, 120);
+  }
   function softExitToHero() {
     if (exitingToHero) return;
     exitingToHero = true;
     locked = true;
     wheelAccum = 0;
+    clearTimeout(settleGuard);
     applyStep(-1);
     if (robotVideo) {
       var rect = pin.getBoundingClientRect();
@@ -1193,6 +1350,8 @@ if(nlForm){
     engaged = false;
     wheelAccum = 0;
     locked = false;
+    liftHashEntryHold();
+    clearTimeout(settleGuard);
     clearInterval(tagCycleTimer);
     tagCycleTimer = 0;
     if (forward) stopSmoothing(); // forward exit can reset fully; backward exit must keep easing the blob away
@@ -1211,7 +1370,11 @@ if(nlForm){
     forceHideServiceRobot();
     layoutStatic(!forward);
     currentStep = -1;
-    window.scrollTo({ top: forward ? docTop + vh * 0.65 : (toHeroTop ? 0 : docTop - vh * 0.55), behavior: 'instant' });
+    var targetTop = forward ? docTop + vh * 1.02 : (toHeroTop ? 0 : docTop - vh * 0.55);
+    if (forward && afterServicesCta) {
+      targetTop = afterServicesCta.getBoundingClientRect().top + window.scrollY - 24;
+    }
+    window.scrollTo({ top: targetTop, behavior: 'auto' });
     if (!forward) {
       if (toHeroTop) {
         setHeroCopyProgress(0);
@@ -1310,7 +1473,29 @@ if(nlForm){
     // Wheel owns the actual pin/step handoff. updateApproach only previews the approach state.
   }
 
+  // ROOT CAUSE of "deep link shows the sphere but no text", confirmed via
+  // on-page diagnostics (panel opacity 1, text fully painted, yet panel
+  // rect exactly one full height ABOVE the stage): the browser's own
+  // scroll-to-#fragment logic targets the panel INSIDE .svcd-pin__list /
+  // .svcd-pin__stage — both overflow:hidden — and scrolls their internal
+  // scrollTop instead of only the window, silently shoving the whole
+  // stacked-panel canvas out of view. These containers are never meant to
+  // scroll internally, on any breakpoint: pin them to 0 permanently, and
+  // clear anything the browser already scrolled before this ran.
+  var innerScrollables = [pin, stage, pin.querySelector('.svcd-pin__list')];
+  innerScrollables.forEach(function (el) {
+    if (!el) return;
+    el.scrollTop = 0;
+    el.scrollLeft = 0;
+    el.addEventListener('scroll', function () {
+      if (el.scrollTop !== 0) el.scrollTop = 0;
+      if (el.scrollLeft !== 0) el.scrollLeft = 0;
+    }, { passive: true });
+  });
+
   window.addEventListener('wheel', onWheel, { passive: false });
+  window.addEventListener('hashchange', openServiceFromHash);
+  window.setTimeout(openServiceFromHash, 80);
   window.addEventListener('scroll', function () {
     if (engaged) {
       // Belt-and-suspenders against real-world trackpad/mouse momentum
@@ -1336,6 +1521,206 @@ if(nlForm){
   updateApproach();
 })();
 
+/* MOBILE LOCKED-STEP SERVICES CONTROLLER — services.html only,
+   touch/narrow screens. Mirrors the desktop wheel-jacked step system
+   above (hero -> sphere rises -> each service holds, one per scroll
+   gesture, locked -> sphere exits -> after-services CTA), but driven by
+   real scroll-position deltas instead of wheel events, since touch
+   scrolling has no equivalent "wheel" event to hijack. Entirely separate
+   code path from the desktop controller above: gated on its own
+   isMobile match, never runs above the mobile breakpoint, never touches
+   desktop DOM, state, or CSS classes.
+
+   How the "lock" works: rather than fighting touchmove/preventDefault
+   (unreliable across mobile browsers, and risks breaking native
+   gestures), this watches real scrollY while "engaged" and immediately
+   snaps it straight back to the anchor position on every scroll event —
+   the same belt-and-suspenders snap-back the desktop controller already
+   uses for momentum-scroll safety, just used here as the PRIMARY
+   mechanism. The accumulated delta before that snap-back is what decides
+   whether a step has been "earned" (crossed WHEEL_THRESHOLD-equivalent),
+   exactly mirroring the desktop wheelAccum/LOCK_MS pattern. */
+(function () {
+  var isMobile = window.matchMedia('(max-width:639px), (pointer:coarse)');
+  var pin = document.querySelector('.svcd-pin');
+  if (!pin) return;
+  var panels = Array.prototype.slice.call(pin.querySelectorAll('.svcd-pin__panel'));
+  var mobileBlob = document.getElementById('js-pin-mobile-blob');
+  var heroRobot = document.querySelector('.svcd-hero__robot');
+  var afterServicesCta = document.querySelector('.svcd-after-services');
+  if (!panels.length || !mobileBlob) return;
+
+  var currentStep = 0; // 0 = hero, not yet engaged; 1..N = services
+  var engaged = false;
+  var completedForward = false;
+  var locked = false;
+  var accum = 0;
+  var anchorY = 0;
+  var lastStepAt = 0;
+  var unlockTimer = 0;
+  var THRESHOLD = 60;
+  var LOCK_MS = 700;
+  var lastDisengageAt = 0;
+  var REENGAGE_COOLDOWN_MS = 500; // otherwise the programmatic scrollTo a
+  // backward disengage() ends with can itself land close enough to the
+  // engage threshold to immediately re-trigger engage() on the very next
+  // scroll event, creating a stuck flicker right at the hero/pin boundary.
+
+  function syncBlobToPanel(i) {
+    var p = panels[i];
+    var cs = window.getComputedStyle(p);
+    ['--row-c', '--row-g1', '--row-g2', '--row-g3', '--row-g4', '--row-g5', '--blob-spin'].forEach(function (name) {
+      var val = cs.getPropertyValue(name);
+      if (val) mobileBlob.style.setProperty(name, val.trim());
+    });
+  }
+
+  function showStep(step) {
+    panels.forEach(function (p, i) {
+      p.classList.toggle('is-mobile-active', step >= 1 && i === step - 1);
+    });
+    if (step >= 1 && step <= panels.length) {
+      syncBlobToPanel(step - 1);
+      mobileBlob.classList.add('is-risen');
+      mobileBlob.classList.remove('is-exiting');
+    } else {
+      mobileBlob.classList.remove('is-risen', 'is-exiting');
+    }
+  }
+
+  function scheduleUnlock() {
+    clearTimeout(unlockTimer);
+    var elapsed = performance.now() - lastStepAt;
+    var delay = Math.max(220, LOCK_MS - elapsed);
+    unlockTimer = setTimeout(function () { locked = false; accum = 0; }, delay);
+  }
+
+  function goToStep(next) {
+    next = Math.max(1, Math.min(panels.length, next));
+    if (next === currentStep) return;
+    currentStep = next;
+    showStep(currentStep);
+    locked = true;
+    accum = 0;
+    lastStepAt = performance.now();
+    scheduleUnlock();
+  }
+
+  function engage(startStep) {
+    engaged = true;
+    completedForward = false;
+    anchorY = window.scrollY;
+    currentStep = 0;
+    pin.classList.add('is-mobile-engaged');
+    if (heroRobot) heroRobot.classList.add('is-mobile-hidden');
+    // The after-services CTA card AND the footer are both gated behind
+    // this same body class site-wide (style.css: ".svcd-page:not(.is-
+    // past-services) .svcd-after-services/.footer" = opacity:0,
+    // visibility:hidden) — previously only the desktop wheel-jack
+    // controller ever toggled it, so on mobile they stayed permanently
+    // invisible no matter how far you scrolled, regardless of this
+    // sequence's own step/scroll logic. Mirroring the exact same toggle
+    // here is what actually reveals them once the last service passes.
+    document.body.classList.remove('is-past-services');
+    goToStep(startStep || 1);
+  }
+
+  function disengage(forward) {
+    engaged = false;
+    completedForward = !!forward;
+    lastDisengageAt = performance.now();
+    clearTimeout(unlockTimer);
+    locked = false;
+    accum = 0;
+    pin.classList.remove('is-mobile-engaged');
+    panels.forEach(function (p) { p.classList.remove('is-mobile-active'); });
+    document.body.classList.toggle('is-past-services', !!forward);
+    if (forward) {
+      mobileBlob.classList.remove('is-risen');
+      mobileBlob.classList.add('is-exiting');
+    } else {
+      mobileBlob.classList.remove('is-risen', 'is-exiting');
+    }
+    currentStep = 0;
+    if (heroRobot && !forward) heroRobot.classList.remove('is-mobile-hidden');
+    var docTop = pin.getBoundingClientRect().top + window.scrollY;
+    var vh = window.innerHeight || document.documentElement.clientHeight || 800;
+    var targetTop;
+    if (forward && afterServicesCta) {
+      targetTop = afterServicesCta.getBoundingClientRect().top + window.scrollY - 16;
+    } else if (forward) {
+      targetTop = docTop + vh * 1.02;
+    } else {
+      targetTop = Math.max(0, docTop - vh * 0.4);
+    }
+    window.scrollTo({ top: targetTop, behavior: 'auto' });
+  }
+
+  function onScroll() {
+    if (!isMobile.matches) return;
+
+    if (!engaged) {
+      if (performance.now() - lastDisengageAt < REENGAGE_COOLDOWN_MS) return;
+      var rect = pin.getBoundingClientRect();
+      var vh = window.innerHeight || document.documentElement.clientHeight || 800;
+      if (completedForward) {
+        // Re-entry from below: scrolling back UP into a section that's
+        // already been fully completed forward. Mirrors the desktop
+        // controller's own re-entry handling — land back on the last
+        // service rather than an empty pinned section.
+        if (rect.bottom > vh * 0.6 && rect.bottom < vh * 1.4) engage(panels.length);
+        return;
+      }
+      if (rect.top < vh * 0.55 && rect.bottom > 0) engage(1);
+      return;
+    }
+
+    var delta = window.scrollY - anchorY;
+    // Snap straight back — this is what "locks" real page scroll while
+    // the sequence is engaged, same technique as the desktop controller's
+    // own momentum-scroll safety net.
+    if (window.scrollY !== anchorY) window.scrollTo(0, anchorY);
+    if (locked) return;
+
+    accum += delta;
+    if (Math.abs(accum) < THRESHOLD) return;
+    var dir = accum > 0 ? 1 : -1;
+    accum = 0;
+
+    if (dir > 0) {
+      if (currentStep >= panels.length) { disengage(true); return; }
+      goToStep(currentStep + 1);
+    } else {
+      if (currentStep <= 1) { disengage(false); return; }
+      goToStep(currentStep - 1);
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', function () {
+    if (!isMobile.matches && engaged) disengage(false);
+  });
+
+  // Deep-links from the home page cards (services.html#ai-innovation etc.)
+  // — mirrors the desktop controller's own hash handling, but engages
+  // straight into THIS controller's locked-step state instead of a plain
+  // scrollIntoView (which doesn't work now that panels are absolutely
+  // positioned/crossfaded rather than stacked in normal flow).
+  function openFromHash() {
+    if (!isMobile.matches) return;
+    var hash = (window.location.hash || '').replace('#', '');
+    if (!hash) return;
+    for (var i = 0; i < panels.length; i += 1) {
+      if (panels[i].id === hash) {
+        window.scrollTo({ top: pin.getBoundingClientRect().top + window.scrollY, behavior: 'auto' });
+        engage(i + 1);
+        return;
+      }
+    }
+  }
+  window.addEventListener('hashchange', openFromHash);
+  window.setTimeout(openFromHash, 80);
+})();
 
 
 
@@ -1590,4 +1975,30 @@ if(nlForm){
 /* After-services CTA is controlled by the services step controller above. */
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* HOME SERVICE CARD DEEP LINKS */
+document.querySelectorAll('.sec-services .svc-card[data-service-target]').forEach(function (card) {
+  card.addEventListener('click', function (event) {
+    if (event.target.closest('button, a')) event.preventDefault();
+    window.location.href = card.getAttribute('data-service-target');
+  });
+  card.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      window.location.href = card.getAttribute('data-service-target');
+    }
+  });
+});
 

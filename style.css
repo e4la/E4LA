@@ -2,6 +2,16 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:'Manrope',system-ui,sans-serif;background:#07060D;color:#fff;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+/* FINAL — theme the browser's own scrollbar track/thumb to match the
+   dark background. Without this, the native scrollbar leaves a bright
+   white strip along the viewport's right edge that visibly breaks the
+   full-bleed dark hero, no matter what color the page content itself is. */
+html{scrollbar-color:rgba(168,113,255,.45) #07060D;scrollbar-width:thin}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:#07060D}
+::-webkit-scrollbar-thumb{background:rgba(168,113,255,.45);border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:rgba(168,113,255,.65)}
 img,svg{display:block;max-width:100%}
 a{text-decoration:none;color:inherit}
 button{font-family:inherit;border:none;cursor:pointer;background:none}
@@ -828,7 +838,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
 .hero-reference-art{width:112%;height:calc(100% + 42px);position:relative;overflow:visible;background:none;filter:saturate(1.04) contrast(1.03)}
 .hero__right>.ring-wrap{display:none}
 
-.sec-services{height:265px;padding:40px var(--pad-x) 26px;background:linear-gradient(105deg,#eee7ff 0%,#fffaf4 57%,#ffd7d4 100%);display:grid;grid-template-columns:1.5fr repeat(5,1fr);gap:0}
+.sec-services{height:265px;padding:40px var(--pad-x) 26px;background:#fff;display:grid;grid-template-columns:1.5fr repeat(5,1fr);gap:0}
 .services-top{display:contents}
 .services-top>div{padding-right:32px;align-self:start}
 .services-top>p{display:none}
@@ -849,7 +859,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
 .svc-card__desc{font-size:9px;line-height:1.62;color:#222;flex:1}
 .svc-card__arr{width:24px;height:24px;margin-top:2px;border-color:rgba(0,0,0,.27);color:#111}
 
-.sec-approach{height:255px;padding:31px var(--pad-x) 26px;background:radial-gradient(circle at 17% 35%,#051d2c 0,#01111e 38%,#020814 100%)}
+.sec-approach{height:255px;padding:31px var(--pad-x) 26px;background:#07060D}
 .approach-layout{grid-template-columns:200px 1fr;gap:22px;height:100%}
 .approach__label,.why__label{font-size:8px;letter-spacing:1px;color:#bd72f3;margin-bottom:13px}
 .approach__h2{font-family:'Manrope',Arial,sans-serif;font-size:20px;line-height:1.3;font-weight:400;margin-bottom:11px}
@@ -909,7 +919,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
 .cta-warm::before{display:none}.cta-warm__text{font-size:10px;line-height:1.55;color:#fff;max-width:210px}
 .cta-warm__btn{width:184px;justify-content:space-between;background:transparent;border:1px solid rgba(255,255,255,.55);color:#fff;border-radius:5px;font-size:9px;letter-spacing:0;padding:12px 16px}
 
-.footer{height:173px;padding:25px var(--pad-x) 16px;background:radial-gradient(circle at 25% 30%,#041a28,#020a14 60%,#02060d)}
+.footer{height:173px;padding:25px var(--pad-x) 16px;background:#07060D}
 .footer__top{grid-template-columns:160px 1fr;gap:20px;margin-bottom:14px}
 .footer__brand-logo{width:124px;height:58px;overflow:hidden;border-radius:6px}.footer__brand-logo .brand-asset{width:100%;height:100%;transform:scale(1.18)}
 .footer__tagline{font-size:7px;line-height:1.55;margin:7px 0 8px;max-width:150px}
@@ -1236,7 +1246,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
   height:auto !important;
   min-height:300px !important;
   padding:40px var(--pad-x) 32px !important;
-  background:linear-gradient(105deg,#eee7ff 0%,#fffaf4 57%,#ffd7d4 100%) !important;
+  background:#fff !important;
   display:grid !important;
   grid-template-columns:1.5fr repeat(5,1fr) !important;
   gap:0 !important;
@@ -2189,7 +2199,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
   height:auto !important;
   min-height:390px !important;
   padding:48px var(--pad-x) 52px !important;
-  background:linear-gradient(105deg,#fffdf9,#fff 58%,#fff8f1) !important;
+  background:#fff !important;
 }
 .coaching-layout{
   grid-template-columns:minmax(0,2fr) minmax(330px,390px) !important;
@@ -2364,8 +2374,15 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
   backdrop-filter:blur(18px) !important;
   -webkit-backdrop-filter:blur(18px) !important;
 }
+/* main#main no longer needs its own top padding for nav clearance —
+   the newer shared .e4la-site-nav system (bottom of this file) already
+   reserves that space via `html body { padding-top }`. Keeping BOTH
+   was double-counting nav height (body pushed everything down once,
+   then main pushed its own content down again on top of that),
+   which showed up as a large dead gap above the hero and pushed the
+   hero's CTAs below the fold. */
 main#main{
-  padding-top:76px !important;
+  padding-top:0 !important;
 }
 #services,
 #approach,
@@ -2379,7 +2396,7 @@ main#main{
   cursor:pointer !important;
 }
 @media(max-width:780px){
-  main#main{padding-top:62px !important;}
+  main#main{padding-top:0 !important;}
   #services,#approach,#why,#coaching,#contact,.coaching-more{scroll-margin-top:74px !important;}
 }
 
@@ -3753,6 +3770,14 @@ html,body,button,input,textarea,select,a,p,h1,h2,h3,h4,h5,h6,span,li,div{
   .sec-services .svc-card__content{min-height:0 !important;}
   .sec-services .svc-card .svc-card__arr{margin-top:26px !important;}
 }
+@media(max-width:640px){
+  /* On phones the description sits directly above the arrow with
+     nothing to push them apart (auto-height cards, so the desc's
+     flex:1 grow has no extra space to consume) — 26px reads as too
+     tight against the site's usual mobile rhythm. Widen just this
+     gap on real phones; tablets keep the 26px above. */
+  .sec-services .svc-card .svc-card__arr{margin-top:40px !important;}
+}
 
 /* FINAL MATCHED SECTION LABELS */
 .sec-services .label-tag,
@@ -3951,6 +3976,23 @@ html,body,button,input,textarea,select,a,p,h1,h2,h3,h4,h5,h6,span,li,div{
   left:24px !important;
   right:24px !important;
 }
+
+/* FINAL — soften the timeline connector line. The base rule for
+   .timeline__track winning at cascade-time was a flat, fully-opaque
+   6-stop rainbow gradient (from an older "reference fidelity" pass)
+   at only 1px tall, which reads as a hard, sharp painted wire rather
+   than a soft gradient glow. Using the higher-specificity
+   .sec-approach .timeline__track selector to win outright: keep the
+   same 6 hues (they match each circle above), but add height + blur
+   + a touch of transparency so it reads as a soft luminous gradient
+   bar instead of a crisp line. */
+.sec-approach .timeline__track{
+  height:3px !important;
+  border-radius:999px !important;
+  opacity:.62 !important;
+  filter:blur(1.4px) !important;
+  box-shadow:0 0 16px rgba(124,58,237,.3) !important;
+}
 @media(max-width:1180px){
   .sec-services{
     padding-left:24px !important;
@@ -4117,7 +4159,7 @@ li{
   padding-right:var(--page-pad) !important;
 }
 .hero{
-  min-height:clamp(620px,calc(100vh - 76px),780px) !important;
+  min-height:clamp(540px,calc(100vh - 80px),720px) !important;
   height:auto !important;
   max-height:none !important;
   padding-left:var(--page-pad) !important;
@@ -4198,6 +4240,19 @@ li{
   gap:clamp(36px,5vw,76px) !important;
   align-items:center !important;
 }
+/* FINAL -- shrink the plain black gap above Approach's content: the
+   section previously used the same generous --section-y (up to 92px)
+   for both top and bottom padding, plus vertically centered its
+   layout -- between hero's own bottom padding and this section's own
+   top padding, that read as a large dead black band before any
+   content/color appeared. Pull padding-top down and align content to
+   the top of the section instead of centering it. */
+.sec-approach{
+  padding-top:clamp(24px,2.8vw,40px) !important;
+}
+.sec-approach .approach-layout{
+  align-items:start !important;
+}
 .sec-approach .timeline{
   max-width:none !important;
   width:100% !important;
@@ -4210,6 +4265,16 @@ li{
 }
 .sec-approach .tstep__sub{
   max-width:150px !important;
+}
+
+/* FINAL — no full card wrap after all; instead a thin top/bottom
+   rule using the exact same stroke color as the site's card borders
+   (.coaching-card / .sec-faq .faq-layout: rgba(157,129,255,.28)) so
+   Approach reads as its own distinct section without a full card
+   background/wash. */
+.sec-approach{
+  border-top:1px solid rgba(157,129,255,.28) !important;
+  border-bottom:1px solid rgba(157,129,255,.28) !important;
 }
 .sec-stats{
   height:auto !important;
@@ -6410,7 +6475,9 @@ a {
 .coaching__desc,
 .cta-warm__text,
 .footer__tagline,
-.footer__nl-note {
+.footer__nl-note,
+.faq-item__a > p,
+.schedule-card__desc {
   font-family: var(--e4la-font) !important;
   font-size: clamp(14.5px, 1vw, 16px) !important;
   line-height: 1.56 !important;
@@ -6422,7 +6489,8 @@ a {
 .why-item__title,
 .aud-card__name,
 .tstep__name,
-.footer__col-head {
+.footer__col-head,
+.howwork-step__name {
   font-family: var(--e4la-font) !important;
   font-size: clamp(16px, 1.1vw, 20px) !important;
   line-height: 1.24 !important;
@@ -6430,13 +6498,24 @@ a {
   letter-spacing: 0 !important;
 }
 
+/* .faq-item__q was briefly grouped with the bold card-title role
+   above (20px/800) — direct feedback was that this read as too
+   heavy/bold for a clickable question row, so it now shares the
+   small-text scale instead, with its own semibold (not bold) weight
+   set right below, same treatment as .gain-item__text /
+   .schedule-card__meta li. */
 .card-description,
 .svc-card__desc,
 .svc-card__more,
 .why-item__body,
 .aud-card__desc,
 .tstep__sub,
-.footer__links a {
+.footer__links a,
+.gain-item__text,
+.howwork-step__desc,
+.schedule-card__note,
+.schedule-card__meta li,
+.faq-item__q {
   font-family: var(--e4la-font) !important;
   font-size: clamp(14px, 0.95vw, 15.5px) !important;
   line-height: 1.52 !important;
@@ -6707,28 +6786,68 @@ a {
 }
 
 /* FINAL SERVICES CARD GRID + 3D HOVER */
+/* FINAL v5 — DARK GLASS REDESIGN, matching the about.html reference
+   (dark base + soft blurred brand-color glow blobs, translucent
+   "glass" cards on top). Reuses the site's own dark/brand palette
+   (#07060D + purple/magenta/gold) instead of about.css's separate
+   #020817 palette, so this section stays visually consistent with
+   the rest of the homepage's dark sections (hero/approach/FAQ/footer). */
 .sec-services {
+  position: relative !important;
   width: min(calc(100% - 48px), 1520px) !important;
   max-width: 1520px !important;
   height: auto !important;
   min-height: 0 !important;
-  margin: clamp(56px, 7vw, 96px) auto !important;
-  padding: clamp(56px, 6vw, 86px) clamp(24px, 4vw, 44px) clamp(44px, 5vw, 64px) !important;
+  margin: 0 auto clamp(56px, 7vw, 96px) !important;
+  padding: clamp(80px, 8.5vw, 130px) clamp(24px, 4vw, 44px) clamp(72px, 8vw, 110px) !important;
   display: block !important;
   overflow: visible !important;
-  border-radius: clamp(24px, 3vw, 36px) !important;
-  background: linear-gradient(112deg, #ebe9ff 0%, #fff7f8 52%, #ffe1d8 100%) !important;
-  box-shadow: 0 28px 80px rgba(83, 56, 132, 0.14) !important;
-  color: #11121b !important;
+  border-radius: 0 0 clamp(24px, 3vw, 36px) clamp(24px, 3vw, 36px) !important;
+  background: linear-gradient(180deg, #07060D 0%, #0c0a17 50%, #07060D 100%) !important;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, .4) !important;
+  color: #fff !important;
   font-family: 'Manrope', Arial, sans-serif !important;
   isolation: isolate !important;
 }
+/* FINAL — the left-to-right color wash used to sit at full strength
+   starting at y:0, i.e. right where the hero's flat black ends, so it
+   read as a visible seam no matter how the vertical fade above was
+   tuned. Move it to a masked ::before that only fades in after the
+   top ~18% of the section, behind a z-index:-1 stacking context, so
+   the very top edge stays pure hero-black and the color only appears
+   once safely past the hero/services boundary. */
+.sec-services::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: -1 !important;
+  border-radius: inherit !important;
+  background: linear-gradient(90deg, rgba(79, 125, 255, .18) 0%, rgba(124, 58, 237, .18) 50%, rgba(219, 39, 119, .15) 100%) !important;
+  /* Top edge (hero -> services): soft fade back in, restoring the
+     smooth blend that existed before the approach-boundary hard-cut
+     fix collapsed this mask to a near-instant 6px reveal — that
+     6px value made the color wash snap on abruptly right under the
+     hero, which is the harsh line being complained about here.
+     Bottom edge stays untouched: solid all the way to 100%, no
+     fade-out, per the earlier explicit "hard boundary at approach"
+     requirement — only the top got softened. */
+  -webkit-mask-image: linear-gradient(180deg, transparent 0px, #000 90px, #000 100%) !important;
+  mask-image: linear-gradient(180deg, transparent 0px, #000 90px, #000 100%) !important;
+  pointer-events: none !important;
+}
+
+/* FINAL — the boundary itself (the border-top line on .sec-approach)
+   is meant to BE the hard edge: colored wash above it, flat dark
+   hero-color below it, no fade on either side. The wash above now
+   runs at full strength all the way down to the line; .sec-approach
+   already uses a flat #07060D with no gradient of its own, so the
+   line reads as a clean, deliberate boundary instead of a blend. */
 
 .sec-services .services-top {
   display: block !important;
   width: min(100%, 820px) !important;
   max-width: 820px !important;
-  margin: 0 auto clamp(36px, 5vw, 58px) !important;
+  margin: 0 auto clamp(56px, 7vw, 90px) !important;
   padding: 0 !important;
   text-align: center !important;
 }
@@ -6743,7 +6862,7 @@ a {
 .sec-services .label-tag.section-eyebrow {
   display: block !important;
   margin: 0 0 20px !important;
-  color: #4f35bf !important;
+  color: #d8a8ff !important;
   font-size: clamp(12px, 1vw, 14px) !important;
   line-height: 1.1 !important;
   letter-spacing: 0.32em !important;
@@ -6755,7 +6874,7 @@ a {
 .sec-services .services-top__h2.section-heading {
   max-width: 720px !important;
   margin: 0 auto !important;
-  color: #11121b !important;
+  color: #fff !important;
   font-family: 'Manrope', Arial, sans-serif !important;
   font-size: clamp(40px, 4.2vw, 66px) !important;
   line-height: 1.04 !important;
@@ -6768,7 +6887,7 @@ a {
   display: block !important;
   max-width: 660px !important;
   margin: 22px auto 0 !important;
-  color: rgba(17, 18, 27, 0.72) !important;
+  color: rgba(255, 255, 255, 0.68) !important;
   font-family: 'Manrope', Arial, sans-serif !important;
   font-size: clamp(16px, 1.35vw, 21px) !important;
   line-height: 1.55 !important;
@@ -6788,7 +6907,7 @@ a {
   height: auto !important;
   display: grid !important;
   grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-  gap: clamp(14px, 1.5vw, 22px) !important;
+  gap: clamp(20px, 2.2vw, 32px) !important;
   margin: 0 !important;
   padding: 0 !important;
   list-style: none !important;
@@ -6808,17 +6927,17 @@ a {
   flex-direction: column !important;
   justify-content: space-between !important;
   gap: 24px !important;
-  border: 1px solid rgba(255, 255, 255, 0.72) !important;
-  border-left: 1px solid rgba(255, 255, 255, 0.72) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.72) !important;
+  border: 1px solid rgba(15, 14, 24, 0.08) !important;
+  border-left: 1px solid rgba(15, 14, 24, 0.08) !important;
+  border-top: 1px solid rgba(15, 14, 24, 0.08) !important;
   border-radius: clamp(18px, 1.7vw, 24px) !important;
-  background: rgba(255, 255, 255, 0.54) !important;
-  box-shadow: 0 20px 50px rgba(75, 58, 110, 0.11) !important;
+  background: #fff !important;
+  box-shadow: 0 10px 28px rgba(15, 14, 24, 0.08) !important;
   color: #11121b !important;
   overflow: visible !important;
   cursor: pointer !important;
   transform-style: preserve-3d !important;
-  transform: perspective(1200px) rotateX(var(--svc-rx, 0deg)) rotateY(var(--svc-ry, 0deg)) scale(var(--svc-scale, 1)) !important;
+  transform: perspective(1200px) translateY(var(--svc-lift, 0px)) rotateX(var(--svc-rx, 0deg)) rotateY(var(--svc-ry, 0deg)) scale(var(--svc-scale, 1)) !important;
   transition: transform 0.38s cubic-bezier(.22,1,.36,1), box-shadow 0.38s cubic-bezier(.22,1,.36,1), background 0.38s cubic-bezier(.22,1,.36,1), border-color 0.38s cubic-bezier(.22,1,.36,1) !important;
   will-change: transform !important;
   contain: layout paint !important;
@@ -6827,10 +6946,9 @@ a {
 .sec-services .svc-card:hover,
 .sec-services .svc-card:focus-visible,
 .sec-services .svc-card.is-active {
-  --svc-scale: 1.02;
-  background: rgba(255, 255, 255, 0.68) !important;
-  border-color: rgba(255, 255, 255, 0.9) !important;
-  box-shadow: 0 28px 70px rgba(75, 58, 110, 0.18) !important;
+  background: #fff !important;
+  border-color: rgba(15, 14, 24, 0.12) !important;
+  box-shadow: 0 16px 38px rgba(15, 14, 24, 0.14) !important;
 }
 
 .sec-services .svc-card__content {
@@ -7010,7 +7128,8 @@ a {
   --svc-rx: 0deg;
   --svc-ry: 0deg;
   --svc-scale: 1;
-  transform: perspective(1200px) rotateX(var(--svc-rx, 0deg)) rotateY(var(--svc-ry, 0deg)) scale(var(--svc-scale, 1)) !important;
+  --svc-lift: 0px;
+  transform: perspective(1200px) translateY(var(--svc-lift, 0px)) rotateX(var(--svc-rx, 0deg)) rotateY(var(--svc-ry, 0deg)) scale(var(--svc-scale, 1)) !important;
   transform-style: preserve-3d !important;
   backface-visibility: hidden !important;
   will-change: transform !important;
@@ -7022,12 +7141,12 @@ a {
 .sec-services .svc-card.is-active,
 .sec-services .svc-card.is-hovering,
 .sec-services .svc-card.is-tilting {
-  transform: perspective(1200px) rotateX(var(--svc-rx, 0deg)) rotateY(var(--svc-ry, 0deg)) scale(var(--svc-scale, 1)) !important;
+  transform: perspective(1200px) translateY(var(--svc-lift, 0px)) rotateX(var(--svc-rx, 0deg)) rotateY(var(--svc-ry, 0deg)) scale(var(--svc-scale, 1)) !important;
 }
 
 .sec-services .svc-card.is-hovering,
 .sec-services .svc-card.is-tilting {
-  box-shadow: 0 26px 58px rgba(76, 55, 115, .16) !important;
+  box-shadow: 0 16px 38px rgba(15, 14, 24, 0.14) !important;
 }
 
 .sec-services .svc-card .svc-icon,
@@ -7415,7 +7534,7 @@ a {
 .sec-services .services-grid .svc-card.svc-card:focus-visible,
 .sec-services .services-grid .svc-card.svc-card.is-hovering,
 .sec-services .services-grid .svc-card.svc-card.is-tilting {
-  box-shadow: 0 30px 70px rgba(58, 35, 120, .18) !important;
+  box-shadow: 0 16px 38px rgba(15, 14, 24, .14) !important;
 }
 
 /* Kill the old accordion/reveal behavior. Nothing inside the card should collapse. */
@@ -7815,13 +7934,22 @@ body.nav-open {
   overflow: hidden;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 780px) {
   .nav__burger {
     display: inline-flex;
   }
+  /* Nav links used to only hide at max-width:700px (see the older
+     700px pass above) while .nav__cta and the nav's own compact
+     sizing already switch at 780px (line ~924) — that left a ~79px
+     window (701-780px) where the CTA button vanished with no burger
+     menu yet shown to reach it. Hiding the links at the same 780px
+     breakpoint the burger now appears at closes that gap. */
+  .nav__links {
+    display: none !important;
+  }
 }
 
-@media (min-width: 701px) {
+@media (min-width: 781px) {
   .nav__mobile {
     display: none !important;
   }
@@ -8014,13 +8142,15 @@ body.nav-open {
    .btn-play and .cta-warm__btn already render correctly with the
    generic .cta-neon rules above and are not repeated here.
 
-   Every selector below is doubled (e.g. .nav__cta.cta-neon) so its
-   specificity is strictly higher than a lone .nav__cta rule
-   anywhere else in the file, not just equal-and-later — this wins
-   regardless of what else is declared for these specific classes,
-   past or future. */
-.nav__cta.cta-neon,
-.nav__mobile-cta.cta-neon,
+   Every selector below is doubled (e.g. .btn-outline-white.cta-neon)
+   so its specificity is strictly higher than a lone rule anywhere
+   else in the file — this wins regardless of what else is declared
+   for these specific classes, past or future.
+
+   .nav__cta / .nav__mobile-cta have been removed from this shared
+   group: the nav CTA is now owned exclusively by nav.css with its
+   own fixed, non-traveling badge, so it no longer needs or wants
+   anything from this system. */
 .btn-outline-white.cta-neon,
 .btn-outline-gold.cta-neon,
 .cal__cta.cta-neon {
@@ -8040,13 +8170,9 @@ body.nav-open {
   transition: box-shadow .3s ease, border-color .3s ease, transform .3s ease !important;
 }
 
-.nav__cta.cta-neon:hover,
-.nav__mobile-cta.cta-neon:hover,
 .btn-outline-white.cta-neon:hover,
 .btn-outline-gold.cta-neon:hover,
 .cal__cta.cta-neon:hover,
-.nav__cta.cta-neon:focus-visible,
-.nav__mobile-cta.cta-neon:focus-visible,
 .btn-outline-white.cta-neon:focus-visible,
 .btn-outline-gold.cta-neon:focus-visible,
 .cal__cta.cta-neon:focus-visible {
@@ -8057,8 +8183,6 @@ body.nav-open {
   transform: scale(1.01) !important;
 }
 
-.nav__cta.cta-neon > *,
-.nav__mobile-cta.cta-neon > *,
 .btn-outline-white.cta-neon > *,
 .btn-outline-gold.cta-neon > *,
 .cal__cta.cta-neon > * {
@@ -8066,8 +8190,6 @@ body.nav-open {
   z-index: 2 !important;
 }
 
-.nav__cta.cta-neon .cta-neon__badge,
-.nav__mobile-cta.cta-neon .cta-neon__badge,
 .btn-outline-white.cta-neon .cta-neon__badge,
 .btn-outline-gold.cta-neon .cta-neon__badge,
 .cal__cta.cta-neon .cta-neon__badge {
@@ -8089,8 +8211,6 @@ body.nav-open {
   box-shadow: 0 0 8px var(--neon-g1h) !important;
 }
 
-.nav__cta.cta-neon .cta-neon__badge img,
-.nav__mobile-cta.cta-neon .cta-neon__badge img,
 .btn-outline-white.cta-neon .cta-neon__badge img,
 .btn-outline-gold.cta-neon .cta-neon__badge img,
 .cal__cta.cta-neon .cta-neon__badge img {
@@ -8099,16 +8219,12 @@ body.nav-open {
   object-fit: contain !important;
 }
 
-.nav__cta.cta-neon .cta-neon__label,
-.nav__mobile-cta.cta-neon .cta-neon__label,
 .btn-outline-white.cta-neon .cta-neon__label,
 .btn-outline-gold.cta-neon .cta-neon__label,
 .cal__cta.cta-neon .cta-neon__label {
   white-space: nowrap !important;
 }
 
-.nav__cta.cta-neon .cta-neon__beam,
-.nav__mobile-cta.cta-neon .cta-neon__beam,
 .btn-outline-white.cta-neon .cta-neon__beam,
 .btn-outline-gold.cta-neon .cta-neon__beam,
 .cal__cta.cta-neon .cta-neon__beam {
@@ -8138,8 +8254,6 @@ body.nav-open {
   flex: none !important;
 }
 
-.nav__cta.cta-neon .cta-neon__beam-rect,
-.nav__mobile-cta.cta-neon .cta-neon__beam-rect,
 .btn-outline-white.cta-neon .cta-neon__beam-rect,
 .btn-outline-gold.cta-neon .cta-neon__beam-rect,
 .cal__cta.cta-neon .cta-neon__beam-rect {
@@ -8150,13 +8264,9 @@ body.nav-open {
   transition: opacity .3s ease !important;
 }
 
-.nav__cta.cta-neon:hover .cta-neon__beam-rect,
-.nav__mobile-cta.cta-neon:hover .cta-neon__beam-rect,
 .btn-outline-white.cta-neon:hover .cta-neon__beam-rect,
 .btn-outline-gold.cta-neon:hover .cta-neon__beam-rect,
 .cal__cta.cta-neon:hover .cta-neon__beam-rect,
-.nav__cta.cta-neon:focus-visible .cta-neon__beam-rect,
-.nav__mobile-cta.cta-neon:focus-visible .cta-neon__beam-rect,
 .btn-outline-white.cta-neon:focus-visible .cta-neon__beam-rect,
 .btn-outline-gold.cta-neon:focus-visible .cta-neon__beam-rect,
 .cal__cta.cta-neon:focus-visible .cta-neon__beam-rect {
@@ -8164,25 +8274,17 @@ body.nav-open {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nav__cta.cta-neon:hover,
-  .nav__mobile-cta.cta-neon:hover,
   .btn-outline-white.cta-neon:hover,
   .btn-outline-gold.cta-neon:hover,
   .cal__cta.cta-neon:hover,
-  .nav__cta.cta-neon:focus-visible,
-  .nav__mobile-cta.cta-neon:focus-visible,
   .btn-outline-white.cta-neon:focus-visible,
   .btn-outline-gold.cta-neon:focus-visible,
   .cal__cta.cta-neon:focus-visible {
     transform: none !important;
   }
-  .nav__cta.cta-neon:hover .cta-neon__beam-rect,
-  .nav__mobile-cta.cta-neon:hover .cta-neon__beam-rect,
   .btn-outline-white.cta-neon:hover .cta-neon__beam-rect,
   .btn-outline-gold.cta-neon:hover .cta-neon__beam-rect,
   .cal__cta.cta-neon:hover .cta-neon__beam-rect,
-  .nav__cta.cta-neon:focus-visible .cta-neon__beam-rect,
-  .nav__mobile-cta.cta-neon:focus-visible .cta-neon__beam-rect,
   .btn-outline-white.cta-neon:focus-visible .cta-neon__beam-rect,
   .btn-outline-gold.cta-neon:focus-visible .cta-neon__beam-rect,
   .cal__cta.cta-neon:focus-visible .cta-neon__beam-rect {
@@ -8476,19 +8578,37 @@ body.nav-open {
    regardless of their specificity or source order. */
 
 #coaching {
+  position: relative !important;
   height: auto !important;
   min-height: 0 !important;
   padding-top: clamp(32px, 4.5vw, 56px) !important;
   padding-right: clamp(20px, 4vw, 56px) !important;
   padding-bottom: clamp(16px, 2.2vw, 26px) !important;
   padding-left: clamp(20px, 4vw, 56px) !important;
-  background: linear-gradient(120deg, #eef0fb 0%, #f5eefb 38%, #fdeee9 72%, #fdece6 100%) !important;
-  border-radius: 28px !important;
-  margin: clamp(24px, 4vw, 48px) 0 !important;
+  background: linear-gradient(180deg, #07060D 0%, #0c0a17 50%, #07060D 100%) !important;
+  border-radius: 28px 28px 0 0 !important;
+  margin: clamp(24px, 4vw, 48px) 0 0 !important;
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
   overflow: visible !important;
+  isolation: isolate !important;
+}
+/* FINAL — match the services section's left-to-right color wash so
+   the booking section's background reads as the same family instead
+   of a plain flat dark fade. Same masked ::before technique: color
+   only appears in the middle band, fading out near the top/bottom
+   edges so it doesn't create a seam against neighboring sections. */
+#coaching::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: -1 !important;
+  border-radius: inherit !important;
+  background: linear-gradient(90deg, rgba(79, 125, 255, .18) 0%, rgba(124, 58, 237, .18) 50%, rgba(219, 39, 119, .15) 100%) !important;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0px, #000 2px, #000 100%) !important;
+  mask-image: linear-gradient(180deg, transparent 0px, #000 2px, #000 100%) !important;
+  pointer-events: none !important;
 }
 
 #coaching .coaching-layout {
@@ -8517,7 +8637,7 @@ body.nav-open {
   font-weight: 700 !important;
   letter-spacing: 1.6px !important;
   text-transform: uppercase !important;
-  color: #6d28d9 !important;
+  color: #d8a8ff !important;
   margin: 0 0 12px !important;
 }
 
@@ -8529,7 +8649,7 @@ body.nav-open {
   line-height: 1.18 !important;
   font-weight: 800 !important;
   letter-spacing: -0.5px !important;
-  color: #16131f !important;
+  color: #fff !important;
   margin: 0 0 12px !important;
   max-width: 560px !important;
 }
@@ -8539,7 +8659,7 @@ body.nav-open {
   grid-column: auto !important;
   font-size: 14px !important;
   line-height: 1.6 !important;
-  color: #4a4753 !important;
+  color: rgba(255, 255, 255, .68) !important;
   max-width: 480px !important;
   margin: 0 !important;
 }
@@ -8558,12 +8678,12 @@ body.nav-open {
   gap: 7px !important;
   font-size: 11.5px !important;
   font-weight: 600 !important;
-  color: #4a4753 !important;
+  color: rgba(255, 255, 255, .72) !important;
 }
 #coaching .coaching__meta svg {
   width: 16px !important;
   height: 16px !important;
-  color: #6d28d9 !important;
+  color: #a78bfa !important;
   flex: 0 0 16px !important;
 }
 
@@ -8572,7 +8692,7 @@ body.nav-open {
   font-weight: 700 !important;
   letter-spacing: 1.6px !important;
   text-transform: uppercase !important;
-  color: #16131f !important;
+  color: #fff !important;
   margin: 6px 0 2px !important;
 }
 
@@ -8595,18 +8715,18 @@ body.nav-open {
   gap: 7px !important;
   height: auto !important;
   min-height: 0 !important;
-  background: #fff !important;
-  border: 1px solid rgba(20, 12, 40, .08) !important;
+  background: #03041D !important;
+  border: 1px solid rgba(157, 129, 255, .28) !important;
   border-radius: 14px !important;
   padding: 14px 14px 12px !important;
-  box-shadow: 0 4px 16px rgba(30, 12, 60, .05) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 12px 32px rgba(0, 0, 0, .3) !important;
   cursor: pointer !important;
   transition: border-color .2s, box-shadow .2s, transform .2s !important;
 }
 #coaching .aud-card:hover,
 #coaching .aud-card:focus-visible {
-  border-color: rgba(109, 40, 217, .35) !important;
-  box-shadow: 0 8px 22px rgba(109, 40, 217, .12) !important;
+  border-color: rgba(157, 129, 255, .5) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 16px 40px rgba(0, 0, 0, .4) !important;
   transform: translateY(-2px) !important;
 }
 #coaching .aud-card__ico {
@@ -8623,12 +8743,12 @@ body.nav-open {
 #coaching .aud-card__name {
   font-size: 13.5px !important;
   font-weight: 700 !important;
-  color: #16131f !important;
+  color: #fff !important;
 }
 #coaching .aud-card__desc {
   font-size: 11.5px !important;
   line-height: 1.55 !important;
-  color: #6b6875 !important;
+  color: rgba(255, 255, 255, .66) !important;
   flex: 1 !important;
 }
 #coaching .aud-card__radio {
@@ -8636,22 +8756,22 @@ body.nav-open {
   height: 28px !important;
   margin: 0 !important;
   border-radius: 50% !important;
-  border: 1px solid rgba(20, 12, 40, .16) !important;
+  border: 1px solid rgba(255, 255, 255, .22) !important;
   background: transparent !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  color: #16131f !important;
+  color: rgba(255, 255, 255, .75) !important;
   transition: background .2s, border-color .2s, color .2s !important;
 }
 #coaching .aud-card__radio svg { width: 13px !important; height: 13px !important; }
 #coaching .aud-card[aria-checked="true"] {
-  border-color: #6d28d9 !important;
-  box-shadow: 0 8px 22px rgba(109, 40, 217, .16) !important;
+  border-color: #8B5CF6 !important;
+  box-shadow: 0 8px 22px rgba(139, 92, 246, .3) !important;
 }
 #coaching .aud-card[aria-checked="true"] .aud-card__radio {
-  background: #6d28d9 !important;
-  border-color: #6d28d9 !important;
+  background: #7C3AED !important;
+  border-color: #7C3AED !important;
   color: #fff !important;
 }
 
@@ -8670,7 +8790,7 @@ body.nav-open {
   left: 36px !important;
   right: 36px !important;
   height: 0 !important;
-  border-top: 1.5px dotted rgba(20, 12, 40, .22) !important;
+  border-top: 1.5px dotted rgba(255, 255, 255, .16) !important;
 }
 #coaching .coaching__timeline li {
   flex: 1 !important;
@@ -8699,19 +8819,19 @@ body.nav-open {
   font-size: 9.5px !important;
   font-weight: 700 !important;
   letter-spacing: 1px !important;
-  color: #a29ab0 !important;
+  color: rgba(255, 255, 255, .4) !important;
   margin: 4px 0 0 !important;
 }
 #coaching .ctime__name {
   font-size: 11.5px !important;
   font-weight: 700 !important;
-  color: #16131f !important;
+  color: #fff !important;
   margin: 0 !important;
 }
 #coaching .ctime__sub {
   font-size: 9.5px !important;
   line-height: 1.4 !important;
-  color: #6b6875 !important;
+  color: rgba(255, 255, 255, .6) !important;
   margin: 0 !important;
   max-width: 108px !important;
 }
@@ -8722,13 +8842,28 @@ body.nav-open {
   gap: 18px !important;
 }
 
+/* Frosted glass, matching the site's established glass-card recipe
+   (rgba(255,255,255,.06) + purple border) instead of a flat solid
+   fill, per direct request. */
 #coaching .calendar-widget {
-  background: #fff !important;
-  border: 1px solid rgba(20, 12, 40, .07) !important;
-  border-left: 1px solid rgba(20, 12, 40, .07) !important;
+  background: rgba(255, 255, 255, .06) !important;
+  border: 1px solid rgba(157, 129, 255, .28) !important;
+  border-left: 1px solid rgba(157, 129, 255, .28) !important;
   border-radius: 18px !important;
   padding: 22px !important;
-  box-shadow: 0 10px 28px rgba(30, 12, 60, .07) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 18px 44px rgba(0, 0, 0, .35) !important;
+}
+/* .cal__body is a nested wrapper inside .calendar-widget that still
+   carried its own old cream/white card background+border (from a
+   much earlier light-theme pass, .sec-coaching .cal__body at ~line
+   5383) -- that's what was rendering as a white box with the day
+   numbers' white text invisible on top of it. Neutralize it so the
+   glass background above shows through instead of a second, mismatched
+   box nested inside the first. */
+#coaching .cal__body {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
 }
 #coaching .cal__header { margin-bottom: 14px !important; }
 #coaching .cal__title {
@@ -8736,7 +8871,7 @@ body.nav-open {
   font-weight: 700 !important;
   letter-spacing: 1.4px !important;
   text-transform: uppercase !important;
-  color: #16131f !important;
+  color: #fff !important;
   margin: 0 !important;
 }
 #coaching .cal__nav {
@@ -8748,46 +8883,52 @@ body.nav-open {
 #coaching .cal__month {
   font-size: 13px !important;
   font-weight: 700 !important;
-  color: #16131f !important;
+  color: #fff !important;
 }
 #coaching .cal__btn {
   width: 26px !important;
   height: 26px !important;
-  border: 1px solid rgba(20, 12, 40, .12) !important;
+  border: 1px solid rgba(255, 255, 255, .18) !important;
   border-radius: 50% !important;
-  background: #fff !important;
-  color: #16131f !important;
+  background: rgba(255, 255, 255, .04) !important;
+  color: #fff !important;
 }
-#coaching .cal__btn:hover { background: rgba(109, 40, 217, .08) !important; }
-#coaching .cal__grid { gap: 4px !important; }
+#coaching .cal__btn:hover { background: rgba(124, 58, 237, .25) !important; }
+#coaching .cal__grid { gap: 2px !important; }
 #coaching .cal__day-name {
-  font-size: 9.5px !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
-  color: #a29ab0 !important;
+  color: rgba(255, 255, 255, .4) !important;
   padding-bottom: 6px !important;
 }
 #coaching .cal__date {
-  font-size: 11.5px !important;
-  color: #33303c !important;
-  width: 30px !important;
-  height: 30px !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  color: rgba(255, 255, 255, .82) !important;
+  width: 34px !important;
+  height: 34px !important;
   border-radius: 50% !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   margin: 0 auto !important;
 }
-#coaching .cal__date:hover { background: rgba(109, 40, 217, .08) !important; }
+#coaching .cal__date[aria-disabled="true"],
+#coaching .cal__date.cal__date--disabled {
+  opacity: .32 !important;
+  pointer-events: none !important;
+}
+#coaching .cal__date:hover { background: rgba(124, 58, 237, .28) !important; }
 #coaching .cal__date--today {
-  background: #6d28d9 !important;
+  background: #7C3AED !important;
   color: #fff !important;
   font-weight: 700 !important;
 }
-#coaching .cal__date--today:hover { background: #5b1fb8 !important; }
+#coaching .cal__date--today:hover { background: #6d28d9 !important; }
 #coaching .cal__footer {
   margin-top: 16px !important;
   padding-top: 16px !important;
-  border-top: 1px solid rgba(20, 12, 40, .07) !important;
+  border-top: 1px solid rgba(255, 255, 255, .1) !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
@@ -8795,8 +8936,8 @@ body.nav-open {
 }
 #coaching .cal__cta { width: 100% !important; }
 #coaching .cal__note {
-  font-size: 10.5px !important;
-  color: #8f8b98 !important;
+  font-size: 13px !important;
+  color: rgba(255, 255, 255, .5) !important;
   margin: 0 !important;
   text-align: center !important;
 }
@@ -8806,8 +8947,8 @@ body.nav-open {
   flex-direction: column !important;
   justify-content: center !important;
   flex: 1 !important;
-  background: linear-gradient(160deg, #f4effc, #fdf1ee) !important;
-  border: 1px solid rgba(109, 40, 217, .12) !important;
+  background: linear-gradient(160deg, rgba(124, 58, 237, .16), rgba(219, 39, 119, .1)) !important;
+  border: 1px solid rgba(157, 129, 255, .28) !important;
   border-radius: 18px !important;
   padding: 24px 26px !important;
 }
@@ -8816,7 +8957,7 @@ body.nav-open {
   font-weight: 700 !important;
   letter-spacing: 1.2px !important;
   text-transform: uppercase !important;
-  color: #6d28d9 !important;
+  color: #d8a8ff !important;
   margin: 0 0 16px !important;
 }
 #coaching .coaching__checklist ul {
@@ -8833,14 +8974,14 @@ body.nav-open {
   gap: 11px !important;
   font-size: 14.5px !important;
   line-height: 1.5 !important;
-  color: #2c2836 !important;
+  color: rgba(255, 255, 255, .8) !important;
 }
 #coaching .coaching__checklist svg {
   width: 19px !important;
   height: 19px !important;
   flex: 0 0 19px !important;
   margin-top: 1px !important;
-  color: #6d28d9 !important;
+  color: #a78bfa !important;
 }
 
 @media (max-width: 960px) {
@@ -8878,28 +9019,27 @@ body.nav-open {
   #coaching .ctime__sub { max-width: none !important; }
 }
 
-/* FINAL BOOK SESSION CTA — black pill, matching the reference photo.
-   Reverses the earlier gold-neon-glow treatment for this one button:
-   solid black fill, no colored border/glow at rest, hover is a plain
-   elevation (lift + soft dark shadow) instead of the traveling neon
-   beam. Also enlarged: this button reads as the primary action in
-   the booking card, so it should not look like a small thin pill. */
+/* FINAL BOOK SESSION CTA — white matte pill with black text, per
+   direct request (the surrounding calendar card is now dark glass,
+   so a solid black button on it read as almost invisible; flipping
+   to a light pill gives it real contrast as the primary action). */
 #js-book.cta-neon {
-  background: #0e0c14 !important;
-  border: 1.5px solid transparent !important;
-  color: #fff !important;
-  box-shadow: 0 3px 8px rgba(14, 12, 20, .22) !important;
+  background: rgba(245, 244, 248, .94) !important;
+  border: 1.5px solid rgba(255, 255, 255, .9) !important;
+  color: #0f0e18 !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .3) !important;
   padding: 18px 26px !important;
   min-height: 58px !important;
 }
 #js-book.cta-neon .cta-neon__label {
-  color: #fff !important;
+  color: #0f0e18 !important;
   font-size: 13px !important;
   letter-spacing: 2px !important;
 }
 #js-book.cta-neon:hover,
 #js-book.cta-neon:focus-visible {
-  box-shadow: 0 8px 18px rgba(14, 12, 20, .38) !important;
+  background: #fff !important;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .35) !important;
   transform: scale(1.025) !important;
 }
 #js-book.cta-neon .cta-neon__beam,
@@ -8956,24 +9096,46 @@ body.nav-open {
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  background-size: contain !important;
 }
 #coaching .ctime__ico svg { display: none !important; }
-#coaching .coaching__timeline li:nth-child(1) .ctime__ico {
-  background-image: url('assets/booking3-01.svg') !important;
+/* The icon artwork moved from .ctime__ico's own background to a
+   ::after pseudo-element. Reason: a box's own background always
+   paints FIRST within its stacking context, before any descendant —
+   including a negative z-index pseudo-element. The frosted-glass
+   layer added below is .ctime__ico::before at z-index:-1, which is
+   meant to sit behind the icon, but with the icon as .ctime__ico's
+   own background it was actually behind the icon already at the
+   box level, so the glass pseudo (a descendant, painted after the
+   box's own background regardless of its negative z-index) ended up
+   rendering ON TOP of the icon artwork instead — the reported "glass
+   circle needs to go behind the icons" bug. Moving the artwork onto
+   ::after (a real descendant, z-index:1) puts it in its own paint
+   step after ::before, so the stacking order becomes correct: glass
+   (-1) behind, icon artwork (1) in front. */
+#coaching .ctime__ico::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  pointer-events: none;
 }
-#coaching .coaching__timeline li:nth-child(2) .ctime__ico {
+#coaching .coaching__timeline li:nth-child(1) .ctime__ico::after {
+  background-image: url('assets/booking3-01-fix.png?v=1') !important;
+}
+#coaching .coaching__timeline li:nth-child(2) .ctime__ico::after {
   background-image: url('assets/booking3-02.svg') !important;
 }
-#coaching .coaching__timeline li:nth-child(3) .ctime__ico {
+#coaching .coaching__timeline li:nth-child(3) .ctime__ico::after {
   background-image: url('assets/booking3-03.svg') !important;
 }
-#coaching .coaching__timeline li:nth-child(4) .ctime__ico {
-  background-image: url('assets/booking3-04.svg') !important;
+#coaching .coaching__timeline li:nth-child(4) .ctime__ico::after {
+  background-image: url('assets/booking3-04-fix.png?v=1') !important;
 }
-#coaching .coaching__timeline li:nth-child(5) .ctime__ico {
+#coaching .coaching__timeline li:nth-child(5) .ctime__ico::after {
   background-image: url('assets/booking3-05.svg') !important;
 }
 
@@ -8997,8 +9159,6 @@ body.nav-open {
 }
 
 .cta-neon,
-.nav__cta.cta-neon,
-.nav__mobile-cta.cta-neon,
 .btn-outline-white.cta-neon,
 .btn-outline-gold.cta-neon,
 .cal__cta.cta-neon,
@@ -9011,8 +9171,6 @@ body.nav-open {
 
 .cta-neon .cta-neon__badge,
 .cta-neon .btn-play__ring,
-.nav__cta.cta-neon .cta-neon__badge,
-.nav__mobile-cta.cta-neon .cta-neon__badge,
 .btn-outline-white.cta-neon .cta-neon__badge,
 .btn-outline-gold.cta-neon .cta-neon__badge,
 .cal__cta.cta-neon .cta-neon__badge,
@@ -9050,20 +9208,28 @@ body.nav-open {
    dragging a new color across the pill. Synced to the exact same
    duration/easing as the badge's own "left" transition so they
    visibly move together. */
+/* Rebuilt to animate its own width (anchored to the left edge)
+   instead of an animated clip-path. A plain box resize always keeps
+   correctly rounded corners for free (border-radius on a normal box
+   is never "reinterpolated" the way an animated clip-path shape is),
+   so this can never show a jagged/square corner or a ghosting
+   artifact mid-travel the way the clip-path version could. */
 .btn-outline-white.cta-neon::before {
   content: '' !important;
   position: absolute !important;
-  inset: 0 !important;
+  top: -1.5px !important;
+  bottom: -1.5px !important;
+  left: -1.5px !important;
+  width: 0 !important;
   border-radius: 999px !important;
   background: #0a0612 !important;
-  clip-path: inset(0 101% 0 -1%) !important;
-  transition: clip-path .45s cubic-bezier(.4, 0, .2, 1) !important;
+  transition: width .45s cubic-bezier(.4, 0, .2, 1) !important;
   z-index: 1 !important;
   pointer-events: none !important;
 }
 .btn-outline-white.cta-neon:hover::before,
 .btn-outline-white.cta-neon:focus-visible::before {
-  clip-path: inset(0 0 0 0) !important;
+  width: calc(100% + 3px) !important;
 }
 
 /* Hover: the black badge travels across and becomes flush with the
@@ -9116,20 +9282,27 @@ body.nav-open {
 .btn-play.cta-neon:focus-visible .cta-neon__badge {
   left: calc(100% + 1.5px - var(--badge-d, 2.2em)) !important;
 }
+/* Rebuilt to animate width (left-anchored) instead of clip-path —
+   see the matching note on .btn-outline-white.cta-neon::before just
+   above for why: a resized plain box keeps correctly rounded corners
+   automatically, with no risk of the jagged-corner/ghosting artifacts
+   an animated clip-path shape could show mid-travel. */
 .btn-play.cta-neon::before {
   content: '' !important;
   position: absolute !important;
-  inset: 0 !important;
+  top: -1.5px !important;
+  bottom: -1.5px !important;
+  left: -1.5px !important;
+  width: 0 !important;
   border-radius: 999px !important;
   background: linear-gradient(90deg, #F97316, #DB2777, #7C3AED) !important;
-  clip-path: inset(0 101% 0 -1%) !important;
-  transition: clip-path .45s cubic-bezier(.4, 0, .2, 1) !important;
+  transition: width .45s cubic-bezier(.4, 0, .2, 1) !important;
   z-index: 1 !important;
   pointer-events: none !important;
 }
 .btn-play.cta-neon:hover::before,
 .btn-play.cta-neon:focus-visible::before {
-  clip-path: inset(0 0 0 0) !important;
+  width: calc(100% + 3px) !important;
 }
 
 /* FINAL — enlarge both traveling-badge CTAs (Explore Our Services,
@@ -9148,15 +9321,9 @@ body.nav-open {
   transition: color .45s cubic-bezier(.4, 0, .2, 1) !important;
 }
 
-/* FINAL — enlarge the top nav "Let's Connect" (desktop + mobile menu)
-   the same way, so its traveling badge has room to slide across on
-   hover without sliding the label text underneath it. */
-.nav__cta.cta-neon,
-.nav__mobile-cta.cta-neon {
-  padding-top: 15px !important;
-  padding-bottom: 15px !important;
-  padding-right: 56px !important;
-}
+/* The top nav "Let's Connect" (desktop + mobile menu) padding is no
+   longer set here — nav.css owns the CTA's full box model as a fixed,
+   non-animated pill. See nav.css. */
 .btn-play.cta-neon:hover .cta-neon__label,
 .btn-play.cta-neon:focus-visible .cta-neon__label {
   color: #0a0612 !important;
@@ -9218,31 +9385,53 @@ body.nav-open {
   position: absolute !important;
   inset: 0 !important;
   background: linear-gradient(90deg,
-    #02050d 0%,
-    rgba(2, 5, 13, .92) 10%,
-    rgba(2, 5, 13, .72) 22%,
-    rgba(2, 5, 13, .46) 36%,
-    rgba(2, 5, 13, .24) 50%,
-    rgba(2, 5, 13, .08) 64%,
-    transparent 78%) !important;
+    #07060D 0%,
+    rgba(7, 6, 13, .94) 8%,
+    rgba(7, 6, 13, .82) 16%,
+    rgba(7, 6, 13, .62) 26%,
+    rgba(7, 6, 13, .42) 38%,
+    rgba(7, 6, 13, .26) 50%,
+    rgba(7, 6, 13, .14) 64%,
+    rgba(7, 6, 13, .06) 78%,
+    transparent 94%) !important;
   z-index: 1 !important;
   pointer-events: none !important;
 }
 
 @media (max-width: 900px) {
+  /* Was position:static, pushing the video into normal flow BELOW
+     the hero text with its own margin/height — on top of .hero's
+     own solid #000 background (see the "remove the old hero photo"
+     rule further down) that left a dead black gap under the video
+     wherever .hero's padding/min-height ran taller than the text.
+     Make the video a true full-bleed background behind the text
+     instead, matching how it already works on desktop. */
+  .hero {
+    min-height: 560px !important;
+    height: auto !important;
+    padding-top: 44px !important;
+    padding-bottom: 40px !important;
+  }
   .hero__video-frame {
-    position: static !important;
+    position: absolute !important;
+    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
     width: 100% !important;
-    height: min(70vw, 380px) !important;
-    margin: 28px 0 0 !important;
+    height: 100% !important;
+    aspect-ratio: auto !important;
+    margin: 0 !important;
+    z-index: 0 !important;
   }
   .hero__video-frame::before {
     background: linear-gradient(180deg,
-      #02050d 0%,
-      rgba(2, 5, 13, .7) 14%,
-      rgba(2, 5, 13, .35) 26%,
-      rgba(2, 5, 13, .12) 38%,
-      transparent 50%) !important;
+      rgba(7, 6, 13, .78) 0%,
+      rgba(7, 6, 13, .5) 30%,
+      rgba(7, 6, 13, .3) 55%,
+      rgba(7, 6, 13, .5) 75%,
+      rgba(7, 6, 13, .82) 100%) !important;
   }
 }
 
@@ -9256,17 +9445,18 @@ body.nav-open {
    it), leaving a clean dark backdrop with a soft purple glow. */
 .hero {
   background-image: none !important;
-  background-color: #000 !important;
+  background-color: var(--bg-hero) !important;
 }
 
-/* FINAL — the remaining "Let's Connect" CTAs (top nav, mobile nav,
-   final section) now adopt the exact same mechanism as How We Work:
-   black at rest, a gradient badge that travels left -> right on
-   hover, and a gradient paint-wipe reveal. This also undoes the
-   earlier flat-purple-only treatment given to the final section's
-   Let's Connect, per this newer, broader consistency request. */
-.nav__cta.cta-neon,
-.nav__mobile-cta.cta-neon,
+/* FINAL — the "Let's Connect" CTA in the page-bottom section adopts
+   the exact same mechanism as How We Work: black at rest, a gradient
+   badge that travels left -> right on hover, and a gradient
+   paint-wipe reveal. This also undoes the earlier flat-purple-only
+   treatment given to the final section's Let's Connect, per this
+   newer, broader consistency request. (The top-nav / mobile-nav
+   Let's Connect CTAs are no longer styled here — that component now
+   lives exclusively in nav.css, which owns its own static badge with
+   no travel/wipe animation. See nav.css.) */
 .cta-warm__btn.cta-neon {
   --neon: #DB2777 !important;
   --neon-g1: rgba(219, 39, 119, .3) !important;
@@ -9279,8 +9469,6 @@ body.nav-open {
   border: 1.5px solid transparent !important;
   padding-left: calc(var(--badge-d, 2.2em) + 14px) !important;
 }
-.nav__cta.cta-neon .cta-neon__badge,
-.nav__mobile-cta.cta-neon .cta-neon__badge,
 .cta-warm__btn.cta-neon .cta-neon__badge {
   position: absolute !important;
   top: 50% !important;
@@ -9291,34 +9479,52 @@ body.nav-open {
   background: radial-gradient(circle at 32% 28%, #fdba74, #F97316 24%, #DB2777 60%, #7C3AED 100%) !important;
   transition: left .45s cubic-bezier(.4, 0, .2, 1) !important;
 }
-.nav__cta.cta-neon:hover .cta-neon__badge,
-.nav__cta.cta-neon:focus-visible .cta-neon__badge,
-.nav__mobile-cta.cta-neon:hover .cta-neon__badge,
-.nav__mobile-cta.cta-neon:focus-visible .cta-neon__badge,
-.cta-warm__btn.cta-neon:hover .cta-neon__badge,
+/* The badge-travel + gradient-wipe below is a :hover effect, but
+   touch devices don't have a real "hover" — a tap fires :hover and
+   then leaves the button stuck showing it (classic mobile Safari/
+   Chrome behavior) until the person taps elsewhere. That read as the
+   button being broken/unresponsive on phones (badge stuck on the
+   right, whole pill lit up, nothing seeming to happen on tap). Gating
+   the animated part to "real hover" devices only (mouse, not touch)
+   fixes this; :focus-visible is left ungated everywhere since it's
+   keyboard-only and doesn't have this stuck-state problem. */
+@media (hover: hover) and (pointer: fine) {
+  .cta-warm__btn.cta-neon:hover .cta-neon__badge {
+    left: calc(100% + 1.5px - var(--badge-d, 2.2em)) !important;
+  }
+}
 .cta-warm__btn.cta-neon:focus-visible .cta-neon__badge {
   left: calc(100% + 1.5px - var(--badge-d, 2.2em)) !important;
 }
-.nav__cta.cta-neon::before,
-.nav__mobile-cta.cta-neon::before,
+/* Rebuilt to animate width (left-anchored) instead of clip-path — see
+   the matching note on .btn-outline-white.cta-neon::before for why. */
 .cta-warm__btn.cta-neon::before {
   content: '' !important;
   position: absolute !important;
-  inset: 0 !important;
+  top: -1.5px !important;
+  bottom: -1.5px !important;
+  left: -1.5px !important;
+  width: 0 !important;
   border-radius: 999px !important;
   background: linear-gradient(90deg, #F97316, #DB2777, #7C3AED) !important;
-  clip-path: inset(0 101% 0 -1%) !important;
-  transition: clip-path .45s cubic-bezier(.4, 0, .2, 1) !important;
+  transition: width .45s cubic-bezier(.4, 0, .2, 1) !important;
   z-index: 1 !important;
   pointer-events: none !important;
 }
-.nav__cta.cta-neon:hover::before,
-.nav__cta.cta-neon:focus-visible::before,
-.nav__mobile-cta.cta-neon:hover::before,
-.nav__mobile-cta.cta-neon:focus-visible::before,
-.cta-warm__btn.cta-neon:hover::before,
+@media (hover: hover) and (pointer: fine) {
+  .cta-warm__btn.cta-neon:hover::before {
+    width: calc(100% + 3px) !important;
+  }
+}
 .cta-warm__btn.cta-neon:focus-visible::before {
-  clip-path: inset(0 0 0 0) !important;
+  width: calc(100% + 3px) !important;
+}
+/* Touch devices get a quick, self-resetting tap press instead of a
+   state that can get stuck. */
+@media (hover: none), (pointer: coarse) {
+  .cta-warm__btn.cta-neon:active {
+    opacity: .88 !important;
+  }
 }
 
 /* FINAL — APPROACH TIMELINE AUTO-CYCLE. Mirrors the exact "lit" look
@@ -9393,6 +9599,31 @@ body.nav-open {
   font-weight: 700 !important;
 }
 
+/* FINAL — "Schedule Your Session" recolored to match the NAV "Let's
+   Connect" CTA (gold border-glow + orange→pink→purple gradient
+   badge), per direct request. This deliberately does NOT touch the
+   bottom-of-page ".sec-cta" "Let's Connect" button just above — that
+   one shares the same .cta-warm__btn.cta-neon base classes but was
+   purposefully kept purple per an earlier, separate direct request
+   (see the comment above). Scoping to .schedule-card__btn specifically
+   (same specificity as the purple rules above, but later in source,
+   so it wins only for this one button) keeps that distinction intact. */
+.schedule-card__btn.cta-neon {
+  --neon: #C8A84B !important;
+  --neon-g1: rgba(200, 168, 75, .3) !important;
+  --neon-g2: rgba(200, 168, 75, .16) !important;
+  --neon-g3: rgba(200, 168, 75, .1) !important;
+  --neon-g1h: rgba(223, 192, 110, .45) !important;
+  --neon-g2h: rgba(223, 192, 110, .28) !important;
+  --neon-g3h: rgba(223, 192, 110, .16) !important;
+}
+.schedule-card__btn.cta-neon .cta-neon__badge {
+  background: radial-gradient(circle at 32% 28%, #fdba74, #F97316 24%, #DB2777 60%, #7C3AED 100%) !important;
+}
+.schedule-card__btn.cta-neon::before {
+  background: linear-gradient(90deg, #F97316, #DB2777, #7C3AED) !important;
+}
+
 /* ============================================================
    FINAL — BULLETPROOF BADGE-TRAVEL FIX (all 5 traveling CTAs).
 
@@ -9424,18 +9655,18 @@ body.nav-open {
       it flush on the right, correctly, regardless of what
       --badge-d resolves to. +1.5px mirrors the -1.5px used at rest
       to cancel the border width on both sides. */
+/* nav__cta / nav__mobile-cta removed from this system entirely —
+   their badge is now a fixed, non-traveling circle owned solely by
+   nav.css. Only the other 3 buttons that still use the classic
+   hover-travel badge remain here. */
 .btn-outline-white.cta-neon.cta-neon.cta-neon,
 .btn-play.cta-neon.cta-neon.cta-neon,
-.nav__cta.cta-neon.cta-neon.cta-neon,
-.nav__mobile-cta.cta-neon.cta-neon.cta-neon,
 .cta-warm__btn.cta-neon.cta-neon.cta-neon {
   position: relative !important;
 }
 
 .btn-outline-white.cta-neon.cta-neon.cta-neon .cta-neon__badge,
 .btn-play.cta-neon.cta-neon.cta-neon .cta-neon__badge,
-.nav__cta.cta-neon.cta-neon.cta-neon .cta-neon__badge,
-.nav__mobile-cta.cta-neon.cta-neon.cta-neon .cta-neon__badge,
 .cta-warm__btn.cta-neon.cta-neon.cta-neon .cta-neon__badge {
   position: absolute !important;
   top: 50% !important;
@@ -9448,15 +9679,23 @@ body.nav-open {
     transform .45s cubic-bezier(.4, 0, .2, 1) !important;
 }
 
+/* cta-warm__btn's :hover portion is gated to real-hover devices
+   only — see the touch "stuck hover" note near its base rule.
+   btn-outline-white and btn-play aren't part of that report, so
+   their :hover stays ungated here. */
 .btn-outline-white.cta-neon.cta-neon.cta-neon:hover .cta-neon__badge,
+.btn-play.cta-neon.cta-neon.cta-neon:hover .cta-neon__badge {
+  left: 100% !important;
+  transform: translateY(-50%) translateX(calc(-100% + 1.5px)) !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  .cta-warm__btn.cta-neon.cta-neon.cta-neon:hover .cta-neon__badge {
+    left: 100% !important;
+    transform: translateY(-50%) translateX(calc(-100% + 1.5px)) !important;
+  }
+}
 .btn-outline-white.cta-neon.cta-neon.cta-neon:focus-visible .cta-neon__badge,
-.btn-play.cta-neon.cta-neon.cta-neon:hover .cta-neon__badge,
 .btn-play.cta-neon.cta-neon.cta-neon:focus-visible .cta-neon__badge,
-.nav__cta.cta-neon.cta-neon.cta-neon:hover .cta-neon__badge,
-.nav__cta.cta-neon.cta-neon.cta-neon:focus-visible .cta-neon__badge,
-.nav__mobile-cta.cta-neon.cta-neon.cta-neon:hover .cta-neon__badge,
-.nav__mobile-cta.cta-neon.cta-neon.cta-neon:focus-visible .cta-neon__badge,
-.cta-warm__btn.cta-neon.cta-neon.cta-neon:hover .cta-neon__badge,
 .cta-warm__btn.cta-neon.cta-neon.cta-neon:focus-visible .cta-neon__badge {
   left: 100% !important;
   transform: translateY(-50%) translateX(calc(-100% + 1.5px)) !important;
@@ -9762,7 +10001,8 @@ body.nav-open {
 #coaching .coaching__timeline li:nth-child(4).is-ctime-active .ctime__ico { box-shadow: 0 0 0 1px rgba(247, 201, 72, .82), 0 0 20px rgba(247, 201, 72, .68), 0 0 46px rgba(247, 201, 72, .36) !important; }
 #coaching .coaching__timeline li:nth-child(5).is-ctime-active .ctime__ico { box-shadow: 0 0 0 1px rgba(255, 79, 163, .8), 0 0 20px rgba(255, 79, 163, .68), 0 0 46px rgba(255, 79, 163, .38) !important; }
 #coaching .coaching__timeline li.is-ctime-active .ctime__name {
-  color: #16131f !important;
+  color: #fff !important;
+  text-shadow: 0 0 18px rgba(255, 255, 255, .18) !important;
 }
 
 @media (max-width: 700px) {
@@ -9776,6 +10016,18 @@ body.nav-open {
   #coaching .ctime__sub {
     font-size: 12px !important;
     max-width: none !important;
+  }
+  /* The unconditional "enlarge" pass above sets gap:8px for the
+     desktop row layout, but that same value carries into the
+     stacked mobile layout (flex-direction:column, set further up in
+     the file at this same breakpoint) — 8px between full-width rows
+     that each carry a 45px icon + multi-line description reads as
+     cramped/overlapping. Give the stacked steps real breathing room. */
+  #coaching .coaching__timeline {
+    gap: 24px !important;
+  }
+  #coaching .coaching__timeline li {
+    gap: 14px !important;
   }
 }
 
@@ -10168,6 +10420,27 @@ body.nav-open {
 .svcd-pin__tags li.is-tag-active{font-weight:800}
 .svcd-pin__tags li.is-tag-active::before{background:#fff;border-color:#fff}
 
+/* FINAL — "Paint Events" gradient treatment. Reuses this exact
+   panel's own already-declared accent colors (--row-g2/--row-g3/
+   --row-g4, set inline on .svcd-pin__panel#workshops-experiences)
+   rather than importing an unrelated gradient, so the tag's color
+   is intentionally tied to its own panel's identity. Fallback color
+   (plain white, matching its sibling tags) is declared first for
+   browsers without background-clip:text support; font-weight bumped
+   for legibility against the gradient. Does not affect the other
+   4 tags in this panel or any other panel's tags. */
+.svcd-pin__tags li.svcd-pin__tag--paint{
+  color:#fff;
+  font-weight:700;
+  background:linear-gradient(90deg,var(--row-g2,#8A2FFF) 0%,var(--row-g3,#C026D3) 50%,var(--row-g4,#F02D64) 100%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+@supports not (background-clip:text){
+  .svcd-pin__tags li.svcd-pin__tag--paint{color:#fff;-webkit-text-fill-color:initial}
+}
+.svcd-pin__tags li.svcd-pin__tag--paint.is-tag-active{font-weight:800}
+
 .svcd-pin__visual{position:relative;height:380px;display:flex;align-items:center;justify-content:center;perspective:1000px}
 /* Outer wrapper: owns the scroll-driven scale/rotate/blur (set live by
    script.js from the panel's scroll progress). Kept separate from
@@ -10277,6 +10550,30 @@ body.nav-open {
    script.js (its blob moved into .svcd-pin__blob-slot above), and panels
    1-4 keep their unused blob markup only for the mobile fallback below. */
 .svcd-pin__panel .svcd-pin__visual{display:none}
+/* Mobile's own persistent sphere (separate node, see services.html + the
+   "MOBILE PINNED-SPHERE FALLBACK" block in script.js) — desktop-hidden by
+   default, shown fixed-to-viewport only inside the mobile media query
+   below. */
+.svcd-pin__mobile-blob{display:none}
+
+/* HASH-ENTRY HOLD (desktop deep links from the home cards). While a
+   visitor arrives at services.html#<service>, script.js gives display
+   duty for the target panel to THIS stylesheet rule and orders its own
+   paint pipeline to leave the panel alone (see "HASH-ENTRY HOLD" in
+   script.js). A stylesheet rule cannot be killed by any JS failure
+   mode, which is what finally guarantees the service's text is visible
+   on arrival. The hold lifts (classes removed) on the first real step
+   change, after which the normal pinned interaction repaints as usual. */
+.svcd-pin.is-hash-entry .svcd-pin__panel.is-hash-active{
+  transform:translateY(0) !important;
+  opacity:1 !important;
+  filter:none !important;
+  pointer-events:auto;
+}
+.svcd-pin.is-hash-entry .svcd-pin__panel.is-hash-active .svcd-pin__tags{
+  transform:none !important;
+  opacity:1 !important;
+}
 
 .svcd-pin__progress{
   position:absolute;right:22px;top:50%;transform:translateY(-50%);
@@ -10320,26 +10617,102 @@ body.nav-open {
 .svcd-cta__btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(124,58,237,.35)}
 
 @media (max-width:639px), (pointer:coarse){
-  /* Scroll-jacked pinning is unfriendly on small/touch screens —
-     degrade to a plain stacked list, all panels visible normally.
-     Gated on actual touch (pointer:coarse) OR a genuinely narrow
-     viewport, NOT just "not super wide" — a normal desktop browser
-     window (even a modest, non-maximized one) should still get the
-     pinned interaction; only real phones/tablets and very narrow
-     windows fall back. Must mirror the JS controller's `canPin`
-     check in script.js exactly, or the two will disagree. */
-  .svcd-pin{height:auto}
-  .svcd-pin__stage{position:static;height:auto;display:block;overflow:visible}
-  .svcd-pin__list{display:flex;flex-direction:column;gap:56px;height:auto;padding:40px 0}
-  .svcd-pin__panel{
-    position:static;opacity:1!important;transform:none!important;pointer-events:auto;
-    grid-template-columns:1fr;row-gap:22px;padding:0 var(--pad-x);
-    transition:none;
+  /* MOBILE LOCKED-STEP SEQUENCE — replaces the old "just stack all 5
+     panels and let the user scroll past them normally" fallback. Per
+     explicit request: hero (with its robot image) shows first, then the
+     sphere rises and each service holds one at a time, one scroll
+     gesture = one step forward (locked, mirroring the desktop wheel-jack
+     mechanic above but driven by scroll-position deltas — see script.js
+     "MOBILE LOCKED-STEP SERVICES CONTROLLER"), until the sphere shrinks
+     away and the after-services CTA card is revealed. Desktop's own
+     rules (outside this media query) are completely untouched; this
+     query only ever matches real touch devices / genuinely narrow
+     windows, same gate as before. */
+
+  /* Hero robot: desktop hides this entirely below 900px (see the
+     dedicated hero-robot rule earlier in this file). Brought back here,
+     simply, as a normal in-flow image under the heading — no fixed
+     positioning, no scroll-driven scale, just a calm static visual.
+     script.js fades it out (via .is-mobile-hidden) once the locked
+     sequence engages, then back in if the user scrolls back up to the
+     hero. */
+  .svcd-hero{display:flex;flex-direction:column;gap:20px;align-items:flex-start}
+  /* Repeated-class selector deliberately boosts specificity above the
+     plain ".svcd-hero__robot{display:none!important}" rule further down
+     this file (the one gating the robot to "desktop only, hidden below
+     900px") — that rule sits LATER in source order, so with equal
+     specificity it would otherwise win and silently cancel this
+     override, which is exactly what was happening (hero image missing
+     on mobile even though this block looked correct). Same fix pattern
+     already used elsewhere in this codebase for this exact class of
+     "duplicated authority across the file" cascade bug. */
+  .svcd-hero__robot.svcd-hero__robot{
+    display:block!important;position:relative!important;inset:auto!important;
+    left:auto!important;top:auto!important;right:auto!important;bottom:auto!important;
+    width:min(230px,58vw)!important;height:auto!important;max-height:none!important;
+    transform:none!important;opacity:1!important;align-self:center;
+    transition:opacity .35s ease!important;
   }
-  .svcd-pin__panel .svcd-pin__visual{display:flex;height:220px;order:-1}
+  .svcd-hero__robot.svcd-hero__robot.is-mobile-hidden{opacity:0!important}
+
+  /* The pin section reserves a full viewport-height "slot" to scroll
+     into, same as desktop, so there's a natural, consistent point at
+     which script.js engages the locked sequence. */
+  .svcd-pin{height:100vh}
+  .svcd-pin__stage{
+    position:relative;height:100%;display:block;overflow:hidden;
+  }
+  /* Once engaged, the stage pins to the viewport exactly like desktop's
+     own layoutFixed() — real page scroll is frozen (script.js snaps
+     scrollY straight back to the anchor point every time it drifts),
+     so this fixed stage is what the user actually sees "not moving"
+     while they swipe through services. */
+  .svcd-pin.is-mobile-engaged .svcd-pin__stage{
+    position:fixed;top:0;left:0;width:100%;height:100vh;z-index:5;
+    background:#07060D;
+  }
+  .svcd-pin__list{position:relative;height:100%;width:100%;padding:0}
+  /* All 5 panels stack exactly on top of one another (absolute, same
+     inset) and crossfade via opacity — only the active one is
+     interactive/visible. This is what makes "next service replaces the
+     previous one" instead of everything scrolling past in a column. */
+  .svcd-pin__panel{
+    position:absolute;inset:0;height:100%;margin:0 auto;max-width:1180px;
+    display:grid;grid-template-columns:1fr;row-gap:18px;align-content:center;
+    padding:0 var(--pad-x);opacity:0;pointer-events:none;transform:none!important;
+    transition:opacity .45s ease;
+  }
+  .svcd-pin__panel.is-mobile-active{opacity:1;pointer-events:auto}
+  /* Each panel used to carry its own copy of the blob markup, shown
+     inline — replaced by the single shared sphere below. Markup stays
+     (display:none only) so its --row-c/--blob-spin custom properties are
+     still readable via getComputedStyle by the mobile controller. */
+  .svcd-pin__panel .svcd-pin__visual{display:none}
   .svcd-pin__blob-slot{display:none}
   .svcd-pin__blob-wrap{transform:none!important;filter:none!important}
-  .svcd-pin__blob{width:180px;height:180px;animation-play-state:running!important}
+  /* Single sphere, fixed to the bottom of the viewport, full-bleed —
+     touches the left AND right frame edges (per explicit annotated
+     request), sized off the viewport width itself rather than a fixed
+     px value so it still reaches edge-to-edge on any phone width. Sits
+     behind panel content (z-index:0 vs. panels' z-index:1) and never
+     intercepts scroll/tap. .is-risen brings it up to full size/visible;
+     .is-exiting sends it back down and fades it out once the last
+     service has passed. script.js swaps --row-c/--blob-spin per active
+     service — the transitions already defined on .svcd-pin__blob itself
+     (see base rules above) are what make that swap read as a smooth
+     turn. */
+  .svcd-pin__mobile-blob{
+    --mb-d:118vw;
+    display:block;position:fixed;left:50%;z-index:0;
+    width:var(--mb-d);height:var(--mb-d);
+    bottom:calc(var(--mb-d) * -0.30); /* pulled further down, per request */
+    pointer-events:none;
+    transform:translateX(-50%) translateY(60px) scale(.7);opacity:0;
+    transition:transform .6s cubic-bezier(.22,1,.36,1),opacity .5s ease;
+  }
+  .svcd-pin__mobile-blob.is-risen{transform:translateX(-50%) translateY(0) scale(1);opacity:1}
+  .svcd-pin__mobile-blob.is-exiting{transform:translateX(-50%) translateY(160px) scale(.55);opacity:0}
+  .svcd-pin__mobile-blob .svcd-pin__blob{width:var(--mb-d);height:var(--mb-d);animation-play-state:running!important}
   .svcd-pin__progress{display:none}
   .svcd-pin__tags{
     grid-column:auto;grid-row:auto;align-self:auto;justify-self:auto;
@@ -10348,33 +10721,27 @@ body.nav-open {
   }
   .svcd-pin__tags li{font-size:14px}
 
+  /* Typography here was only ever tuned for the pinned/desktop
+     layout (80px numeral, 30px description) — scaled down to match
+     the rest of the site's mobile type scale. */
+  .svcd-pin__num{font-size:40px;margin-bottom:10px}
+  .svcd-pin__title{font-size:clamp(26px,7vw,32px);margin-bottom:12px}
+  .svcd-pin__desc{font-size:16px;line-height:1.6;margin-bottom:20px;max-width:none}
+
   .svcd-cta__inner{padding:22px}
   .svcd-cta__btn{width:100%;justify-content:center}
 }
 
-/* CROSS-DOCUMENT VIEW TRANSITIONS — smooths navigation between index.html
-   and services.html (separate documents, so a normal link click is a full
-   page reload). Pure progressive enhancement: unsupported browsers just get
-   today's normal hard navigation, nothing breaks.
-   .nav gets its own named layer, but its transition ANIMATION is switched
-   off entirely (not just left to the default morph) — so it never fades or
-   resizes, it just stays visually put while only the page content underneath
-   cross-fades. This sidesteps the earlier bug where the default per-element
-   morph tried to interpolate old-box -> new-box and visibly resized the nav
-   whenever the two pages' nav boxes weren't pixel-identical (e.g. scrollbar
-   presence differs because services.html has a much taller pinned section). */
-@view-transition {
-  navigation: auto;
-}
-.nav {
-  view-transition-name: site-nav;
-}
-::view-transition-group(site-nav),
-::view-transition-old(site-nav),
-::view-transition-new(site-nav) {
-  animation: none;
-  mix-blend-mode: normal;
-}
+/* Cross-document View Transitions between index.html and services.html
+   used to be set up here. Removed: this was one of TWO separate,
+   conflicting view-transition-name declarations for .nav in this same
+   file (this one named it "site-nav", a second block further down
+   named it "e4la-nav") — only the later one actually won the cascade,
+   which is exactly the kind of duplicated/competing-authority setup
+   that caused the nav to behave inconsistently depending on load
+   order. See the note further down (where the surviving block used
+   to be) for why view transitions were dropped entirely rather than
+   just de-duplicated. */
 
 /* SERVICES ROBOT CHARACTER PATH */
 .svcd-pin__robot{
@@ -10500,18 +10867,17 @@ body.nav-open {
   }
 }
 
-/* FINAL v4 — HOMEPAGE SERVICE CARDS: back to plain white cards with
-   dark text and full-color icon clips. This replaces the v2/v3 vivid
-   rainbow-gradient card treatment above (~line 9840) — that gradient
-   is exactly what was being reported as unwanted, so every property it
-   set (gradient background/border, white text, white-forced icon
-   filter) is reset here at higher source order. */
+/* FINAL v5 — HOMEPAGE SERVICE CARDS: dark glass treatment matching
+   the about.html reference (translucent dark card over the section's
+   glow, colored per-card border, light text). Replaces the v4 "plain
+   white card" reset directly above this comment's old position —
+   background/border/shadow/text-color all flipped to dark-on-dark. */
 .sec-services .svc-card.svc-card,
 .sec-services .services-grid .svc-card.svc-card {
-  border: 1px solid rgba(15, 14, 24, .08) !important;
-  background-color: #fff !important;
+  border: 1px solid var(--svc-card-line, rgba(157, 129, 255, .28)) !important;
+  background-color: #03041D !important;
   background-image: none !important;
-  box-shadow: 0 10px 28px rgba(15, 14, 24, .08) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 18px 44px rgba(0, 0, 0, .34) !important;
 }
 .sec-services .services-grid .svc-card.svc-card:nth-child(1),
 .sec-services .services-grid .svc-card.svc-card:nth-child(2),
@@ -10520,6 +10886,11 @@ body.nav-open {
 .sec-services .services-grid .svc-card.svc-card:nth-child(5) {
   background-position: 0 0 !important;
 }
+.sec-services .services-grid .svc-card.svc-card:nth-child(1) { --svc-card-line: rgba(124, 58, 237, .38); }
+.sec-services .services-grid .svc-card.svc-card:nth-child(2) { --svc-card-line: rgba(79, 125, 255, .38); }
+.sec-services .services-grid .svc-card.svc-card:nth-child(3) { --svc-card-line: rgba(21, 162, 142, .4); }
+.sec-services .services-grid .svc-card.svc-card:nth-child(4) { --svc-card-line: rgba(232, 117, 22, .4); }
+.sec-services .services-grid .svc-card.svc-card:nth-child(5) { --svc-card-line: rgba(141, 53, 178, .4); }
 .sec-services .svc-card.svc-card:hover,
 .sec-services .svc-card.svc-card:focus-visible,
 .sec-services .svc-card.svc-card.is-active,
@@ -10528,30 +10899,50 @@ body.nav-open {
 .sec-services .services-grid .svc-card.svc-card.svc-card.is-active,
 .sec-services .services-grid .svc-card.svc-card.svc-card.is-hovering,
 .sec-services .services-grid .svc-card.svc-card.svc-card.is-tilting {
-  border: 1px solid rgba(15, 14, 24, .12) !important;
-  background-color: #fff !important;
+  border-color: var(--svc-card-line, rgba(157, 129, 255, .5)) !important;
+  background-color: #03041D !important;
   background-image: none !important;
-  box-shadow: 0 16px 38px rgba(15, 14, 24, .14) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 26px 58px rgba(0, 0, 0, .44) !important;
   opacity: 1 !important;
   filter: none !important;
 }
 
 .sec-services .services-grid .svc-card.svc-card .svc-card__title,
 .sec-services .svc-card .svc-card__title {
-  color: #0F0E18 !important;
+  color: #fff !important;
 }
 .sec-services .services-grid .svc-card.svc-card .svc-card__desc,
 .sec-services .svc-card .svc-card__desc {
-  color: rgba(15, 14, 24, .6) !important;
+  color: rgba(255, 255, 255, .66) !important;
 }
 .sec-services .services-grid .svc-card.svc-card .svc-card__arr {
-  border: 1.5px solid rgba(15, 14, 24, .18) !important;
-  background: rgba(15, 14, 24, .04) !important;
-  color: #0F0E18 !important;
+  border: 1.5px solid rgba(255, 255, 255, .26) !important;
+  background: rgba(255, 255, 255, .06) !important;
+  color: #fff !important;
 }
 .sec-services .services-grid .svc-card.svc-card .svc-card__arr svg {
-  color: #0F0E18 !important;
-  stroke: #0F0E18 !important;
+  color: #fff !important;
+  stroke: #fff !important;
+}
+.sec-services .services-grid .svc-card.svc-card:hover .svc-card__arr,
+.sec-services .services-grid .svc-card.svc-card:focus-visible .svc-card__arr,
+.sec-services .services-grid .svc-card.svc-card.is-active .svc-card__arr {
+  border-color: rgba(255, 255, 255, .5) !important;
+  background: rgba(255, 255, 255, .12) !important;
+}
+
+/* Icon area becomes a solid-white "photo header" block spanning the
+   card's full width (it already is full-width/square per the FIX v3
+   sizing rules below) — this is deliberate: the 5 icon clips are
+   pre-recorded videos with a baked-in solid white background (not
+   real alpha transparency), so floating them directly on a dark card
+   would show an ugly white rectangle. Framing that white as an
+   intentional "cover image" strip, flush with the card's own top
+   corners, turns the same asset into a clean, common media-card
+   pattern instead of a bug. */
+.sec-services .services-grid .svc-card.svc-card .svc-icon {
+  background: #03041D !important;
+  border-radius: clamp(18px, 1.7vw, 24px) clamp(18px, 1.7vw, 24px) 0 0 !important;
 }
 
 /* Icons: show the clips in their native color again instead of the
@@ -10580,8 +10971,8 @@ body.nav-open {
    card gets extra top padding + a bit more height so nothing feels
    cramped. */
 .sec-services .services-grid .svc-card.svc-card {
-  padding-top: clamp(40px, 3.6vw, 58px) !important;
-  min-height: clamp(480px, 39vw, 620px) !important;
+  padding-top: clamp(34px, 3vw, 48px) !important;
+  min-height: clamp(420px, 34.5vw, 546px) !important;
 }
 .sec-services .services-grid .svc-card.svc-card .svc-icon {
   transform-origin: 50% 0% !important;
@@ -10754,6 +11145,18 @@ body.nav-open {
 .sec-services .services-grid .svc-card.svc-card {
   justify-content: flex-start !important;
 }
+/* Mobile only: the rule above zeroes the arrow's top margin (needed on
+   desktop to defeat the auto-margin "CTA shoved to the bottom" bug),
+   but in the stacked single-column mobile layout that left the arrow
+   sitting flush against the description text. Re-open a clear gap on
+   narrow screens; desktop keeps margin-top:0 untouched. Same selector
+   list as the rule above, placed after it, so it wins on ties. */
+@media (max-width: 700px) {
+  .sec-services .services-grid .svc-card.svc-card .svc-card__arr,
+  .sec-services .services-grid .svc-card.svc-card .svc-card__content + .svc-card__arr {
+    margin-top: 28px !important;
+  }
+}
 
 /* FINAL — service card titles: gradient text instead of flat black,
    using the same brand gradient already used for the "grad-text"
@@ -10782,9 +11185,12 @@ body.nav-open {
    typography rules (those are unscoped by parent class and harmless
    to reuse), just not any of the old .sec-why-scoped color/layout
    rules. */
+/* Why/Gain/HowWork now render as ONE unified card (see
+   .coaching-extra__inner, which carries the shared background, border,
+   radius and color-wash for all three) -- this section is just an
+   internal content segment inside that card, not its own boxed panel. */
 .sec-why2 {
-  background: #fffefc;
-  padding: clamp(40px, 4.5vw, 64px) var(--e4la-page-pad);
+  padding: 0 0 clamp(28px, 3vw, 40px);
 }
 .why-card {
   max-width: var(--e4la-page-max);
@@ -10793,22 +11199,21 @@ body.nav-open {
   flex-wrap: wrap;
   align-items: center;
   gap: 36px;
-  border: 1.5px solid rgba(124, 58, 237, .24);
-  background: linear-gradient(120deg, rgba(124, 58, 237, .09), rgba(255, 255, 255, .98) 45%, rgba(219, 39, 119, .08));
-  border-radius: var(--r-xl);
-  padding: clamp(28px, 3vw, 44px);
-  box-shadow: 0 18px 46px rgba(76, 29, 149, .12), 0 4px 14px rgba(76, 29, 149, .08);
+  transition: border-color .2s, box-shadow .2s;
+}
+.why-card:hover {
+  border-color: rgba(157, 129, 255, .5);
 }
 .why-card__intro {
   flex: 1 1 320px;
   min-width: 280px;
 }
 .sec-why2 .why__label.section-eyebrow {
-  color: #6d28d9;
+  color: #d8a8ff;
   margin-bottom: 14px;
 }
 .sec-why2 .why__h2.section-heading {
-  color: var(--text-ink);
+  color: #fff;
   max-width: 440px;
   margin-bottom: 14px;
 }
@@ -10822,14 +11227,14 @@ body.nav-open {
 .why__desc {
   font-size: 13.5px;
   line-height: 1.6;
-  color: rgba(15, 14, 24, .62);
+  color: rgba(255, 255, 255, .68);
   max-width: 46ch;
   margin-bottom: 12px;
 }
 .why__attribution {
   font-size: 12px;
   font-weight: 700;
-  color: rgba(15, 14, 24, .5);
+  color: rgba(255, 255, 255, .5);
 }
 .why-stats {
   flex: 2 1 480px;
@@ -10854,7 +11259,7 @@ body.nav-open {
   transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .35s cubic-bezier(.2, .8, .2, 1);
 }
 .why-stat__ico svg { width: 19px; height: 19px; }
-.why-stat__ico--purple { background: rgba(109, 40, 217, .1); color: #6d28d9; box-shadow: 0 0 0 1px rgba(109, 40, 217, .22), 0 0 14px rgba(109, 40, 217, .16); }
+.why-stat__ico--purple { background: rgba(109, 40, 217, .1); color: #C4B5FD; box-shadow: 0 0 0 1px rgba(196, 181, 253, .32), 0 0 14px rgba(196, 181, 253, .22); }
 .why-stat__ico--pink   { background: rgba(219, 39, 119, .1); color: #db2777; box-shadow: 0 0 0 1px rgba(219, 39, 119, .22), 0 0 14px rgba(219, 39, 119, .16); }
 .why-stat__ico--amber  { background: rgba(217, 119, 6, .1);  color: #d97706; box-shadow: 0 0 0 1px rgba(217, 119, 6, .24),  0 0 14px rgba(217, 119, 6, .16); }
 .why-stat__ico--green  { background: rgba(5, 150, 105, .1);  color: #059669; box-shadow: 0 0 0 1px rgba(5, 150, 105, .22),  0 0 14px rgba(5, 150, 105, .16); }
@@ -10867,7 +11272,7 @@ body.nav-open {
 .why-stat.is-why-active .why-stat__ico {
   transform: scale(1.12);
 }
-.why-stat:nth-child(1).is-why-active .why-stat__ico { box-shadow: 0 0 0 1px rgba(109, 40, 217, .75), 0 0 20px rgba(109, 40, 217, .55), 0 0 42px rgba(109, 40, 217, .3); }
+.why-stat:nth-child(1).is-why-active .why-stat__ico { box-shadow: 0 0 0 1px rgba(196, 181, 253, .85), 0 0 20px rgba(196, 181, 253, .6), 0 0 42px rgba(196, 181, 253, .34); }
 .why-stat:nth-child(2).is-why-active .why-stat__ico { box-shadow: 0 0 0 1px rgba(219, 39, 119, .75), 0 0 20px rgba(219, 39, 119, .55), 0 0 42px rgba(219, 39, 119, .3); }
 .why-stat:nth-child(3).is-why-active .why-stat__ico { box-shadow: 0 0 0 1px rgba(217, 119, 6, .78),  0 0 20px rgba(217, 119, 6, .55),  0 0 42px rgba(217, 119, 6, .3); }
 .why-stat:nth-child(4).is-why-active .why-stat__ico { box-shadow: 0 0 0 1px rgba(5, 150, 105, .75),   0 0 20px rgba(5, 150, 105, .55),  0 0 42px rgba(5, 150, 105, .3); }
@@ -10879,7 +11284,7 @@ body.nav-open {
   line-height: 1.1;
   transition: transform .35s cubic-bezier(.2, .8, .2, 1);
 }
-.why-stat:nth-child(1) .why-stat__num { color: #6d28d9; }
+.why-stat:nth-child(1) .why-stat__num { color: #C4B5FD; }
 .why-stat:nth-child(2) .why-stat__num { color: #db2777; }
 .why-stat:nth-child(3) .why-stat__num { color: #d97706; }
 .why-stat:nth-child(4) .why-stat__num { color: #059669; }
@@ -10891,12 +11296,12 @@ body.nav-open {
   font-size: 13px;
   font-weight: 600;
   line-height: 1.4;
-  color: rgba(15, 14, 24, .6);
+  color: rgba(255, 255, 255, .6);
   max-width: 13ch;
   transition: color .35s ease;
 }
 .why-stat.is-why-active .why-stat__label {
-  color: var(--text-ink);
+  color: #fff;
 }
 @media (max-width: 900px) {
   .why-card {
@@ -10914,28 +11319,60 @@ body.nav-open {
   .why-stat {
     flex: 1 1 100%;
     flex-direction: row;
+    align-items: center;
     text-align: left;
   }
+  .why-stat__num {
+    flex: 0 0 auto;
+  }
   .why-stat__label {
+    /* Was capped at 13ch for the centered column layout — in this row
+       layout that made longer labels ("Event participants &
+       communities") wrap narrower than the row has room for. Let it
+       fill the remaining row width instead so wrapping is even. */
     max-width: none;
+    flex: 1 1 auto;
   }
 }
 
 /* ============================================================
-   NEW — post-booking sections: What You'll Gain / How We Work
-   Together / FAQ / final Schedule CTA card. Continues the light
-   (cream/white) theme already used by .sec-coaching immediately
-   above these sections, reusing existing tokens (--purple, --g-pink,
-   --amber, --green, --blue, --pad-x, --section-py, --r-lg/--r-xl,
-   .section-eyebrow, .section-heading, .grad-text, .cta-neon) rather
-   than introducing a new palette or component system.
+   FINAL — post-booking sections: What You'll Gain / How We Work
+   Together / FAQ / final Schedule CTA card. Converted from the old
+   light (cream/white) theme to the same dark theme already used by
+   the hero, .sec-services, .sec-approach and #coaching above these
+   sections, reusing the exact same section-background gradient +
+   masked color-wash overlay, and the same dark-glass card treatment
+   as #coaching's .aud-card (background ~#03041D, purple-tinted
+   border, inset highlight + dark drop shadow). Existing tokens
+   (--purple, --g-pink, --amber, --green, --blue, --pad-x,
+   --section-py, --r-lg/--r-xl, .section-eyebrow, .section-heading,
+   .grad-text, .cta-neon) are still reused rather than introducing a
+   new palette or component system.
    ============================================================ */
 
-.sec-gain,
-.sec-howwork,
 .sec-schedule {
-  background: #fffefc;
+  position: relative !important;
+  isolation: isolate !important;
+  background: linear-gradient(180deg, #07060D 0%, #0c0a17 50%, #07060D 100%) !important;
   padding: clamp(40px, 4.5vw, 64px) var(--e4la-page-pad);
+}
+/* .sec-gain / .sec-howwork are internal segments of the single unified
+   Why/Gain/HowWork card now (background/border/radius all live on
+   .coaching-extra__inner) -- just vertical rhythm + a soft divider
+   between segments here. */
+.sec-gain,
+.sec-howwork {
+  padding: clamp(28px, 3vw, 40px) 0;
+  border-top: 1px solid rgba(255, 255, 255, .08);
+}
+.sec-schedule::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: -1 !important;
+  border-radius: inherit !important;
+  background: linear-gradient(90deg, rgba(79, 125, 255, .18) 0%, rgba(124, 58, 237, .18) 50%, rgba(219, 39, 119, .15) 100%) !important;
+  pointer-events: none !important;
 }
 
 .gain-layout,
@@ -10946,14 +11383,14 @@ body.nav-open {
 
 .sec-gain .gain__label.section-eyebrow,
 .sec-howwork .howwork__label.section-eyebrow {
-  color: #6d28d9;
+  color: #d8a8ff;
   margin-bottom: 0;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-/* FAQ band: the section itself stays on the light theme like its
+/* FAQ band: the section now shares the same dark theme as its
    neighbors — the brand gradient (same one used by the closing
    "Ready to elevate..." CTA band) is scoped to the card box
    (.faq-layout) only, sized to the question grid's own content
@@ -10961,8 +11398,23 @@ body.nav-open {
    box, on the plain section background, sharing a flex row with it
    so both stay centered together within the page's max-width. */
 .sec-faq {
-  background: #fffefc;
-  padding: clamp(52px, 6vw, 80px) var(--e4la-page-pad);
+  position: relative !important;
+  isolation: isolate !important;
+  background: linear-gradient(180deg, #07060D 0%, #0c0a17 50%, #07060D 100%) !important;
+  /* clamp(20px,4vw,56px), not var(--e4la-page-pad) -- matches
+     #coaching/.coaching-card's own left/right inset exactly so the
+     FAQ card (now on the left, see .faq-mascot order below) lines up
+     with the card above it. */
+  padding: clamp(52px, 6vw, 80px) clamp(20px, 4vw, 56px);
+}
+.sec-faq::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: -1 !important;
+  border-radius: inherit !important;
+  background: linear-gradient(90deg, rgba(79, 125, 255, .18) 0%, rgba(124, 58, 237, .18) 50%, rgba(219, 39, 119, .15) 100%) !important;
+  pointer-events: none !important;
 }
 .sec-faq .faq-outer {
   max-width: var(--e4la-page-max);
@@ -10976,9 +11428,16 @@ body.nav-open {
   min-width: 0;
   max-width: none;
   margin: 0;
-  background: linear-gradient(105deg, #1c2782 0%, #5b1e9d 34%, #c12e70 56%, #e46d16 75%, #171354 100%);
+  /* Frosted glass, matching .coaching-card's recipe -- flat translucent
+     color, no backdrop-filter:blur(). The FAQ items inside use the same
+     grid-template-rows 0fr/1fr accordion animation that caused visible
+     jank earlier this session when paired with a real blur() on an
+     ancestor; a flat rgba tint gets the "glass" look without that risk. */
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(157, 129, 255, .28);
   border-radius: var(--r-xl);
   padding: clamp(28px, 3vw, 44px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 18px 46px rgba(0, 0, 0, .35), 0 4px 14px rgba(0, 0, 0, .25);
 }
 .sec-faq .faq__label.section-eyebrow {
   color: #fff;
@@ -10997,6 +11456,11 @@ body.nav-open {
    it beside the card without squeezing the questions. */
 .faq-mascot {
   flex: 0 0 auto;
+  /* moved to the right of the card -- .faq-outer's DOM order still has
+     the mascot <video> first (markup unchanged), so push it after
+     .faq-layout visually with flex order instead of restructuring the
+     HTML. */
+  order: 2;
   width: clamp(200px, 17vw, 300px);
   height: auto;
   object-fit: contain;
@@ -11013,23 +11477,15 @@ body.nav-open {
   width: 15px;
   height: 15px;
   flex: 0 0 auto;
-  color: #6d28d9;
+  color: #d8a8ff;
 }
 
 /* -- What You'll Gain -- */
-.sec-gain {
-  border-top: 1px solid rgba(15, 14, 24, .08);
-}
 .gain-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 28px;
   margin-top: 28px;
-  border: 1.5px solid rgba(124, 58, 237, .22);
-  background: #fff;
-  border-radius: var(--r-xl);
-  padding: 32px 24px;
-  box-shadow: 0 18px 46px rgba(76, 29, 149, .1), 0 4px 14px rgba(76, 29, 149, .07);
 }
 .gain-item {
   display: flex;
@@ -11048,7 +11504,7 @@ body.nav-open {
   transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .35s cubic-bezier(.2, .8, .2, 1);
 }
 .gain-item__ico svg { width: 22px; height: 22px; }
-.gain-item__ico--purple { background: rgba(109, 40, 217, .1); color: #6d28d9; box-shadow: 0 0 0 1px rgba(109, 40, 217, .26), 0 0 16px rgba(109, 40, 217, .18); }
+.gain-item__ico--purple { background: rgba(109, 40, 217, .1); color: #C4B5FD; box-shadow: 0 0 0 1px rgba(196, 181, 253, .36), 0 0 16px rgba(196, 181, 253, .24); }
 .gain-item__ico--pink   { background: rgba(219, 39, 119, .1); color: #db2777; box-shadow: 0 0 0 1px rgba(219, 39, 119, .26), 0 0 16px rgba(219, 39, 119, .18); }
 .gain-item__ico--amber  { background: rgba(217, 119, 6, .1);  color: #d97706; box-shadow: 0 0 0 1px rgba(217, 119, 6, .28),  0 0 16px rgba(217, 119, 6, .18); }
 .gain-item__ico--green  { background: rgba(5, 150, 105, .1);  color: #059669; box-shadow: 0 0 0 1px rgba(5, 150, 105, .26),  0 0 16px rgba(5, 150, 105, .18); }
@@ -11058,7 +11514,7 @@ body.nav-open {
    .coaching__timeline / .why-stats, driven by script.js toggling
    .is-gain-active every 2s. */
 .gain-item.is-gain-active .gain-item__ico { transform: scale(1.12); }
-.gain-item:nth-child(1).is-gain-active .gain-item__ico { box-shadow: 0 0 0 1px rgba(109, 40, 217, .78), 0 0 22px rgba(109, 40, 217, .58), 0 0 46px rgba(109, 40, 217, .3); }
+.gain-item:nth-child(1).is-gain-active .gain-item__ico { box-shadow: 0 0 0 1px rgba(196, 181, 253, .88), 0 0 22px rgba(196, 181, 253, .62), 0 0 46px rgba(196, 181, 253, .34); }
 .gain-item:nth-child(2).is-gain-active .gain-item__ico { box-shadow: 0 0 0 1px rgba(219, 39, 119, .78), 0 0 22px rgba(219, 39, 119, .58), 0 0 46px rgba(219, 39, 119, .3); }
 .gain-item:nth-child(3).is-gain-active .gain-item__ico { box-shadow: 0 0 0 1px rgba(217, 119, 6, .8),  0 0 22px rgba(217, 119, 6, .58),  0 0 46px rgba(217, 119, 6, .3); }
 .gain-item:nth-child(4).is-gain-active .gain-item__ico { box-shadow: 0 0 0 1px rgba(5, 150, 105, .78),  0 0 22px rgba(5, 150, 105, .58),  0 0 46px rgba(5, 150, 105, .3); }
@@ -11068,7 +11524,7 @@ body.nav-open {
   font-size: 14px;
   line-height: 1.5;
   font-weight: 600;
-  color: var(--text-ink);
+  color: #fff;
   max-width: 20ch;
   transition: transform .35s cubic-bezier(.2, .8, .2, 1);
 }
@@ -11077,19 +11533,11 @@ body.nav-open {
 }
 
 /* -- How We Work Together -- */
-.sec-howwork {
-  border-top: 1px solid rgba(15, 14, 24, .08);
-}
 .howwork-steps {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0;
   margin-top: 28px;
-  border: 1.5px solid rgba(219, 39, 119, .22);
-  background: #fff;
-  border-radius: var(--r-xl);
-  padding: 32px 24px;
-  box-shadow: 0 18px 46px rgba(157, 23, 77, .1), 0 4px 14px rgba(157, 23, 77, .07);
 }
 .howwork-step {
   position: relative;
@@ -11114,7 +11562,7 @@ body.nav-open {
   top: 26px;
   left: calc(50% + 37px);
   width: calc(100% - 82px);
-  border-top: 2px dashed rgba(15, 14, 24, .22);
+  border-top: 2px dashed rgba(255, 255, 255, .22);
   z-index: 0;
 }
 .howwork-step:not(:last-child)::before {
@@ -11126,7 +11574,7 @@ body.nav-open {
   height: 0;
   border-top: 5px solid transparent;
   border-bottom: 5px solid transparent;
-  border-left: 7px solid rgba(15, 14, 24, .32);
+  border-left: 7px solid rgba(255, 255, 255, .32);
   z-index: 0;
 }
 .howwork-step__ico {
@@ -11138,11 +11586,11 @@ body.nav-open {
   flex: 0 0 auto;
   position: relative;
   z-index: 1;
-  background: #fffefc;
+  background: #03041D;
   transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .35s cubic-bezier(.2, .8, .2, 1);
 }
 .howwork-step__ico svg { width: 23px; height: 23px; }
-.howwork-step__ico--purple { background: rgba(109, 40, 217, .1); color: #6d28d9; box-shadow: 0 0 0 1px rgba(109, 40, 217, .26), 0 0 16px rgba(109, 40, 217, .18); }
+.howwork-step__ico--purple { background: rgba(109, 40, 217, .1); color: #C4B5FD; box-shadow: 0 0 0 1px rgba(196, 181, 253, .36), 0 0 16px rgba(196, 181, 253, .24); }
 .howwork-step__ico--pink   { background: rgba(219, 39, 119, .1); color: #db2777; box-shadow: 0 0 0 1px rgba(219, 39, 119, .26), 0 0 16px rgba(219, 39, 119, .18); }
 .howwork-step__ico--amber  { background: rgba(217, 119, 6, .1);  color: #d97706; box-shadow: 0 0 0 1px rgba(217, 119, 6, .28),  0 0 16px rgba(217, 119, 6, .18); }
 .howwork-step__ico--green  { background: rgba(5, 150, 105, .1);  color: #059669; box-shadow: 0 0 0 1px rgba(5, 150, 105, .26),  0 0 16px rgba(5, 150, 105, .18); }
@@ -11151,7 +11599,7 @@ body.nav-open {
    .coaching__timeline / .why-stats / .gain-item, driven by
    script.js toggling .is-howwork-active every 2s. */
 .howwork-step.is-howwork-active .howwork-step__ico { transform: scale(1.12); }
-.howwork-step:nth-child(1).is-howwork-active .howwork-step__ico { box-shadow: 0 0 0 1px rgba(109, 40, 217, .78), 0 0 22px rgba(109, 40, 217, .58), 0 0 46px rgba(109, 40, 217, .3); }
+.howwork-step:nth-child(1).is-howwork-active .howwork-step__ico { box-shadow: 0 0 0 1px rgba(196, 181, 253, .88), 0 0 22px rgba(196, 181, 253, .62), 0 0 46px rgba(196, 181, 253, .34); }
 .howwork-step:nth-child(2).is-howwork-active .howwork-step__ico { box-shadow: 0 0 0 1px rgba(219, 39, 119, .78), 0 0 22px rgba(219, 39, 119, .58), 0 0 46px rgba(219, 39, 119, .3); }
 .howwork-step:nth-child(3).is-howwork-active .howwork-step__ico { box-shadow: 0 0 0 1px rgba(217, 119, 6, .8),  0 0 22px rgba(217, 119, 6, .58),  0 0 46px rgba(217, 119, 6, .3); }
 .howwork-step:nth-child(4).is-howwork-active .howwork-step__ico { box-shadow: 0 0 0 1px rgba(5, 150, 105, .78),  0 0 22px rgba(5, 150, 105, .58),  0 0 46px rgba(5, 150, 105, .3); }
@@ -11159,7 +11607,7 @@ body.nav-open {
 .howwork-step__name {
   font-size: 14px;
   font-weight: 700;
-  color: var(--text-ink);
+  color: #fff;
   transition: transform .35s cubic-bezier(.2, .8, .2, 1);
 }
 .howwork-step.is-howwork-active .howwork-step__name {
@@ -11168,7 +11616,7 @@ body.nav-open {
 .howwork-step__desc {
   font-size: 12.5px;
   line-height: 1.55;
-  color: rgba(15, 14, 24, .56);
+  color: rgba(255, 255, 255, .6);
   max-width: 22ch;
 }
 
@@ -11180,15 +11628,15 @@ body.nav-open {
   margin-top: 28px;
 }
 .faq-item {
-  border: 1px solid rgba(255, 255, 255, .5);
+  border: 1px solid rgba(157, 129, 255, .28);
   border-radius: var(--r-md);
-  background: #fff;
-  box-shadow: 0 16px 34px rgba(9, 6, 30, .28), 0 4px 12px rgba(9, 6, 30, .18);
-  transition: box-shadow .28s ease, transform .28s cubic-bezier(.2, .8, .2, 1);
+  background: #03041D;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 12px 32px rgba(0, 0, 0, .3);
+  transition: box-shadow .28s ease, border-color .28s ease, transform .28s cubic-bezier(.2, .8, .2, 1);
 }
 .faq-item:has(.faq-item__q[aria-expanded="true"]) {
-  border-color: #fff;
-  box-shadow: 0 20px 42px rgba(9, 6, 30, .34), 0 6px 16px rgba(9, 6, 30, .22);
+  border-color: rgba(157, 129, 255, .55);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 16px 40px rgba(0, 0, 0, .4);
 }
 .faq-item__q {
   width: 100%;
@@ -11199,14 +11647,14 @@ body.nav-open {
   padding: 16px 18px;
   font-size: 14px;
   font-weight: 700;
-  color: var(--text-ink);
+  color: #fff;
   text-align: left;
 }
 .faq-item__chev {
   width: 14px;
   height: 14px;
   flex: 0 0 auto;
-  color: rgba(15, 14, 24, .5);
+  color: rgba(255, 255, 255, .5);
   transition: transform .25s ease;
 }
 .faq-item__q[aria-expanded="true"] .faq-item__chev {
@@ -11226,7 +11674,7 @@ body.nav-open {
   padding: 0 18px;
   font-size: 13px;
   line-height: 1.6;
-  color: rgba(15, 14, 24, .62);
+  color: rgba(255, 255, 255, .68);
 }
 .faq-item__q[aria-expanded="true"] + .faq-item__a > p {
   padding-bottom: 16px;
@@ -11234,7 +11682,7 @@ body.nav-open {
 
 /* -- Final schedule CTA card -- */
 .sec-schedule {
-  border-top: 1px solid rgba(15, 14, 24, .08);
+  border-top: 0;
 }
 .schedule-card {
   max-width: var(--e4la-page-max);
@@ -11243,11 +11691,15 @@ body.nav-open {
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 24px;
-  border: 1.5px solid rgba(219, 39, 119, .26);
-  background: linear-gradient(120deg, rgba(124, 58, 237, .07), rgba(219, 39, 119, .07));
+  border: 1px solid rgba(157, 129, 255, .28);
+  background: linear-gradient(120deg, rgba(124, 58, 237, .14), #03041D 55%, rgba(219, 39, 119, .12));
   border-radius: var(--r-xl);
   padding: 32px clamp(24px, 3vw, 40px);
-  box-shadow: 0 18px 46px rgba(157, 23, 77, .12), 0 4px 14px rgba(157, 23, 77, .08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 18px 46px rgba(0, 0, 0, .35), 0 4px 14px rgba(0, 0, 0, .25);
+  transition: border-color .2s, box-shadow .2s;
+}
+.schedule-card:hover {
+  border-color: rgba(157, 129, 255, .5);
 }
 .schedule-card__ico {
   width: 56px;
@@ -11264,7 +11716,7 @@ body.nav-open {
   max-width: none !important;
   font-size: clamp(22px, 1.8vw, 28px) !important;
   margin-bottom: 8px;
-  color: var(--text-ink);
+  color: #fff;
 }
 .schedule-card__h2 .grad-text {
   background: linear-gradient(92deg, #7c3aed 0%, #a855f7 45%, #f97316 100%);
@@ -11276,7 +11728,7 @@ body.nav-open {
 .schedule-card__desc {
   font-size: 13.5px;
   line-height: 1.55;
-  color: rgba(15, 14, 24, .6);
+  color: rgba(255, 255, 255, .68);
   max-width: 46ch;
 }
 .schedule-card__action {
@@ -11285,19 +11737,42 @@ body.nav-open {
   align-items: center;
   gap: 8px;
 }
-/* Reuse .cta-warm__btn (the exact classes the "Let's Connect" CTA at
-   the bottom of the page uses) so this button gets the identical
-   size, padding, and neon-glow interaction — that class carries one
-   old fixed `width: 184px` sized for "LET'S CONNECT"'s short label;
-   this button's longer label needs to size to its own content
-   instead. */
-.schedule-card__btn.cta-warm__btn {
+/* Restyled to match the About page's "Book a Strategy Call" button
+   (flat gradient rounded-rect, no badge/beam) per direct request —
+   replaces the previous .cta-warm__btn/.cta-neon pill+badge reuse.
+   Same recipe as about.css's ".btn": linear gradient fill, 8px
+   radius (not a pill), plain trailing arrow icon, soft lift on
+   hover. Markup no longer carries the cta-neon classes. */
+.schedule-card__btn {
+  min-height: 48px;
   width: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border-radius: 8px;
+  color: #fff;
+  background: linear-gradient(100deg, #5b57ff 0%, #cf49d9 52%, #ff497d 100%);
+  box-shadow: 0 10px 30px rgba(207, 73, 217, .28);
+  font-family: 'Manrope', Arial, sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  text-decoration: none;
   white-space: nowrap;
+  transition: transform .2s, box-shadow .2s;
 }
-/* Color: left as the natural .cta-warm__btn.cta-neon treatment
-   (purple/pink glow, matching "Let's Connect" exactly) per direct
-   request — no gold override here. */
+.schedule-card__btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 36px rgba(207, 73, 217, .38);
+}
+.schedule-card__btn svg {
+  width: 15px;
+  height: 15px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .schedule-card__btn:hover { transform: none; }
+}
 
 /* Right-edge alignment: "Let's Connect" (.sec-cta .cta-warm__btn)
    sits in a special full-bleed grid built just for the 2-tone CTA
@@ -11311,7 +11786,7 @@ body.nav-open {
 }
 .schedule-card__note {
   font-size: 11.5px;
-  color: rgba(15, 14, 24, .48);
+  color: rgba(255, 255, 255, .55);
   white-space: nowrap;
 }
 .schedule-card__meta {
@@ -11319,7 +11794,7 @@ body.nav-open {
   display: flex;
   flex-wrap: wrap;
   gap: 22px;
-  border-top: 1px solid rgba(15, 14, 24, .1);
+  border-top: 1px solid rgba(255, 255, 255, .12);
   padding-top: 20px;
   margin-top: 4px;
 }
@@ -11329,17 +11804,25 @@ body.nav-open {
   gap: 7px;
   font-size: 12px;
   font-weight: 600;
-  color: rgba(15, 14, 24, .58);
+  color: rgba(255, 255, 255, .68);
 }
 .schedule-card__meta svg {
   width: 15px;
   height: 15px;
-  color: #6d28d9;
+  color: #a78bfa;
 }
 
 @media (max-width: 900px) {
   .gain-grid {
     grid-template-columns: 1fr 1fr;
+  }
+  /* 5 items in a 2-column grid leaves the last one stranded alone on
+     its own row with a lopsided gap beside it — span it across both
+     columns and center it instead. */
+  .gain-item:last-child {
+    grid-column: 1 / -1;
+    max-width: 200px;
+    margin: 0 auto;
   }
   .howwork-steps {
     grid-template-columns: 1fr;
@@ -11364,26 +11847,69 @@ body.nav-open {
 @media (max-width: 560px) {
   .gain-grid {
     grid-template-columns: 1fr 1fr;
-    padding: 24px 16px;
   }
 }
 
 /* -- Coaching "Read More" reveal toggle -- */
+/* .coaching-more-band is a full-bleed section, same gradient-wash
+   background as #coaching/.sec-faq, so the area around the card
+   continues the site's dark-blue/purple/pink theme instead of
+   dropping to flat black in the gap above/below the card. */
+.coaching-more-band {
+  position: relative;
+  width: 100%;
+  padding: clamp(32px, 4vw, 56px) 0;
+  background: linear-gradient(180deg, #07060D 0%, #0c0a17 50%, #07060D 100%);
+  isolation: isolate;
+}
+.coaching-more-band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, rgba(79, 125, 255, .18) 0%, rgba(124, 58, 237, .18) 50%, rgba(219, 39, 119, .15) 100%);
+  pointer-events: none;
+}
+/* .coaching-card is the ONE single painted box for the whole
+   Why/Gain/HowWork unit -- background, border, radius, shadow all
+   live here, on a single shared parent, instead of being split across
+   .coaching-more and .coaching-extra__inner as two independently-
+   painted adjacent boxes (that approach kept producing a hairline
+   seam where the two met). Left/right margin matches #coaching's own
+   padding-left/right exactly (clamp(20px,4vw,56px)) so this card's
+   edges line up with the arrow-cards / "This Session For You" panel
+   inside #coaching directly above it -- not a narrower centered box,
+   not a full-bleed edge-to-edge bar. overflow:hidden here also
+   backstops the accordion's own clipping so nothing can visually leak
+   past the rounded corners while collapsed. */
+.coaching-card {
+  position: relative;
+  width: auto;
+  margin: 0 clamp(20px, 4vw, 56px);
+  border: 1px solid rgba(157, 129, 255, .28);
+  border-radius: var(--r-xl);
+  background:
+    linear-gradient(90deg, rgba(79, 125, 255, .18) 0%, rgba(124, 58, 237, .18) 50%, rgba(219, 39, 119, .15) 100%),
+    rgba(255, 255, 255, .06);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 18px 46px rgba(0, 0, 0, .35), 0 4px 14px rgba(0, 0, 0, .25);
+  overflow: hidden;
+}
+/* .coaching-more is just the always-visible header row inside
+   .coaching-card now -- no background/border/radius of its own. */
 .coaching-more {
-  max-width: var(--e4la-page-max);
-  margin: 0 auto;
-  padding: 28px var(--e4la-page-pad) 20px;
+  width: 100%;
+  margin: 0;
+  padding: 28px clamp(24px, 4vw, 44px) 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
   text-align: center;
-  background: linear-gradient(105deg, #fffdf9, #fff 60%, #fff8f1);
 }
 .coaching-more__text {
   font-size: 14px;
   font-weight: 600;
-  color: rgba(15, 14, 24, .56);
+  color: rgba(255, 255, 255, .6);
 }
 .coaching-more__btn {
   display: inline-flex;
@@ -11426,15 +11952,28 @@ body.nav-open {
    the sections unfold beneath it" rather than an instant jump. */
 .coaching-extra {
   display: grid;
-  grid-template-rows: 0fr;
+  /* minmax(0, 0fr) -- not bare 0fr -- overrides the row's implicit
+     "auto" minimum track size (which otherwise floors at the content's
+     min-content height, e.g. the WHY E4LA eyebrow label's own line
+     height) so the collapsed state actually reaches zero instead of
+     leaving a sliver of the first section visible underneath the
+     button. */
+  grid-template-rows: minmax(0, 0fr);
   transition: grid-template-rows .6s cubic-bezier(.22, 1, .36, 1);
 }
 .coaching-extra.is-open {
-  grid-template-rows: 1fr;
+  grid-template-rows: minmax(0, 1fr);
 }
+/* .coaching-extra__inner is just the revealed content's padding/
+   layout wrapper now -- .coaching-card (above) owns all the visual
+   framing. overflow:hidden + min-height:0 here are what make the
+   grid-template-rows 0fr/1fr collapse actually reach zero height. */
 .coaching-extra__inner {
   overflow: hidden;
   min-height: 0;
+  width: 100%;
+  margin: 0;
+  padding: clamp(28px, 3.5vw, 44px) clamp(24px, 4vw, 44px) clamp(32px, 3.5vw, 48px);
 }
 
 
@@ -11520,17 +12059,34 @@ body.nav-open {
   transform: translate3d(0, 0, 0);
 }
 
+/* FINAL — reskinned to match Home's established dark-glass card
+   treatment (.sec-services .svc-card: border rgba(157,129,255,.28),
+   background-color #03041D, inset-highlight + drop-shadow box-shadow;
+   hover deepens both) instead of this card's previous distinct
+   gradient-border-banner look. Content/layout/padding/radius/place-
+   in-page are all unchanged — only background/border/shadow moved
+   to the shared card language. The old padding:1.5px + gradient
+   background "clip trick" (used to fake a gradient border) is
+   replaced by a real 1px border directly on .svcd-cta__box, so
+   .svcd-cta__inner no longer needs its own background layer. */
 .svcd-page .svcd-after-services .svcd-cta__box {
   border-radius: 22px !important;
-  padding: 1.5px !important;
-  background: linear-gradient(95deg, #7C3AED 0%, #C026D3 48%, #F02D64 100%) !important;
-  box-shadow: 0 24px 72px rgba(0, 0, 0, .28), 0 0 46px rgba(124, 58, 237, .18) !important;
+  padding: 0 !important;
+  border: 1px solid rgba(157, 129, 255, .28) !important;
+  background: #03041D !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 18px 44px rgba(0, 0, 0, .34) !important;
+  transition: border-color .28s ease, box-shadow .28s ease !important;
+}
+.svcd-page .svcd-after-services .svcd-cta__box:hover,
+.svcd-page .svcd-after-services .svcd-cta__box:focus-within {
+  border-color: rgba(157, 129, 255, .5) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 26px 58px rgba(0, 0, 0, .44) !important;
 }
 
 .svcd-page .svcd-after-services .svcd-cta__inner {
   min-height: 104px !important;
   border-radius: 20.5px !important;
-  background: linear-gradient(135deg, rgba(9, 8, 18, .94), rgba(10, 17, 42, .88)) !important;
+  background: transparent !important;
   padding: clamp(22px, 2.2vw, 30px) clamp(24px, 3vw, 42px) !important;
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) auto !important;
@@ -11781,4 +12337,890 @@ body.nav-open {
   max-width: 1280px !important;
   margin: 0 auto !important;
   padding: clamp(54px, 8vh, 92px) var(--pad-x) clamp(34px, 6vh, 72px) !important;
+}
+
+
+
+/* FINAL PINNED SERVICE STAR BACKGROUND ONLY */
+body.svcd-page {
+  background-color: #07060D !important;
+  background-image:
+    radial-gradient(1.6px 1.6px at 6% 14%, rgba(255,255,255,.9) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 18% 63%, rgba(255,255,255,.62) 50%, transparent 51%),
+    radial-gradient(2px 2px at 29% 30%, rgba(255,255,255,.82) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 41% 82%, rgba(255,255,255,.58) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 52% 8%, rgba(255,255,255,.74) 50%, transparent 51%),
+    radial-gradient(1.8px 1.8px at 63% 55%, rgba(255,255,255,.88) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 74% 22%, rgba(255,255,255,.58) 50%, transparent 51%),
+    radial-gradient(1.9px 1.9px at 85% 71%, rgba(255,255,255,.82) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 95% 40%, rgba(255,255,255,.58) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 15% 45%, rgba(255,255,255,.72) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 33% 92%, rgba(255,255,255,.58) 50%, transparent 51%),
+    radial-gradient(1.8px 1.8px at 48% 20%, rgba(255,255,255,.84) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 60% 68%, rgba(255,255,255,.58) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 72% 40%, rgba(255,255,255,.74) 50%, transparent 51%),
+    radial-gradient(3.2px 3.2px at 22% 20%, rgba(255,255,255,1) 0%, rgba(255,255,255,.34) 40%, transparent 72%),
+    radial-gradient(3px 3px at 68% 12%, rgba(255,255,255,1) 0%, rgba(255,255,255,.3) 40%, transparent 72%),
+    radial-gradient(3.2px 3.2px at 80% 62%, rgba(255,255,255,1) 0%, rgba(255,255,255,.34) 40%, transparent 72%) !important;
+  background-size:
+    853px 853px, 853px 853px, 853px 853px, 853px 853px, 853px 853px,
+    853px 853px, 853px 853px, 853px 853px, 853px 853px,
+    611px 611px, 611px 611px, 611px 611px, 611px 611px, 611px 611px,
+    920px 920px, 920px 920px, 920px 920px !important;
+  background-repeat: repeat !important;
+  background-position: 0 0 !important;
+  background-attachment: fixed !important;
+}
+
+/* FINAL DENSER PINNED SERVICE STARS ONLY */
+body.svcd-page {
+  background-image:
+    radial-gradient(1.6px 1.6px at 6% 14%, rgba(255,255,255,.9) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 18% 63%, rgba(255,255,255,.62) 50%, transparent 51%),
+    radial-gradient(2px 2px at 29% 30%, rgba(255,255,255,.82) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 41% 82%, rgba(255,255,255,.58) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 52% 8%, rgba(255,255,255,.74) 50%, transparent 51%),
+    radial-gradient(1.8px 1.8px at 63% 55%, rgba(255,255,255,.88) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 74% 22%, rgba(255,255,255,.58) 50%, transparent 51%),
+    radial-gradient(1.9px 1.9px at 85% 71%, rgba(255,255,255,.82) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 95% 40%, rgba(255,255,255,.58) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 15% 45%, rgba(255,255,255,.72) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 33% 92%, rgba(255,255,255,.58) 50%, transparent 51%),
+    radial-gradient(1.8px 1.8px at 48% 20%, rgba(255,255,255,.84) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 60% 68%, rgba(255,255,255,.58) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 72% 40%, rgba(255,255,255,.74) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 8% 88%, rgba(255,255,255,.52) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 12% 33%, rgba(255,255,255,.7) 50%, transparent 51%),
+    radial-gradient(1.1px 1.1px at 21% 17%, rgba(255,255,255,.5) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 25% 78%, rgba(255,255,255,.68) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 36% 54%, rgba(255,255,255,.5) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 44% 11%, rgba(255,255,255,.68) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 55% 36%, rgba(255,255,255,.52) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 66% 82%, rgba(255,255,255,.72) 50%, transparent 51%),
+    radial-gradient(1.1px 1.1px at 77% 58%, rgba(255,255,255,.5) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 88% 24%, rgba(255,255,255,.7) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 92% 86%, rgba(255,255,255,.52) 50%, transparent 51%),
+    radial-gradient(1.1px 1.1px at 4% 52%, rgba(255,255,255,.46) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 27% 44%, rgba(255,255,255,.58) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 39% 28%, rgba(255,255,255,.5) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 51% 73%, rgba(255,255,255,.64) 50%, transparent 51%),
+    radial-gradient(1.1px 1.1px at 69% 29%, rgba(255,255,255,.48) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 81% 9%, rgba(255,255,255,.6) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 97% 67%, rgba(255,255,255,.5) 50%, transparent 51%),
+    radial-gradient(3.2px 3.2px at 22% 20%, rgba(255,255,255,1) 0%, rgba(255,255,255,.34) 40%, transparent 72%),
+    radial-gradient(3px 3px at 68% 12%, rgba(255,255,255,1) 0%, rgba(255,255,255,.3) 40%, transparent 72%),
+    radial-gradient(3.2px 3.2px at 80% 62%, rgba(255,255,255,1) 0%, rgba(255,255,255,.34) 40%, transparent 72%) !important;
+  background-size:
+    853px 853px, 853px 853px, 853px 853px, 853px 853px, 853px 853px,
+    853px 853px, 853px 853px, 853px 853px, 853px 853px,
+    611px 611px, 611px 611px, 611px 611px, 611px 611px, 611px 611px,
+    733px 733px, 733px 733px, 733px 733px, 733px 733px, 733px 733px,
+    733px 733px, 733px 733px, 733px 733px, 733px 733px, 733px 733px,
+    733px 733px, 997px 997px, 997px 997px, 997px 997px, 997px 997px,
+    997px 997px, 997px 997px, 997px 997px,
+    920px 920px, 920px 920px, 920px 920px !important;
+  background-repeat: repeat !important;
+  background-position: 0 0 !important;
+  background-attachment: fixed !important;
+}
+
+/* FINAL BRIGHT DENSE SERVICE STARS ONLY */
+/* Density reduced twice per direct request: 33 small/4 glow -> 17/3
+   -> now 9/2 (~70% fewer than the original 37 total). Each round
+   kept every other star from the prior evenly-spread sequence
+   (rather than clustering removals), so the spread across x (3% to
+   98%) and y stays balanced with no empty/overcrowded patches. Same
+   per-star size/opacity formula and background-repeat/position/
+   attachment mechanics as before, so the appearance and "fixed"
+   pinned-backdrop behavior are unchanged — just fewer of them. */
+body.svcd-page {
+  background-color: var(--bg-hero) !important;
+  background-image:
+    radial-gradient(2.2px 2.2px at 3% 7%, rgba(255,255,255,1) 45%, transparent 58%),
+    radial-gradient(1.6px 1.6px at 15% 55%, rgba(255,255,255,.82) 45%, transparent 58%),
+    radial-gradient(1.8px 1.8px at 27% 18%, rgba(255,255,255,.88) 45%, transparent 58%),
+    radial-gradient(1.6px 1.6px at 38% 84%, rgba(255,255,255,.82) 45%, transparent 58%),
+    radial-gradient(1.7px 1.7px at 50% 74%, rgba(255,255,255,.86) 45%, transparent 58%),
+    radial-gradient(1.7px 1.7px at 62% 82%, rgba(255,255,255,.86) 45%, transparent 58%),
+    radial-gradient(1.7px 1.7px at 74% 88%, rgba(255,255,255,.86) 45%, transparent 58%),
+    radial-gradient(1.7px 1.7px at 86% 76%, rgba(255,255,255,.86) 45%, transparent 58%),
+    radial-gradient(1.7px 1.7px at 98% 92%, rgba(255,255,255,.86) 45%, transparent 58%),
+    radial-gradient(4.2px 4.2px at 17% 23%, rgba(255,255,255,1) 0%, rgba(255,255,255,.58) 35%, transparent 72%),
+    radial-gradient(4.4px 4.4px at 82% 62%, rgba(255,255,255,1) 0%, rgba(255,255,255,.58) 35%, transparent 72%) !important;
+  background-size:
+    390px 390px, 470px 470px, 450px 450px, 430px 430px, 410px 410px,
+    390px 390px, 470px 470px, 450px 450px, 430px 430px,
+    760px 760px, 860px 860px !important;
+  background-repeat: repeat !important;
+  background-position: 0 0 !important;
+  background-attachment: fixed !important;
+}
+
+/* FINAL SERVICES HERO COPY POSITION */
+.svcd-hero .svcd-hero__copy {
+  margin-top: clamp(120px, 18vh, 190px) !important;
+}
+
+
+/* Cross-document View Transitions (nav + page crossfade) are removed
+   site-wide now. Root cause found via a screen recording: on a real
+   navigation, the browser applied the DESTINATION page's nav state
+   (e.g. its correct active-link color) instantly, while the outgoing
+   page's body kept cross-fading out underneath for up to ~260ms — and
+   under some timing/interruption conditions that mismatched state
+   (new nav + stale old body) lingered far longer than the declared
+   260ms before resolving. This file also had TWO different, competing
+   view-transition-name values assigned to .nav (one earlier in this
+   file named it "site-nav", this block named it "e4la-nav") — only
+   one can ever win the cascade, so the other was silently dead code,
+   the same "duplicated authority across the file" problem that caused
+   the earlier plain-CSS nav bugs. A plain instant full-page swap (the
+   default with this feature off) can't produce a mismatched nav/body
+   state, so that's what every page gets now. */
+
+/* Nav/header sizing, links, CTA, badge, mobile menu — all of it —
+   now lives exclusively in nav.css (loaded last on every page) as a
+   single shared component. The three separate copies that used to
+   sit here (FINAL SHARED NAV COMPONENT / FINAL NAV TYPOGRAPHY LOCK /
+   FINAL NAV POSITION + TYPE HARD LOCK), each with their own
+   escalating !important/specificity tricks, were the actual cause
+   of the nav rendering inconsistently between pages: whichever rule
+   happened to win in a given context differed page to page. Do not
+   re-add nav rules here — edit nav.css instead. */
+
+/* ============================================================
+   FINAL SHARED TYPOGRAPHY TOKEN SYSTEM — Home + Services
+   consolidates the roles below onto one shared scale so the same
+   kind of title/subtitle/body copy reads identically everywhere
+   it appears on these two pages. about.html does not load this
+   stylesheet (it has its own assets/css/about.css) — matching
+   concrete values are mirrored there so About stays visually in
+   sync without merging the two separate CSS architectures.
+   Roles covered: hero/page title, section title, subtitle/eyebrow,
+   description/body copy, small supporting text, CTA labels.
+   Nav labels were already consistent site-wide and are untouched.
+   ============================================================ */
+:root {
+  --font-primary: 'Manrope', Arial, sans-serif;
+  --text-hero: clamp(36px, 4vw, 66px);
+  --fw-hero: 700;
+  --line-height-hero: 1.04;
+  --text-section-title: clamp(32px, 2.4vw, 44px);
+  --fw-section-title: 700;
+  --line-height-heading: 1.12;
+  --text-subtitle: 14px;
+  --fw-subtitle: 800;
+  --ls-subtitle: 0.24em;
+  --text-body: clamp(14.5px, 1vw, 16px);
+  --fw-body: 400;
+  --line-height-body: 1.56;
+  --text-small: clamp(14px, 0.95vw, 15.5px);
+  --line-height-small: 1.52;
+  --text-cta: 13px;
+  --fw-cta: 400;
+}
+
+/* Hero / page title — Home's marketing hero and Services' page
+   title are the same semantic role and now share one scale. */
+.hero__h1,
+.svcd-h1 {
+  font-family: var(--font-primary) !important;
+  font-size: var(--text-hero) !important;
+  font-weight: var(--fw-hero) !important;
+  line-height: var(--line-height-hero) !important;
+  letter-spacing: normal !important;
+}
+/* Consistent mobile breakpoint for the hero/page-title role — Home
+   already had its own 700px override to keep the headline from
+   wrapping awkwardly on phones; giving Services' page title the
+   same breakpoint + value keeps the two in sync at every width. */
+@media (max-width: 700px) {
+  .hero__h1,
+  .svcd-h1 {
+    font-size: clamp(36px, 12vw, 58px) !important;
+  }
+}
+
+/* Section titles — brings the booking headline (previously its
+   own ID-scoped 36px/800 override) in line with Approach/Why so
+   every "normal" section title matches. The larger Home-services
+   intro heading (.services-top__h2, ~66px) is a deliberately
+   bigger statement heading and is preserved as-is, matching the
+   allowed hero-vs-section-title distinction. */
+.section-heading,
+.approach__h2,
+.why__h2,
+#coaching .coaching__h2 {
+  font-family: var(--font-primary) !important;
+  font-size: var(--text-section-title) !important;
+  font-weight: var(--fw-section-title) !important;
+  line-height: var(--line-height-heading) !important;
+  letter-spacing: 0 !important;
+}
+
+/* Subtitle / eyebrow / overline */
+.section-eyebrow,
+.hero__eyebrow,
+.label-tag,
+.approach__label,
+.why__label,
+.coaching__label,
+.sec-services .label-tag,
+.svcd-eyebrow {
+  font-family: var(--font-primary) !important;
+  font-size: var(--text-subtitle) !important;
+  font-weight: var(--fw-subtitle) !important;
+  letter-spacing: var(--ls-subtitle) !important;
+}
+
+/* Description / body copy */
+.section-description,
+.hero__desc,
+.approach__desc,
+.coaching__desc,
+.why__desc,
+.svcd-sub {
+  font-family: var(--font-primary) !important;
+  font-size: var(--text-body) !important;
+  font-weight: var(--fw-body) !important;
+  line-height: var(--line-height-body) !important;
+}
+
+/* Small supporting text */
+.card-description,
+.svc-card__desc,
+.why-item__body,
+.aud-card__desc,
+.tstep__sub,
+.footer__links a {
+  font-family: var(--font-primary) !important;
+  font-size: var(--text-small) !important;
+  line-height: var(--line-height-small) !important;
+}
+
+/* .gain-item__text and .schedule-card__meta li were folded into the
+   shared "small supporting text" role above (matching .tstep__sub's
+   size/line-height so Gain/Schedule read consistently with Approach),
+   but that shared rule also normalizes font-weight to 400 for every
+   selector in its list. These two were originally semi-bold (600) by
+   design — restoring that here so only size/line-height unified,
+   not the intentional weight difference. */
+.gain-item__text,
+.schedule-card__meta li {
+  font-weight: 600 !important;
+}
+/* .faq-item__q: explicitly semibold, NOT bold, per direct feedback —
+   enough weight to read as a clickable question row without looking
+   like a heading. */
+.faq-item__q {
+  font-weight: 600 !important;
+}
+
+/* CTA / button labels — non-nav buttons (.site-cta group, line
+   ~6514) already share font-family:Manrope / font-size:13px, and
+   the earlier "FINAL CTA TYPOGRAPHY" rule already collapsed every
+   one of them to font-weight:400 — so this role is already
+   consistent and is intentionally left untouched here. The nav
+   CTA ("Let's Connect") deliberately keeps its own Inter/11px
+   styling as part of the nav, which is a distinct role (see Nav
+   labels below) and is NOT targeted by this token block. */
+
+/* ============================================================
+   FINAL FROSTED-GLASS ACTIVE-STATE LAYER — illuminated circles
+   Scope (explicitly named, not a blanket ".circle" selector):
+     - #coaching .ctime__ico       (booking "how it works" icons)
+     - .why-stat__ico              (Why-E4LA stat icons)
+     - .btn-play__ring             ("How We Work" hero button badge)
+     - .gain-item__ico             (What You'll Gain icons)
+     - .howwork-step__ico          (How We Work Together step icons)
+   EXCLUDED, per explicit instruction: every circle inside the
+   Approach section (.tstep__circle / .timeline__track family) —
+   none of the selectors below reference .sec-approach or
+   .tstep__circle, so that section is untouched.
+   .gain-item__ico and .howwork-step__ico use a child <svg> for their
+   icon (not a background-image on the circle itself, like
+   #coaching .ctime__ico did before its fix), so the plain z-index:-1
+   ::before trick already sits correctly behind their icon — no
+   ::after relocation needed for these two.
+   Each circle gets one ::before glass layer, inset:0 so it tracks
+   the circle's own size exactly (no oversized blob), sitting
+   behind it (z-index:-1) via a local stacking context, hidden
+   (opacity:0, pointer-events:none) until the SAME trigger that
+   already drives that circle's own glow/illumination switches it
+   on — no new animation timing is introduced, no glow color is
+   changed, and layout is unaffected since the layer is absolutely
+   positioned and never influences box size. */
+#coaching .ctime__ico,
+.why-stat__ico,
+.btn-play__ring,
+.gain-item__ico,
+.howwork-step__ico {
+  position: relative;
+  isolation: isolate;
+}
+#coaching .ctime__ico::before,
+.why-stat__ico::before,
+.btn-play__ring::before,
+.gain-item__ico::before,
+.howwork-step__ico::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 50%;
+  /* Resting state is deliberately faint — a permanent opacity:1 at
+     the ORIGINAL hover-tier strength (0.07 bg + 14px blur + a wide
+     0 8px 28px shadow) turned every icon into a bright frosted-white
+     disc that visually swallowed the icon's own color/artwork
+     ("circles gone under a white circle"). This is a bare hint of
+     glass at rest; the fuller effect below only shows on the
+     circle's own illumination trigger. */
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(3px) saturate(105%);
+  -webkit-backdrop-filter: blur(3px) saturate(105%);
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity .3s ease, transform .3s ease, background .3s ease, border-color .3s ease, box-shadow .3s ease, backdrop-filter .3s ease;
+  pointer-events: none;
+}
+/* .btn-play__ring carries a real 1px solid border (see line ~836:
+   .btn-play__ring{border:1px solid #fff}), never overridden. inset:0
+   on an absolutely positioned ::before resolves against the PADDING
+   box of its containing block, i.e. just inside that border — so at
+   inset:0 this layer sat 1px inward on every edge, ~2px smaller in
+   diameter than the visible ring (the reported "not precise" gap).
+   #coaching .ctime__ico resolves to border:0 (see line ~9101) and
+   .why-stat__ico has no border at all, so inset:0 is already exact
+   for those two; only the play-ring needs the outward correction. */
+.btn-play__ring::before {
+  inset: -1px;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  #coaching .ctime__ico::before,
+  .why-stat__ico::before,
+  .btn-play__ring::before,
+  .gain-item__ico::before,
+  .howwork-step__ico::before {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* Illumination trigger steps the same layer up to the fuller glass
+   effect (stronger fill/border/blur/glow + a slight scale-up). */
+#coaching .coaching__timeline li.is-ctime-active .ctime__ico::before,
+.why-stat.is-why-active .why-stat__ico::before,
+.btn-play.cta-neon:hover .btn-play__ring::before,
+.btn-play.cta-neon:focus-visible .btn-play__ring::before,
+.gain-item.is-gain-active .gain-item__ico::before,
+.howwork-step.is-howwork-active .howwork-step__ico::before {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 8px 26px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(14px) saturate(125%);
+  -webkit-backdrop-filter: blur(14px) saturate(125%);
+  transform: scale(1.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #coaching .ctime__ico::before,
+  .why-stat__ico::before,
+  .btn-play__ring::before,
+  .gain-item__ico::before,
+  .howwork-step__ico::before {
+    transition: opacity .01ms linear !important;
+  }
+}
+
+/* The nav__cta / nav__mobile-cta badge-centering saga that used to
+   live here is resolved structurally now: nav.css's badge is
+   position:absolute with no travel animation and no dependency on
+   the label's layout, so there's nothing left to re-center. See
+   nav.css for the single, current implementation. */
+
+/* FINAL CTA BEAM CLIP + RETURN FIX */
+.btn-outline-white.cta-neon,
+.btn-play.cta-neon,
+.cal__cta.cta-neon,
+.cta-warm__btn.cta-neon,
+#js-book.cta-neon {
+  position: relative !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  backface-visibility: hidden !important;
+}
+.btn-outline-white.cta-neon .cta-neon__beam,
+.btn-play.cta-neon .cta-neon__beam,
+.cal__cta.cta-neon .cta-neon__beam,
+.cta-warm__btn.cta-neon .cta-neon__beam,
+#js-book.cta-neon .cta-neon__beam {
+  display: none !important;
+}
+.btn-outline-white.cta-neon::before,
+.btn-play.cta-neon::before,
+.cal__cta.cta-neon::before,
+.cta-warm__btn.cta-neon::before,
+#js-book.cta-neon::before {
+  inset: 0 !important;
+  border-radius: inherit !important;
+  clip-path: inset(0 round inherit) !important;
+  pointer-events: none !important;
+}
+.btn-outline-white.cta-neon .cta-neon__badge,
+.btn-play.cta-neon .cta-neon__badge,
+.cal__cta.cta-neon .cta-neon__badge,
+.cta-warm__btn.cta-neon .cta-neon__badge,
+#js-book.cta-neon .cta-neon__badge {
+  transition: transform 680ms cubic-bezier(.22,1,.36,1), box-shadow 420ms ease, background 420ms ease !important;
+  will-change: transform !important;
+  z-index: 2 !important;
+}
+.btn-outline-white.cta-neon .cta-neon__label,
+.btn-play.cta-neon .cta-neon__label,
+.cal__cta.cta-neon .cta-neon__label,
+.cta-warm__btn.cta-neon .cta-neon__label,
+#js-book.cta-neon .cta-neon__label {
+  position: relative !important;
+  z-index: 3 !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn-outline-white.cta-neon:hover,
+  .btn-play.cta-neon:hover,
+  .cal__cta.cta-neon:hover,
+  .cta-warm__btn.cta-neon:hover,
+  #js-book.cta-neon:hover {
+    overflow: hidden !important;
+  }
+}
+
+
+/* FINAL HERO CTA RETURN SYNC ONLY */
+.btn-outline-white.cta-neon::before,
+.btn-play.cta-neon::before,
+.cal__cta.cta-neon::before,
+#js-book.cta-neon::before {
+  transition: width 840ms cubic-bezier(.22,1,.36,1), clip-path 840ms cubic-bezier(.22,1,.36,1) !important;
+}
+.btn-outline-white.cta-neon .cta-neon__badge,
+.btn-play.cta-neon .cta-neon__badge,
+.cal__cta.cta-neon .cta-neon__badge,
+#js-book.cta-neon .cta-neon__badge {
+  transition: transform 840ms cubic-bezier(.22,1,.36,1), left 840ms cubic-bezier(.22,1,.36,1), box-shadow 520ms ease !important;
+}
+.btn-outline-white.cta-neon .cta-neon__label,
+.btn-play.cta-neon .cta-neon__label,
+.cal__cta.cta-neon .cta-neon__label,
+#js-book.cta-neon .cta-neon__label {
+  transform: none !important;
+}
+
+
+/* FINAL HERO CTA GRADIENT RETURN SLOWDOWN ONLY */
+.btn-outline-white.cta-neon::before,
+.btn-play.cta-neon::before,
+.cal__cta.cta-neon::before,
+#js-book.cta-neon::before {
+  transition: width 1040ms cubic-bezier(.22,1,.36,1), clip-path 1040ms cubic-bezier(.22,1,.36,1) !important;
+}
+
+
+/* FINAL CTA FONT CONSISTENCY */
+.cta-neon .cta-neon__label,
+.coaching-more__btn,
+.services-top__link,
+.section-cta,
+.cal__cta,
+.cta-warm__btn,
+.schedule-card__btn {
+  font-family: Inter, Manrope, Helvetica Neue, Arial, sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: .08em !important;
+}
+
+/* FINAL READ MORE = HOW WE WORK TOGGLE CTA */
+.coaching-more__btn {
+  --badge-d: 46px;
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 54px !important;
+  padding: 14px 38px 14px calc(var(--badge-d) + 16px) !important;
+  border: 1.5px solid transparent !important;
+  border-radius: 999px !important;
+  background: linear-gradient(#0a0612, #0a0612) padding-box, linear-gradient(90deg, #F97316, #DB2777, #7C3AED) border-box !important;
+  color: #fff !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  box-shadow: 0 0 12px rgba(219,39,119,.18), inset 0 0 10px rgba(219,39,119,.06) !important;
+  transform: none !important;
+  transition: box-shadow .35s cubic-bezier(.4, 0, .2, 1), transform .28s cubic-bezier(.2, .8, .2, 1) !important;
+}
+.coaching-more__btn::before {
+  content: attr(data-empty) !important;
+  position: absolute !important;
+  top: -1.5px !important;
+  bottom: -1.5px !important;
+  left: -1.5px !important;
+  width: 0 !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #F97316, #DB2777, #7C3AED) !important;
+  z-index: 1 !important;
+  transition: width .45s cubic-bezier(.4, 0, .2, 1) !important;
+  pointer-events: none !important;
+}
+.coaching-more__btn[aria-expanded=true]::before {
+  width: calc(100% + 3px) !important;
+}
+.coaching-more__btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 12px 28px rgba(109, 40, 217, .30), 0 4px 12px rgba(219, 39, 119, .20) !important;
+}
+.coaching-more__label {
+  position: relative !important;
+  z-index: 2 !important;
+  font-family: Inter, Manrope, Helvetica Neue, Arial, sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: .08em !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+  pointer-events: none !important;
+}
+.coaching-more__chev {
+  position: absolute !important;
+  top: 50% !important;
+  left: -1.5px !important;
+  z-index: 2 !important;
+  width: var(--badge-d) !important;
+  height: var(--badge-d) !important;
+  min-width: var(--badge-d) !important;
+  min-height: var(--badge-d) !important;
+  max-width: var(--badge-d) !important;
+  max-height: var(--badge-d) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 15px !important;
+  border-radius: 50% !important;
+  color: #fff !important;
+  background: radial-gradient(circle at 32% 28%, #fdba74, #F97316 24%, #DB2777 60%, #7C3AED 100%) !important;
+  transform: translateY(-50%) rotate(-90deg) !important;
+  transition: left .45s cubic-bezier(.4, 0, .2, 1), transform .45s cubic-bezier(.4, 0, .2, 1) !important;
+  pointer-events: none !important;
+}
+.coaching-more__btn[aria-expanded=true] .coaching-more__chev {
+  left: calc(100% + 1.5px - var(--badge-d)) !important;
+  transform: translateY(-50%) rotate(90deg) !important;
+}
+
+/* FINAL READ MORE HOW-WE-WORK MATCH */
+.coaching-more__btn {
+  --badge-d: 46px;
+  position: relative !important;
+  min-height: 54px !important;
+  padding: 14px 38px 14px calc(var(--badge-d) + 16px) !important;
+  border-radius: 999px !important;
+  border: 1.5px solid transparent !important;
+  background: linear-gradient(#0a0612, #0a0612) padding-box, linear-gradient(90deg, #F97316, #DB2777, #7C3AED) border-box !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+}
+.coaching-more__btn::before {
+  content: attr(data-empty) !important;
+  position: absolute !important;
+  top: -1.5px !important;
+  bottom: -1.5px !important;
+  left: -1.5px !important;
+  width: 0 !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #F97316, #DB2777, #7C3AED) !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+  transition: width .45s cubic-bezier(.4, 0, .2, 1) !important;
+}
+.coaching-more__btn[aria-expanded=true]::before {
+  width: calc(100% + 3px) !important;
+}
+.coaching-more__label {
+  position: relative !important;
+  z-index: 2 !important;
+  color: #fff !important;
+  font-family: Inter, Manrope, Helvetica Neue, Arial, sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: .08em !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+}
+.coaching-more__chev {
+  position: absolute !important;
+  top: 50% !important;
+  left: -1.5px !important;
+  z-index: 2 !important;
+  width: var(--badge-d) !important;
+  height: var(--badge-d) !important;
+  min-width: var(--badge-d) !important;
+  min-height: var(--badge-d) !important;
+  max-width: var(--badge-d) !important;
+  max-height: var(--badge-d) !important;
+  padding: 15px !important;
+  border-radius: 50% !important;
+  color: #fff !important;
+  background: radial-gradient(circle at 32% 28%, #fdba74, #F97316 24%, #DB2777 60%, #7C3AED 100%) !important;
+  transform: translateY(-50%) rotate(-90deg) !important;
+  transition: left .45s cubic-bezier(.4, 0, .2, 1), transform .45s cubic-bezier(.4, 0, .2, 1) !important;
+}
+.coaching-more__btn[aria-expanded=true] .coaching-more__chev {
+  left: calc(100% + 1.5px - var(--badge-d)) !important;
+  transform: translateY(-50%) rotate(90deg) !important;
+}
+
+/* FINAL READ MORE CTA LENGTH + PALM BADGE */
+.coaching-more__btn {
+ --badge-d: 48px !important;
+ min-width: 238px !important;
+ min-height: 56px !important;
+ padding: 14px calc(var(--badge-d) + 24px) !important;
+}
+.coaching-more__btn[aria-expanded=true]::before,
+.coaching-more__btn[aria-expanded=true]::before {
+ width: calc(100% + 3px) !important;
+}
+.coaching-more__label {
+ text-align: center !important;
+ pointer-events: none !important;
+}
+.coaching-more__chev {
+ width: var(--badge-d) !important;
+ height: var(--badge-d) !important;
+ min-width: var(--badge-d) !important;
+ min-height: var(--badge-d) !important;
+ max-width: var(--badge-d) !important;
+ max-height: var(--badge-d) !important;
+ padding: 0 !important;
+ display: grid !important;
+ place-items: center !important;
+ overflow: hidden !important;
+}
+.coaching-more__palm {
+ width: 22px !important;
+ height: 22px !important;
+ display: block !important;
+ object-fit: contain !important;
+ filter: drop-shadow(0 1px 2px rgba(0,0,0,.18)) !important;
+ pointer-events: none !important;
+}
+
+
+/* FINAL READ MORE CTA STRAIGHT BADGE + EXACT HEIGHT */
+.coaching-more__btn {
+  --badge-d: 48px !important;
+  height: var(--badge-d) !important;
+  min-height: var(--badge-d) !important;
+  max-height: var(--badge-d) !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-left: calc(var(--badge-d) + 24px) !important;
+  padding-right: calc(var(--badge-d) + 24px) !important;
+  align-items: center !important;
+}
+.coaching-more__chev {
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  transition: left .45s cubic-bezier(.4, 0, .2, 1) !important;
+}
+.coaching-more__btn[aria-expanded= true] .coaching-more__chev,
+.coaching-more__btn[aria-expanded=true] .coaching-more__chev {
+  left: calc(100% + 1.5px - var(--badge-d)) !important;
+  transform: translateY(-50%) !important;
+}
+.coaching-more__palm {
+  transform: none !important;
+}
+
+/* FINAL MATCH SECONDARY STRATEGY CTAS TO LETS CONNECT */
+.schedule-card__btn,
+.svcd-page .svcd-after-services .svcd-cta__btn,
+.svcd-cta__btn {
+  min-width: 0 !important;
+  width: auto !important;
+  min-height: 46px !important;
+  padding: 13px 22px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  color: #fff !important;
+  background: linear-gradient(100deg, #F97316 0%, #DB2777 52%, #7C3AED 100%) !important;
+  box-shadow: 0 12px 30px rgba(219, 39, 119, .24), 0 4px 14px rgba(124, 58, 237, .18) !important;
+  font-family: Inter, Manrope,  Helvetica Neue, Arial, sans-serif !important;
+  font-size: 11.5px !important;
+  line-height: 1 !important;
+  font-weight: 700 !important;
+  letter-spacing: .07em !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+  transform: none !important;
+  transition: transform .25s ease, box-shadow .25s ease, filter .25s ease !important;
+}
+.schedule-card__btn:hover,
+.svcd-page .svcd-after-services .svcd-cta__btn:hover,
+.svcd-cta__btn:hover {
+  transform: translateY(-1px) !important;
+  filter: saturate(1.06) brightness(1.03) !important;
+  box-shadow: 0 16px 34px rgba(219, 39, 119, .30), 0 6px 18px rgba(124, 58, 237, .22) !important;
+}
+.schedule-card__btn svg,
+.svcd-page .svcd-after-services .svcd-cta__btn svg,
+.svcd-cta__btn svg {
+  width: 13px !important;
+  height: 13px !important;
+  flex: 0 0 auto !important;
+}
+
+/* FINAL SERVICE 5 PAINT EVENTS CTA-STROKE HIGHLIGHT */
+.svcd-pin__tags li.svcd-pin__tag--paint {
+  width: max-content !important;
+  max-width: 100% !important;
+  min-height: 46px !important;
+  padding: 10px 22px 10px 16px !important;
+  border: 1.5px solid transparent !important;
+  border-radius: 999px !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  background:
+    linear-gradient(rgba(10, 6, 18, .62), rgba(10, 6, 18, .62)) padding-box,
+    linear-gradient(100deg, #F97316 0%, #DB2777 52%, #7C3AED 100%) border-box !important;
+  box-shadow: 0 12px 30px rgba(219, 39, 119, .20), 0 0 18px rgba(124, 58, 237, .22) !important;
+  text-shadow: 0 2px 12px rgba(0,0,0,.42) !important;
+  font-weight: 800 !important;
+  letter-spacing: .01em !important;
+}
+.svcd-pin__tags li.svcd-pin__tag--paint::before {
+  width: 11px !important;
+  height: 11px !important;
+  border-color: rgba(255,255,255,.92) !important;
+  background: #fff !important;
+  box-shadow: 0 0 12px rgba(255,255,255,.42) !important;
+}
+
+/* FINAL SERVICE 5 PAINT EVENTS STROKE ONLY */
+.svcd-pin__tags li.svcd-pin__tag--paint {
+  background:
+    linear-gradient(transparent, transparent) padding-box,
+    linear-gradient(100deg, #F97316 0%, #DB2777 52%, #7C3AED 100%) border-box !important;
+  box-shadow: 0 0 18px rgba(219, 39, 119, .16), 0 0 18px rgba(124, 58, 237, .16) !important;
+}
+
+/* FINAL SERVICE 5 PAINT EVENTS TRUE STROKE ONLY - NO FILL */
+.svcd-pin__tags li.svcd-pin__tag--paint,
+.svcd-pin__tags li.svcd-pin__tag--paint.is-tag-active {
+  background-color: transparent !important;
+  background-image:
+    linear-gradient(transparent, transparent),
+    linear-gradient(100deg, #F97316 0%, #DB2777 52%, #7C3AED 100%) !important;
+  background-origin: border-box !important;
+  background-clip: padding-box, border-box !important;
+  -webkit-background-clip: padding-box, border-box !important;
+  border: 1.5px solid transparent !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  box-shadow: none !important;
+}
+
+/* FINAL SERVICE 5 PAINT EVENTS PSEUDO STROKE ONLY */
+.svcd-pin__tags li.svcd-pin__tag--paint,
+.svcd-pin__tags li.svcd-pin__tag--paint.is-tag-active {
+  position: relative !important;
+  isolation: isolate !important;
+  background: transparent !important;
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+.svcd-pin__tags li.svcd-pin__tag--paint::after {
+  content:  !important;
+ position: absolute !important;
+ inset: 0 !important;
+ border-radius: inherit !important;
+ padding: 1.5px !important;
+ background: linear-gradient(100deg, #F97316 0%, #DB2777 52%, #7C3AED 100%) !important;
+ -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0) !important;
+ -webkit-mask-composite: xor !important;
+ mask-composite: exclude !important;
+ pointer-events: none !important;
+ z-index: -1 !important;
+}
+
+/* FINAL SERVICE 5 PAINT EVENTS VISIBLE STROKE ONLY */
+.svcd-pin__tags li.svcd-pin__tag--paint,
+.svcd-pin__tags li.svcd-pin__tag--paint.is-tag-active {
+  position: relative !important;
+  z-index: 0 !important;
+  isolation: isolate !important;
+  border-radius: 999px !important;
+  padding: 10px 22px 10px 16px !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+.svcd-pin__tags li.svcd-pin__tag--paint::after,
+.svcd-pin__tags li.svcd-pin__tag--paint.is-tag-active::after {
+  content:  !important;
+ position: absolute !important;
+ inset: 0 !important;
+ border-radius: 999px !important;
+ padding: 2px !important;
+ background: linear-gradient(100deg, #F97316 0%, #DB2777 52%, #7C3AED 100%) !important;
+ -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0) !important;
+ -webkit-mask-composite: xor !important;
+ mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0) !important;
+ mask-composite: exclude !important;
+ pointer-events: none !important;
+ z-index: 2 !important;
+}
+.svcd-pin__tags li.svcd-pin__tag--paint::before {
+ position: relative !important;
+ z-index: 3 !important;
+}
+
+/* FINAL SERVICE 5 PAINT EVENTS SIMPLE WHITE STROKE */
+.svcd-pin__tags li.svcd-pin__tag--paint,
+.svcd-pin__tags li.svcd-pin__tag--paint.is-tag-active {
+  width: max-content !important;
+  max-width: 100% !important;
+  min-height: 44px !important;
+  padding: 8px 20px 8px 14px !important;
+  border: 2px solid rgba(255,255,255,.92) !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: 0 0 18px rgba(255,255,255,.18) !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+.svcd-pin__tags li.svcd-pin__tag--paint::after,
+.svcd-pin__tags li.svcd-pin__tag--paint.is-tag-active::after {
+  display: none !important;
+  content: none !important;
+}
+.svcd-pin__tags li.svcd-pin__tag--paint::before {
+  width: 11px !important;
+  height: 11px !important;
+  border-color: #fff !important;
+  background: #fff !important;
 }

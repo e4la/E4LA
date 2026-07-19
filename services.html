@@ -9,8 +9,11 @@
 <link rel="canonical" href="https://www.e4la.org/services.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=optional" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=2026071576">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=2026071913">
+  <link rel="stylesheet" href="assets/css/nav.css?v=2026071907">
+<link rel=icon type=image/png href=assets/e4la-logo-palm.png?v=2026071916>
+<link rel=apple-touch-icon href=assets/e4la-logo-palm.png?v=2026071916>
 </head>
 <body class="svcd-page">
 
@@ -35,19 +38,21 @@
 
 <!-- â•â• NAV â•â• -->
 <header>
-  <nav class="nav" id="js-nav" role="navigation" aria-label="Main navigation">
-    <a class="nav__logo" href="index.html" aria-label="E4LA â€“ Elevation for Los Angeles">
-      <img class="brand-asset" src="assets/e4la-logo-palm.png" alt="E4LA â€” Elevation for Los Angeles" width="1022" height="533">
+  <nav class="nav e4la-site-nav" id="js-nav" role="navigation" aria-label="Main navigation">
+    <a class="nav__logo" href="index.html?v=2026071901#main" aria-label="E4LA - Elevation for Los Angeles">
+      <img class="brand-asset" src="assets/e4la-logo-palm.png" alt="E4LA - Elevation for Los Angeles" width="1022" height="533">
     </a>
 
     <ul class="nav__links" role="list">
-      <li><a class="nav__link" href="services.html" aria-current="page">Services</a></li>
-      <li><a class="nav__link" href="index.html#approach">Approach</a></li>
-      <li><a class="nav__link" href="index.html#coaching">Advisory</a></li>
+      <li><a class="nav__link" href="services.html?v=2026071901" aria-current="page">Services</a></li>
+      <li><a class="nav__link" href="about.html?v=2026071901">About Us</a></li>
+      <li><a class="nav__link" href="index.html?v=2026071901#approach">Approach</a></li>
+      <li><a class="nav__link" href="index.html?v=2026071901#coaching">Advisory</a></li>
     </ul>
 
-    <a class="nav__cta cta-neon cta-neon--gold" href="mailto:info@e4la.org">
+    <a class="nav__cta nav__cta--readmore" href="mailto:info@e4la.org">
       <svg class="cta-neon__beam" aria-hidden="true"><rect class="cta-neon__beam-rect"></rect></svg>
+          <span class="cta-neon__fill" aria-hidden="true"></span>
       <span class="cta-neon__badge" aria-hidden="true"><img class="cta-neon__palm" src="assets/palm-01.png" alt=""></span>
       <span class="cta-neon__label">Let's Connect</span>
     </a>
@@ -59,12 +64,14 @@
 
   <div class="nav__mobile" id="js-nav-mobile" aria-hidden="true">
     <ul class="nav__mobile-links" role="list">
-      <li><a href="services.html">Services</a></li>
-      <li><a href="index.html#approach">Approach</a></li>
-      <li><a href="index.html#coaching">Advisory</a></li>
+      <li><a href="services.html?v=2026071901" aria-current="page">Services</a></li>
+      <li><a href="about.html?v=2026071901">About Us</a></li>
+      <li><a href="index.html?v=2026071901#approach">Approach</a></li>
+      <li><a href="index.html?v=2026071901#coaching">Advisory</a></li>
     </ul>
-    <a class="nav__mobile-cta cta-neon cta-neon--gold" href="mailto:info@e4la.org">
+    <a class="nav__mobile-cta nav__cta--readmore" href="mailto:info@e4la.org">
       <svg class="cta-neon__beam" aria-hidden="true"><rect class="cta-neon__beam-rect"></rect></svg>
+          <span class="cta-neon__fill" aria-hidden="true"></span>
       <span class="cta-neon__badge" aria-hidden="true"><img class="cta-neon__palm" src="assets/palm-01.png" alt=""></span>
       <span class="cta-neon__label">Let's Connect</span>
     </a>
@@ -80,7 +87,7 @@
     <h1 class="svcd-h1" id="svcd-h">End-to-end solutions<br>for <span class="is-purple">modern</span> <span class="is-grad">businesses.</span></h1>
     <p class="svcd-sub">From strategy to execution, we help you grow, innovate and create meaningful impact.</p>
   </div>
-  <video class="svcd-hero__robot svcd-pin__robot" src="assets/robot_3034_alpha_safe.webm?v=2026071605" autoplay muted loop playsinline aria-hidden="true"></video>
+  <video class="svcd-hero__robot svcd-pin__robot" src="assets/robot_0835_alpha_safe.webm?v=2026071893" autoplay muted loop playsinline aria-hidden="true"></video>
 </section>
 
 <!-- â•â• SERVICES DETAIL â€” PINNED SCROLL-STEP SECTION â•â• -->
@@ -89,6 +96,14 @@
     <div class="svcd-pin__blob-slot" aria-hidden="true">
       <div></div>
       <div class="svcd-pin__visual" id="js-pin-blob-visual"></div>
+    </div>
+    <!-- Mobile-only persistent sphere (see mobile media query + script.js
+         "MOBILE PINNED-SPHERE FALLBACK"). Hidden on desktop; the desktop
+         blob-slot above is hidden on mobile instead. Separate element from
+         both, so neither breakpoint's JS/CSS ever has to touch the other's
+         node. -->
+    <div class="svcd-pin__mobile-blob" id="js-pin-mobile-blob" aria-hidden="true">
+      <div class="svcd-pin__blob"></div>
     </div>
     <ol class="svcd-pin__list">
 
@@ -170,7 +185,7 @@
         </div>
         <div class="svcd-pin__visual" aria-hidden="true"><div class="svcd-pin__blob-wrap"><div class="svcd-pin__blob"></div></div></div>
         <ul class="svcd-pin__tags">
-          <li>Paint Events</li>
+          <li class="svcd-pin__tag--paint">Paint Events</li>
           <li>Corporate Workshops</li>
           <li>Team Building</li>
           <li>Community Events</li>
@@ -229,20 +244,20 @@
       <div>
         <p class="footer__col-head">Services</p>
         <nav class="footer__links" aria-label="Services links">
-          <a href="services.html#strategy-growth">Strategy &amp; Growth</a>
-          <a href="services.html#digital-experience">Digital Experience</a>
-          <a href="services.html#ai-innovation">AI &amp; Innovation</a>
-          <a href="services.html#brand-marketing">Brand &amp; Marketing</a>
-          <a href="services.html#workshops-experiences">Workshops &amp; Experiences</a>
+          <a href="services.html?v=2026071901#strategy-growth">Strategy &amp; Growth</a>
+          <a href="services.html?v=2026071901#digital-experience">Digital Experience</a>
+          <a href="services.html?v=2026071901#ai-innovation">AI &amp; Innovation</a>
+          <a href="services.html?v=2026071901#brand-marketing">Brand &amp; Marketing</a>
+          <a href="services.html?v=2026071901#workshops-experiences">Workshops &amp; Experiences</a>
         </nav>
       </div>
       <div>
         <p class="footer__col-head">Company</p>
         <nav class="footer__links" aria-label="Company links">
-          <a href="index.html#why">About Us</a>
-          <a href="index.html#approach">Our Approach</a>
+          <a href="index.html?v=2026071901#why">About Us</a>
+          <a href="index.html?v=2026071901#approach">Our Approach</a>
           <a href="services.html">Work</a>
-          <a href="index.html#coaching">Insights</a>
+          <a href="index.html?v=2026071901#coaching">Insights</a>
           <a href="mailto:info@e4la.org">Contact</a>
         </nav>
       </div>
@@ -252,9 +267,9 @@
           <a href="services.html">Blog</a>
           <a href="services.html">Case Studies</a>
           <a href="services.html">Guides</a>
-          <a href="index.html#coaching">FAQ's</a>
-          <a href="index.html#contact">Privacy Policy</a>
-          <a href="index.html#contact">Terms of Service</a>
+          <a href="index.html?v=2026071901#coaching">FAQ's</a>
+          <a href="index.html?v=2026071901#contact">Privacy Policy</a>
+          <a href="index.html?v=2026071901#contact">Terms of Service</a>
         </nav>
       </div>
       <div>
@@ -275,11 +290,59 @@
   </div>
 </footer>
 
-<script src="script.js?v=2026071586"></script>
+<script src="script.js?v=2026071841"></script>
 <script type="module" src="motion.js"></script>
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

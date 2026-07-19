@@ -1,0 +1,1390 @@
+﻿/* ============================================================
+   E4LA SHARED NAV COMPONENT â€” single source of truth.
+
+   This file is the ONLY place the header/nav is styled. All three
+   pages (index.html, services.html, about.html) load it, and none
+   of them may duplicate nav rules in their own stylesheet
+   (style.css / about.css) â€” that duplication across 3 files, each
+   with its own competing specificity/!important layers, was part of
+   the earlier nav inconsistency. Every value below is fixed and
+   hardcoded â€” no runtime JS measurement is involved in sizing or
+   positioning anything â€” so the nav cannot resize or shift after
+   paint due to CSS/JS timing, and cannot render differently on one
+   page vs another from stylesheet conflicts.
+
+   If the nav ever needs to change, change it here, once.
+   ============================================================ */
+
+:root {
+  --e4la-nav-h: 80px;
+  --e4la-nav-h-m: 72px;
+  --e4la-nav-pad: clamp(24px, 4vw, 72px);
+}
+
+html body {
+  padding-top: var(--e4la-nav-h) !important;
+}
+
+/* ---------- Header shell ---------- */
+body > header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 99999 !important;
+  width: 100% !important;
+  height: var(--e4la-nav-h) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: rgba(2, 5, 13, .96) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .08) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  box-sizing: border-box !important;
+}
+
+body > header .nav {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 var(--e4la-nav-pad) !important;
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: 180px minmax(420px, 1fr) 250px !important;
+  align-items: center !important;
+  column-gap: clamp(24px, 3vw, 52px) !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+/* ---------- Logo ---------- */
+body > header .nav__logo {
+  width: 132px !important;
+  height: 58px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  justify-self: start !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+body > header .nav__logo img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 132px !important;
+  max-height: 58px !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  transform: none !important;
+  mix-blend-mode: normal !important;
+}
+
+/* ---------- Desktop links ---------- */
+body > header .nav__links {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  justify-self: center !important;
+  gap: clamp(30px, 3vw, 48px) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+  width: 100% !important;
+}
+body > header .nav__links li {
+  display: flex !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+body > header .nav__link.nav__link.nav__link {
+  min-height: 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-family: 'Manrope', 'Helvetica Neue', Arial, sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  font-weight: 500 !important;
+  letter-spacing: .035em !important;
+  text-transform: uppercase !important;
+  text-decoration: none !important;
+  color: rgba(255, 255, 255, .86) !important;
+  white-space: nowrap !important;
+  transition: color .2s ease !important;
+}
+body > header .nav__link.nav__link:hover { color: #fff !important; }
+body > header .nav__link.nav__link[aria-current="page"] { color: #C8A84B !important; }
+
+/* ---------- CTA pill ("Let's Connect") ----------
+   Fixed geometry everywhere: static badge size/position, no JS
+   sizing, no hover-triggered badge travel. Interactivity is just a
+   calm glow/lift on real-hover devices â€” nothing with moving parts
+   that could get stuck on a touch tap or drift between pages. */
+body > header .nav__cta.cta-neon.cta-neon.cta-neon {
+  position: relative !important;
+  justify-self: end !important;
+  width: 228px !important;
+  min-width: 228px !important;
+  height: 58px !important;
+  min-height: 58px !important;
+  margin: 0 !important;
+  padding: 0 28px !important;
+  box-sizing: border-box !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255, 77, 149, .34) !important;
+  background: linear-gradient(180deg, rgba(16, 8, 25, .94), rgba(8, 5, 15, .98)) !important;
+  color: #fff !important;
+  text-decoration: none !important;
+  overflow: hidden !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .04) inset, 0 0 20px rgba(255, 45, 126, .22) !important;
+  transition: box-shadow .25s ease, border-color .25s ease, transform .25s ease, background .25s ease !important;
+}
+/* Rest-state glow was a border-alpha + blur bump only (.34->.55, 20px->38px
+   blur) â€” correct in code but visually so close to the resting state that
+   on a real screen it read as "nothing happened" (confirmed by comparing
+   hovered vs non-hovered capture frames side by side: the two were nearly
+   indistinguishable). The hero CTAs invert background + slide the badge on
+   hover, so next to those this pill felt dead by comparison. Strengthened
+   with a clearly perceptible lift + brighten so the response is unmistakable
+   on first hover, no other geometry/position changes. */
+@media (hover: hover) and (pointer: fine) {
+  body > header .nav__cta.cta-neon.cta-neon.cta-neon:hover {
+    border-color: rgba(255, 77, 149, .85) !important;
+    background: linear-gradient(180deg, rgba(28, 14, 40, .96), rgba(14, 8, 22, .98)) !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, .1) inset, 0 0 42px rgba(255, 45, 126, .55) !important;
+    transform: translateY(-1px) scale(1.03) !important;
+  }
+}
+body > header .nav__cta.cta-neon.cta-neon.cta-neon:focus-visible {
+  border-color: rgba(255, 77, 149, .85) !important;
+  background: linear-gradient(180deg, rgba(28, 14, 40, .96), rgba(14, 8, 22, .98)) !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .1) inset, 0 0 42px rgba(255, 45, 126, .55) !important;
+  outline: 2px solid #fff !important;
+  outline-offset: 2px !important;
+}
+/* Touch devices have no :hover at all, so without this a tap on the
+   nav CTA gave zero visible feedback â€” looked completely dead/broken
+   even though the mailto: link underneath was still firing. A quick
+   self-resetting press state (opacity dip + slight scale) confirms
+   the tap registered, on both the desktop and mobile-menu versions. */
+@media (hover: none), (pointer: coarse) {
+  body > header .nav__cta.cta-neon.cta-neon.cta-neon:active,
+  body .nav__mobile-cta.cta-neon.cta-neon.cta-neon:active {
+    opacity: .82 !important;
+    transform: scale(.97) !important;
+    border-color: rgba(255, 77, 149, .55) !important;
+  }
+}
+/* Decorative beam-shimmer relied on JS to size an SVG rect; without
+   fixed, predictable geometry it has no place in a component that
+   must render identically with or without script.js running (About
+   doesn't load script.js at all). Retired for stability. Selectors
+   below are deliberately over-specific (repeated .cta-neon) so they
+   win outright against older, still-present rules elsewhere in the
+   cascade rather than relying on load order alone. */
+body > header .nav__cta.cta-neon.cta-neon.cta-neon .cta-neon__beam,
+body > header .nav__mobile-cta.cta-neon.cta-neon.cta-neon .cta-neon__beam { display: none !important; }
+body > header .nav__cta.cta-neon.cta-neon.cta-neon .cta-neon__badge,
+body > header .nav__mobile-cta.cta-neon.cta-neon.cta-neon .cta-neon__badge {
+  position: absolute !important;
+  left: 7px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  margin: 0 !important;
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 999px !important;
+  background: radial-gradient(circle at 34% 28%, #ffbe35 0 18%, #ff6a2f 36%, #e72e87 68%, #7438ff 100%) !important;
+  box-shadow: 0 0 16px rgba(255, 78, 100, .5), 0 0 28px rgba(214, 43, 159, .28) !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+body > header .nav__cta.cta-neon.cta-neon.cta-neon .cta-neon__palm,
+body > header .nav__mobile-cta.cta-neon.cta-neon.cta-neon .cta-neon__palm {
+  width: 29px !important;
+  height: 29px !important;
+  object-fit: contain !important;
+  filter: brightness(0) invert(1) !important;
+}
+body > header .nav__cta.cta-neon.cta-neon.cta-neon .cta-neon__label,
+body > header .nav__mobile-cta.cta-neon.cta-neon.cta-neon .cta-neon__label {
+  position: relative !important;
+  z-index: 2 !important;
+  font-family: 'Manrope', 'Helvetica Neue', Arial, sans-serif !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  white-space: nowrap !important;
+}
+
+/* ---------- Burger (mobile trigger) ---------- */
+body > header .nav__burger {
+  display: none;
+  width: 46px !important;
+  height: 46px !important;
+  border: 1px solid rgba(255, 255, 255, .18) !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, .04) !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  justify-self: end !important;
+  cursor: pointer;
+}
+body > header .nav__burger span {
+  width: 18px !important;
+  height: 2px !important;
+  background: #fff !important;
+  border-radius: 999px !important;
+  display: block !important;
+}
+
+/* ---------- Mobile slide-down panel ---------- */
+body .nav__mobile {
+  position: fixed !important;
+  top: var(--e4la-nav-h) !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 99998 !important;
+  display: grid !important;
+  gap: 22px !important;
+  padding: 24px var(--e4la-nav-pad) 30px !important;
+  background: rgba(2, 5, 13, .98) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .1) !important;
+  transform: translateY(-120%) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: transform .32s cubic-bezier(.22, 1, .36, 1), opacity .24s ease !important;
+}
+body .nav__mobile.is-open {
+  transform: translateY(0) !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+body .nav__mobile-links {
+  display: grid !important;
+  gap: 16px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+body .nav__mobile-links.nav__mobile-links.nav__mobile-links a {
+  min-height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  color: rgba(255, 255, 255, .86) !important;
+  font-family: 'Manrope', 'Helvetica Neue', Arial, sans-serif !important;
+  font-size: 15px !important;
+  font-weight: 650 !important;
+  letter-spacing: .03em !important;
+  text-transform: uppercase !important;
+  text-decoration: none !important;
+}
+body .nav__mobile-links.nav__mobile-links.nav__mobile-links a:hover { color: #fff !important; }
+body .nav__mobile-links.nav__mobile-links.nav__mobile-links a[aria-current="page"] { color: #C8A84B !important; }
+
+body .nav__mobile-cta.cta-neon.cta-neon.cta-neon {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 300px !important;
+  min-height: 58px !important;
+  padding: 0 28px !important;
+  box-sizing: border-box !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255, 77, 149, .34) !important;
+  background: linear-gradient(180deg, rgba(16, 8, 25, .94), rgba(8, 5, 15, .98)) !important;
+  color: #fff !important;
+  text-decoration: none !important;
+  overflow: hidden !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .04) inset, 0 0 20px rgba(255, 45, 126, .22) !important;
+}
+
+/* ---------- Mobile breakpoint ---------- */
+@media (max-width: 980px) {
+  :root { --e4la-nav-h: var(--e4la-nav-h-m); }
+  body > header .nav {
+    grid-template-columns: 140px 1fr 46px !important;
+    column-gap: 16px !important;
+  }
+  body > header .nav__logo,
+  body > header .nav__logo img {
+    width: 116px !important;
+    height: 52px !important;
+    max-width: 116px !important;
+    max-height: 52px !important;
+  }
+  body > header .nav__links.nav__links,
+  body > header .nav__cta.nav__cta { display: none !important; }
+  body > header .nav__burger.nav__burger { display: inline-flex !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body > header .nav__link.nav__link.nav__link,
+  body > header .nav__cta.cta-neon.cta-neon.cta-neon,
+  body .nav__mobile,
+  body .nav__mobile-cta.cta-neon.cta-neon.cta-neon { transition: none !important; }
+}
+
+/* FINAL CTA HOVER TRAVEL FIX */
+body > header .nav__cta.cta-neon.cta-neon.cta-neon,
+body > header .nav__mobile-cta.cta-neon.cta-neon.cta-neon {
+  overflow: hidden !important;
+  isolation: isolate !important;
+}
+body > header .nav__cta.cta-neon.cta-neon.cta-neon .cta-neon__beam,
+body > header .nav__mobile-cta.cta-neon.cta-neon.cta-neon .cta-neon__beam {
+  display: none !important;
+}
+body > header .nav__cta.cta-neon.cta-neon.cta-neon .cta-neon__badge {
+  left: 7px !important;
+  transform: translate3d(0,-50%,0) !important;
+  transition: transform 680ms cubic-bezier(.22,1,.36,1), box-shadow 420ms ease, background 420ms ease !important;
+  will-change: transform !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  body > header .nav__cta.cta-neon.cta-neon.cta-neon:hover .cta-neon__badge {
+    transform: translate3d(166px,-50%,0) !important;
+  }
+  body > header .nav__cta.cta-neon.cta-neon.cta-neon:hover {
+    background: linear-gradient(100deg, rgba(38, 22, 82, .96), rgba(133, 35, 196, .82), rgba(225, 45, 111, .66)) !important;
+    border-color: rgba(255, 88, 166, .82) !important;
+  }
+}
+body > header .nav__cta.cta-neon.cta-neon.cta-neon .cta-neon__label {
+  transition: transform 680ms cubic-bezier(.22,1,.36,1), color 360ms ease !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  body > header .nav__cta.cta-neon.cta-neon.cta-neon:hover .cta-neon__label {
+    transform: translateX(-22px) !important;
+  }
+}
+
+/* FINAL LETS CONNECT LIQUID TRAIL HOVER */
+body > header .nav__cta.cta-neon.cta-neon.cta-neon {
+  --cta-fill: 0%;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  background: linear-gradient(180deg, rgba(16, 8, 25, .94), rgba(8, 5, 15, .98)) !important;
+  transition: border-color 520ms cubic-bezier(.22,1,.36,1), box-shadow 520ms cubic-bezier(.22,1,.36,1), transform 520ms cubic-bezier(.22,1,.36,1) !important;
+}
+body > header .nav__cta.cta-neon.cta-neon.cta-neon::before {
+  content:  !important;
+ position: absolute !important;
+ inset: 0 !important;
+ z-index: 0 !important;
+ border-radius: inherit !important;
+ background: linear-gradient(100deg, #ffbe35 0%, #ff6a2f 26%, #e72e87 58%, #7438ff 100%) !important;
+ clip-path: inset(0 calc(100% - var(--cta-fill)) 0 0 round 999px) !important;
+ opacity: .96 !important;
+ transition: clip-path 760ms cubic-bezier(.22,1,.36,1) !important;
+ pointer-events: none !important;
+}
+body > header .nav__cta.cta-neon.cta-neon.cta-neon .cta-neon__badge {
+ left: 7px !important;
+ z-index: 2 !important;
+ transform: translate3d(0,-50%,0) !important;
+ transition: transform 760ms cubic-bezier(.22,1,.36,1), box-shadow 520ms ease !important;
+}
+body > header .nav__cta.cta-neon.cta-neon.cta-neon .cta-neon__label {
+ z-index: 3 !important;
+ transform: none !important;
+ transition: color 520ms ease !important;
+}
+@media (hover: hover) and (pointer: fine) {
+ body > header .nav__cta.cta-neon.cta-neon.cta-neon:hover {
+ --cta-fill: 100%;
+ border-color: rgba(255, 126, 190, .88) !important;
+ box-shadow: 0 0 0 1px rgba(255,255,255,.10) inset, 0 0 44px rgba(231,46,135,.42) !important;
+ }
+ body > header .nav__cta.cta-neon.cta-neon.cta-neon:hover::before {
+ clip-path: inset(0 0 0 0 round 999px) !important;
+ }
+ body > header .nav__cta.cta-neon.cta-neon.cta-neon:hover .cta-neon__badge {
+ transform: translate3d(166px,-50%,0) !important;
+ }
+ body > header .nav__cta.cta-neon.cta-neon.cta-neon:hover .cta-neon__label {
+ transform: none !important;
+ color: #fff !important;
+ }
+}
+
+/* FINAL LETS CONNECT REAL LIQUID HOVER - FIXED */
+body > header .nav__cta.cta-neon.cta-neon.cta-neon {
+  overflow: hidden !important;
+  isolation: isolate !important;
+  background: linear-gradient(180deg, rgba(16,8,25,.94), rgba(8,5,15,.98)) !important;
+}
+body > header .nav__cta.cta-neon.cta-neon.cta-neon::after {
+  content: '' !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: 0% !important;
+  z-index: 0 !important;
+  border-radius: inherit !important;
+  background: linear-gradient(100deg, #ffbe35 0%, #ff6a2f 28%, #e72e87 62%, #7438ff 100%) !important;
+  opacity: .98 !important;
+  transition: width 780ms cubic-bezier(.22,1,.36,1) !important;
+  pointer-events: none !important;
+}
+body > header .nav__cta.cta-neon.cta-neon.cta-neon .cta-neon__badge {
+  z-index: 2 !important;
+  transform: translate3d(0,-50%,0) !important;
+  transition: transform 780ms cubic-bezier(.22,1,.36,1), box-shadow 520ms ease !important;
+}
+body > header .nav__cta.cta-neon.cta-neon.cta-neon .cta-neon__label {
+  z-index: 3 !important;
+  transform: none !important;
+  transition: color 420ms ease !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  body > header .nav__cta.cta-neon.cta-neon.cta-neon:hover::after {
+    width: 100% !important;
+  }
+  body > header .nav__cta.cta-neon.cta-neon.cta-neon:hover .cta-neon__badge {
+    transform: translate3d(166px,-50%,0) !important;
+  }
+  body > header .nav__cta.cta-neon.cta-neon.cta-neon:hover .cta-neon__label {
+    transform: none !important;
+    color: #fff !important;
+  }
+  body > header .nav__cta.cta-neon.cta-neon.cta-neon:hover {
+    background: linear-gradient(180deg, rgba(16,8,25,.94), rgba(8,5,15,.98)) !important;
+    border-color: rgba(255,126,190,.86) !important;
+  }
+}
+
+
+/* FINAL CTA RETURN SYNC ONLY */
+body > header .nav__cta.cta-neon.cta-neon.cta-neon {
+  --cta-sync-time: 840ms;
+}
+body > header .nav__cta.cta-neon.cta-neon.cta-neon::before {
+  content: none !important;
+  display: none !important;
+}
+body > header .nav__cta.cta-neon.cta-neon.cta-neon::after {
+  transition: width var(--cta-sync-time) cubic-bezier(.22,1,.36,1), clip-path var(--cta-sync-time) cubic-bezier(.22,1,.36,1) !important;
+}
+body > header .nav__cta.cta-neon.cta-neon.cta-neon .cta-neon__badge {
+  transition: transform var(--cta-sync-time) cubic-bezier(.22,1,.36,1), left var(--cta-sync-time) cubic-bezier(.22,1,.36,1), box-shadow 520ms ease !important;
+}
+body > header .nav__cta.cta-neon.cta-neon.cta-neon .cta-neon__label {
+  transform: none !important;
+}
+
+
+/* FINAL CTA GRADIENT RETURN SLOWDOWN ONLY */
+body > header .nav__cta.cta-neon.cta-neon.cta-neon::after {
+  transition: width 1040ms cubic-bezier(.22,1,.36,1), clip-path 1040ms cubic-bezier(.22,1,.36,1) !important;
+}
+body > header .nav__cta.cta-neon.cta-neon.cta-neon::before {
+  transition: clip-path 1040ms cubic-bezier(.22,1,.36,1) !important;
+}
+
+/* FINAL SHARED LETS CONNECT WIPE CTA */
+body > header .nav__cta.cta-neon,
+body > header .nav__mobile-cta.cta-neon {
+  --lc-size: 48px;
+  --lc-pad: 6px;
+  --lc-travel: 168px;
+  --lc-cut: 168px;
+  --lc-dur: 780ms;
+  --lc-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  position: relative !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 228px !important;
+  min-width: 228px !important;
+  min-height: 60px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255, 126, 190, .74) !important;
+  background: linear-gradient(180deg, rgba(12, 7, 19, .98), rgba(5, 4, 10, .98)) !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .04), 0 0 30px rgba(229, 46, 135, .22) !important;
+  color: #fff !important;
+  text-decoration: none !important;
+}
+body > header .nav__cta.cta-neon::before,
+body > header .nav__mobile-cta.cta-neon::before {
+  content: attr(data-empty) !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  border-radius: inherit !important;
+  background: linear-gradient(100deg, #7438ff 0%, #b833df 34%, #e72e87 66%, #ff6a2f 100%) !important;
+  clip-path: inset(0 0 0 0 round 999px) !important;
+  transition: clip-path var(--lc-dur) var(--lc-ease) !important;
+  pointer-events: none !important;
+}
+body > header .nav__cta.cta-neon::after,
+body > header .nav__mobile-cta.cta-neon::after,
+body > header .nav__cta .cta-neon__beam,
+body > header .nav__mobile-cta .cta-neon__beam {
+  content: none !important;
+  display: none !important;
+}
+body > header .nav__cta .cta-neon__badge,
+body > header .nav__mobile-cta .cta-neon__badge {
+  position: absolute !important;
+  left: var(--lc-pad) !important;
+  top: 50% !important;
+  z-index: 2 !important;
+  width: var(--lc-size) !important;
+  height: var(--lc-size) !important;
+  min-width: var(--lc-size) !important;
+  min-height: var(--lc-size) !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  background: linear-gradient(135deg, #ffbe35 0%, #ff6a2f 34%, #e72e87 68%, #7438ff 100%) !important;
+  box-shadow: 0 10px 26px rgba(229, 46, 135, .42), 0 0 20px rgba(255, 190, 53, .28) !important;
+  transform: translate3d(0, -50%, 0) !important;
+  transition: transform var(--lc-dur) var(--lc-ease), box-shadow var(--lc-dur) var(--lc-ease) !important;
+  pointer-events: none !important;
+}
+body > header .nav__cta .cta-neon__badge::before,
+body > header .nav__mobile-cta .cta-neon__badge::before {
+  content: none !important;
+  display: none !important;
+}
+body > header .nav__cta .cta-neon__palm,
+body > header .nav__mobile-cta .cta-neon__palm {
+  position: relative !important;
+  z-index: 1 !important;
+  width: 28px !important;
+  height: 28px !important;
+}
+body > header .nav__cta .cta-neon__label,
+body > header .nav__mobile-cta .cta-neon__label {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 3 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #fff !important;
+  text-align: center !important;
+  line-height: 1 !important;
+  transform: none !important;
+  transition: none !important;
+  pointer-events: none !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  body > header .nav__cta.cta-neon:hover::before,
+  body > header .nav__cta.cta-neon:focus-visible::before,
+  body > header .nav__mobile-cta.cta-neon:hover::before,
+  body > header .nav__mobile-cta.cta-neon:focus-visible::before {
+    clip-path: inset(0 0 0 var(--lc-cut) round 999px) !important;
+  }
+  body > header .nav__cta.cta-neon:hover .cta-neon__badge,
+  body > header .nav__cta.cta-neon:focus-visible .cta-neon__badge,
+  body > header .nav__mobile-cta.cta-neon:hover .cta-neon__badge,
+  body > header .nav__mobile-cta.cta-neon:focus-visible .cta-neon__badge {
+    transform: translate3d(var(--lc-travel), -50%, 0) !important;
+  }
+}
+body > header .nav__cta.cta-neon:focus-visible,
+body > header .nav__mobile-cta.cta-neon:focus-visible {
+  outline: 2px solid rgba(255, 190, 53, .88) !important;
+  outline-offset: 4px !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  body > header .nav__cta.cta-neon,
+  body > header .nav__mobile-cta.cta-neon,
+  body > header .nav__cta.cta-neon::before,
+  body > header .nav__mobile-cta.cta-neon::before,
+  body > header .nav__cta .cta-neon__badge,
+  body > header .nav__mobile-cta .cta-neon__badge {
+    transition-duration: 1ms !important;
+  }
+}
+
+/* FINAL LETS CONNECT REAL LAYER WIPE */
+body > header .nav__cta.cta-neon,
+body > header .nav__mobile-cta.cta-neon {
+  --lc-size: 48px;
+  --lc-pad: 6px;
+  --lc-travel: 168px;
+  --lc-cut: 168px;
+  --lc-dur: 820ms;
+  --lc-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  position: relative !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 228px !important;
+  min-width: 228px !important;
+  min-height: 60px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255, 126, 190, .76) !important;
+  background: linear-gradient(180deg, rgba(12, 7, 19, .98), rgba(5, 4, 10, .98)) !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .04), 0 0 30px rgba(229, 46, 135, .22) !important;
+  color: #fff !important;
+  text-decoration: none !important;
+}
+body > header .nav__cta.cta-neon::before,
+body > header .nav__cta.cta-neon::after,
+body > header .nav__mobile-cta.cta-neon::before,
+body > header .nav__mobile-cta.cta-neon::after {
+  content: none !important;
+  display: none !important;
+}
+body > header .nav__cta .cta-neon__beam,
+body > header .nav__mobile-cta .cta-neon__beam {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: inherit !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  clip-path: inset(0 0 0 0 round 999px) !important;
+  transition: clip-path var(--lc-dur) var(--lc-ease) !important;
+}
+body > header .nav__cta .cta-neon__beam-rect,
+body > header .nav__mobile-cta .cta-neon__beam-rect {
+  x: 0 !important;
+  y: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  rx: 999px !important;
+  ry: 999px !important;
+  fill: url(#ctaGradient) !important;
+}
+body > header .nav__cta .cta-neon__badge,
+body > header .nav__mobile-cta .cta-neon__badge {
+  position: absolute !important;
+  left: var(--lc-pad) !important;
+  top: 50% !important;
+  z-index: 2 !important;
+  width: var(--lc-size) !important;
+  height: var(--lc-size) !important;
+  min-width: var(--lc-size) !important;
+  min-height: var(--lc-size) !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  background: linear-gradient(135deg, #ffbe35 0%, #ff6a2f 34%, #e72e87 68%, #7438ff 100%) !important;
+  box-shadow: 0 10px 26px rgba(229, 46, 135, .42), 0 0 20px rgba(255, 190, 53, .28) !important;
+  transform: translate3d(0, -50%, 0) !important;
+  transition: transform var(--lc-dur) var(--lc-ease), box-shadow var(--lc-dur) var(--lc-ease) !important;
+  pointer-events: none !important;
+}
+body > header .nav__cta .cta-neon__badge::before,
+body > header .nav__mobile-cta .cta-neon__badge::before {
+  content: none !important;
+  display: none !important;
+}
+body > header .nav__cta .cta-neon__palm,
+body > header .nav__mobile-cta .cta-neon__palm {
+  position: relative !important;
+  z-index: 1 !important;
+  width: 28px !important;
+  height: 28px !important;
+}
+body > header .nav__cta .cta-neon__label,
+body > header .nav__mobile-cta .cta-neon__label {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 3 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #fff !important;
+  text-align: center !important;
+  line-height: 1 !important;
+  transform: none !important;
+  transition: none !important;
+  pointer-events: none !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  body > header .nav__cta.cta-neon:hover .cta-neon__beam,
+  body > header .nav__cta.cta-neon:focus-visible .cta-neon__beam,
+  body > header .nav__mobile-cta.cta-neon:hover .cta-neon__beam,
+  body > header .nav__mobile-cta.cta-neon:focus-visible .cta-neon__beam {
+    clip-path: inset(0 0 0 var(--lc-cut) round 999px) !important;
+  }
+  body > header .nav__cta.cta-neon:hover .cta-neon__badge,
+  body > header .nav__cta.cta-neon:focus-visible .cta-neon__badge,
+  body > header .nav__mobile-cta.cta-neon:hover .cta-neon__badge,
+  body > header .nav__mobile-cta.cta-neon:focus-visible .cta-neon__badge {
+    transform: translate3d(var(--lc-travel), -50%, 0) !important;
+  }
+}
+body > header .nav__cta.cta-neon:focus-visible,
+body > header .nav__mobile-cta.cta-neon:focus-visible {
+  outline: 2px solid rgba(255, 190, 53, .88) !important;
+  outline-offset: 4px !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  body > header .nav__cta .cta-neon__beam,
+  body > header .nav__mobile-cta .cta-neon__beam,
+  body > header .nav__cta .cta-neon__badge,
+  body > header .nav__mobile-cta .cta-neon__badge {
+    transition-duration: 1ms !important;
+  }
+}
+
+/* FINAL LETS CONNECT SVG FILL FIX */
+body > header .nav__cta .cta-neon__beam,
+body > header .nav__mobile-cta .cta-neon__beam {
+  background: linear-gradient(100deg, #7438ff 0%, #b833df 34%, #e72e87 66%, #ff6a2f 100%) !important;
+}
+body > header .nav__cta .cta-neon__beam-rect,
+body > header .nav__mobile-cta .cta-neon__beam-rect {
+  fill: transparent !important;
+}
+
+/* FINAL LETS CONNECT REAL SPAN WIPE */
+body > header .nav__cta.cta-neon,
+body > header .nav__mobile-cta.cta-neon {
+  --lc-size: 48px;
+  --lc-pad: 6px;
+  --lc-travel: 168px;
+  --lc-cut: 168px;
+  --lc-dur: 820ms;
+  --lc-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  position: relative !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 228px !important;
+  min-width: 228px !important;
+  min-height: 60px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255, 126, 190, .76) !important;
+  background: linear-gradient(180deg, rgba(12, 7, 19, .98), rgba(5, 4, 10, .98)) !important;
+}
+body > header .nav__cta .cta-neon__beam,
+body > header .nav__mobile-cta .cta-neon__beam,
+body > header .nav__cta::before,
+body > header .nav__cta::after,
+body > header .nav__mobile-cta::before,
+body > header .nav__mobile-cta::after {
+  display: none !important;
+  content: none !important;
+}
+body > header .nav__cta .cta-neon__fill,
+body > header .nav__mobile-cta .cta-neon__fill {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  display: block !important;
+  border-radius: inherit !important;
+  background: linear-gradient(100deg, #7438ff 0%, #b833df 34%, #e72e87 66%, #ff6a2f 100%) !important;
+  clip-path: inset(0 0 0 0 round 999px) !important;
+  transition: clip-path var(--lc-dur) var(--lc-ease) !important;
+  pointer-events: none !important;
+}
+body > header .nav__cta .cta-neon__badge,
+body > header .nav__mobile-cta .cta-neon__badge {
+  position: absolute !important;
+  left: var(--lc-pad) !important;
+  top: 50% !important;
+  z-index: 2 !important;
+  width: var(--lc-size) !important;
+  height: var(--lc-size) !important;
+  min-width: var(--lc-size) !important;
+  min-height: var(--lc-size) !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 999px !important;
+  background: linear-gradient(135deg, #ffbe35 0%, #ff6a2f 34%, #e72e87 68%, #7438ff 100%) !important;
+  transform: translate3d(0, -50%, 0) !important;
+  transition: transform var(--lc-dur) var(--lc-ease) !important;
+  pointer-events: none !important;
+}
+body > header .nav__cta .cta-neon__label,
+body > header .nav__mobile-cta .cta-neon__label {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 3 !important;
+  display: grid !important;
+  place-items: center !important;
+  transform: none !important;
+  transition: none !important;
+  pointer-events: none !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  body > header .nav__cta.cta-neon:hover .cta-neon__fill,
+  body > header .nav__cta.cta-neon:focus-visible .cta-neon__fill,
+  body > header .nav__mobile-cta.cta-neon:hover .cta-neon__fill,
+  body > header .nav__mobile-cta.cta-neon:focus-visible .cta-neon__fill {
+    clip-path: inset(0 0 0 var(--lc-cut) round 999px) !important;
+  }
+  body > header .nav__cta.cta-neon:hover .cta-neon__badge,
+  body > header .nav__cta.cta-neon:focus-visible .cta-neon__badge,
+  body > header .nav__mobile-cta.cta-neon:hover .cta-neon__badge,
+  body > header .nav__mobile-cta.cta-neon:focus-visible .cta-neon__badge {
+    transform: translate3d(var(--lc-travel), -50%, 0) !important;
+  }
+}
+
+/* FINAL DESIGNER LETS CONNECT CTA POLISH */
+body > header .nav__cta.cta-neon,
+body > header .nav__mobile-cta.cta-neon {
+  --lc-size: 50px;
+  --lc-pad: 5px;
+  --lc-travel: 168px;
+  --lc-cut: 168px;
+  --lc-dur: 860ms;
+  --lc-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  width: 228px !important;
+  min-width: 228px !important;
+  min-height: 60px !important;
+  padding: 0 !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(231, 46, 135, .42) !important;
+  background: linear-gradient(180deg, rgba(12, 7, 20, .98), rgba(3, 3, 9, .98)) !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.035), 0 0 28px rgba(231,46,135,.18) !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+}
+body > header .nav__cta .cta-neon__fill,
+body > header .nav__mobile-cta .cta-neon__fill {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  display: block !important;
+  border-radius: inherit !important;
+  background: linear-gradient(100deg, #7438ff 0%, #b833df 42%, #e72e87 72%, #ff6a2f 100%) !important;
+  opacity: .92 !important;
+  clip-path: inset(0 0 0 calc(100% - var(--lc-size) - 10px) round 999px) !important;
+  transition: clip-path var(--lc-dur) var(--lc-ease), opacity var(--lc-dur) var(--lc-ease) !important;
+  pointer-events: none !important;
+}
+body > header .nav__cta .cta-neon__fill::before,
+body > header .nav__mobile-cta .cta-neon__fill::before {
+  content: none !important;
+  display: none !important;
+}
+body > header .nav__cta .cta-neon__badge,
+body > header .nav__mobile-cta .cta-neon__badge {
+  left: var(--lc-pad) !important;
+  top: 50% !important;
+  z-index: 2 !important;
+  width: var(--lc-size) !important;
+  height: var(--lc-size) !important;
+  min-width: var(--lc-size) !important;
+  min-height: var(--lc-size) !important;
+  border-radius: 999px !important;
+  background: linear-gradient(135deg, #ffbe35 0%, #ff6a2f 30%, #e72e87 64%, #7438ff 100%) !important;
+  box-shadow: 0 0 22px rgba(231,46,135,.46), 0 8px 24px rgba(0,0,0,.28) !important;
+  transform: translate3d(0, -50%, 0) !important;
+  transition: transform var(--lc-dur) var(--lc-ease), box-shadow var(--lc-dur) var(--lc-ease) !important;
+}
+body > header .nav__cta .cta-neon__label,
+body > header .nav__mobile-cta .cta-neon__label {
+  z-index: 3 !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 10px rgba(0,0,0,.28) !important;
+  transform: none !important;
+  transition: none !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  body > header .nav__cta.cta-neon:hover .cta-neon__fill,
+  body > header .nav__cta.cta-neon:focus-visible .cta-neon__fill,
+  body > header .nav__mobile-cta.cta-neon:hover .cta-neon__fill,
+  body > header .nav__mobile-cta.cta-neon:focus-visible .cta-neon__fill {
+    clip-path: inset(0 0 0 var(--lc-cut) round 999px) !important;
+    opacity: .98 !important;
+  }
+  body > header .nav__cta.cta-neon:hover .cta-neon__badge,
+  body > header .nav__cta.cta-neon:focus-visible .cta-neon__badge,
+  body > header .nav__mobile-cta.cta-neon:hover .cta-neon__badge,
+  body > header .nav__mobile-cta.cta-neon:focus-visible .cta-neon__badge {
+    transform: translate3d(var(--lc-travel), -50%, 0) !important;
+    box-shadow: 0 0 26px rgba(255,106,47,.34), 0 0 34px rgba(231,46,135,.42), 0 8px 24px rgba(0,0,0,.28) !important;
+  }
+}
+
+/* FINAL EXACT REFERENCE LETS CONNECT CTA */
+body > header .nav__cta.cta-neon,
+body > header .nav__mobile-cta.cta-neon {
+  --lc-size: 50px;
+  --lc-pad: 5px;
+  --lc-travel: 168px;
+  --lc-cut: 168px;
+  --lc-dur: 760ms;
+  --lc-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  position: relative !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 228px !important;
+  min-width: 228px !important;
+  min-height: 60px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255, 157, 178, .42) !important;
+  background: linear-gradient(180deg, rgba(9, 5, 17, .98), rgba(4, 3, 9, .98)) !important;
+  box-shadow: 0 0 34px rgba(231, 46, 135, .20), inset 0 0 0 1px rgba(255,255,255,.035) !important;
+}
+body > header .nav__cta .cta-neon__beam,
+body > header .nav__mobile-cta .cta-neon__beam,
+body > header .nav__cta::before,
+body > header .nav__cta::after,
+body > header .nav__mobile-cta::before,
+body > header .nav__mobile-cta::after {
+  display: none !important;
+  content: none !important;
+}
+body > header .nav__cta .cta-neon__fill,
+body > header .nav__mobile-cta .cta-neon__fill {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  display: block !important;
+  border-radius: inherit !important;
+  background: linear-gradient(100deg, #ff7a1f 0%, #f05247 24%, #df2b86 54%, #9b35de 78%, #6436ff 100%) !important;
+  opacity: .96 !important;
+  clip-path: inset(0 0 0 0 round 999px) !important;
+  transition: clip-path var(--lc-dur) var(--lc-ease), opacity var(--lc-dur) var(--lc-ease) !important;
+  pointer-events: none !important;
+}
+body > header .nav__cta .cta-neon__badge,
+body > header .nav__mobile-cta .cta-neon__badge {
+  position: absolute !important;
+  left: var(--lc-pad) !important;
+  top: 50% !important;
+  z-index: 2 !important;
+  width: var(--lc-size) !important;
+  height: var(--lc-size) !important;
+  min-width: var(--lc-size) !important;
+  min-height: var(--lc-size) !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 999px !important;
+  background: linear-gradient(135deg, #ffba34 0%, #ff642b 28%, #df2b86 62%, #7438ff 100%) !important;
+  box-shadow: 0 0 22px rgba(231,46,135,.42), 0 0 16px rgba(255,122,31,.28), 0 8px 22px rgba(0,0,0,.32) !important;
+  transform: translate3d(0, -50%, 0) !important;
+  transition: transform var(--lc-dur) var(--lc-ease), box-shadow var(--lc-dur) var(--lc-ease) !important;
+  pointer-events: none !important;
+}
+body > header .nav__cta .cta-neon__palm,
+body > header .nav__mobile-cta .cta-neon__palm {
+  width: 29px !important;
+  height: 29px !important;
+}
+body > header .nav__cta .cta-neon__label,
+body > header .nav__mobile-cta .cta-neon__label {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 3 !important;
+  display: grid !important;
+  place-items: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #fff !important;
+  text-align: center !important;
+  transform: none !important;
+  transition: none !important;
+  text-shadow: 0 1px 10px rgba(0,0,0,.28) !important;
+  pointer-events: none !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  body > header .nav__cta.cta-neon:hover .cta-neon__fill,
+  body > header .nav__cta.cta-neon:focus-visible .cta-neon__fill,
+  body > header .nav__mobile-cta.cta-neon:hover .cta-neon__fill,
+  body > header .nav__mobile-cta.cta-neon:focus-visible .cta-neon__fill {
+    clip-path: inset(0 0 0 var(--lc-cut) round 999px) !important;
+    opacity: .98 !important;
+  }
+  body > header .nav__cta.cta-neon:hover .cta-neon__badge,
+  body > header .nav__cta.cta-neon:focus-visible .cta-neon__badge,
+  body > header .nav__mobile-cta.cta-neon:hover .cta-neon__badge,
+  body > header .nav__mobile-cta.cta-neon:focus-visible .cta-neon__badge {
+    transform: translate3d(var(--lc-travel), -50%, 0) !important;
+    box-shadow: 0 0 24px rgba(231,46,135,.48), 0 0 22px rgba(255,122,31,.30), 0 8px 22px rgba(0,0,0,.32) !important;
+  }
+}
+
+/* FINAL NAV LETS CONNECT - COPY HOW WE WORK CTA MODEL */
+body > header .nav__cta.cta-neon,
+body > header .nav__mobile-cta.cta-neon {
+  --badge-d: 50px;
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 228px !important;
+  min-width: 228px !important;
+  min-height: 60px !important;
+  padding: 15px 56px 15px calc(var(--badge-d, 2.2em) + 14px) !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  border-radius: 999px !important;
+  border: 1.5px solid transparent !important;
+  background: linear-gradient(#0a0612, #0a0612) padding-box, linear-gradient(90deg, #F97316, #DB2777, #7C3AED) border-box !important;
+  box-shadow: 0 0 12px rgba(219,39,119,.22), 0 0 28px rgba(124,58,237,.14), inset 0 0 10px rgba(219,39,119,.08) !important;
+}
+body > header .nav__cta .cta-neon__beam,
+body > header .nav__mobile-cta .cta-neon__beam,
+body > header .nav__cta .cta-neon__fill,
+body > header .nav__mobile-cta .cta-neon__fill,
+body > header .nav__cta::after,
+body > header .nav__mobile-cta::after {
+  display: none !important;
+  content: none !important;
+}
+body > header .nav__cta.cta-neon::before,
+body > header .nav__mobile-cta.cta-neon::before {
+  content: attr(data-empty) !important;
+  position: absolute !important;
+  top: -1.5px !important;
+  bottom: -1.5px !important;
+  left: -1.5px !important;
+  width: 0 !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #F97316, #DB2777, #7C3AED) !important;
+  transition: width .45s cubic-bezier(.4, 0, .2, 1) !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+}
+body > header .nav__cta .cta-neon__badge,
+body > header .nav__mobile-cta .cta-neon__badge {
+  position: absolute !important;
+  top: 50% !important;
+  left: -1.5px !important;
+  z-index: 2 !important;
+  width: var(--badge-d) !important;
+  height: var(--badge-d) !important;
+  min-width: var(--badge-d) !important;
+  min-height: var(--badge-d) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  flex: none !important;
+  border-radius: 999px !important;
+  background: radial-gradient(circle at 32% 28%, #fdba74, #F97316 24%, #DB2777 60%, #7C3AED 100%) !important;
+  transform: translateY(-50%) !important;
+  transition: left .45s cubic-bezier(.4, 0, .2, 1) !important;
+  pointer-events: none !important;
+}
+body > header .nav__cta .cta-neon__palm,
+body > header .nav__mobile-cta .cta-neon__palm {
+  width: 58% !important;
+  height: 58% !important;
+  object-fit: contain !important;
+}
+body > header .nav__cta .cta-neon__label,
+body > header .nav__mobile-cta .cta-neon__label {
+  position: relative !important;
+  inset: auto !important;
+  z-index: 2 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #fff !important;
+  white-space: nowrap !important;
+  transform: none !important;
+  transition: color .45s cubic-bezier(.4, 0, .2, 1) !important;
+  pointer-events: none !important;
+}
+body > header .nav__cta.cta-neon:hover::before,
+body > header .nav__cta.cta-neon:focus-visible::before,
+body > header .nav__mobile-cta.cta-neon:hover::before,
+body > header .nav__mobile-cta.cta-neon:focus-visible::before {
+  width: calc(100% + 3px) !important;
+}
+body > header .nav__cta.cta-neon:hover .cta-neon__badge,
+body > header .nav__cta.cta-neon:focus-visible .cta-neon__badge,
+body > header .nav__mobile-cta.cta-neon:hover .cta-neon__badge,
+body > header .nav__mobile-cta.cta-neon:focus-visible .cta-neon__badge {
+  left: calc(100% + 1.5px - var(--badge-d, 2.2em)) !important;
+}
+body > header .nav__cta.cta-neon:hover .cta-neon__label,
+body > header .nav__cta.cta-neon:focus-visible .cta-neon__label,
+body > header .nav__mobile-cta.cta-neon:hover .cta-neon__label,
+body > header .nav__mobile-cta.cta-neon:focus-visible .cta-neon__label {
+  color: #fff !important;
+}
+
+
+/* FINAL NAV LETS CONNECT = EXACT HOW WE WORK CTA */
+body > header .nav__cta--howwork.btn-play.cta-neon,
+body > header .nav__mobile-cta.nav__cta--howwork.btn-play.cta-neon {
+  --badge-d: 50px !important;
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 228px !important;
+  min-height: 60px !important;
+  padding: 15px 56px 15px calc(var(--badge-d, 2.2em) + 14px) !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  border-radius: 999px !important;
+  border: 1.5px solid transparent !important;
+  background: linear-gradient(#0a0612, #0a0612) padding-box, linear-gradient(90deg, #F97316, #DB2777, #7C3AED) border-box !important;
+  box-shadow: 0 0 12px rgba(219,39,119,.22), 0 0 28px rgba(124,58,237,.14), inset 0 0 10px rgba(219,39,119,.08) !important;
+  color: #fff !important;
+}
+body > header .nav__cta--howwork.btn-play.cta-neon .cta-neon__beam,
+body > header .nav__cta--howwork.btn-play.cta-neon .cta-neon__fill,
+body > header .nav__cta--howwork.btn-play.cta-neon::after {
+  display: none !important;
+  content: none !important;
+}
+body > header .nav__cta--howwork.btn-play.cta-neon::before {
+  content: attr(data-empty) !important;
+  position: absolute !important;
+  top: -1.5px !important;
+  bottom: -1.5px !important;
+  left: -1.5px !important;
+  width: 0 !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #F97316, #DB2777, #7C3AED) !important;
+  transition: width .45s cubic-bezier(.4, 0, .2, 1) !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+}
+body > header .nav__cta--howwork.btn-play.cta-neon:hover::before,
+body > header .nav__cta--howwork.btn-play.cta-neon:focus-visible::before {
+  width: calc(100% + 3px) !important;
+}
+body > header .nav__cta--howwork.btn-play.cta-neon .cta-neon__badge {
+  position: absolute !important;
+  top: 50% !important;
+  left: -1.5px !important;
+  z-index: 2 !important;
+  width: var(--badge-d) !important;
+  height: var(--badge-d) !important;
+  min-width: var(--badge-d) !important;
+  min-height: var(--badge-d) !important;
+  max-width: var(--badge-d) !important;
+  max-height: var(--badge-d) !important;
+  flex: 0 0 var(--badge-d) !important;
+  aspect-ratio: 1 / 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle at 32% 28%, #fdba74, #F97316 24%, #DB2777 60%, #7C3AED 100%) !important;
+  transform: translateY(-50%) !important;
+  transition: left .45s cubic-bezier(.4, 0, .2, 1) !important;
+  pointer-events: none !important;
+}
+body > header .nav__cta--howwork.btn-play.cta-neon:hover .cta-neon__badge,
+body > header .nav__cta--howwork.btn-play.cta-neon:focus-visible .cta-neon__badge {
+  left: calc(100% + 1.5px - var(--badge-d, 2.2em)) !important;
+}
+body > header .nav__cta--howwork.btn-play.cta-neon .cta-neon__palm {
+  width: 58% !important;
+  height: 58% !important;
+  object-fit: contain !important;
+}
+body > header .nav__cta--howwork.btn-play.cta-neon .cta-neon__label {
+  position: relative !important;
+  inset: auto !important;
+  z-index: 2 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #fff !important;
+  white-space: nowrap !important;
+  transform: none !important;
+  transition: color .45s cubic-bezier(.4, 0, .2, 1) !important;
+  pointer-events: none !important;
+}
+
+
+/* FINAL NAV READ MORE STYLE CTA */
+body > header .nav__cta--readmore {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 9px !important;
+  min-height: 48px !important;
+  padding: 15px 32px !important;
+  border: none !important;
+  border-radius: 999px !important;
+  background: linear-gradient(100deg, #6d28d9 0%, #a855f7 55%, #db2777 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 22px rgba(109, 40, 217, .32), 0 2px 8px rgba(219, 39, 119, .22) !important;
+  text-decoration: none !important;
+  overflow: visible !important;
+  isolation: auto !important;
+  transform: none !important;
+  transition: transform .28s cubic-bezier(.2, .8, .2, 1), box-shadow .28s cubic-bezier(.2, .8, .2, 1) !important;
+}
+body > header .nav__cta--readmore:hover,
+body > header .nav__cta--readmore:focus-visible {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 28px rgba(109, 40, 217, .4), 0 4px 12px rgba(219, 39, 119, .28) !important;
+}
+body > header .nav__cta--readmore .cta-neon__beam,
+body > header .nav__cta--readmore .cta-neon__fill,
+body > header .nav__cta--readmore .cta-neon__badge,
+body > header .nav__cta--readmore::before,
+body > header .nav__cta--readmore::after {
+  display: none !important;
+  content: none !important;
+}
+body > header .nav__cta--readmore .cta-neon__label {
+  position: static !important;
+  inset: auto !important;
+  z-index: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 9px !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #fff !important;
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: .4px !important;
+  line-height: 1 !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+  transform: none !important;
+  transition: none !important;
+  pointer-events: none !important;
+}
+body > header .nav__cta--readmore .cta-neon__label::after {
+  content: '→' !important;
+  display: inline-block !important;
+  font-size: 15px !important;
+  line-height: 1 !important;
+  transform: translateY(-1px) !important;
+}
+
+
+/* FINAL NAV READMORE SIZE + HERO GRADIENT */
+body > header .nav__cta--readmore {
+  min-height: 42px !important;
+  padding: 12px 22px !important;
+  gap: 8px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #F97316 0%, #DB2777 52%, #7C3AED 100%) !important;
+  box-shadow: 0 7px 18px rgba(219, 39, 119, .26), 0 2px 7px rgba(124, 58, 237, .18) !important;
+}
+body > header .nav__cta--readmore:hover,
+body > header .nav__cta--readmore:focus-visible {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 10px 24px rgba(219, 39, 119, .34), 0 3px 10px rgba(124, 58, 237, .24) !important;
+}
+body > header .nav__cta--readmore .cta-neon__label {
+  font-family: Inter, Manrope, Helvetica Neue, Arial, sans-serif !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: .08em !important;
+  text-transform: uppercase !important;
+  line-height: 1 !important;
+}
+body > header .nav__cta--readmore .cta-neon__label::after {
+  font-size: 13px !important;
+  margin-left: 2px !important;
+  transform: translateY(-1px) !important;
+}
+
+
+/* FINAL NAV READMORE COMPACT WIDTH */
+body > header .nav__cta--readmore {
+  min-width: 0 !important;
+  width: auto !important;
+  padding: 11px 18px !important;
+}
+
+/* FINAL HARD COMPACT NAV CTA */
+body > header a.nav__cta.nav__cta--readmore.nav__cta--readmore,
+body > header a.nav__mobile-cta.nav__cta--readmore.nav__cta--readmore {
+  min-width: 0 !important;
+  width: auto !important;
+  min-height: 40px !important;
+  padding: 10px 16px !important;
+  gap: 7px !important;
+}
+body > header a.nav__cta.nav__cta--readmore.nav__cta--readmore .cta-neon__label,
+body > header a.nav__mobile-cta.nav__cta--readmore.nav__cta--readmore .cta-neon__label {
+  font-size: 11px !important;
+  letter-spacing: .075em !important;
+}
+body > header a.nav__cta.nav__cta--readmore.nav__cta--readmore .cta-neon__label::after,
+body > header a.nav__mobile-cta.nav__cta--readmore.nav__cta--readmore .cta-neon__label::after {
+  font-size: 12px !important;
+  margin-left: 6px !important;
+}
+
+/* FINAL NAV CTA LENGTH REDUCTION */
+html body > header .nav__cta.nav__cta--readmore,
+html body > header .nav__mobile-cta.nav__cta--readmore {
+  min-width: 0 !important;
+  max-width: max-content !important;
+  width: auto !important;
+  min-height: 38px !important;
+  padding: 9px 14px !important;
+  border-radius: 999px !important;
+}
+html body > header .nav__cta.nav__cta--readmore .cta-neon__label,
+html body > header .nav__mobile-cta.nav__cta--readmore .cta-neon__label {
+  font-size: 10.5px !important;
+  line-height: 1 !important;
+  letter-spacing: .065em !important;
+  white-space: nowrap !important;
+}
+html body > header .nav__cta.nav__cta--readmore .cta-neon__label::after,
+html body > header .nav__mobile-cta.nav__cta--readmore .cta-neon__label::after {
+  margin-left: 5px !important;
+}
+
+/* FINAL NAV CTA RIGHT ALIGNMENT */
+@media (min-width: 861px) {
+  body > header .nav {
+    grid-template-columns: 180px minmax(420px, 1fr) max-content !important;
+  }
+  body > header .nav__cta.nav__cta--readmore {
+    justify-self: end !important;
+    margin-left: auto !important;
+    margin-right: 0 !important;
+  }
+}

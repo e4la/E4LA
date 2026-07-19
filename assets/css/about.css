@@ -1,0 +1,265 @@
+﻿*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scrollbar-color:rgba(168,113,255,.45) #07060D;scrollbar-width:thin}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:#07060D}
+::-webkit-scrollbar-thumb{background:rgba(168,113,255,.45);border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:rgba(168,113,255,.65)}
+body{font-family:'Manrope',system-ui,sans-serif;background:#07060D;color:#fff;overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img,svg{display:block;max-width:100%}
+a{text-decoration:none;color:inherit}
+button,input{font:inherit}
+ul,ol{list-style:none}
+:root{
+  --bg:#020817;--bg-2:#050b1f;--panel:#07112d;--panel-2:#0a1536;
+  --gold:#C8A84B;--gold-lt:#DFC06E;
+  --violet:#7c3cff;--purple:#a855f7;--pink:#e94bb9;--rose:#ff497d;--orange:#ff8a4c;--blue:#4f7dff;
+  --text:#f8fafc;--soft:rgba(236,242,255,.78);--muted:rgba(236,242,255,.58);--faint:rgba(236,242,255,.14);
+  --line:rgba(157,129,255,.28);--radius:12px;--radius-sm:8px;
+  --pad-x:clamp(22px,4.86vw,94px);--section-py:clamp(54px,7vw,104px);
+  --shell:min(100%,1220px);--hero-shell:min(100%,1360px);--grad:linear-gradient(100deg,var(--violet),var(--pink) 56%,var(--orange));
+  /* Shared typography tokens — kept numerically identical to the
+     matching tokens in ../../style.css (Home/Services). about.html
+     does not load style.css, so the values are mirrored here rather
+     than shared via one file, keeping all three pages' typography
+     in sync without merging the two separate CSS architectures. */
+  --font-primary:'Manrope',Arial,sans-serif;
+  --text-hero:clamp(36px,4vw,66px);
+  --fw-hero:700;
+  --line-height-hero:1.04;
+  --text-section-title:clamp(32px,2.4vw,44px);
+  --fw-section-title:700;
+  --line-height-heading:1.12;
+  --text-subtitle:14px;
+  --fw-subtitle:800;
+  --ls-subtitle:0.24em;
+  --text-body:clamp(14.5px,1vw,16px);
+  --fw-body:400;
+  --line-height-body:1.56;
+  --text-small:clamp(14px,.95vw,15.5px);
+  --line-height-small:1.52;
+  --text-card-title:clamp(16px,1.1vw,20px);
+  --fw-card-title:800;
+  --line-height-card-title:1.24;
+}
+.skip-link{position:absolute;top:-100%;left:20px;z-index:9999;min-height:44px;display:flex;align-items:center;padding:10px 16px;border-radius:0 0 8px 8px;background:var(--gold);color:#050505;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px}
+.skip-link:focus{top:0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+:focus-visible{outline:2px solid #fff;outline-offset:4px;border-radius:8px}
+.brand-asset{display:block;object-fit:contain;object-position:center;mix-blend-mode:screen}
+.nav{position:sticky;top:0;z-index:100;height:76px;padding:0 var(--pad-x);display:flex;align-items:center;justify-content:space-between;gap:24px;background:rgba(2,5,13,.96);border-bottom:1px solid rgba(255,255,255,.055)}
+.nav__logo{width:91px;height:57px;overflow:hidden;display:flex;align-items:center}
+.nav__logo .brand-asset{width:100%;height:100%}
+.nav__links{display:flex;align-items:center;gap:34px}
+.nav__link{min-height:44px;display:inline-flex;align-items:center;font-size:9.5px;font-weight:700;color:rgba(255,255,255,.72);text-transform:uppercase;transition:color .2s}
+.nav__link:hover{color:#fff}
+.nav__link[aria-current="page"]{color:#C8A84B}
+.nav__cta{min-height:44px;display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.45);border-radius:5px;padding:10px 14px;font-size:9.5px;font-weight:800;text-transform:uppercase;color:#fff}
+.nav__cta:hover{background:rgba(255,255,255,.07)}
+/* Background matched to Home's ".sec-services" treatment per direct
+   request: same blue->purple->pink horizontal color wash, layered
+   over the same near-black vertical base (#07060D), replacing the
+   previous 3-dot radial-glow treatment. */
+.page{position:relative;overflow:hidden;background:linear-gradient(90deg,rgba(79,125,255,.18) 0%,rgba(124,58,237,.18) 50%,rgba(219,39,119,.15) 100%),linear-gradient(180deg,#07060D 0%,#0c0a17 50%,#07060D 100%)}
+/* Grid-line pattern removed per direct request (was a faint 36px
+   graph-paper overlay sitting behind the whole page). */
+.shell{width:var(--shell);margin:0 auto;position:relative;z-index:1}
+.section{padding:var(--section-py) var(--pad-x)}
+.eyebrow{margin-bottom:14px;color:#b55cff;font-family:var(--font-primary);font-size:var(--text-subtitle);font-weight:var(--fw-subtitle);letter-spacing:var(--ls-subtitle);text-transform:uppercase}
+.gradient-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.page>.section:first-child{padding-top:clamp(14px,1.8vw,28px);padding-bottom:clamp(22px,3vw,42px)}
+.hero-grid{width:var(--hero-shell);display:grid;grid-template-columns:minmax(590px,.9fr) minmax(620px,1fr);gap:clamp(22px,2.6vw,36px);align-items:start}
+.hero-copy{max-width:700px}
+h1{max-width:760px;font-family:var(--font-primary);font-size:var(--text-hero);line-height:var(--line-height-hero);letter-spacing:normal;font-weight:var(--fw-hero)}
+.lede{margin-top:11px;max-width:610px;color:rgba(255,255,255,.86);font-family:var(--font-primary);font-size:var(--text-body);line-height:var(--line-height-body);font-weight:var(--fw-body)}
+.body-copy{margin-top:16px;display:grid;gap:10px;max-width:640px;color:var(--soft);font-family:var(--font-primary);font-size:var(--text-body);line-height:var(--line-height-body);font-weight:var(--fw-body)}
+.principles{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:14px}
+/* Frosted matte glass + thin stroke, matching Home's dark-glass card
+   system (.svc-card): flat near-black fill instead of the previous
+   blue-tinted gradient sheen, a real backdrop blur for genuine
+   "frosted glass" (Home's flat cards don't need it since they sit on
+   a busier background, but this page's cards benefit from it), and
+   the same thin 1px border + inset-highlight/drop-shadow formula.
+   Per-card accent color (--card-line, already set inline per card)
+   is preserved, so Mission/Vision/Values/Team keep their individual
+   tints — only the base material changed. */
+.card{
+  position:relative;
+  border:1px solid var(--card-line,var(--line));
+  border-radius:var(--radius);
+  background-color:rgba(255,255,255,.055);
+  backdrop-filter:blur(22px) saturate(140%);
+  -webkit-backdrop-filter:blur(22px) saturate(140%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 18px 44px rgba(0,0,0,.34);
+  overflow:hidden;
+  transition:border-color .28s ease,box-shadow .28s ease,background-color .28s ease;
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .card{background-color:#14151f}
+}
+.card:hover,.card:focus-within{
+  border-color:var(--card-line,rgba(157,129,255,.5));
+  background-color:rgba(255,255,255,.085);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 26px 58px rgba(0,0,0,.44);
+}
+.card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 14% 0,rgba(var(--accent-rgb,124,60,255),.18),transparent 40%);pointer-events:none}
+.principle{min-height:154px;padding:17px}
+.icon-orb{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;margin-bottom:11px;color:var(--accent,#a855f7);border:1px solid rgba(var(--accent-rgb,124,60,255),.62);box-shadow:0 0 24px rgba(var(--accent-rgb,124,60,255),.2),inset 0 0 14px rgba(var(--accent-rgb,124,60,255),.14)}
+.icon-orb svg{width:22px;height:22px;stroke-width:1.6}
+.card h2,.card h3{position:relative;color:#fff}
+.principle h2{font-size:clamp(18px,1.45vw,23px);line-height:1.2;margin-bottom:7px}
+.principle p{position:relative;color:var(--soft);font-size:14px;line-height:1.44}
+.section-head{margin-bottom:30px}
+.section-head h2{font-family:var(--font-primary);font-size:var(--text-section-title);line-height:var(--line-height-heading);letter-spacing:0;font-weight:var(--fw-section-title)}
+.section-head p{margin-top:14px;max-width:650px;color:var(--muted);font-family:var(--font-primary);font-size:var(--text-body);line-height:var(--line-height-body);font-weight:var(--fw-body)}
+.journey{padding-top:clamp(22px,2.4vw,36px)}
+.timeline{position:relative;display:grid;grid-template-columns:repeat(7,minmax(130px,1fr));gap:12px;padding-top:42px}
+.timeline::before{content:"";position:absolute;left:3%;right:3%;top:17px;height:2px;border-radius:999px;background:var(--grad);box-shadow:0 0 22px rgba(168,85,247,.42)}
+.milestone{position:relative;min-width:0}
+.milestone::before{content:"";position:absolute;top:-31px;left:22px;width:14px;height:14px;border-radius:50%;background:#fff;border:4px solid var(--node,#a855f7);box-shadow:0 0 0 4px rgba(var(--node-rgb,168,85,247),.22),0 0 18px rgba(var(--node-rgb,168,85,247),.6)}
+.milestone-card{height:100%;display:flex;flex-direction:column;gap:12px;padding:0;background:transparent;border:0;color:inherit;text-align:left}
+.year{color:var(--node,#a855f7);font-size:clamp(18px,1.5vw,24px);font-weight:800;line-height:1.15}
+.milestone h3{font-size:17px;line-height:1.4;min-height:46px}
+.milestone p{color:var(--soft);font-size:14px;line-height:1.65}
+.media{position:relative;order:3;height:124px;border:1px solid rgba(var(--node-rgb,168,85,247),.38);border-radius:10px;background:#06112e;overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.22)}
+.media img{width:100%;height:100%;object-fit:cover}
+.media--2016 img{object-position:center center}
+.media--team img{object-position:center 34%}
+.media--paint{display:grid;place-items:center;background:#fff}
+.media--paint img{width:82%;height:82%;object-fit:contain}
+/* align-items was "start", which let each profile card size to its
+   own content height — since the two bios are different lengths,
+   the shorter card's frosted-glass box stopped far short of its
+   neighbor's bottom edge, leaving a large empty gap below it.
+   Default "stretch" makes both cards fill the same row height. */
+.team-layout{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.profile{display:grid;grid-template-columns:minmax(170px,.72fr) 1fr;gap:22px;padding:18px}
+.portrait{align-self:start;height:clamp(360px,34vw,520px);border-radius:10px;overflow:hidden;background:#050b18}
+.portrait img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.profile--nasim .portrait img{object-position:center 18%}
+.profile--rojin .portrait img{object-position:center 14%}
+.profile h3{font-size:clamp(22px,2vw,30px);line-height:1.1;margin:4px 0 6px}
+.role{color:#b785ff;font-size:13px;font-weight:800;line-height:1.35;margin-bottom:16px}
+.bio{display:grid;gap:12px;color:var(--soft);font-size:13.5px;line-height:1.62}
+.highlights{display:grid;gap:8px;margin-top:16px}
+.highlights li{position:relative;padding-left:20px;color:rgba(255,255,255,.82);font-size:12.5px;line-height:1.35}
+.highlights li::before{content:"";position:absolute;left:0;top:.35em;width:10px;height:10px;border-radius:50%;background:var(--grad);box-shadow:0 0 12px rgba(168,85,247,.6)}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.tag{border:1px solid rgba(124,60,255,.36);border-radius:6px;padding:6px 8px;background:rgba(124,60,255,.12);color:#d7c4ff;font-size:10px;font-weight:800;line-height:1}
+.ai-stack{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.ai-card{display:flex;flex-direction:column;padding:26px;min-height:360px}
+.ai-card h3{font-size:clamp(20px,1.8vw,27px);line-height:1.15;margin-bottom:16px}
+.ai-label{display:block;margin:8px 0 14px;color:#ff70c4;font-size:clamp(20px,2.4vw,36px);font-weight:800;line-height:1.05}
+.ai-card p{position:relative;color:var(--soft);font-size:14px;line-height:1.6}
+.principle-line{margin-top:14px;color:#fff;font-weight:800}
+.ai-tags{position:relative;display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:18px}
+.ai-tags li{border:1px solid rgba(var(--accent-rgb,168,85,247),.34);border-radius:6px;padding:7px 9px;background:rgba(var(--accent-rgb,168,85,247),.1);color:#e6ddff;font-size:11px;font-weight:800;line-height:1.1}
+.cta-wrap{padding-top:0}
+/* Harmonized with Home's ".schedule-card" (the "Ready to gain a
+   clearer direction?" band): same purple->near-black->pink diagonal
+   wash, same thin single-hue border + triple-layer shadow formula,
+   instead of the previous flat navy fill + bright rainbow border-box
+   ring, which read as a different, louder material than the rest of
+   the site's cards. */
+.final-cta{display:grid;grid-template-columns:78px 1fr auto;align-items:center;gap:28px;padding:32px clamp(24px,3vw,40px);border-radius:22px;border:1px solid rgba(157,129,255,.28);background:linear-gradient(120deg,rgba(124,58,237,.14),#03041D 55%,rgba(219,39,119,.12));box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 18px 46px rgba(0,0,0,.35),0 4px 14px rgba(0,0,0,.25);transition:border-color .2s ease,box-shadow .2s ease}
+.final-cta:hover,.final-cta:focus-within{border-color:rgba(157,129,255,.5)}
+.cta-icon{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:rgba(124,58,237,.14);color:#c4b5fd}
+.cta-icon svg{width:24px;height:24px;transform:rotate(-45deg)}
+/* Matched to Home's ".schedule-card__h2"/"__desc" (the equivalent
+   final-CTA-band heading/copy role) instead of this page's own
+   one-off sizes. */
+.final-cta h2{font-size:clamp(22px,1.8vw,28px);line-height:1.12}
+.final-cta p{margin-top:6px;color:var(--soft);font-family:var(--font-primary);font-size:var(--text-body);line-height:var(--line-height-body);font-weight:var(--fw-body)}
+.btn{min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 24px;border-radius:8px;color:#fff;background:linear-gradient(100deg,#5b57ff 0%,#cf49d9 52%,#ff497d 100%);box-shadow:0 10px 30px rgba(207,73,217,.28);font-weight:800;font-size:15px;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 14px 36px rgba(207,73,217,.38)}
+.btn svg,.nav__cta svg{width:15px;height:15px}
+.footer{background:#07060D;border-top:1px solid rgba(255,255,255,.05);padding:32px var(--pad-x) 18px}
+.footer__top{display:grid;grid-template-columns:180px 1fr;gap:44px;margin-bottom:18px}
+.footer__brand-logo{width:83px;height:49px;overflow:hidden}.footer__brand-logo .brand-asset{width:100%;height:100%}
+/* Footer typography matched to Home/Services' resolved values (same
+   shared roles: tagline/nl-note -> body-copy, col-head -> card-title,
+   links -> small-text) instead of this page's own smaller one-off
+   sizes, which read noticeably tinier than the other two pages. */
+.footer__tagline{font-family:var(--font-primary);font-size:var(--text-body);font-weight:var(--fw-body);line-height:var(--line-height-body);margin:14px 0 16px;max-width:240px;color:rgba(255,255,255,.48)}
+.footer__socials{display:flex;gap:10px}.footer__soc{width:28px;height:28px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.14);border-radius:50%;color:#fff}.footer__soc svg{width:14px;height:14px}
+.footer__cols{display:grid;grid-template-columns:repeat(4,1fr);gap:26px}.footer__col-head{font-family:var(--font-primary);font-size:var(--text-card-title);font-weight:var(--fw-card-title);line-height:var(--line-height-card-title);letter-spacing:0;text-transform:uppercase;color:var(--gold);margin-bottom:14px}.footer__links{display:grid;gap:8px}.footer__links a,.footer__nl-note{font-family:var(--font-primary);font-size:var(--text-small);line-height:var(--line-height-small);color:rgba(255,255,255,.7)}
+.footer__form{height:36px;display:flex;border:1px solid rgba(200,168,75,.52);border-radius:6px;overflow:hidden}.footer__input{min-width:0;flex:1;border:0;background:transparent;color:#fff;padding:8px 12px;font-family:var(--font-primary);font-size:14px}.footer__submit{border:0;background:transparent;color:var(--gold);font-size:22px;padding:4px 12px;cursor:pointer}
+.footer__bottom{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:12px;border-top:1px solid rgba(255,255,255,.05)}.footer__copy,.footer__made{font-family:var(--font-primary);font-size:12.5px;line-height:1.5;color:rgba(255,255,255,.48)}
+[data-r]{opacity:0;transform:translateY(14px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+[data-r].in{opacity:1;transform:none}
+@media(max-width:1180px){.hero-grid{grid-template-columns:1fr}.hero-copy{max-width:760px}.principles{max-width:860px}.profile{grid-template-columns:minmax(150px,.54fr) 1fr}.timeline{overflow-x:auto;padding-bottom:14px;scroll-snap-type:x proximity}.milestone{scroll-snap-align:start}}
+@media(max-width:860px){.nav{height:62px}.nav__logo{width:76px;height:46px}.nav__links{display:none}.nav__cta{display:none}.section{padding-left:20px;padding-right:20px}.principles,.team-layout,.ai-stack{grid-template-columns:1fr}.timeline{display:grid;grid-template-columns:1fr;gap:22px;overflow:visible;padding:6px 0 0 30px}.timeline::before{left:7px;right:auto;top:0;bottom:0;width:2px;height:auto;background:var(--grad)}.milestone::before{top:4px;left:-29px}.milestone-card{display:grid;grid-template-columns:1fr minmax(120px,190px);gap:14px;align-items:start}.milestone p{font-size:13.5px}.media{grid-row:1/4;grid-column:2;height:132px}.profile{grid-template-columns:1fr}.portrait{min-height:auto;aspect-ratio:4/5}.ai-card{min-height:0}.final-cta{grid-template-columns:1fr;align-items:start}.btn{width:100%}.footer__top{grid-template-columns:1fr}.footer__cols{grid-template-columns:1fr 1fr}.footer__soc{width:44px;height:44px}.footer__links a{min-height:44px;display:flex;align-items:center}.footer__form{height:46px}.footer__input,.footer__submit{min-height:44px}.footer__submit{min-width:44px}}
+@media(max-width:700px){h1{font-size:clamp(36px,12vw,58px)}}
+@media(max-width:520px){.page>.section:first-child{padding-top:24px;padding-bottom:36px}.principle{min-height:0;padding:17px}.milestone-card{grid-template-columns:1fr}.media{grid-row:auto;grid-column:auto;height:154px}.profile{padding:14px}.bio{font-size:13px}.ai-card{min-height:0}.final-cta{padding:24px}.footer__cols{grid-template-columns:1fr}}
+@media(max-width:360px){.section{padding-left:16px;padding-right:16px}.timeline{padding-left:24px}.milestone::before{left:-25px}.profile h3{font-size:22px}.tag{font-size:9px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}[data-r]{opacity:1!important;transform:none!important}.btn:hover{transform:none}}
+
+/* Nav/header sizing, links, CTA, badge, and mobile menu — all of it —
+   now lives exclusively in ../nav.css (loaded on every page, after
+   this file) as a single shared component. The full duplicate block
+   that used to live here ("FINAL ABOUT NAVBAR MATCH HOME/SERVICES")
+   is removed: having the nav styled redundantly in nav.css + style.css
+   + about.css, each with its own escalating !important/specificity
+   layers, was the actual cause of the nav looking/behaving
+   differently across pages. Do not re-add nav rules here — edit
+   nav.css instead. */
+
+/* Cross-document View Transitions (the @view-transition + nav/page
+   crossfade block that used to live here) are removed site-wide.
+   In practice they caused the exact bug being chased across this
+   whole nav investigation: during a real navigation, the browser
+   would apply the DESTINATION page's nav state (e.g. the new page's
+   correct active-link color) instantly, while the outgoing page's
+   body content kept cross-fading out underneath for up to ~260ms —
+   and under some interruption/timing conditions (fast re-scroll,
+   repeated navigation, slow asset load) that mismatched, stale state
+   could linger far longer than intended. A plain, instant, full page
+   swap (the browser default with this feature off) can never show a
+   mismatched nav/body state, so it's the more reliable choice here. */
+
+/* The nav__cta / nav__mobile-cta badge-centering saga, the typography
+   lock, and the position/type hard-lock that used to live here are
+   all resolved structurally now: nav.css is the single source of
+   truth for the header/nav (sizing, links, CTA, badge, mobile menu)
+   across all three pages, with static hardcoded geometry and no JS
+   dependency, so there's nothing page-specific left to lock or
+   re-center here. See ../nav.css for the current implementation. */
+
+/* FINAL ABOUT STRATEGY CTA MATCHES LETS CONNECT */
+.final-cta .btn {
+  min-width: 0 !important;
+  width: auto !important;
+  min-height: 46px !important;
+  padding: 13px 22px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  color: #fff !important;
+  background: linear-gradient(100deg, #F97316 0%, #DB2777 52%, #7C3AED 100%) !important;
+  box-shadow: 0 12px 30px rgba(219, 39, 119, .24), 0 4px 14px rgba(124, 58, 237, .18) !important;
+  font-family: Inter, Manrope, Helvetica Neue, Arial, sans-serif !important;
+  font-size: 11.5px !important;
+  line-height: 1 !important;
+  font-weight: 700 !important;
+  letter-spacing: .07em !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+  transform: none !important;
+  transition: transform .25s ease, box-shadow .25s ease, filter .25s ease !important;
+}
+.final-cta .btn:hover {
+  transform: translateY(-1px) !important;
+  filter: saturate(1.06) brightness(1.03) !important;
+  box-shadow: 0 16px 34px rgba(219, 39, 119, .30), 0 6px 18px rgba(124, 58, 237, .22) !important;
+}
+.final-cta .btn svg {
+  width: 13px !important;
+  height: 13px !important;
+  flex: 0 0 auto !important;
+}
+@media(max-width:860px){
+  .final-cta .btn { width: 100% !important; }
+}
