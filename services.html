@@ -10,11 +10,18 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=2026072007">
+<link rel="stylesheet" href="style.css?v=2026072025">
   <link rel="stylesheet" href="assets/css/nav.css?v=2026071918">
 <link rel="stylesheet" href="auth.css?v=2026072008">
 <link rel=icon type=image/png href=assets/e4la-logo-palm.png?v=2026071916>
 <link rel=apple-touch-icon href=assets/e4la-logo-palm.png?v=2026071916>
+
+  <script data-mobile-service-hash-guard>
+    if (window.matchMedia('(max-width: 639px), (pointer: coarse)').matches &&
+        /^#(?:strategy-growth|digital-experience|ai-innovation|brand-marketing|workshops-experiences)$/.test(location.hash)) {
+      history.replaceState(null, '', location.pathname + location.search);
+    }
+  </script>
 </head>
 <body class="svcd-page">
 
@@ -112,7 +119,7 @@
         <div class="svcd-pin__copy">
           <p class="svcd-pin__num">01</p>
           <span class="svcd-pin__icon" aria-hidden="true"><svg><use href="#i-target"/></svg></span>
-          <h3 class="svcd-pin__title">Strategy &amp; Growth</h3>
+          <h3 class="svcd-pin__title svcd-pin__title--strategy"><span>Strategy &amp;</span><span>Growth</span></h3>
           <p class="svcd-pin__desc">Helping businesses define direction, identify opportunities, and build sustainable growth.</p>
         </div>
         <div class="svcd-pin__visual" aria-hidden="true"><div class="svcd-pin__blob-wrap"><div class="svcd-pin__blob"></div></div></div>
@@ -291,7 +298,7 @@
   </div>
 </footer>
 
-<script src="script.js?v=2026072010"></script>
+<script src="script.js?v=2026072024"></script>
 <script src="auth.js?v=2026072002" defer></script>
 <script type="module" src="motion.js"></script>
 

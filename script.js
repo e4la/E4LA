@@ -1521,240 +1521,167 @@ if(nlForm){
   updateApproach();
 })();
 
-/* MOBILE LOCKED-STEP SERVICES CONTROLLER — services.html only,
-   touch/narrow screens. Mirrors the desktop wheel-jacked step system
-   above (hero -> sphere rises -> each service holds, one per scroll
-   gesture, locked -> sphere exits -> after-services CTA), but driven by
-   real scroll-position deltas instead of wheel events, since touch
-   scrolling has no equivalent "wheel" event to hijack. Entirely separate
-   code path from the desktop controller above: gated on its own
-   isMobile match, never runs above the mobile breakpoint, never touches
-   desktop DOM, state, or CSS classes.
-
-   How the "lock" works: rather than fighting touchmove/preventDefault
-   (unreliable across mobile browsers, and risks breaking native
-   gestures), this watches real scrollY while "engaged" and immediately
-   snaps it straight back to the anchor position on every scroll event —
-   the same belt-and-suspenders snap-back the desktop controller already
-   uses for momentum-scroll safety, just used here as the PRIMARY
-   mechanism. The accumulated delta before that snap-back is what decides
-   whether a step has been "earned" (crossed WHEEL_THRESHOLD-equivalent),
-   exactly mirroring the desktop wheelAccum/LOCK_MS pattern. */
+/* MOBILE SERVICES — SINGLE CLEAN PINNED CONTROLLER.
+   One state machine owns Hero -> five services -> CTA. */
 (function () {
-  var isMobile = window.matchMedia('(max-width:639px), (pointer:coarse)');
+  var mobile = window.matchMedia('(max-width: 639px), (pointer: coarse)');
   var pin = document.querySelector('.svcd-pin');
   if (!pin) return;
   var panels = Array.prototype.slice.call(pin.querySelectorAll('.svcd-pin__panel'));
-  var mobileBlob = document.getElementById('js-pin-mobile-blob');
-  var heroRobot = document.querySelector('.svcd-hero__robot');
-  var afterServicesCta = document.querySelector('.svcd-after-services');
-  if (!panels.length || !mobileBlob) return;
+  var sphere = document.getElementById('js-pin-mobile-blob');
+  var hero = document.querySelector('.svcd-hero');
+  var cta = document.querySelector('.svcd-after-services');
+  if (!panels.length || !sphere || !hero || !cta) return;
 
-  var currentStep = 0; // 0 = hero, not yet engaged; 1..N = services
-  var engaged = false;
+  var active = false;
+  var index = 0;
   var completedForward = false;
-  var locked = false;
-  var accum = 0;
-  var anchorY = 0;
-  var lastStepAt = 0;
+  var inputLocked = false;
   var unlockTimer = 0;
-  var THRESHOLD = 60;
-  var LOCK_MS = 700;
-  var MOMENTUM_QUIET_MS = 420;
-  var lastDisengageAt = 0;
-  var REENGAGE_COOLDOWN_MS = 500; // otherwise the programmatic scrollTo a
-  // backward disengage() ends with can itself land close enough to the
-  // engage threshold to immediately re-trigger engage() on the very next
-  // scroll event, creating a stuck flicker right at the hero/pin boundary.
+  var touchActive = false;
+  var touchCandidate = false;
+  var startX = 0;
+  var startY = 0;
+  var currentX = 0;
+  var currentY = 0;
+  var SWIPE_DISTANCE = 24;
+  var STEP_LOCK_MS = 1080;
 
-  function syncBlobToPanel(i) {
-    var p = panels[i];
-    var cs = window.getComputedStyle(p);
+  function copySphereTheme(panel) {
+    var style = window.getComputedStyle(panel);
     ['--row-c', '--row-g1', '--row-g2', '--row-g3', '--row-g4', '--row-g5', '--blob-spin'].forEach(function (name) {
-      var val = cs.getPropertyValue(name);
-      if (val) mobileBlob.style.setProperty(name, val.trim());
+      var value = style.getPropertyValue(name);
+      if (value) sphere.style.setProperty(name, value.trim());
     });
   }
 
-  function showStep(step) {
-    panels.forEach(function (p, i) {
-      p.classList.toggle('is-mobile-active', step >= 1 && i === step - 1);
+  function render() {
+    panels.forEach(function (panel, panelIndex) {
+      panel.classList.toggle('is-mobile-active', active && panelIndex === index);
     });
-    if (step >= 1 && step <= panels.length) {
-      syncBlobToPanel(step - 1);
-      mobileBlob.classList.add('is-risen');
-      mobileBlob.classList.remove('is-exiting');
+    if (active) {
+      copySphereTheme(panels[index]);
+      sphere.classList.add('is-risen');
     } else {
-      mobileBlob.classList.remove('is-risen', 'is-exiting');
+      sphere.classList.remove('is-risen', 'is-exiting');
     }
   }
 
-  function scheduleUnlock() {
+  function lockInput() {
+    inputLocked = true;
     clearTimeout(unlockTimer);
-    var elapsed = performance.now() - lastStepAt;
-    var delay = Math.max(220, LOCK_MS - elapsed);
-    unlockTimer = setTimeout(function () { locked = false; accum = 0; }, delay);
+    unlockTimer = setTimeout(function () { inputLocked = false; }, STEP_LOCK_MS);
   }
 
-  function goToStep(next) {
-    next = Math.max(1, Math.min(panels.length, next));
-    if (next === currentStep) return;
-    currentStep = next;
-    showStep(currentStep);
-    locked = true;
-    accum = 0;
-    lastStepAt = performance.now();
-    scheduleUnlock();
-  }
-
-  function engage(startStep) {
-    engaged = true;
-    completedForward = false;
-    anchorY = window.scrollY;
-    currentStep = 0;
-    pin.classList.add('is-mobile-engaged');
-    if (heroRobot) heroRobot.classList.add('is-mobile-hidden');
-    // The after-services CTA card AND the footer are both gated behind
-    // this same body class site-wide (style.css: ".svcd-page:not(.is-
-    // past-services) .svcd-after-services/.footer" = opacity:0,
-    // visibility:hidden) — previously only the desktop wheel-jack
-    // controller ever toggled it, so on mobile they stayed permanently
-    // invisible no matter how far you scrolled, regardless of this
-    // sequence's own step/scroll logic. Mirroring the exact same toggle
-    // here is what actually reveals them once the last service passes.
+  function enterServices(startIndex) {
+    active = true;
+    index = Math.max(0, Math.min(panels.length - 1, startIndex || 0));
     document.body.classList.remove('is-past-services');
-    goToStep(startStep || 1);
+    pin.classList.add('is-mobile-sequence');
+    window.scrollTo({ top: pin.getBoundingClientRect().top + window.scrollY, behavior: 'auto' });
+    render();
+    lockInput();
   }
 
-  function disengage(forward) {
-    engaged = false;
+  function leaveServices(forward) {
+    active = false;
+    pin.classList.remove('is-mobile-sequence');
     completedForward = !!forward;
-    lastDisengageAt = performance.now();
-    clearTimeout(unlockTimer);
-    locked = false;
-    accum = 0;
-    pin.classList.remove('is-mobile-engaged');
-    panels.forEach(function (p) { p.classList.remove('is-mobile-active'); });
-    document.body.classList.toggle('is-past-services', !!forward);
-    if (forward) {
-      mobileBlob.classList.remove('is-risen');
-      mobileBlob.classList.add('is-exiting');
-    } else {
-      mobileBlob.classList.remove('is-risen', 'is-exiting');
-    }
-    currentStep = 0;
-    if (heroRobot && !forward) heroRobot.classList.remove('is-mobile-hidden');
-    var docTop = pin.getBoundingClientRect().top + window.scrollY;
-    var vh = window.innerHeight || document.documentElement.clientHeight || 800;
-    var targetTop;
-    if (forward && afterServicesCta) {
-      targetTop = afterServicesCta.getBoundingClientRect().top + window.scrollY - 16;
-    } else if (forward) {
-      targetTop = docTop + vh * 1.02;
-    } else {
-      targetTop = Math.max(0, docTop - vh * 0.4);
-    }
-    window.scrollTo({ top: targetTop, behavior: 'auto' });
+    document.body.classList.toggle('is-past-services', completedForward);
+    render();
+    lockInput();
+    (forward ? cta : hero).scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  function onScroll() {
-    if (!isMobile.matches) return;
-
-    if (!engaged) {
-      if (performance.now() - lastDisengageAt < REENGAGE_COOLDOWN_MS) return;
-      var rect = pin.getBoundingClientRect();
-      var vh = window.innerHeight || document.documentElement.clientHeight || 800;
-      if (completedForward) {
-        // Re-entry from below: scrolling back UP into a section that's
-        // already been fully completed forward. Mirrors the desktop
-        // controller's own re-entry handling — land back on the last
-        // service rather than an empty pinned section.
-        if (rect.bottom > vh * 0.6 && rect.bottom < vh * 1.4) engage(panels.length);
-        return;
+  function move(direction) {
+    if (!active || inputLocked) return;
+    if (direction > 0) {
+      if (index === panels.length - 1) leaveServices(true);
+      else {
+        index += 1;
+        render();
+        lockInput();
       }
-      if (rect.top < vh * 0.55 && rect.bottom > 0) engage(1);
-      return;
-    }
-
-    var delta = window.scrollY - anchorY;
-    // Snap straight back — this is what "locks" real page scroll while
-    // the sequence is engaged, same technique as the desktop controller's
-    // own momentum-scroll safety net.
-    if (window.scrollY !== anchorY) window.scrollTo(0, anchorY);
-    if (locked) {
-      /* A single touch swipe keeps emitting scroll events after the finger
-         leaves the screen. Keep the current service locked until that
-         momentum has actually gone quiet, otherwise the tail of one swipe
-         can be counted as a second gesture and skip a service. */
-      accum = 0;
-      clearTimeout(unlockTimer);
-      unlockTimer = setTimeout(function () {
-        locked = false;
-        accum = 0;
-      }, MOMENTUM_QUIET_MS);
-      return;
-    }
-
-    accum += delta;
-    if (Math.abs(accum) < THRESHOLD) return;
-    var dir = accum > 0 ? 1 : -1;
-    accum = 0;
-
-    if (dir > 0) {
-      if (currentStep >= panels.length) { disengage(true); return; }
-      goToStep(currentStep + 1);
+    } else if (index === 0) {
+      leaveServices(false);
     } else {
-      if (currentStep <= 1) { disengage(false); return; }
-      goToStep(currentStep - 1);
+      index -= 1;
+      render();
+      lockInput();
     }
   }
 
-  window.addEventListener('scroll', onScroll, { passive: true });
+  function isNearEntry() {
+    var rect = pin.getBoundingClientRect();
+    var viewport = window.innerHeight || document.documentElement.clientHeight || 800;
+    return rect.top <= viewport * 1.2 && rect.bottom > 0;
+  }
+
+  window.addEventListener('wheel', function (event) {
+    if (!mobile.matches || Math.abs(event.deltaY) < 2) return;
+    if (active) {
+      event.preventDefault();
+      move(event.deltaY > 0 ? 1 : -1);
+      return;
+    }
+    if (event.deltaY > 0 && !completedForward && isNearEntry()) {
+      event.preventDefault();
+      enterServices(0);
+      return;
+    }
+    if (event.deltaY < 0 && completedForward) {
+      event.preventDefault();
+      enterServices(panels.length - 1);
+    }
+  }, { passive: false, capture: true });
+
+  window.addEventListener('touchstart', function (event) {
+    if (!mobile.matches || event.touches.length !== 1) return;
+    touchCandidate = active || completedForward || isNearEntry();
+    if (!touchCandidate) return;
+    touchActive = true;
+    startX = currentX = event.touches[0].clientX;
+    startY = currentY = event.touches[0].clientY;
+  }, { passive: true, capture: true });
+
+  window.addEventListener('touchmove', function (event) {
+    if (!touchActive || !event.touches.length) return;
+    currentX = event.touches[0].clientX;
+    currentY = event.touches[0].clientY;
+    if (Math.abs(startY - currentY) > Math.abs(startX - currentX)) event.preventDefault();
+  }, { passive: false, capture: true });
+
+  window.addEventListener('touchend', function (event) {
+    if (!touchActive) return;
+    if (event.changedTouches && event.changedTouches.length) {
+      currentX = event.changedTouches[0].clientX;
+      currentY = event.changedTouches[0].clientY;
+    }
+    touchActive = false;
+    var dx = startX - currentX;
+    var dy = startY - currentY;
+    if (Math.abs(dy) <= Math.abs(dx) || Math.abs(dy) < SWIPE_DISTANCE) return;
+    if (!active) {
+      if (dy > 0 && !completedForward && isNearEntry()) enterServices(0);
+      else if (dy < 0 && completedForward) enterServices(panels.length - 1);
+      return;
+    }
+    move(dy > 0 ? 1 : -1);
+  }, { passive: true, capture: true });
+
+  window.addEventListener('touchcancel', function () {
+    touchActive = false;
+    touchCandidate = false;
+  }, { passive: true, capture: true });
+
   window.addEventListener('resize', function () {
-    if (!isMobile.matches && engaged) disengage(false);
-  });
-
-  // Deep-links from the home page cards (services.html#ai-innovation etc.)
-  // — mirrors the desktop controller's own hash handling, but engages
-  // straight into THIS controller's locked-step state instead of a plain
-  // scrollIntoView (which doesn't work now that panels are absolutely
-  // positioned/crossfaded rather than stacked in normal flow).
-  function openFromHash() {
-    if (!isMobile.matches) return;
-    var hash = (window.location.hash || '').replace('#', '');
-    if (!hash) return;
-    for (var i = 0; i < panels.length; i += 1) {
-      if (panels[i].id === hash) {
-        window.scrollTo({ top: pin.getBoundingClientRect().top + window.scrollY, behavior: 'auto' });
-        engage(i + 1);
-        return;
-      }
+    if (!mobile.matches && active) {
+      active = false;
+      pin.classList.remove('is-mobile-sequence');
+      render();
     }
-  }
-  window.addEventListener('hashchange', openFromHash);
-  window.setTimeout(openFromHash, 80);
+  });
 })();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* Robot handoff is now owned by the services controller above. */
 /* FAQ accordion (post-booking section, index.html). Independent
    toggles — opening one doesn't close the others. Height animation
@@ -2712,7 +2639,10 @@ document.querySelectorAll('.sec-services .svc-card[data-service-target]').forEac
 
     const activePanel = modal.querySelector(`[data-booking-panel="${guardedStep}"]`);
     const focusTarget = activePanel?.querySelector('input, textarea, select, button:not([disabled])') || getFocusable()[0];
-    requestAnimationFrame(() => focusTarget?.focus({ preventScroll: true }));
+    requestAnimationFrame(() => {
+      modal.querySelector('.booking-modal__shell')?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      focusTarget?.focus({ preventScroll: true });
+    });
   }
 
   function getAllowedStep(requestedStep) {
@@ -2783,7 +2713,10 @@ document.querySelectorAll('.sec-services .svc-card[data-service-target]').forEac
   }
   function isReviewValid(show) { const accepted = Boolean(policyInput?.checked); markInvalid(policyInput, accepted ? '' : 'Please agree to the session policy before confirming.', show); return hasValidAppointment() && isStep1Valid(false) && isStep2Valid(false) && accepted; }
   function getAllowedStep(step) { if (!hasValidAppointment()) return 1; if (step >= 2 && !isStep1Valid(false)) return 1; if (step >= 3 && !isStep2Valid(false)) return 2; return step; }
-  function setBookingStep(step, options = {}) { const requested = Math.max(1, Math.min(Number(step) || 1, 6)); const guarded = options.force ? requested : getAllowedStep(requested); modal.dataset.step = String(guarded); updateProgress(guarded); modal.querySelectorAll('[data-booking-panel]').forEach((panel) => { panel.hidden = panel.getAttribute('data-booking-panel') !== String(guarded); }); if (guarded !== 6 || !bookingState.confirmed) resetSuccessScreen(); updateButtons(); renderReviewSection(); const activePanel = modal.querySelector('[data-booking-panel="' + guarded + '"]'); const focusTarget = activePanel?.querySelector('input, textarea, select, button:not([disabled])') || getFocusable()[0]; requestAnimationFrame(() => focusTarget?.focus({ preventScroll: true })); }
+  function setBookingStep(step, options = {}) { const requested = Math.max(1, Math.min(Number(step) || 1, 6)); const guarded = options.force ? requested : getAllowedStep(requested); modal.dataset.step = String(guarded); updateProgress(guarded); modal.querySelectorAll('[data-booking-panel]').forEach((panel) => { panel.hidden = panel.getAttribute('data-booking-panel') !== String(guarded); }); if (guarded !== 6 || !bookingState.confirmed) resetSuccessScreen(); updateButtons(); renderReviewSection(); const activePanel = modal.querySelector('[data-booking-panel="' + guarded + '"]'); const focusTarget = activePanel?.querySelector('input, textarea, select, button:not([disabled])') || getFocusable()[0]; requestAnimationFrame(() => {
+      modal.querySelector('.booking-modal__shell')?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      focusTarget?.focus({ preventScroll: true });
+    }); }
   function updateProgress(step) { modal.querySelectorAll('[data-progress-step]').forEach((item) => { const itemStep = Number(item.dataset.progressStep); const badge = item.querySelector('b'); item.classList.toggle('is-complete', itemStep < step); item.classList.toggle('is-active', itemStep === step); if (badge) badge.textContent = String(itemStep); }); }
   function updateButtons() { modal.querySelector('[data-booking-panel="1"] .booking-submit')?.toggleAttribute('disabled', !isStep1Valid(false)); modal.querySelector('[data-open-optional-notice]')?.toggleAttribute('disabled', !isStep2Valid(false)); if (confirmButton) confirmButton.disabled = !isReviewValid(false); updatePriorityUI(); }
   function syncPersonalInfo() { bookingState.personalInfo.fullName = fields.fullName?.value.trim() || ''; bookingState.personalInfo.email = fields.email?.value.trim() || ''; bookingState.personalInfo.phone = fields.phone?.value.trim() || ''; bookingState.personalInfo.company = fields.company?.value.trim() || ''; bookingState.personalInfo.role = fields.role?.value.trim() || ''; bookingState.personalInfo.referralSource = fields.referralSource?.value || ''; saveBookingState(); updateSummary(); updateButtons(); }
@@ -2943,7 +2876,10 @@ document.querySelectorAll('.sec-services .svc-card[data-service-target]').forEac
   function isStep2Valid(show) { const checks = []; checks.push(validateRequired(fields.fullName, 'Please enter your full name.', show)); const email = fields.email?.value || ''; checks.push(markInvalid(fields.email, !email.trim() ? 'Please enter your email.' : !isValidEmail(email) ? 'Please enter a valid email address.' : '', show)); const phone = fields.phone?.value || ''; checks.push(markInvalid(fields.phone, !phone.trim() ? 'Please enter your phone number.' : !isValidPhone(phone) ? 'Please enter a valid phone number.' : '', show)); return checks.every(Boolean); }
   function isReviewValid(show) { const accepted = Boolean(policyInput?.checked); markInvalid(policyInput, accepted ? '' : 'Please agree to the session policy before confirming.', show); return hasValidAppointment() && isStep1Valid(false) && isStep2Valid(false) && accepted; }
   function getAllowedStep(step) { if (!hasValidAppointment()) return 1; if (step >= 2 && !isStep1Valid(false)) return 1; if (step >= 3 && !isStep2Valid(false)) return 2; return step; }
-  function setBookingStep(step, options = {}) { const requested = Math.max(1, Math.min(Number(step) || 1, 6)); const guarded = options.force ? requested : getAllowedStep(requested); modal.dataset.step = String(guarded); updateProgress(guarded); modal.querySelectorAll('[data-booking-panel]').forEach((panel) => { panel.hidden = panel.getAttribute('data-booking-panel') !== String(guarded); }); if (guarded !== 6 || !bookingState.confirmed) resetSuccessScreen(); updateButtons(); renderReviewSection(); const activePanel = modal.querySelector('[data-booking-panel="' + guarded + '"]'); const focusTarget = activePanel?.querySelector('input, textarea, select, button:not([disabled])') || getFocusable()[0]; requestAnimationFrame(() => focusTarget?.focus({ preventScroll: true })); }
+  function setBookingStep(step, options = {}) { const requested = Math.max(1, Math.min(Number(step) || 1, 6)); const guarded = options.force ? requested : getAllowedStep(requested); modal.dataset.step = String(guarded); updateProgress(guarded); modal.querySelectorAll('[data-booking-panel]').forEach((panel) => { panel.hidden = panel.getAttribute('data-booking-panel') !== String(guarded); }); if (guarded !== 6 || !bookingState.confirmed) resetSuccessScreen(); updateButtons(); renderReviewSection(); const activePanel = modal.querySelector('[data-booking-panel="' + guarded + '"]'); const focusTarget = activePanel?.querySelector('input, textarea, select, button:not([disabled])') || getFocusable()[0]; requestAnimationFrame(() => {
+      modal.querySelector('.booking-modal__shell')?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      focusTarget?.focus({ preventScroll: true });
+    }); }
   function updateProgress(step) { modal.querySelectorAll('[data-progress-step]').forEach((item) => { const itemStep = Number(item.dataset.progressStep); const badge = item.querySelector('b'); item.classList.toggle('is-complete', itemStep < step); item.classList.toggle('is-active', itemStep === step); if (badge) badge.textContent = String(itemStep); }); }
   function updateButtons() { modal.querySelector('[data-booking-panel="1"] .booking-submit')?.toggleAttribute('disabled', !isStep1Valid(false)); modal.querySelector('[data-open-optional-notice]')?.toggleAttribute('disabled', !isStep2Valid(false)); if (confirmButton) confirmButton.disabled = !isReviewValid(false); updatePriorityUI(); }
   function syncPersonalInfo() { bookingState.personalInfo.fullName = fields.fullName?.value.trim() || ''; bookingState.personalInfo.email = fields.email?.value.trim() || ''; bookingState.personalInfo.phone = fields.phone?.value.trim() || ''; bookingState.personalInfo.company = fields.company?.value.trim() || ''; bookingState.personalInfo.role = fields.role?.value.trim() || ''; bookingState.personalInfo.referralSource = fields.referralSource?.value || ''; saveBookingState(); updateSummary(); updateButtons(); }

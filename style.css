@@ -10616,122 +10616,6 @@ body.nav-open {
 .svcd-cta__btn svg{width:15px;height:15px}
 .svcd-cta__btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(124,58,237,.35)}
 
-@media (max-width:639px), (pointer:coarse){
-  /* MOBILE LOCKED-STEP SEQUENCE — replaces the old "just stack all 5
-     panels and let the user scroll past them normally" fallback. Per
-     explicit request: hero (with its robot image) shows first, then the
-     sphere rises and each service holds one at a time, one scroll
-     gesture = one step forward (locked, mirroring the desktop wheel-jack
-     mechanic above but driven by scroll-position deltas — see script.js
-     "MOBILE LOCKED-STEP SERVICES CONTROLLER"), until the sphere shrinks
-     away and the after-services CTA card is revealed. Desktop's own
-     rules (outside this media query) are completely untouched; this
-     query only ever matches real touch devices / genuinely narrow
-     windows, same gate as before. */
-
-  /* Hero robot: desktop hides this entirely below 900px (see the
-     dedicated hero-robot rule earlier in this file). Brought back here,
-     simply, as a normal in-flow image under the heading — no fixed
-     positioning, no scroll-driven scale, just a calm static visual.
-     script.js fades it out (via .is-mobile-hidden) once the locked
-     sequence engages, then back in if the user scrolls back up to the
-     hero. */
-  .svcd-hero{display:flex;flex-direction:column;gap:20px;align-items:flex-start}
-  /* Repeated-class selector deliberately boosts specificity above the
-     plain ".svcd-hero__robot{display:none!important}" rule further down
-     this file (the one gating the robot to "desktop only, hidden below
-     900px") — that rule sits LATER in source order, so with equal
-     specificity it would otherwise win and silently cancel this
-     override, which is exactly what was happening (hero image missing
-     on mobile even though this block looked correct). Same fix pattern
-     already used elsewhere in this codebase for this exact class of
-     "duplicated authority across the file" cascade bug. */
-  .svcd-hero__robot.svcd-hero__robot{
-    display:block!important;position:relative!important;inset:auto!important;
-    left:auto!important;top:auto!important;right:auto!important;bottom:auto!important;
-    width:min(230px,58vw)!important;height:auto!important;max-height:none!important;
-    transform:none!important;opacity:1!important;align-self:center;
-    transition:opacity .35s ease!important;
-  }
-  .svcd-hero__robot.svcd-hero__robot.is-mobile-hidden{opacity:0!important}
-
-  /* The pin section reserves a full viewport-height "slot" to scroll
-     into, same as desktop, so there's a natural, consistent point at
-     which script.js engages the locked sequence. */
-  .svcd-pin{height:100vh}
-  .svcd-pin__stage{
-    position:relative;height:100%;display:block;overflow:hidden;
-  }
-  /* Once engaged, the stage pins to the viewport exactly like desktop's
-     own layoutFixed() — real page scroll is frozen (script.js snaps
-     scrollY straight back to the anchor point every time it drifts),
-     so this fixed stage is what the user actually sees "not moving"
-     while they swipe through services. */
-  .svcd-pin.is-mobile-engaged .svcd-pin__stage{
-    position:fixed;top:0;left:0;width:100%;height:100vh;z-index:5;
-    background:#07060D;
-  }
-  .svcd-pin__list{position:relative;height:100%;width:100%;padding:0}
-  /* All 5 panels stack exactly on top of one another (absolute, same
-     inset) and crossfade via opacity — only the active one is
-     interactive/visible. This is what makes "next service replaces the
-     previous one" instead of everything scrolling past in a column. */
-  .svcd-pin__panel{
-    position:absolute;inset:0;height:100%;margin:0 auto;max-width:1180px;
-    display:grid;grid-template-columns:1fr;row-gap:18px;align-content:center;
-    padding:0 var(--pad-x);opacity:0;pointer-events:none;transform:none!important;
-    transition:opacity .45s ease;
-  }
-  .svcd-pin__panel.is-mobile-active{opacity:1;pointer-events:auto}
-  /* Each panel used to carry its own copy of the blob markup, shown
-     inline — replaced by the single shared sphere below. Markup stays
-     (display:none only) so its --row-c/--blob-spin custom properties are
-     still readable via getComputedStyle by the mobile controller. */
-  .svcd-pin__panel .svcd-pin__visual{display:none}
-  .svcd-pin__blob-slot{display:none}
-  .svcd-pin__blob-wrap{transform:none!important;filter:none!important}
-  /* Single sphere, fixed to the bottom of the viewport, full-bleed —
-     touches the left AND right frame edges (per explicit annotated
-     request), sized off the viewport width itself rather than a fixed
-     px value so it still reaches edge-to-edge on any phone width. Sits
-     behind panel content (z-index:0 vs. panels' z-index:1) and never
-     intercepts scroll/tap. .is-risen brings it up to full size/visible;
-     .is-exiting sends it back down and fades it out once the last
-     service has passed. script.js swaps --row-c/--blob-spin per active
-     service — the transitions already defined on .svcd-pin__blob itself
-     (see base rules above) are what make that swap read as a smooth
-     turn. */
-  .svcd-pin__mobile-blob{
-    --mb-d:118vw;
-    display:block;position:fixed;left:50%;z-index:0;
-    width:var(--mb-d);height:var(--mb-d);
-    bottom:calc(var(--mb-d) * -0.30); /* pulled further down, per request */
-    pointer-events:none;
-    transform:translateX(-50%) translateY(60px) scale(.7);opacity:0;
-    transition:transform .6s cubic-bezier(.22,1,.36,1),opacity .5s ease;
-  }
-  .svcd-pin__mobile-blob.is-risen{transform:translateX(-50%) translateY(0) scale(1);opacity:1}
-  .svcd-pin__mobile-blob.is-exiting{transform:translateX(-50%) translateY(160px) scale(.55);opacity:0}
-  .svcd-pin__mobile-blob .svcd-pin__blob{width:var(--mb-d);height:var(--mb-d);animation-play-state:running!important}
-  .svcd-pin__progress{display:none}
-  .svcd-pin__tags{
-    grid-column:auto;grid-row:auto;align-self:auto;justify-self:auto;
-    flex-direction:row;flex-wrap:wrap;margin-bottom:0;
-    transform:none!important;opacity:1!important;pointer-events:auto;
-  }
-  .svcd-pin__tags li{font-size:14px}
-
-  /* Typography here was only ever tuned for the pinned/desktop
-     layout (80px numeral, 30px description) — scaled down to match
-     the rest of the site's mobile type scale. */
-  .svcd-pin__num{font-size:40px;margin-bottom:10px}
-  .svcd-pin__title{font-size:clamp(26px,7vw,32px);margin-bottom:12px}
-  .svcd-pin__desc{font-size:16px;line-height:1.6;margin-bottom:20px;max-width:none}
-
-  .svcd-cta__inner{padding:22px}
-  .svcd-cta__btn{width:100%;justify-content:center}
-}
-
 /* Cross-document View Transitions between index.html and services.html
    used to be set up here. Removed: this was one of TWO separate,
    conflicting view-transition-name declarations for .nav in this same
@@ -17128,10 +17012,14 @@ svg {
 }
 /* FINAL BOOKING MOBILE HEADER — close button scrolls with modal content */
 @media (max-width: 640px) {
+  .booking-modal__shell {
+    padding-top: 76px !important;
+  }
   .booking-modal__close {
     position: absolute !important;
-    top: 16px !important;
+    top: 10px !important;
     right: 16px !important;
+    z-index: 10 !important;
   }
 }
 /* FINAL MOBILE SESSION TIMELINE — remove iOS square blur artifacts and align copy */
@@ -17208,4 +17096,185 @@ svg {
   #coaching .coaching__timeline li:last-child .ctime__sub {
     margin-left: 6px !important;
   }
+}
+
+/* MOBILE SERVICES — RESTORED PINNED VISUAL, SINGLE AUTHORITY */
+@media (max-width: 639px), (pointer: coarse) {
+  html {
+    scroll-snap-type: none !important;
+    scroll-behavior: smooth;
+    overflow-y: auto !important;
+  }
+  body.svcd-page {
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    touch-action: pan-y !important;
+    overscroll-behavior-y: auto !important;
+  }
+  .svcd-page .svcd-hero {
+    min-height: 100svh !important;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+  .svcd-page .svcd-hero__robot.svcd-hero__robot,
+  .svcd-page .svcd-pin__robot {
+    display: none !important;
+  }
+  .svcd-page .svcd-pin {
+    position: relative !important;
+    height: 100svh !important;
+    min-height: 100svh !important;
+    overflow: visible !important;
+  }
+  .svcd-page .svcd-pin__stage {
+    position: relative !important;
+    width: 100% !important;
+    height: 100svh !important;
+    overflow: hidden !important;
+    background: #07060D;
+  }
+  .svcd-page .svcd-pin.is-mobile-sequence .svcd-pin__stage {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 50 !important;
+  }
+  .svcd-page .svcd-pin__list {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+  }
+  .svcd-page .svcd-pin__panel {
+    position: absolute !important;
+    inset: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr) !important;
+    column-gap: clamp(14px, 4vw, 24px) !important;
+    align-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: max(80px, 10svh) var(--pad-x) 11svh !important;
+    box-sizing: border-box !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transform: none !important;
+    transition: opacity 240ms ease !important;
+    z-index: 1 !important;
+  }
+  .svcd-page .svcd-pin__panel.is-mobile-active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+  .svcd-page .svcd-pin__panel .svcd-pin__visual,
+  .svcd-page .svcd-pin__blob-slot,
+  .svcd-page .svcd-pin__progress {
+    display: none !important;
+  }
+  .svcd-page .svcd-pin__copy,
+  .svcd-page .svcd-pin__tags {
+    position: relative;
+    z-index: 2;
+  }
+  .svcd-page .svcd-pin__copy {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    align-self: center !important;
+    min-width: 0 !important;
+  }
+  .svcd-page .svcd-pin__tags {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    align-self: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    align-items: flex-start !important;
+    gap: 14px !important;
+    width: 100% !important;
+    margin: 0 !important;
+    transform: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+  .svcd-page .svcd-pin__tags li {
+    width: 100% !important;
+    margin: 0 !important;
+    font-size: clamp(12px, 3.4vw, 14px) !important;
+    line-height: 1.35 !important;
+    white-space: nowrap !important;
+  }
+  .svcd-page .svcd-pin__num { font-size: 40px; margin-bottom: 10px; }
+  .svcd-page .svcd-pin__title { font-size: clamp(26px, 7vw, 32px); margin-bottom: 12px; }
+  .svcd-page .svcd-pin__title--strategy span { display: block; white-space: nowrap; }
+  .svcd-page .svcd-pin__desc { font-size: 16px; line-height: 1.6; margin-bottom: 20px; max-width: none; }
+
+  .svcd-page .svcd-pin__mobile-blob {
+    --mb-d: 118vw;
+    display: block !important;
+    position: fixed !important;
+    left: 50% !important;
+    bottom: calc(var(--mb-d) * -0.30) !important;
+    width: var(--mb-d) !important;
+    height: var(--mb-d) !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+    transform: translateX(-50%) translateY(60px) scale(.7) !important;
+    opacity: 0 !important;
+    transition: transform 420ms cubic-bezier(.22,1,.36,1), opacity 300ms ease !important;
+  }
+  .svcd-page .svcd-pin.is-mobile-sequence .svcd-pin__mobile-blob.is-risen {
+    transform: translateX(-50%) translateY(0) scale(1) !important;
+    opacity: 1 !important;
+  }
+  .svcd-page .svcd-pin__mobile-blob .svcd-pin__blob {
+    width: var(--mb-d) !important;
+    height: var(--mb-d) !important;
+  }
+
+  .svcd-page .svcd-after-services {
+    position: relative !important;
+    inset: auto !important;
+    min-height: 0 !important;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+  .svcd-page footer,
+  .svcd-page .footer {
+    position: relative !important;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  .svcd-page .svcd-cta__inner { padding: 22px; }
+  .svcd-page .svcd-cta__btn { width: 100%; justify-content: center; }
+}
+@media (max-width: 639px) and (prefers-reduced-motion: reduce) {
+  .svcd-page .svcd-pin__panel,
+  .svcd-page .svcd-pin__mobile-blob { transition: none !important; }
+}
+/* BOOKING SUCCESS MOBILE ROBOT FALLBACK */
+.booking-success-visual__fallback { display: none; }
+@media (max-width: 640px) {
+  .booking-success-visual {
+    min-height: 260px !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+  .booking-success-visual__fallback {
+    display: block !important;
+    width: min(82vw, 320px) !important;
+    height: auto !important;
+    object-fit: contain !important;
+    filter: drop-shadow(0 24px 64px rgba(188, 66, 255, .24));
+  }
+  .booking-success-visual video { display: none !important; }
 }
