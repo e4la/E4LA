@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="E4LA client portal dashboard for project progress, deliverables, analytics, and collaboration."
+    />
+    <title>E4LA Client Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel='stylesheet' href='portal.css?v=2026072007' />
+    <link rel='stylesheet' href='auth.css?v=2026072008' />
+  </head>
+  <body data-protected="portal">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <div class="portal-shell">
+      <aside class="sidebar" id="sidebar" aria-label="Client portal navigation">
+        <div class="sidebar__inner">
+          <div class="brand" aria-label="E4LA Evolve for Los Angeles">
+            <div class="brand__mark">E4LA</div>
+            <div class="brand__tagline">EVOLVE FOR<br />LOS ANGELES</div>
+          </div>
+
+          <nav class="nav" id="portal-nav" aria-label="Primary"></nav>
+
+          <section class="help-card" aria-labelledby="help-title">
+            <div>
+              <h2 id="help-title">Need something?</h2>
+              <p>We're here to help.</p>
+            </div>
+            <a class="button button--ghost" href="mailto:info@e4la.org">
+              <span>Contact Us</span>
+              <i data-lucide="arrow-right" aria-hidden="true"></i>
+            </a>
+          </section>
+        </div>
+      </aside>
+
+      <div class="mobile-bar">
+        <button class="icon-button" id="menu-toggle" type="button" aria-label="Open navigation" aria-controls="sidebar">
+          <i data-lucide="menu" aria-hidden="true"></i>
+        </button>
+        <div class="brand brand--mobile" aria-label="E4LA Evolve for Los Angeles">
+          <div class="brand__mark">E4LA</div>
+        </div>
+        <a class="button button--dark button--small" href="#messages">Message Team</a>
+      </div>
+
+      <main class="main" id="main-content">
+        <header class="topbar" aria-label="Portal actions">
+          <div></div>
+          <div class="topbar__actions">
+            <button class="icon-button has-dot" type="button" aria-label="View notifications">
+              <i data-lucide="bell" aria-hidden="true"></i>
+            </button>
+            <button class="icon-button" type="button" aria-label="Open help">
+              <i data-lucide="circle-help" aria-hidden="true"></i>
+            </button>
+            <button class="user-menu" type="button" aria-label="Open user menu" aria-haspopup="menu">
+              <span class="avatar" id="avatar-initials">SE</span>
+              <span id="user-name">Client Name</span>
+              <i data-lucide="chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+        </header>
+
+        <section class="hero-section" aria-labelledby="welcome-title">
+          <div>
+            <p class="eyebrow">Welcome back,</p>
+            <h1 id="welcome-title"><span id="client-name">Client Name</span> <span aria-hidden="true">ðŸ‘‹</span></h1>
+            <p class="hero-section__copy" id="client-summary">Here's what's happening with your project.</p>
+          </div>
+          <a class="button button--dark" id="messages" href="mailto:info@e4la.org">
+            <span>Message E4LA Team</span>
+            <i data-lucide="message-circle" aria-hidden="true"></i>
+          </a>
+        </section>
+
+        <section class="kpi-grid" id="kpi-grid" aria-label="Project highlights"></section>
+
+        <section class="dashboard-grid">
+          <div class="stack">
+            <section class="panel roadmap-panel" aria-labelledby="roadmap-title">
+              <div class="panel__header">
+                <h2 id="roadmap-title">Project Roadmap</h2>
+                <a class="text-link" href="#">
+                  <span>View Full Roadmap</span>
+                  <i data-lucide="arrow-right" aria-hidden="true"></i>
+                </a>
+              </div>
+              <div class="roadmap" id="roadmap"></div>
+            </section>
+
+            <section class="panel deliverables-panel" aria-labelledby="deliverables-title">
+              <div class="panel__header">
+                <h2 id="deliverables-title">Recent Deliverables</h2>
+                <a class="text-link" href="#">
+                  <span>View All</span>
+                  <i data-lucide="arrow-right" aria-hidden="true"></i>
+                </a>
+              </div>
+              <div class="deliverables" id="deliverables"></div>
+            </section>
+          </div>
+
+          <aside class="stack stack--right">
+            <section class="panel analytics-panel" aria-labelledby="analytics-title">
+              <div class="panel__header">
+                <h2 id="analytics-title">Performance Overview</h2>
+                <label class="select-shell">
+                  <span class="sr-only">Analytics date range</span>
+                  <select id="analytics-range">
+                    <option>Last 30 Days</option>
+                    <option>Last 60 Days</option>
+                    <option>Last Quarter</option>
+                  </select>
+                </label>
+              </div>
+              <div class="metrics" id="metrics"></div>
+              <a class="text-link text-link--center" href="#">
+                <span>View Full Analytics</span>
+                <i data-lucide="arrow-right" aria-hidden="true"></i>
+              </a>
+            </section>
+
+            <section class="panel tasks-panel" aria-labelledby="tasks-title">
+              <div class="panel__header">
+                <h2 id="tasks-title">Upcoming Tasks</h2>
+                <a class="text-link" href="#">
+                  <span>View All Tasks</span>
+                  <i data-lucide="arrow-right" aria-hidden="true"></i>
+                </a>
+              </div>
+              <ul class="tasks" id="tasks"></ul>
+            </section>
+          </aside>
+        </section>
+
+        <section class="status-banner" aria-label="Project status message">
+          <div class="status-banner__icon">
+            <i data-lucide="sparkles" aria-hidden="true"></i>
+          </div>
+          <p id="status-message">Project momentum is strong.</p>
+          <a class="button button--dark" href="mailto:info@e4la.org?subject=Schedule%20a%20Call">
+            <span>Schedule a Call</span>
+            <i data-lucide="arrow-right" aria-hidden="true"></i>
+          </a>
+        </section>
+      </main>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+        <script src='auth.js?v=2026072002' defer></script>
+<script src='portal.js?v=2026071917'></script>
+  </body>
+</html>
+
+
+
+
+

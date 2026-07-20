@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    E4LA SHARED NAV COMPONENT â€” single source of truth.
 
    This file is the ONLY place the header/nav is styled. All three
@@ -1387,4 +1387,29 @@ html body > header .nav__mobile-cta.nav__cta--readmore .cta-neon__label::after {
     margin-left: auto !important;
     margin-right: 0 !important;
   }
+}
+
+/* FINAL MOBILE BURGER RIGHT EDGE ALIGNMENT */
+@media (max-width: 980px) {
+  body > header .nav {
+    grid-template-columns: 140px 1fr !important;
+  }
+  body > header .nav__burger.nav__burger {
+    position: absolute !important;
+    right: var(--e4la-nav-pad) !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    justify-self: end !important;
+    margin: 0 !important;
+  }
+}
+@media (max-width: 520px) {
+  body > header .nav__burger.nav__burger {
+    right: clamp(16px, 5vw, 24px) !important;
+  }
+}
+/* FINAL AUTH CTA — Sign In is text-only; no generated arrow */
+body > header [data-auth-control] .cta-neon__label::after {
+  content: none !important;
+  display: none !important;
 }

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#07060D">
+<title>Verify Email | E4LA</title>
+<meta name="description" content="E4LA client portal authentication.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="auth.css?v=2026072012">
+<link rel="icon" type="image/png" href="assets/e4la-logo-palm.png?v=2026071916">
+<link rel="apple-touch-icon" href="assets/e4la-logo-palm.png?v=2026071916">
+</head>
+<body class="auth-page auth-page--verify">
+<main class="auth-shell" id="main">
+<section class="auth-brand" aria-label="E4LA client portal introduction">
+<div class="auth-media" aria-hidden="true">
+<video class="auth-media__video" src="assets/auth-robot-alpha.webm?v=2026072005" autoplay muted loop playsinline preload="auto"></video>
+</div>
+</section>
+<section class="auth-card" aria-label="Verify Email">
+<a class="auth-card__close" href="index.html#main" aria-label="Close and return home">&times;</a>
+<div data-verify-email>
+<p class="auth-eyebrow">CHECK YOUR INBOX</p>
+<h1>Verify your email</h1>
+<p class="auth-card__copy">We’ll show the verification destination here once the authentication provider confirms account creation.</p>
+<span class="auth-status-email" data-email-display>your email address</span>
+<div class="auth-form">
+<p class="auth-alert is-visible" data-resend-status aria-live="polite">Email delivery requires a connected authentication provider.</p>
+<button class="auth-primary" type="button" data-resend>RESEND EMAIL</button>
+<a class="auth-secondary" href="sign-up.html">USE A DIFFERENT EMAIL</a>
+<a class="auth-secondary" href="sign-in.html">RETURN TO SIGN IN</a>
+</div>
+</div>
+</section>
+</main>
+<script src="auth.js?v=2026072006" defer></script>
+<script type="module" src="motion.js?v=2026072006"></script>
+</body>
+</html>
+
+
+
+
+
+

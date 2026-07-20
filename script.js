@@ -1,4 +1,4 @@
-﻿(function(){
+(function(){
 'use strict';
 
 /* â”€â”€ Scroll reveal â”€â”€ */
@@ -82,7 +82,7 @@ document.querySelectorAll('.cal__date:not(.cal__date--empty)').forEach(function(
 
 /* â”€â”€ Book session â”€â”€ */
 var bookBtn=document.getElementById('js-book');
-if(bookBtn){
+if(bookBtn && !bookBtn.hasAttribute('data-booking-open')){
   bookBtn.addEventListener('click',function(){
     window.location.href='mailto:info@e4la.org?subject=Book%20a%20Session'
   });
@@ -1560,6 +1560,7 @@ if(nlForm){
   var unlockTimer = 0;
   var THRESHOLD = 60;
   var LOCK_MS = 700;
+  var MOMENTUM_QUIET_MS = 420;
   var lastDisengageAt = 0;
   var REENGAGE_COOLDOWN_MS = 500; // otherwise the programmatic scrollTo a
   // backward disengage() ends with can itself land close enough to the
@@ -1680,7 +1681,19 @@ if(nlForm){
     // the sequence is engaged, same technique as the desktop controller's
     // own momentum-scroll safety net.
     if (window.scrollY !== anchorY) window.scrollTo(0, anchorY);
-    if (locked) return;
+    if (locked) {
+      /* A single touch swipe keeps emitting scroll events after the finger
+         leaves the screen. Keep the current service locked until that
+         momentum has actually gone quiet, otherwise the tail of one swipe
+         can be counted as a second gesture and skip a service. */
+      accum = 0;
+      clearTimeout(unlockTimer);
+      unlockTimer = setTimeout(function () {
+        locked = false;
+        accum = 0;
+      }, MOMENTUM_QUIET_MS);
+      return;
+    }
 
     accum += delta;
     if (Math.abs(accum) < THRESHOLD) return;
@@ -2001,4 +2014,1018 @@ document.querySelectorAll('.sec-services .svc-card[data-service-target]').forEac
     }
   });
 });
+
+
+
+/* FINAL FUNCTIONAL BOOKING CALENDAR */
+(() => {
+  const calendar = document.querySelector('.calendar-widget');
+  if (!calendar) return;
+
+  const STORAGE_KEY = 'e4laBookingState';
+  const LEGACY_APPOINTMENT_STORAGE_KEY = 'e4laBookingAppointment';
+  const TIMEZONE = 'America/Los_Angeles';
+  const DURATION = 60;
+  const SESSION_TYPE = '1:1 Vision Strategy Session';
+  const monthLabel = calendar.querySelector('.cal__month');
+  const prevButton = calendar.querySelector('.cal__btn[aria-label="Previous month"]');
+  const nextButton = calendar.querySelector('.cal__btn[aria-label="Next month"]');
+  const grid = calendar.querySelector('.cal__grid');
+  const timeList = calendar.querySelector('.cal__time-list');
+  const bookButton = calendar.querySelector('#js-book');
+  const note = calendar.querySelector('.cal__note');
+  const weekdayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+  const monthFormatter = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' });
+  const dateFormatter = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+  const availability = {
+    weekdaySlots: ['09:00', '11:00', '14:00', '16:00'],
+    fridaySlots: ['09:00', '11:00', '13:00'],
+    saturdaySlots: ['10:00', '12:00'],
+    blockedIsoDates: []
+  };
+
+  const today = stripTime(new Date());
+  const bookingEnd = addMonths(today, 6);
+  let visibleMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  let state = loadState();
+
+  function stripTime(date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  }
+
+  function addMonths(date, amount) {
+    return new Date(date.getFullYear(), date.getMonth() + amount, date.getDate());
+  }
+
+  function toIso(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  function fromIso(iso) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || '')) return null;
+    const [y, m, d] = iso.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+  function sameDate(a, b) {
+    return a && b && toIso(a) === toIso(b);
+  }
+
+  function getMonthKey(date) {
+    return `${date.getFullYear()}-${date.getMonth()}`;
+  }
+
+  function normalizeState(raw) {
+    return {
+      sessionType: raw?.sessionType || SESSION_TYPE,
+      date: raw?.date || '',
+      startTime: raw?.startTime || '',
+      endTime: raw?.endTime || '',
+      timezone: TIMEZONE,
+      durationMinutes: DURATION
+    };
+  }
+
+  function loadState() {
+    try {
+      const flowState = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || '{}');
+      let legacyAppointment = {};
+      try { legacyAppointment = JSON.parse(sessionStorage.getItem(LEGACY_APPOINTMENT_STORAGE_KEY) || '{}'); } catch (error) {}
+      const saved = normalizeState(flowState.appointment || legacyAppointment || {});
+      const selectedDate = fromIso(saved.date);
+      if (!selectedDate || !isInsideWindow(selectedDate) || !getSlotsForDate(selectedDate).length) {
+        return normalizeState({});
+      }
+      if (saved.startTime && getSlotsForDate(selectedDate).includes(saved.startTime)) {
+        saved.endTime = addMinutesToTime(saved.startTime, DURATION);
+        visibleMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+        return saved;
+      }
+      saved.startTime = '';
+      saved.endTime = '';
+      return saved;
+    } catch (error) {
+      return normalizeState({});
+    }
+  }
+
+  function saveState() {
+    try {
+      const flowState = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || '{}');
+      flowState.appointment = { ...state };
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(flowState));
+    } catch (error) {}
+  }
+
+  function isPast(date) {
+    return date < today;
+  }
+
+  function isInsideWindow(date) {
+    return date >= today && date <= bookingEnd;
+  }
+
+  function getSlotsForDate(date) {
+    const iso = toIso(date);
+    if (availability.blockedIsoDates.includes(iso)) return [];
+    const day = date.getDay();
+    if (day === 0) return [];
+    if (day === 6) return availability.saturdaySlots;
+    if (day === 5) return availability.fridaySlots;
+    return availability.weekdaySlots;
+  }
+
+  function isAvailable(date) {
+    return isInsideWindow(date) && getSlotsForDate(date).length > 0;
+  }
+
+  function renderCalendar() {
+    if (!monthLabel || !grid) return;
+    monthLabel.textContent = monthFormatter.format(visibleMonth);
+    grid.setAttribute('aria-label', monthFormatter.format(visibleMonth));
+    grid.innerHTML = weekdayNames.map((day) => `<div class="cal__day-name">${day}</div>`).join('');
+
+    const firstDay = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth(), 1).getDay();
+    const daysInMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 0).getDate();
+
+    for (let i = 0; i < firstDay; i += 1) {
+      grid.appendChild(createEmptyCell());
+    }
+
+    for (let day = 1; day <= daysInMonth; day += 1) {
+      const date = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth(), day);
+      grid.appendChild(createDateCell(date));
+    }
+
+    updateMonthButtons();
+    renderTimes();
+    updateBookButton();
+    updateSummary();
+  }
+
+  function createEmptyCell() {
+    const cell = document.createElement('div');
+    cell.className = 'cal__date cal__date--empty';
+    cell.setAttribute('aria-hidden', 'true');
+    return cell;
+  }
+
+  function createDateCell(date) {
+    const button = document.createElement('button');
+    const iso = toIso(date);
+    const available = isAvailable(date);
+    const selected = state.date === iso;
+    button.type = 'button';
+    button.className = 'cal__date';
+    button.textContent = String(date.getDate());
+    button.dataset.date = iso;
+    button.setAttribute('role', 'gridcell');
+    button.setAttribute('aria-label', `Select ${dateFormatter.format(date)}`);
+
+    if (isPast(date)) button.classList.add('cal__date--past');
+    else if (!isInsideWindow(date)) button.classList.add('cal__date--outside-window');
+    else if (!available) button.classList.add('cal__date--unavailable');
+    else button.classList.add('cal__date--available');
+
+    if (sameDate(date, today)) button.classList.add('cal__date--today');
+    if (selected) {
+      button.classList.add('cal__date--selected');
+      button.setAttribute('aria-pressed', 'true');
+    } else {
+      button.setAttribute('aria-pressed', 'false');
+    }
+
+    if (!available) {
+      button.disabled = true;
+      button.tabIndex = -1;
+      button.setAttribute('aria-disabled', 'true');
+    } else {
+      button.addEventListener('click', () => selectDate(iso));
+      button.addEventListener('keydown', handleDateKeyboard);
+    }
+    return button;
+  }
+
+  function selectDate(iso) {
+    if (state.date !== iso) {
+      state.date = iso;
+      state.startTime = '';
+      state.endTime = '';
+    }
+    state.sessionType = SESSION_TYPE;
+    saveState();
+    renderCalendar();
+    showMessage('Choose a time for your selected date.');
+  }
+
+  function handleDateKeyboard(event) {
+    const keys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'];
+    if (!keys.includes(event.key)) return;
+    event.preventDefault();
+    const buttons = Array.from(grid.querySelectorAll('.cal__date--available'));
+    const current = buttons.indexOf(event.currentTarget);
+    let next = current;
+    if (event.key === 'ArrowLeft') next = Math.max(0, current - 1);
+    if (event.key === 'ArrowRight') next = Math.min(buttons.length - 1, current + 1);
+    if (event.key === 'ArrowUp') next = Math.max(0, current - 7);
+    if (event.key === 'ArrowDown') next = Math.min(buttons.length - 1, current + 7);
+    if (event.key === 'Home') next = 0;
+    if (event.key === 'End') next = buttons.length - 1;
+    buttons[next]?.focus();
+  }
+
+  function renderTimes() {
+    if (!timeList) return;
+    timeList.innerHTML = '';
+    const date = fromIso(state.date);
+    if (!date || !isAvailable(date)) {
+      timeList.innerHTML = '<p class="cal__message">Select an available date to see times.</p>';
+      return;
+    }
+
+    getSlotsForDate(date).forEach((slot) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'cal__time-slot';
+      button.textContent = formatTime(slot);
+      button.dataset.time = slot;
+      button.setAttribute('role', 'radio');
+      button.setAttribute('aria-checked', state.startTime === slot ? 'true' : 'false');
+      if (state.startTime === slot) button.classList.add('is-selected');
+      button.addEventListener('click', () => selectTime(slot));
+      timeList.appendChild(button);
+    });
+  }
+
+  function selectTime(time) {
+    state.sessionType = SESSION_TYPE;
+    state.startTime = time;
+    state.endTime = addMinutesToTime(time, DURATION);
+    saveState();
+    renderTimes();
+    updateBookButton();
+    updateSummary();
+    showMessage('Date and time selected. You can book now.');
+  }
+
+  function updateMonthButtons() {
+    const minMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const maxMonth = new Date(bookingEnd.getFullYear(), bookingEnd.getMonth(), 1);
+    if (prevButton) prevButton.disabled = getMonthKey(visibleMonth) === getMonthKey(minMonth);
+    if (nextButton) nextButton.disabled = getMonthKey(visibleMonth) === getMonthKey(maxMonth);
+  }
+
+  function updateBookButton() {
+    const valid = hasValidAppointment();
+    if (!bookButton) return;
+    bookButton.disabled = !valid;
+    bookButton.setAttribute('aria-disabled', String(!valid));
+  }
+
+  function hasValidAppointment() {
+    if (!state.sessionType || !state.date || !state.startTime || !state.endTime) return false;
+    const date = fromIso(state.date);
+    return Boolean(date && isAvailable(date) && getSlotsForDate(date).includes(state.startTime));
+  }
+
+  function updateSummary() {
+    document.querySelectorAll('[data-booking-summary]').forEach((item) => {
+      const key = item.dataset.bookingSummary;
+      if (key === 'sessionType') item.textContent = state.sessionType || SESSION_TYPE;
+      if (key === 'date') item.textContent = state.date ? formatDateDisplay(state.date) : 'Select a date';
+      if (key === 'time') item.textContent = state.startTime ? formatTimeRange(state.startTime, state.endTime) : 'Select a time';
+      if (key === 'duration') item.textContent = `${state.durationMinutes || DURATION} minutes`;
+    });
+    window.E4LABookingFlow?.refreshSummary?.();
+  }
+
+  function formatDateDisplay(iso) {
+    const date = fromIso(iso);
+    return date ? dateFormatter.format(date) : 'Select a date';
+  }
+
+  function formatTime(time) {
+    const [hours, minutes] = time.split(':').map(Number);
+    return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(new Date(2026, 0, 1, hours, minutes));
+  }
+
+  function formatTimeRange(start, end) {
+    const date = fromIso(state.date) || today;
+    return `${formatTime(start)} - ${formatTime(end)} (${getTimezoneName(date)})`;
+  }
+
+  function addMinutesToTime(time, minutesToAdd) {
+    const [hours, minutes] = time.split(':').map(Number);
+    const date = new Date(2026, 0, 1, hours, minutes + minutesToAdd);
+    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+  }
+
+  function getTimezoneName(date) {
+    const parts = new Intl.DateTimeFormat('en-US', { timeZone: TIMEZONE, timeZoneName: 'short' }).formatToParts(date);
+    return parts.find((part) => part.type === 'timeZoneName')?.value || 'MT';
+  }
+
+  function showMessage(message) {
+    if (note) note.textContent = message;
+  }
+
+  function goToMonth(delta) {
+    visibleMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + delta, 1);
+    renderCalendar();
+  }
+
+  prevButton?.addEventListener('click', () => goToMonth(-1));
+  nextButton?.addEventListener('click', () => goToMonth(1));
+
+  function setAppointment(nextAppointment) {
+    state = normalizeState(nextAppointment || {});
+    const selectedDate = fromIso(state.date);
+    if (selectedDate && isInsideWindow(selectedDate)) {
+      visibleMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+    }
+    saveState();
+    renderCalendar();
+  }
+
+  function createAppointmentEditor(editor) {
+    if (!editor) return null;
+    const editorMonthLabel = editor.querySelector('.cal__month');
+    const editorPrevButton = editor.querySelector('.cal__btn[aria-label="Previous month"]');
+    const editorNextButton = editor.querySelector('.cal__btn[aria-label="Next month"]');
+    const editorGrid = editor.querySelector('.cal__grid');
+    const editorTimeList = editor.querySelector('.cal__time-list');
+    const editorSaveButton = editor.querySelector('[data-appointment-save]');
+    const editorWarning = editor.querySelector('.appointment-edit-modal__warning');
+    const editorTimezone = editor.querySelector('.cal__timezone');
+    let draft = normalizeState({});
+    let editorVisibleMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    function open(appointment) {
+      draft = normalizeState(appointment || state || {});
+      const selectedDate = fromIso(draft.date);
+      editorWarning.hidden = true;
+      editorWarning.textContent = '';
+      if (selectedDate && isInsideWindow(selectedDate)) {
+        editorVisibleMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+        const slots = getSlotsForDate(selectedDate);
+        if (draft.startTime && !slots.includes(draft.startTime)) {
+          draft.startTime = '';
+          draft.endTime = '';
+          showEditorWarning('That time is no longer available. Please choose another time.');
+        }
+      } else {
+        draft.date = '';
+        draft.startTime = '';
+        draft.endTime = '';
+        editorVisibleMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      }
+      renderEditor();
+    }
+
+    function renderEditor() {
+      if (!editorMonthLabel || !editorGrid) return;
+      editorMonthLabel.textContent = monthFormatter.format(editorVisibleMonth);
+      editorGrid.setAttribute('aria-label', monthFormatter.format(editorVisibleMonth));
+      editorGrid.innerHTML = weekdayNames.map((day) => `<div class="cal__day-name">${day}</div>`).join('');
+      if (editorTimezone) editorTimezone.textContent = 'Times shown in Pacific Time';
+
+      const firstDay = new Date(editorVisibleMonth.getFullYear(), editorVisibleMonth.getMonth(), 1).getDay();
+      const daysInMonth = new Date(editorVisibleMonth.getFullYear(), editorVisibleMonth.getMonth() + 1, 0).getDate();
+      for (let i = 0; i < firstDay; i += 1) editorGrid.appendChild(createEmptyCell());
+      for (let day = 1; day <= daysInMonth; day += 1) {
+        const date = new Date(editorVisibleMonth.getFullYear(), editorVisibleMonth.getMonth(), day);
+        editorGrid.appendChild(createEditorDateCell(date));
+      }
+      updateEditorMonthButtons();
+      renderEditorTimes();
+      updateEditorSaveButton();
+    }
+
+    function createEditorDateCell(date) {
+      const button = document.createElement('button');
+      const iso = toIso(date);
+      const available = isAvailable(date);
+      const selected = draft.date === iso;
+      button.type = 'button';
+      button.className = 'cal__date';
+      button.textContent = String(date.getDate());
+      button.dataset.date = iso;
+      button.setAttribute('role', 'gridcell');
+      button.setAttribute('aria-label', `Select ${dateFormatter.format(date)}`);
+      button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+      if (isPast(date)) button.classList.add('cal__date--past');
+      else if (!isInsideWindow(date)) button.classList.add('cal__date--outside-window');
+      else if (!available) button.classList.add('cal__date--unavailable');
+      else button.classList.add('cal__date--available');
+      if (sameDate(date, today)) button.classList.add('cal__date--today');
+      if (selected) button.classList.add('cal__date--selected');
+      if (!available) {
+        button.disabled = true;
+        button.tabIndex = -1;
+        button.setAttribute('aria-disabled', 'true');
+      } else {
+        button.addEventListener('click', () => selectEditorDate(iso));
+        button.addEventListener('keydown', handleEditorDateKeyboard);
+      }
+      return button;
+    }
+
+    function selectEditorDate(iso) {
+      if (draft.date !== iso) {
+        draft.date = iso;
+        draft.startTime = '';
+        draft.endTime = '';
+      }
+      hideEditorWarning();
+      renderEditor();
+    }
+
+    function handleEditorDateKeyboard(event) {
+      const keys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'];
+      if (!keys.includes(event.key)) return;
+      event.preventDefault();
+      const buttons = Array.from(editorGrid.querySelectorAll('.cal__date--available'));
+      const current = buttons.indexOf(event.currentTarget);
+      let next = current;
+      if (event.key === 'ArrowLeft') next = Math.max(0, current - 1);
+      if (event.key === 'ArrowRight') next = Math.min(buttons.length - 1, current + 1);
+      if (event.key === 'ArrowUp') next = Math.max(0, current - 7);
+      if (event.key === 'ArrowDown') next = Math.min(buttons.length - 1, current + 7);
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = buttons.length - 1;
+      buttons[next]?.focus();
+    }
+
+    function renderEditorTimes() {
+      if (!editorTimeList) return;
+      editorTimeList.innerHTML = '';
+      const date = fromIso(draft.date);
+      if (!date || !isAvailable(date)) {
+        editorTimeList.innerHTML = '<p class="cal__message">Select an available date to see times.</p>';
+        return;
+      }
+      getSlotsForDate(date).forEach((slot) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'cal__time-slot';
+        button.textContent = formatTime(slot);
+        button.dataset.time = slot;
+        button.setAttribute('role', 'radio');
+        button.setAttribute('aria-checked', draft.startTime === slot ? 'true' : 'false');
+        if (draft.startTime === slot) button.classList.add('is-selected');
+        button.addEventListener('click', () => selectEditorTime(slot));
+        editorTimeList.appendChild(button);
+      });
+    }
+
+    function selectEditorTime(slot) {
+      draft.startTime = slot;
+      draft.endTime = addMinutesToTime(slot, DURATION);
+      hideEditorWarning();
+      renderEditorTimes();
+      updateEditorSaveButton();
+    }
+
+    function updateEditorMonthButtons() {
+      const minMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      const maxMonth = new Date(bookingEnd.getFullYear(), bookingEnd.getMonth(), 1);
+      if (editorPrevButton) editorPrevButton.disabled = getMonthKey(editorVisibleMonth) === getMonthKey(minMonth);
+      if (editorNextButton) editorNextButton.disabled = getMonthKey(editorVisibleMonth) === getMonthKey(maxMonth);
+    }
+
+    function updateEditorSaveButton() {
+      if (editorSaveButton) editorSaveButton.disabled = !isDraftValid();
+    }
+
+    function isDraftValid() {
+      if (!draft.date || !draft.startTime || !draft.endTime) return false;
+      const date = fromIso(draft.date);
+      return Boolean(date && isAvailable(date) && getSlotsForDate(date).includes(draft.startTime));
+    }
+
+    function showEditorWarning(message) {
+      if (!editorWarning) return;
+      editorWarning.textContent = message;
+      editorWarning.hidden = false;
+    }
+
+    function hideEditorWarning() {
+      if (!editorWarning) return;
+      editorWarning.textContent = '';
+      editorWarning.hidden = true;
+    }
+
+    function goToEditorMonth(delta) {
+      editorVisibleMonth = new Date(editorVisibleMonth.getFullYear(), editorVisibleMonth.getMonth() + delta, 1);
+      renderEditor();
+    }
+
+    editorPrevButton?.addEventListener('click', () => goToEditorMonth(-1));
+    editorNextButton?.addEventListener('click', () => goToEditorMonth(1));
+
+    return {
+      open,
+      isValid: isDraftValid,
+      getDraft: () => ({ ...draft }),
+      focusInitial: () => editor.querySelector('.cal__date--selected, .cal__date--available, [data-appointment-cancel], button:not([disabled])')?.focus({ preventScroll: true })
+    };
+  }
+  window.E4LABookingCalendar = {
+    hasValidAppointment,
+    setAppointment,
+    createAppointmentEditor,
+    syncSummary: updateSummary,
+    showMessage,
+    getState: () => ({ ...state })
+  };
+
+  renderCalendar();
+})();
+/* FINAL BOOKING POPUP MODAL */
+(() => {
+  const modal = document.getElementById('booking-modal');
+  if (!modal) return;
+  if (!modal.dataset.legacyBookingFlowDisabled) { modal.dataset.legacyBookingFlowDisabled = 'true'; return; }
+
+  const FLOW_STORAGE_KEY = 'e4laBookingState';
+  const APPOINTMENT_STORAGE_KEY = 'e4laBookingAppointment';
+  const defaultState = {
+    appointment: {
+      sessionType: '',
+      date: '',
+      startTime: '',
+      endTime: '',
+      timezone: '',
+      durationMinutes: 60
+    },
+    personalInfo: {
+      fullName: '',
+      email: '',
+      phone: '',
+      company: '',
+      role: '',
+      referralSource: ''
+    },
+    bookingReason: '',
+    details: {
+      mainChallenge: '',
+      desiredOutcome: '',
+      workedWithConsultant: '',
+      aiExperience: '',
+      previousAttempts: ''
+    },
+    finalDetails: {
+      reviewItems: [],
+      notes: '',
+      policyAccepted: false,
+      selectedFiles: []
+    }
+  };
+
+  const openers = document.querySelectorAll('[data-booking-open]');
+  const closers = modal.querySelectorAll('[data-booking-close]');
+  const stepButtons = modal.querySelectorAll('[data-booking-step]');
+  const choices = modal.querySelectorAll('.booking-choice input[type="radio"]');
+  const countedFields = modal.querySelectorAll('textarea[maxlength]');
+  const summaryEditButtons = modal.querySelectorAll('[data-booking-edit]');
+  const appointmentEditor = document.getElementById('booking-appointment-editor');
+  const appointmentCancelButtons = appointmentEditor?.querySelectorAll('[data-appointment-cancel]') || [];
+  const appointmentSaveButton = appointmentEditor?.querySelector('[data-appointment-save]');
+  const step1Next = modal.querySelector('[data-booking-panel="1"] .booking-submit');
+  const step2Next = modal.querySelector('[data-booking-panel="2"] .booking-submit[data-booking-step="3"]');
+  const step3Next = modal.querySelector('[data-booking-panel="3"] .booking-submit');
+  const confirmButton = modal.querySelector('[data-confirm-booking]');
+  const confirmMessage = modal.querySelector('[data-confirm-message]');
+  const reviewContent = modal.querySelector('[data-booking-review-content]');
+  const successContent = modal.querySelector('[data-booking-success]');
+  const successTitle = modal.querySelector('[data-success-title]');
+  const successSessionType = modal.querySelector('[data-success-session-type]');
+  const successPrepCopy = modal.querySelector('[data-success-prep-copy]');
+  const successMessage = modal.querySelector('[data-success-message]');
+  const returnHomeButton = modal.querySelector('[data-return-home]');
+  const addCalendarButton = modal.querySelector('[data-add-calendar]');
+  const reviewList = modal.querySelector('[data-booking-review]');
+  const prepInputs = modal.querySelectorAll('input[name="booking-prep"]');
+  const prepPanels = modal.querySelectorAll('[data-prep-panel]');
+  const uploadInput = modal.querySelector('#booking-files');
+  const uploadDrop = modal.querySelector('[data-upload-drop]');
+  const uploadBrowse = modal.querySelector('[data-upload-browse]');
+  const uploadList = modal.querySelector('[data-upload-list]');
+  const uploadError = modal.querySelector('[data-upload-error]');
+  const policyInput = modal.querySelector('#booking-policy');
+  const MAX_FILE_SIZE = 20 * 1024 * 1024;
+  const ALLOWED_FILE_EXTENSIONS = ['pdf', 'ppt', 'pptx', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+  const touched = new Set();
+  let bookingState = loadBookingState();
+  let lastFocused = null;
+  let navigationLocked = false;
+  let submitAttempted = false;
+  let appointmentEditorControl = window.E4LABookingCalendar?.createAppointmentEditor?.(appointmentEditor) || null;
+  let lastAppointmentEditTrigger = null;
+  let appointmentSaveLocked = false;
+  let confirmLocked = false;
+  let activeFinalFiles = [];
+
+  const fields = {
+    fullName: modal.querySelector('#booking-name'),
+    email: modal.querySelector('#booking-email'),
+    phone: modal.querySelector('#booking-phone'),
+    company: modal.querySelector('#booking-company'),
+    role: modal.querySelector('#booking-role'),
+    referralSource: modal.querySelector('#booking-source'),
+    mainChallenge: modal.querySelector('#booking-challenge'),
+    desiredOutcome: modal.querySelector('#booking-success'),
+    previousAttempts: modal.querySelector('#booking-tried'),
+    notes: modal.querySelector('#booking-final-notes')
+  };
+
+  function clone(value) {
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function loadBookingState() {
+    let saved = {};
+    let appointment = {};
+    try { saved = JSON.parse(sessionStorage.getItem(FLOW_STORAGE_KEY) || '{}'); } catch (error) {}
+    try { appointment = JSON.parse(sessionStorage.getItem(APPOINTMENT_STORAGE_KEY) || '{}'); } catch (error) {}
+    const merged = mergeState(defaultState, saved);
+    merged.appointment = mergeState(defaultState.appointment, saved.appointment || appointment || {});
+    return merged;
+  }
+
+  function mergeState(base, patch) {
+    const output = clone(base);
+    Object.keys(patch || {}).forEach((key) => {
+      if (patch[key] && typeof patch[key] === 'object' && !Array.isArray(patch[key]) && output[key]) {
+        output[key] = mergeState(output[key], patch[key]);
+      } else if (patch[key] !== undefined) {
+        output[key] = patch[key];
+      }
+    });
+    return output;
+  }
+
+  function saveBookingState() {
+    sessionStorage.setItem(FLOW_STORAGE_KEY, JSON.stringify(bookingState));
+  }
+
+  function hasValidAppointment() {
+    const a = bookingState.appointment;
+    return Boolean(a.sessionType && a.date && a.startTime && a.endTime && a.timezone && Number(a.durationMinutes));
+  }
+
+  function syncAppointmentFromCalendar() {
+    const calendarState = window.E4LABookingCalendar?.getState?.();
+    let stored = {};
+    try { stored = JSON.parse(sessionStorage.getItem(APPOINTMENT_STORAGE_KEY) || '{}'); } catch (error) {}
+    const appointment = calendarState || stored;
+    bookingState.appointment = mergeState(defaultState.appointment, appointment || {});
+    saveBookingState();
+  }
+
+  function getFocusable() {
+    return Array.from(modal.querySelectorAll('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'));
+  }
+
+  function updateProgress(step) {
+    modal.querySelectorAll('[data-progress-step]').forEach((item) => {
+      const itemStep = Number(item.getAttribute('data-progress-step'));
+      const badge = item.querySelector('b');
+      item.classList.toggle('is-complete', itemStep < step);
+      item.classList.toggle('is-active', itemStep === step);
+      if (badge) badge.textContent = itemStep < step ? '✓' : String(itemStep);
+    });
+  }
+
+      function setBookingStep(step) {
+    const guardedStep = getAllowedStep(Math.max(1, Math.min(Number(step) || 1, 3)));
+    modal.dataset.step = String(guardedStep);
+    updateProgress(guardedStep);
+
+    modal.querySelectorAll('[data-booking-panel]').forEach((panel) => {
+      panel.hidden = panel.getAttribute('data-booking-panel') !== String(guardedStep);
+    });
+
+    const activePanel = modal.querySelector(`[data-booking-panel="${guardedStep}"]`);
+    const focusTarget = activePanel?.querySelector('input, textarea, select, button:not([disabled])') || getFocusable()[0];
+    requestAnimationFrame(() => focusTarget?.focus({ preventScroll: true }));
+  }
+
+  function getAllowedStep(requestedStep) {
+    if (!hasValidAppointment()) return 1;
+    if (requestedStep >= 2 && !isStep2Valid(false)) return 1;
+    if (requestedStep >= 3 && !isStep1Valid(false)) return 2;
+    return requestedStep;
+  }
+
+      function updateButtons() {
+    if (step1Next) {
+      step1Next.disabled = !isStep2Valid(false);
+      const label = bookingState.bookingReason ? `Continue with ${bookingState.bookingReason}` : 'Continue';
+      step1Next.innerHTML = `${escapeHtml(label)} <span aria-hidden="true">&rarr;</span>`;
+    }
+    if (step2Next) step2Next.disabled = !isStep1Valid(false);
+    if (step3Next) step3Next.disabled = !isStep3Valid(false);
+    if (confirmButton) confirmButton.disabled = !isStep3Valid(false);
+  }
+
+  function markInvalid(control, message, show) {
+    if (!control) return false;
+    const wrapper = control.closest('.booking-field, .booking-question, .booking-policy') || control.closest('fieldset') || control.parentElement;
+    let error = wrapper.querySelector('.booking-error');
+    if (!error) {
+      error = document.createElement('small');
+      error.className = 'booking-error';
+      error.setAttribute('role', 'alert');
+      wrapper.appendChild(error);
+    }
+    control.classList.toggle('is-invalid', show && Boolean(message));
+    wrapper.classList.toggle('is-invalid', show && Boolean(message));
+    error.textContent = show && message ? message : '';
+    error.hidden = !(show && message);
+    return !message;
+  }
+
+  function validateRequired(control, message, show) {
+    const invalid = !String(control?.value || '').trim();
+    return markInvalid(control, invalid ? message : '', show);
+  }
+
+  function isValidEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+  }
+
+  function isValidPhone(value) {
+    const digits = value.replace(/\D/g, '');
+    return digits.length >= 7 && digits.length <= 15;
+  }
+
+  function isStep1Valid(show) {
+    const ok = Boolean(bookingState.bookingReason);
+    const group = modal.querySelector('[data-booking-panel="1"] .booking-choice-grid');
+    let error = group?.querySelector('.booking-error');
+    if (group && !error) { error = document.createElement('small'); error.className = 'booking-error'; error.setAttribute('role', 'alert'); group.appendChild(error); }
+    if (group && error) { group.classList.toggle('is-invalid', show && !ok); error.textContent = show && !ok ? 'Please choose one primary focus.' : ''; error.hidden = !show || ok; }
+    return ok;
+  }
+  function isStep2Valid(show) {
+    const checks = [];
+    checks.push(validateRequired(fields.fullName, 'Please enter your full name.', show));
+    const email = fields.email?.value || '';
+    checks.push(markInvalid(fields.email, !email.trim() ? 'Please enter your email.' : !isValidEmail(email) ? 'Please enter a valid email address.' : '', show));
+    const phone = fields.phone?.value || '';
+    checks.push(markInvalid(fields.phone, !phone.trim() ? 'Please enter your phone number.' : !isValidPhone(phone) ? 'Please enter a valid phone number.' : '', show));
+    return checks.every(Boolean);
+  }
+  function isReviewValid(show) { const accepted = Boolean(policyInput?.checked); markInvalid(policyInput, accepted ? '' : 'Please agree to the session policy before confirming.', show); return hasValidAppointment() && isStep1Valid(false) && isStep2Valid(false) && accepted; }
+  function getAllowedStep(step) { if (!hasValidAppointment()) return 1; if (step >= 2 && !isStep1Valid(false)) return 1; if (step >= 3 && !isStep2Valid(false)) return 2; return step; }
+  function setBookingStep(step, options = {}) { const requested = Math.max(1, Math.min(Number(step) || 1, 6)); const guarded = options.force ? requested : getAllowedStep(requested); modal.dataset.step = String(guarded); updateProgress(guarded); modal.querySelectorAll('[data-booking-panel]').forEach((panel) => { panel.hidden = panel.getAttribute('data-booking-panel') !== String(guarded); }); if (guarded !== 6 || !bookingState.confirmed) resetSuccessScreen(); updateButtons(); renderReviewSection(); const activePanel = modal.querySelector('[data-booking-panel="' + guarded + '"]'); const focusTarget = activePanel?.querySelector('input, textarea, select, button:not([disabled])') || getFocusable()[0]; requestAnimationFrame(() => focusTarget?.focus({ preventScroll: true })); }
+  function updateProgress(step) { modal.querySelectorAll('[data-progress-step]').forEach((item) => { const itemStep = Number(item.dataset.progressStep); const badge = item.querySelector('b'); item.classList.toggle('is-complete', itemStep < step); item.classList.toggle('is-active', itemStep === step); if (badge) badge.textContent = String(itemStep); }); }
+  function updateButtons() { modal.querySelector('[data-booking-panel="1"] .booking-submit')?.toggleAttribute('disabled', !isStep1Valid(false)); modal.querySelector('[data-open-optional-notice]')?.toggleAttribute('disabled', !isStep2Valid(false)); if (confirmButton) confirmButton.disabled = !isReviewValid(false); updatePriorityUI(); }
+  function syncPersonalInfo() { bookingState.personalInfo.fullName = fields.fullName?.value.trim() || ''; bookingState.personalInfo.email = fields.email?.value.trim() || ''; bookingState.personalInfo.phone = fields.phone?.value.trim() || ''; bookingState.personalInfo.company = fields.company?.value.trim() || ''; bookingState.personalInfo.role = fields.role?.value.trim() || ''; bookingState.personalInfo.referralSource = fields.referralSource?.value || ''; saveBookingState(); updateSummary(); updateButtons(); }
+  function syncOptionalDetails() { const o = bookingState.optionalDetails; o.biggestChallenge = fields.biggestChallenge?.value.trim() || ''; o.desiredOutcome = fields.desiredOutcome?.value.trim() || ''; o.previousAttempts = fields.previousAttempts?.value.trim() || ''; o.consultantExperience = modal.querySelector('input[name="consultant-before"]:checked')?.value || ''; o.aiExperience = modal.querySelector('input[name="ai-use"]:checked')?.value || ''; o.reviewItems = Array.from(reviewInputs).filter((input) => input.checked).map((input) => input.value); o.notes = fields.notes?.value.trim() || ''; o.selectedFileMetadata = activeFinalFiles.map((file) => ({ name: file.name, size: file.size, type: file.type || '' })); saveBookingState(); updateCounters(); updateSummary(); renderReviewSection(); renderUploadList(); updateButtons(); }
+  function applyStateToUI() { const p = bookingState.personalInfo, o = bookingState.optionalDetails; if (fields.fullName) fields.fullName.value = p.fullName || ''; if (fields.email) fields.email.value = p.email || ''; if (fields.phone) fields.phone.value = p.phone || ''; if (fields.company) fields.company.value = p.company || ''; if (fields.role) fields.role.value = p.role || ''; if (fields.referralSource) fields.referralSource.value = p.referralSource || ''; if (fields.biggestChallenge) fields.biggestChallenge.value = o.biggestChallenge || ''; if (fields.desiredOutcome) fields.desiredOutcome.value = o.desiredOutcome || ''; if (fields.previousAttempts) fields.previousAttempts.value = o.previousAttempts || ''; if (fields.notes) fields.notes.value = o.notes || ''; if (policyInput) policyInput.checked = Boolean(bookingState.finalDetails.policyAccepted); setRadioValue('consultant-before', o.consultantExperience); setRadioValue('ai-use', o.aiExperience); modal.querySelectorAll('input[name="booking-focus"]').forEach((input) => { input.checked = input.value === bookingState.bookingReason; input.closest('.booking-choice')?.classList.toggle('is-selected', input.checked); }); reviewInputs.forEach((input) => { input.checked = (o.reviewItems || []).includes(input.value); input.closest('.booking-final-card')?.classList.toggle('is-selected', input.checked); }); updateCounters(); updatePriorityUI(); renderUploadList(); updateSummary(); renderReviewSection(); updateButtons(); }
+  function setRadioValue(name, value) { modal.querySelectorAll('input[name="' + name + '"]').forEach((input) => { input.checked = input.value === value; }); }
+  function getFocusable() { return Array.from(modal.querySelectorAll('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')); }
+  function focusFirstInvalid(step) {
+    const selector = step === 1 ? '[data-booking-panel="1"] .booking-choice-grid.is-invalid input' : step === 2 ? '[data-booking-panel="2"] .booking-field.is-invalid input, [data-booking-panel="2"] .booking-field.is-invalid select' : '.booking-policy.is-invalid input';
+    modal.querySelector(selector)?.focus({ preventScroll: false });
+  }
+  function attemptStepChange(targetStep, options = {}) { if (navigationLocked) return; navigationLocked = true; window.setTimeout(() => { navigationLocked = false; }, 220); syncPersonalInfo(); syncOptionalDetails(); if (targetStep >= 2 && !isStep1Valid(true)) { updateButtons(); focusFirstInvalid(1); return; } if (targetStep >= 3 && !isStep2Valid(true)) { setBookingStep(2); updateButtons(); focusFirstInvalid(2); return; } setBookingStep(targetStep, options); }
+  function updatePriorityUI() { const selected = bookingState.optionalDetails.priorities || []; if (priorityCount) priorityCount.textContent = selected.length + ' of 3 selected'; priorityCards.forEach((card) => { const isSelected = selected.includes(card.dataset.priority); card.classList.toggle('is-selected', isSelected); card.disabled = selected.length >= 3 && !isSelected; card.classList.toggle('is-disabled', card.disabled); }); }
+  function togglePriority(value) { const selected = bookingState.optionalDetails.priorities || []; if (selected.includes(value)) bookingState.optionalDetails.priorities = selected.filter((item) => item !== value); else if (selected.length < 3) bookingState.optionalDetails.priorities = selected.concat(value); saveBookingState(); updatePriorityUI(); updateSummary(); renderReviewSection(); }
+  function setUploadError(message) { if (!uploadError) return; uploadError.textContent = message || ''; uploadError.hidden = !message; }
+  function formatFileSize(size) { if (size >= 1024 * 1024) return (size / (1024 * 1024)).toFixed(size >= 10 * 1024 * 1024 ? 0 : 1) + ' MB'; return Math.max(1, Math.round(size / 1024)) + ' KB'; }
+  function addFinalFiles(files) { setUploadError(''); Array.from(files || []).forEach((file) => { const ext = file.name.split('.').pop().toLowerCase(); const duplicate = activeFinalFiles.some((item) => item.name === file.name && item.size === file.size); if (!ALLOWED_FILE_EXTENSIONS.includes(ext)) { setUploadError('Please choose PDF, PPT, DOC, PNG or JPG files only.'); return; } if (file.size > MAX_FILE_SIZE) { setUploadError('Each file must be 20MB or smaller.'); return; } if (!duplicate) activeFinalFiles.push(file); }); syncOptionalDetails(); }
+  function renderUploadList() { if (!uploadList) return; const saved = bookingState.optionalDetails.selectedFileMetadata || []; uploadList.innerHTML = ''; if (!activeFinalFiles.length && saved.length) { const row = document.createElement('li'); row.className = 'booking-upload__stale'; row.textContent = 'Previously selected files need to be chosen again after refresh.'; uploadList.appendChild(row); return; } activeFinalFiles.forEach((file, index) => { const row = document.createElement('li'); row.innerHTML = '<span>' + escapeHtml(file.name) + '<small>' + formatFileSize(file.size) + '</small></span><button type="button" data-remove-file="' + index + '">Remove</button>'; uploadList.appendChild(row); }); }
+  function updateCounters() { countedFields.forEach((field) => { const counter = modal.querySelector('[data-count-for="' + field.id + '"]'); if (counter) counter.textContent = String(field.value.length); }); }
+  function updateSummary() { const a = bookingState.appointment; setSummary('sessionType', a.sessionType || 'Select a session'); setSummary('date', a.date ? formatDateDisplay(a.date) : 'Select a date'); setSummary('time', a.startTime ? formatTimeRange(a.startTime, a.endTime, a.timezone, a.date) : 'Select a time'); setSummary('duration', (a.durationMinutes || 60) + ' minutes'); renderExtraSummaryRows(); }
+  function setSummary(key, value) { const node = modal.querySelector('[data-booking-summary="' + key + '"]'); if (node) node.textContent = value; }
+  function renderExtraSummaryRows() {
+    const list = modal.querySelector('.booking-summary__details');
+    if (!list) return;
+    const rows = [['goal', 'Primary Goal', bookingState.bookingReason], ['name', 'Name', bookingState.personalInfo.fullName], ['context', 'Optional Context', optionalSummary()]];
+    rows.forEach(([key, label, value]) => {
+      let row = list.querySelector('[data-summary-extra="' + key + '"]');
+      if (!row) {
+        row = document.createElement('li');
+        row.dataset.summaryExtra = key;
+        row.className = 'booking-summary__extra is-visible';
+        row.innerHTML = '<span class="booking-summary__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg></span><span><small></small><strong></strong></span>';
+        list.appendChild(row);
+      }
+      const isVisible = Boolean(value);
+      row.hidden = !isVisible;
+      if (!isVisible) return;
+      const small = row.querySelector('small');
+      const strong = row.querySelector('strong');
+      if (small) small.textContent = label;
+      if (strong) strong.textContent = shorten(value, 48);
+    });
+  }
+  function optionalSummary() { const o = bookingState.optionalDetails; const parts = []; if (o.biggestChallenge) parts.push('Context'); if (o.priorities?.length) parts.push(o.priorities.length + ' priorities'); if (o.reviewItems?.length) parts.push(o.reviewItems.length + ' materials'); if (o.selectedFileMetadata?.length) parts.push(o.selectedFileMetadata.length + ' files'); if (o.notes) parts.push('Notes'); return parts.join(', '); }
+  function renderReviewSection() { renderDl('[data-booking-review-required]', requiredRows()); renderDl('[data-booking-review-optional]', optionalRows()); }
+  function renderDl(selector, rows) { const list = modal.querySelector(selector); if (!list) return; const visible = rows.filter((row) => row[1]); list.innerHTML = visible.length ? visible.map(([label, value]) => '<div><dt>' + escapeHtml(label) + '</dt><dd>' + escapeHtml(value) + '</dd></div>').join('') : '<div><dt>Optional preparation</dt><dd>Not provided</dd></div>'; }
+  function requiredRows() { const a = bookingState.appointment; return [['Session type', a.sessionType], ['Date', a.date ? formatDateDisplay(a.date) : ''], ['Time', a.startTime && a.endTime ? formatTimeRange(a.startTime, a.endTime, a.timezone, a.date) : ''], ['Duration', a.durationMinutes ? a.durationMinutes + ' minutes' : ''], ['Full name', bookingState.personalInfo.fullName], ['Email', bookingState.personalInfo.email], ['Phone', bookingState.personalInfo.phone], ['Primary goal', bookingState.bookingReason]]; }
+  function optionalRows() { const o = bookingState.optionalDetails; return [['Biggest challenge', o.biggestChallenge], ['Desired outcome', o.desiredOutcome], ['Consultant experience', o.consultantExperience], ['AI experience', o.aiExperience], ['Previous attempts', o.previousAttempts], ['Priorities', (o.priorities || []).join(', ')], ['Materials', (o.reviewItems || []).map(labelForReviewItem).join(', ')], ['Files', (o.selectedFileMetadata || []).map((file) => file.name).join(', ')], ['Notes', o.notes]]; }
+  function labelForReviewItem(key) { return ({ website: 'Website', portfolio: 'Portfolio', pitchDeck: 'Pitch deck', socialMedia: 'Social media', pdf: 'PDF', other: 'Other' }[key]) || key; }
+  function resetSuccessScreen() { modal.classList.remove('is-booking-success'); if (reviewContent) reviewContent.hidden = false; if (successContent) successContent.hidden = true; if (successMessage) { successMessage.hidden = true; successMessage.textContent = ''; } }
+  function showSuccessScreen() { bookingState.confirmed = true; bookingState.confirmedAt = new Date().toISOString(); saveBookingState(); updateProgress(7); modal.classList.add('is-booking-success'); if (reviewContent) reviewContent.hidden = true; if (successContent) successContent.hidden = false; const firstName = (bookingState.personalInfo.fullName || '').trim().split(/\s+/)[0]; if (successTitle) successTitle.innerHTML = firstName ? 'You&rsquo;re all set, ' + escapeHtml(firstName) + '!' : 'You&rsquo;re all set!'; if (successSessionType) successSessionType.textContent = (bookingState.appointment.sessionType || '1:1 Vision Strategy Session').toUpperCase(); if (successPrepCopy) successPrepCopy.textContent = optionalSummary() ? 'We\'ll review the information you shared before your session.' : 'We\'ll use your booking goal to prepare for the conversation.'; if (confirmMessage) { confirmMessage.hidden = true; confirmMessage.textContent = ''; } requestAnimationFrame(() => successTitle?.focus({ preventScroll: true })); }
+  function confirmBooking(event) { if (event) event.preventDefault(); syncPersonalInfo(); syncOptionalDetails(); bookingState.finalDetails.policyAccepted = Boolean(policyInput?.checked); saveBookingState(); if (confirmLocked || !isReviewValid(true)) { updateButtons(); focusFirstInvalid(6); return; } confirmLocked = true; showSuccessScreen(); updateButtons(); window.setTimeout(() => { confirmLocked = false; }, 500); }
+  function pad2(value) { return String(value).padStart(2, '0'); }
+  function calendarStamp(date, time) { const parts = String(date || '').split('-').map(Number); const clock = String(time || '').split(':').map(Number); if (parts.length !== 3 || clock.length < 2) return ''; return String(parts[0]) + pad2(parts[1]) + pad2(parts[2]) + 'T' + pad2(clock[0]) + pad2(clock[1]) + '00'; }
+  function escapeIcs(value) { return String(value || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n'); }
+  function downloadCalendarFile(event) { if (event) event.preventDefault(); if (!hasValidAppointment()) { if (successMessage) { successMessage.hidden = false; successMessage.textContent = 'Calendar file could not be created because the appointment is incomplete.'; } return; } const a = bookingState.appointment; const title = a.sessionType || 'E4LA Strategy Session'; const timezone = a.timezone || 'America/Los_Angeles'; const ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//E4LA//Booking//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH','BEGIN:VEVENT','UID:' + Date.now() + '-e4la-booking','DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z'),'DTSTART;TZID=' + timezone + ':' + calendarStamp(a.date, a.startTime),'DTEND;TZID=' + timezone + ':' + calendarStamp(a.date, a.endTime),'SUMMARY:' + escapeIcs(title),'DESCRIPTION:' + escapeIcs('E4LA booking details completed. Meeting link will be provided when the backend is connected.'),'END:VEVENT','END:VCALENDAR'].join('\r\n'); const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'e4la-vision-strategy-session.ics'; document.body.appendChild(link); link.click(); link.remove(); window.setTimeout(() => URL.revokeObjectURL(link.href), 1000); }
+  function openBooking(event) { if (event) event.preventDefault(); syncAppointmentFromCalendar(); if (!hasValidAppointment()) { window.E4LABookingCalendar?.showMessage?.('Please select a date and time before booking.'); document.getElementById('coaching')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; } lastFocused = document.activeElement; applyStateToUI(); setBookingStep(1, { force: true }); modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); document.body.classList.add('booking-modal-open'); }
+  function closeBooking(event) { if (event) event.preventDefault(); modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); document.body.classList.remove('booking-modal-open'); if (lastFocused?.focus) lastFocused.focus({ preventScroll: true }); }
+  function openNotice(event) { if (event) event.preventDefault(); syncPersonalInfo(); syncOptionalDetails(); if (!isStep2Valid(true)) { focusFirstInvalid(2); return; } lastNoticeTrigger = event.currentTarget; notice?.classList.add('is-open'); notice?.setAttribute('aria-hidden', 'false'); document.body.classList.add('booking-notice-open'); requestAnimationFrame(() => noticeAnswer?.focus({ preventScroll: true })); }
+  function closeNotice(event, returnFocus = true) { if (event) event.preventDefault(); notice?.classList.remove('is-open'); notice?.setAttribute('aria-hidden', 'true'); document.body.classList.remove('booking-notice-open'); if (returnFocus && lastNoticeTrigger?.focus) lastNoticeTrigger.focus({ preventScroll: true }); }
+  function getNoticeFocusable() { return Array.from(notice?.querySelectorAll('button:not([disabled]), a[href], input:not([disabled]), [tabindex]:not([tabindex="-1"])') || []); }
+  function openAppointmentEditor(event) { if (event) event.preventDefault(); if (!appointmentEditor || !appointmentEditorControl) return; syncAppointmentFromCalendar(); if (!hasValidAppointment()) return; lastAppointmentEditTrigger = event?.currentTarget || document.activeElement; appointmentEditorControl.open(bookingState.appointment); appointmentEditor.classList.add('is-open'); appointmentEditor.setAttribute('aria-hidden', 'false'); document.body.classList.add('appointment-editor-open'); requestAnimationFrame(() => appointmentEditorControl.focusInitial?.()); }
+  function closeAppointmentEditor(event, options = {}) { if (event) event.preventDefault(); appointmentEditor?.classList.remove('is-open'); appointmentEditor?.setAttribute('aria-hidden', 'true'); document.body.classList.remove('appointment-editor-open'); if (options.returnFocus !== false && lastAppointmentEditTrigger?.focus) lastAppointmentEditTrigger.focus({ preventScroll: true }); }
+  function saveAppointmentEditor(event) { if (event) event.preventDefault(); if (!appointmentEditorControl || appointmentSaveLocked || !appointmentEditorControl.isValid()) return; appointmentSaveLocked = true; if (appointmentSaveButton) appointmentSaveButton.disabled = true; const previous = clone(bookingState.appointment); try { bookingState.appointment = mergeState(defaultState.appointment, appointmentEditorControl.getDraft()); saveBookingState(); window.E4LABookingCalendar?.setAppointment?.(bookingState.appointment); updateSummary(); renderReviewSection(); closeAppointmentEditor(null, { returnFocus: true }); } catch (error) { bookingState.appointment = previous; saveBookingState(); updateSummary(); } finally { window.setTimeout(() => { appointmentSaveLocked = false; }, 240); } }
+  function formatDateDisplay(iso) { const [year, month, day] = iso.split('-').map(Number); return new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date(year, month - 1, day)); }
+  function formatTimeRange(start, end, timezone, isoDate) { return formatTime(start) + ' - ' + formatTime(end) + ' (' + getTimezoneName(timezone, isoDate) + ')'; }
+  function formatTime(time) { const [hours, minutes] = time.split(':').map(Number); return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(new Date(2026, 0, 1, hours, minutes)); }
+  function getTimezoneName(timezone, isoDate) { const date = isoDate ? new Date(isoDate + 'T12:00:00') : new Date(); const parts = new Intl.DateTimeFormat('en-US', { timeZone: timezone || 'America/Los_Angeles', timeZoneName: 'short' }).formatToParts(date); return parts.find((part) => part.type === 'timeZoneName')?.value || 'PT'; }
+  function escapeHtml(value) { return String(value || '').replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char])); }
+  function shorten(value, max) { value = String(value || ''); return value.length > max ? value.slice(0, max - 1) + '?' : value; }
+  Object.values(fields).forEach((field) => { field?.addEventListener('input', () => { syncPersonalInfo(); syncOptionalDetails(); }); field?.addEventListener('change', () => { syncPersonalInfo(); syncOptionalDetails(); }); });
+  modal.querySelectorAll('input[name="booking-focus"]').forEach((choice) => { const card = choice.closest('.booking-choice'); card?.setAttribute('tabindex', '0'); card?.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); choice.checked = true; choice.dispatchEvent(new Event('change', { bubbles: true })); } }); choice.addEventListener('change', () => { bookingState.bookingReason = choice.checked ? choice.value : ''; modal.querySelectorAll('.booking-choice').forEach((item) => item.classList.remove('is-selected')); card?.classList.toggle('is-selected', choice.checked); saveBookingState(); updateSummary(); updateButtons(); }); });
+  modal.querySelectorAll('input[name="consultant-before"], input[name="ai-use"]').forEach((input) => input.addEventListener('change', syncOptionalDetails));
+  reviewInputs.forEach((input) => { const card = input.closest('.booking-final-card'); card?.setAttribute('tabindex', '0'); card?.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); input.checked = !input.checked; input.dispatchEvent(new Event('change', { bubbles: true })); } }); input.addEventListener('change', () => { card?.classList.toggle('is-selected', input.checked); syncOptionalDetails(); }); });
+  priorityCards.forEach((card) => card.addEventListener('click', () => togglePriority(card.dataset.priority)));
+  if (uploadBrowse && uploadInput) uploadBrowse.addEventListener('click', () => uploadInput.click());
+  uploadInput?.addEventListener('change', () => { addFinalFiles(uploadInput.files); uploadInput.value = ''; });
+  uploadDrop?.addEventListener('dragover', (event) => { event.preventDefault(); uploadDrop.classList.add('is-dragging'); }); uploadDrop?.addEventListener('dragleave', () => uploadDrop.classList.remove('is-dragging')); uploadDrop?.addEventListener('drop', (event) => { event.preventDefault(); uploadDrop.classList.remove('is-dragging'); addFinalFiles(event.dataTransfer?.files); });
+  uploadList?.addEventListener('click', (event) => { const button = event.target.closest('[data-remove-file]'); if (!button) return; activeFinalFiles.splice(Number(button.dataset.removeFile), 1); syncOptionalDetails(); });
+  policyInput?.addEventListener('change', () => { bookingState.finalDetails.policyAccepted = Boolean(policyInput.checked); saveBookingState(); updateButtons(); }); openers.forEach((opener) => opener.addEventListener('click', openBooking)); closers.forEach((closer) => closer.addEventListener('click', closeBooking)); stepButtons.forEach((button) => button.addEventListener('click', (event) => { event.preventDefault(); attemptStepChange(Number(button.dataset.bookingStep) || 1); })); skipButtons.forEach((button) => button.addEventListener('click', (event) => { event.preventDefault(); syncOptionalDetails(); setBookingStep(Number(button.dataset.bookingSkip) || 6, { force: true }); }));
+  modal.querySelector('[data-open-optional-notice]')?.addEventListener('click', openNotice); noticeCloseButtons.forEach((button) => button.addEventListener('click', (event) => closeNotice(event, true))); noticeAnswer?.addEventListener('click', (event) => { closeNotice(event, false); setBookingStep(3, { force: true }); }); noticeSkip?.addEventListener('click', (event) => { closeNotice(event, false); setBookingStep(6, { force: true }); }); confirmButton?.addEventListener('click', confirmBooking); addCalendarButton?.addEventListener('click', downloadCalendarFile); returnHomeButton?.addEventListener('click', (event) => { event.preventDefault(); closeBooking(event); window.scrollTo({ top: 0, behavior: 'smooth' }); }); summaryEditButtons.forEach((button) => button.addEventListener('click', openAppointmentEditor)); appointmentCancelButtons.forEach((button) => button.addEventListener('click', (event) => closeAppointmentEditor(event, { returnFocus: true }))); appointmentSaveButton?.addEventListener('click', saveAppointmentEditor); modal.addEventListener('click', (event) => { if (event.target.classList.contains('booking-modal__backdrop')) closeBooking(event); });
+  document.addEventListener('keydown', (event) => { if (notice?.classList.contains('is-open')) { if (event.key === 'Escape') { closeNotice(event, true); return; } if (event.key === 'Tab') { const focusable = getNoticeFocusable(); const first = focusable[0]; const last = focusable[focusable.length - 1]; if (!first) return; if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); } } return; } if (!modal.classList.contains('is-open')) return; if (event.key === 'Escape') closeBooking(event); });
+  window.E4LABookingFlow = { refreshSummary() { bookingState = loadBookingState(); applyStateToUI(); }, getState: () => clone(bookingState) };
+  applyStateToUI();
+})();
+
+/* FINAL SIX-STEP BOOKING FLOW */
+(() => {
+  const modal = document.getElementById('booking-modal');
+  if (!modal) return;
+  const FLOW_STORAGE_KEY = 'e4laBookingState';
+  const APPOINTMENT_STORAGE_KEY = 'e4laBookingAppointment';
+  const MAX_FILE_SIZE = 20 * 1024 * 1024;
+  const ALLOWED_FILE_EXTENSIONS = ['pdf', 'ppt', 'pptx', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+  const defaultState = {
+    appointment: { sessionType: '', date: '', startTime: '', endTime: '', timezone: '', durationMinutes: 60 },
+    personalInfo: { fullName: '', email: '', phone: '', company: '', role: '', referralSource: '' },
+    bookingReason: '',
+    optionalDetails: { biggestChallenge: '', desiredOutcome: '', consultantExperience: '', aiExperience: '', previousAttempts: '', priorities: [], reviewItems: [], notes: '', selectedFileMetadata: [] },
+    finalDetails: { policyAccepted: false }
+  };
+  let bookingState = loadBookingState();
+  let lastFocused = null;
+  let lastNoticeTrigger = null;
+  let navigationLocked = false;
+  let confirmLocked = false;
+  let activeFinalFiles = [];
+  let lastAppointmentEditTrigger = null;
+  let appointmentSaveLocked = false;
+  const openers = document.querySelectorAll('[data-booking-open]');
+  const closers = modal.querySelectorAll('[data-booking-close]');
+  const stepButtons = modal.querySelectorAll('[data-booking-step]');
+  const skipButtons = modal.querySelectorAll('[data-booking-skip]');
+  const summaryEditButtons = modal.querySelectorAll('[data-booking-edit]');
+  const appointmentEditor = document.getElementById('booking-appointment-editor');
+  const appointmentCancelButtons = appointmentEditor?.querySelectorAll('[data-appointment-cancel]') || [];
+  const appointmentSaveButton = appointmentEditor?.querySelector('[data-appointment-save]');
+  const appointmentEditorControl = window.E4LABookingCalendar?.createAppointmentEditor?.(appointmentEditor) || null;
+  const notice = document.getElementById('booking-optional-notice');
+  const noticeCloseButtons = notice?.querySelectorAll('[data-optional-notice-close]') || [];
+  const noticeAnswer = notice?.querySelector('[data-optional-notice-answer]');
+  const noticeSkip = notice?.querySelector('[data-optional-notice-skip]');
+  const confirmButton = modal.querySelector('[data-confirm-booking]');
+  const confirmMessage = modal.querySelector('[data-confirm-message]');
+  const reviewContent = modal.querySelector('[data-booking-review-content]');
+  const successContent = modal.querySelector('[data-booking-success]');
+  const successTitle = modal.querySelector('[data-success-title]');
+  const successSessionType = modal.querySelector('[data-success-session-type]');
+  const successPrepCopy = modal.querySelector('[data-success-prep-copy]');
+  const successMessage = modal.querySelector('[data-success-message]');
+  const returnHomeButton = modal.querySelector('[data-return-home]');
+  const addCalendarButton = modal.querySelector('[data-add-calendar]');
+  const policyInput = modal.querySelector('#booking-policy');
+  const uploadInput = modal.querySelector('#booking-files');
+  const uploadDrop = modal.querySelector('[data-upload-drop]');
+  const uploadBrowse = modal.querySelector('[data-upload-browse]');
+  const uploadList = modal.querySelector('[data-upload-list]');
+  const uploadError = modal.querySelector('[data-upload-error]');
+  const priorityCards = modal.querySelectorAll('[data-priority]');
+  const priorityCount = modal.querySelector('[data-priority-count]');
+  const reviewInputs = modal.querySelectorAll('input[name="booking-final-review"]');
+  const countedFields = modal.querySelectorAll('textarea[maxlength]');
+  const fields = {
+    fullName: modal.querySelector('#booking-name'), email: modal.querySelector('#booking-email'), phone: modal.querySelector('#booking-phone'), company: modal.querySelector('#booking-company'), role: modal.querySelector('#booking-role'), referralSource: modal.querySelector('#booking-source'), biggestChallenge: modal.querySelector('#booking-challenge'), desiredOutcome: modal.querySelector('#booking-success'), previousAttempts: modal.querySelector('#booking-tried'), notes: modal.querySelector('#booking-final-notes')
+  };
+  function clone(value) { return JSON.parse(JSON.stringify(value)); }
+  function mergeState(base, patch) { const output = clone(base); Object.keys(patch || {}).forEach((key) => { if (patch[key] && typeof patch[key] === 'object' && !Array.isArray(patch[key]) && output[key] && typeof output[key] === 'object' && !Array.isArray(output[key])) output[key] = mergeState(output[key], patch[key]); else if (patch[key] !== undefined) output[key] = patch[key]; }); return output; }
+  function loadBookingState() { let saved = {}; let appointment = {}; try { saved = JSON.parse(sessionStorage.getItem(FLOW_STORAGE_KEY) || '{}'); } catch (error) {} try { appointment = JSON.parse(sessionStorage.getItem(APPOINTMENT_STORAGE_KEY) || '{}'); } catch (error) {} const merged = mergeState(defaultState, saved); merged.appointment = mergeState(defaultState.appointment, saved.appointment || appointment || {}); if (!saved.optionalDetails) { merged.optionalDetails.biggestChallenge = saved.details?.mainChallenge || ''; merged.optionalDetails.desiredOutcome = saved.details?.desiredOutcome || ''; merged.optionalDetails.consultantExperience = saved.details?.workedWithConsultant || ''; merged.optionalDetails.aiExperience = saved.details?.aiExperience || ''; merged.optionalDetails.previousAttempts = saved.details?.previousAttempts || ''; merged.optionalDetails.reviewItems = saved.finalDetails?.reviewItems || []; merged.optionalDetails.notes = saved.finalDetails?.notes || ''; merged.optionalDetails.selectedFileMetadata = saved.finalDetails?.selectedFiles || []; } merged.finalDetails.policyAccepted = Boolean(saved.finalDetails?.policyAccepted); return merged; }
+  function saveBookingState() { sessionStorage.setItem(FLOW_STORAGE_KEY, JSON.stringify(bookingState)); }
+  function syncAppointmentFromCalendar() { const calendarState = window.E4LABookingCalendar?.getState?.(); let stored = {}; try { stored = JSON.parse(sessionStorage.getItem(APPOINTMENT_STORAGE_KEY) || '{}'); } catch (error) {} bookingState.appointment = mergeState(defaultState.appointment, calendarState || stored || {}); saveBookingState(); }
+  function hasValidAppointment() { const a = bookingState.appointment; return Boolean(a.sessionType && a.date && a.startTime && a.endTime && a.timezone && Number(a.durationMinutes)); }
+  function isValidEmail(value) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()); }
+  function isValidPhone(value) { const digits = value.replace(/\D/g, ''); return digits.length >= 7 && digits.length <= 15; }
+  function markInvalid(control, message, show) { if (!control) return false; const wrapper = control.closest('.booking-field, .booking-policy') || control.parentElement; let error = wrapper.querySelector('.booking-error'); if (!error) { error = document.createElement('small'); error.className = 'booking-error'; error.setAttribute('role', 'alert'); wrapper.appendChild(error); } wrapper.classList.toggle('is-invalid', show && Boolean(message)); control.classList.toggle('is-invalid', show && Boolean(message)); error.textContent = show && message ? message : ''; error.hidden = !(show && message); return !message; }
+  function validateRequired(control, message, show) { return markInvalid(control, !String(control?.value || '').trim() ? message : '', show); }
+  function isStep1Valid(show) { const ok = Boolean(bookingState.bookingReason); const group = modal.querySelector('[data-booking-panel="1"] .booking-choice-grid'); let error = group?.querySelector('.booking-error'); if (group && !error) { error = document.createElement('small'); error.className = 'booking-error'; error.setAttribute('role', 'alert'); group.appendChild(error); } if (group && error) { group.classList.toggle('is-invalid', show && !ok); error.textContent = show && !ok ? 'Please choose one primary focus.' : ''; error.hidden = !show || ok; } return ok; }
+  function isStep2Valid(show) { const checks = []; checks.push(validateRequired(fields.fullName, 'Please enter your full name.', show)); const email = fields.email?.value || ''; checks.push(markInvalid(fields.email, !email.trim() ? 'Please enter your email.' : !isValidEmail(email) ? 'Please enter a valid email address.' : '', show)); const phone = fields.phone?.value || ''; checks.push(markInvalid(fields.phone, !phone.trim() ? 'Please enter your phone number.' : !isValidPhone(phone) ? 'Please enter a valid phone number.' : '', show)); return checks.every(Boolean); }
+  function isReviewValid(show) { const accepted = Boolean(policyInput?.checked); markInvalid(policyInput, accepted ? '' : 'Please agree to the session policy before confirming.', show); return hasValidAppointment() && isStep1Valid(false) && isStep2Valid(false) && accepted; }
+  function getAllowedStep(step) { if (!hasValidAppointment()) return 1; if (step >= 2 && !isStep1Valid(false)) return 1; if (step >= 3 && !isStep2Valid(false)) return 2; return step; }
+  function setBookingStep(step, options = {}) { const requested = Math.max(1, Math.min(Number(step) || 1, 6)); const guarded = options.force ? requested : getAllowedStep(requested); modal.dataset.step = String(guarded); updateProgress(guarded); modal.querySelectorAll('[data-booking-panel]').forEach((panel) => { panel.hidden = panel.getAttribute('data-booking-panel') !== String(guarded); }); if (guarded !== 6 || !bookingState.confirmed) resetSuccessScreen(); updateButtons(); renderReviewSection(); const activePanel = modal.querySelector('[data-booking-panel="' + guarded + '"]'); const focusTarget = activePanel?.querySelector('input, textarea, select, button:not([disabled])') || getFocusable()[0]; requestAnimationFrame(() => focusTarget?.focus({ preventScroll: true })); }
+  function updateProgress(step) { modal.querySelectorAll('[data-progress-step]').forEach((item) => { const itemStep = Number(item.dataset.progressStep); const badge = item.querySelector('b'); item.classList.toggle('is-complete', itemStep < step); item.classList.toggle('is-active', itemStep === step); if (badge) badge.textContent = String(itemStep); }); }
+  function updateButtons() { modal.querySelector('[data-booking-panel="1"] .booking-submit')?.toggleAttribute('disabled', !isStep1Valid(false)); modal.querySelector('[data-open-optional-notice]')?.toggleAttribute('disabled', !isStep2Valid(false)); if (confirmButton) confirmButton.disabled = !isReviewValid(false); updatePriorityUI(); }
+  function syncPersonalInfo() { bookingState.personalInfo.fullName = fields.fullName?.value.trim() || ''; bookingState.personalInfo.email = fields.email?.value.trim() || ''; bookingState.personalInfo.phone = fields.phone?.value.trim() || ''; bookingState.personalInfo.company = fields.company?.value.trim() || ''; bookingState.personalInfo.role = fields.role?.value.trim() || ''; bookingState.personalInfo.referralSource = fields.referralSource?.value || ''; saveBookingState(); updateSummary(); updateButtons(); }
+  function syncOptionalDetails() { const o = bookingState.optionalDetails; o.biggestChallenge = fields.biggestChallenge?.value.trim() || ''; o.desiredOutcome = fields.desiredOutcome?.value.trim() || ''; o.previousAttempts = fields.previousAttempts?.value.trim() || ''; o.consultantExperience = modal.querySelector('input[name="consultant-before"]:checked')?.value || ''; o.aiExperience = modal.querySelector('input[name="ai-use"]:checked')?.value || ''; o.reviewItems = Array.from(reviewInputs).filter((input) => input.checked).map((input) => input.value); o.notes = fields.notes?.value.trim() || ''; o.selectedFileMetadata = activeFinalFiles.map((file) => ({ name: file.name, size: file.size, type: file.type || '' })); saveBookingState(); updateCounters(); updateSummary(); renderReviewSection(); renderUploadList(); updateButtons(); }
+  function applyStateToUI() { const p = bookingState.personalInfo, o = bookingState.optionalDetails; if (fields.fullName) fields.fullName.value = p.fullName || ''; if (fields.email) fields.email.value = p.email || ''; if (fields.phone) fields.phone.value = p.phone || ''; if (fields.company) fields.company.value = p.company || ''; if (fields.role) fields.role.value = p.role || ''; if (fields.referralSource) fields.referralSource.value = p.referralSource || ''; if (fields.biggestChallenge) fields.biggestChallenge.value = o.biggestChallenge || ''; if (fields.desiredOutcome) fields.desiredOutcome.value = o.desiredOutcome || ''; if (fields.previousAttempts) fields.previousAttempts.value = o.previousAttempts || ''; if (fields.notes) fields.notes.value = o.notes || ''; if (policyInput) policyInput.checked = Boolean(bookingState.finalDetails.policyAccepted); setRadioValue('consultant-before', o.consultantExperience); setRadioValue('ai-use', o.aiExperience); modal.querySelectorAll('input[name="booking-focus"]').forEach((input) => { input.checked = input.value === bookingState.bookingReason; input.closest('.booking-choice')?.classList.toggle('is-selected', input.checked); }); reviewInputs.forEach((input) => { input.checked = (o.reviewItems || []).includes(input.value); input.closest('.booking-final-card')?.classList.toggle('is-selected', input.checked); }); updateCounters(); updatePriorityUI(); renderUploadList(); updateSummary(); renderReviewSection(); updateButtons(); }
+  function setRadioValue(name, value) { modal.querySelectorAll('input[name="' + name + '"]').forEach((input) => { input.checked = input.value === value; }); }
+  function getFocusable() { return Array.from(modal.querySelectorAll('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')); }
+  function focusFirstInvalid(step) { const selector = step === 1 ? '[data-booking-panel="1"] .booking-choice-grid.is-invalid input' : step === 2 ? '[data-booking-panel="2"] .booking-field.is-invalid input, [data-booking-panel="2"] .booking-field.is-invalid select' : '.booking-policy.is-invalid input'; modal.querySelector(selector)?.focus({ preventScroll: false }); }
+  function attemptStepChange(targetStep, options = {}) { if (navigationLocked) return; navigationLocked = true; window.setTimeout(() => { navigationLocked = false; }, 220); syncPersonalInfo(); syncOptionalDetails(); if (targetStep >= 2 && !isStep1Valid(true)) { updateButtons(); focusFirstInvalid(1); return; } if (targetStep >= 3 && !isStep2Valid(true)) { setBookingStep(2); updateButtons(); focusFirstInvalid(2); return; } setBookingStep(targetStep, options); }
+  function updatePriorityUI() { const selected = bookingState.optionalDetails.priorities || []; if (priorityCount) priorityCount.textContent = selected.length + ' of 3 selected'; priorityCards.forEach((card) => { const isSelected = selected.includes(card.dataset.priority); card.classList.toggle('is-selected', isSelected); card.disabled = selected.length >= 3 && !isSelected; card.classList.toggle('is-disabled', card.disabled); }); }
+  function togglePriority(value) { const selected = bookingState.optionalDetails.priorities || []; if (selected.includes(value)) bookingState.optionalDetails.priorities = selected.filter((item) => item !== value); else if (selected.length < 3) bookingState.optionalDetails.priorities = selected.concat(value); saveBookingState(); updatePriorityUI(); updateSummary(); renderReviewSection(); }
+  function setUploadError(message) { if (!uploadError) return; uploadError.textContent = message || ''; uploadError.hidden = !message; }
+  function formatFileSize(size) { if (size >= 1024 * 1024) return (size / (1024 * 1024)).toFixed(size >= 10 * 1024 * 1024 ? 0 : 1) + ' MB'; return Math.max(1, Math.round(size / 1024)) + ' KB'; }
+  function addFinalFiles(files) { setUploadError(''); Array.from(files || []).forEach((file) => { const ext = file.name.split('.').pop().toLowerCase(); const duplicate = activeFinalFiles.some((item) => item.name === file.name && item.size === file.size); if (!ALLOWED_FILE_EXTENSIONS.includes(ext)) { setUploadError('Please choose PDF, PPT, DOC, PNG or JPG files only.'); return; } if (file.size > MAX_FILE_SIZE) { setUploadError('Each file must be 20MB or smaller.'); return; } if (!duplicate) activeFinalFiles.push(file); }); syncOptionalDetails(); }
+  function renderUploadList() { if (!uploadList) return; const saved = bookingState.optionalDetails.selectedFileMetadata || []; uploadList.innerHTML = ''; if (!activeFinalFiles.length && saved.length) { const row = document.createElement('li'); row.className = 'booking-upload__stale'; row.textContent = 'Previously selected files need to be chosen again after refresh.'; uploadList.appendChild(row); return; } activeFinalFiles.forEach((file, index) => { const row = document.createElement('li'); row.innerHTML = '<span>' + escapeHtml(file.name) + '<small>' + formatFileSize(file.size) + '</small></span><button type="button" data-remove-file="' + index + '">Remove</button>'; uploadList.appendChild(row); }); }
+  function updateCounters() { countedFields.forEach((field) => { const counter = modal.querySelector('[data-count-for="' + field.id + '"]'); if (counter) counter.textContent = String(field.value.length); }); }
+  function updateSummary() { const a = bookingState.appointment; setSummary('sessionType', a.sessionType || 'Select a session'); setSummary('date', a.date ? formatDateDisplay(a.date) : 'Select a date'); setSummary('time', a.startTime ? formatTimeRange(a.startTime, a.endTime, a.timezone, a.date) : 'Select a time'); setSummary('duration', (a.durationMinutes || 60) + ' minutes'); renderExtraSummaryRows(); }
+  function setSummary(key, value) { const node = modal.querySelector('[data-booking-summary="' + key + '"]'); if (node) node.textContent = value; }
+  function renderExtraSummaryRows() {
+    const list = modal.querySelector('.booking-summary__details');
+    if (!list) return;
+    const rows = [['goal', 'Primary Goal', bookingState.bookingReason], ['name', 'Name', bookingState.personalInfo.fullName], ['context', 'Optional Context', optionalSummary()]];
+    rows.forEach(([key, label, value]) => {
+      let row = list.querySelector('[data-summary-extra="' + key + '"]');
+      if (!row) {
+        row = document.createElement('li');
+        row.dataset.summaryExtra = key;
+        row.className = 'booking-summary__extra is-visible';
+        row.innerHTML = '<span class="booking-summary__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg></span><span><small></small><strong></strong></span>';
+        list.appendChild(row);
+      }
+      const isVisible = Boolean(value);
+      row.hidden = !isVisible;
+      if (!isVisible) return;
+      const small = row.querySelector('small');
+      const strong = row.querySelector('strong');
+      if (small) small.textContent = label;
+      if (strong) strong.textContent = shorten(value, 48);
+    });
+  }
+  function optionalSummary() { const o = bookingState.optionalDetails; const parts = []; if (o.biggestChallenge) parts.push('Context'); if (o.priorities?.length) parts.push(o.priorities.length + ' priorities'); if (o.reviewItems?.length) parts.push(o.reviewItems.length + ' materials'); if (o.selectedFileMetadata?.length) parts.push(o.selectedFileMetadata.length + ' files'); if (o.notes) parts.push('Notes'); return parts.join(', '); }
+  function renderReviewSection() { renderDl('[data-booking-review-required]', requiredRows()); renderDl('[data-booking-review-optional]', optionalRows()); }
+  function renderDl(selector, rows) { const list = modal.querySelector(selector); if (!list) return; const visible = rows.filter((row) => row[1]); list.innerHTML = visible.length ? visible.map(([label, value]) => '<div><dt>' + escapeHtml(label) + '</dt><dd>' + escapeHtml(value) + '</dd></div>').join('') : '<div><dt>Optional preparation</dt><dd>Not provided</dd></div>'; }
+  function requiredRows() { const a = bookingState.appointment; return [['Session type', a.sessionType], ['Date', a.date ? formatDateDisplay(a.date) : ''], ['Time', a.startTime && a.endTime ? formatTimeRange(a.startTime, a.endTime, a.timezone, a.date) : ''], ['Duration', a.durationMinutes ? a.durationMinutes + ' minutes' : ''], ['Primary goal', bookingState.bookingReason], ['Full name', bookingState.personalInfo.fullName], ['Email', bookingState.personalInfo.email], ['Phone', bookingState.personalInfo.phone]]; }
+  function optionalRows() { const o = bookingState.optionalDetails; return [['Biggest challenge', o.biggestChallenge], ['Desired outcome', o.desiredOutcome], ['Consultant experience', o.consultantExperience], ['AI experience', o.aiExperience], ['Previous attempts', o.previousAttempts], ['Priorities', (o.priorities || []).join(', ')], ['Materials', (o.reviewItems || []).map(labelForReviewItem).join(', ')], ['Files', (o.selectedFileMetadata || []).map((file) => file.name).join(', ')], ['Notes', o.notes]]; }
+  function labelForReviewItem(key) { return ({ website: 'Website', portfolio: 'Portfolio', pitchDeck: 'Pitch deck', socialMedia: 'Social media', pdf: 'PDF', other: 'Other' }[key]) || key; }
+  function resetSuccessScreen() { modal.classList.remove('is-booking-success'); if (reviewContent) reviewContent.hidden = false; if (successContent) successContent.hidden = true; if (successMessage) { successMessage.hidden = true; successMessage.textContent = ''; } }
+  function showSuccessScreen() { bookingState.confirmed = true; bookingState.confirmedAt = new Date().toISOString(); saveBookingState(); updateProgress(7); modal.classList.add('is-booking-success'); if (reviewContent) reviewContent.hidden = true; if (successContent) successContent.hidden = false; const firstName = (bookingState.personalInfo.fullName || '').trim().split(/\s+/)[0]; if (successTitle) successTitle.innerHTML = firstName ? 'You&rsquo;re all set, ' + escapeHtml(firstName) + '!' : 'You&rsquo;re all set!'; if (successSessionType) successSessionType.textContent = (bookingState.appointment.sessionType || '1:1 Vision Strategy Session').toUpperCase(); if (successPrepCopy) successPrepCopy.textContent = optionalSummary() ? 'We\'ll review the information you shared before your session.' : 'We\'ll use your booking goal to prepare for the conversation.'; if (confirmMessage) { confirmMessage.hidden = true; confirmMessage.textContent = ''; } requestAnimationFrame(() => successTitle?.focus({ preventScroll: true })); }
+  function confirmBooking(event) { if (event) event.preventDefault(); syncPersonalInfo(); syncOptionalDetails(); bookingState.finalDetails.policyAccepted = Boolean(policyInput?.checked); saveBookingState(); if (confirmLocked || !isReviewValid(true)) { updateButtons(); focusFirstInvalid(6); return; } confirmLocked = true; showSuccessScreen(); updateButtons(); window.setTimeout(() => { confirmLocked = false; }, 500); }
+  function pad2(value) { return String(value).padStart(2, '0'); }
+  function calendarStamp(date, time) { const parts = String(date || '').split('-').map(Number); const clock = String(time || '').split(':').map(Number); if (parts.length !== 3 || clock.length < 2) return ''; return String(parts[0]) + pad2(parts[1]) + pad2(parts[2]) + 'T' + pad2(clock[0]) + pad2(clock[1]) + '00'; }
+  function escapeIcs(value) { return String(value || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n'); }
+  function downloadCalendarFile(event) { if (event) event.preventDefault(); if (!hasValidAppointment()) { if (successMessage) { successMessage.hidden = false; successMessage.textContent = 'Calendar file could not be created because the appointment is incomplete.'; } return; } const a = bookingState.appointment; const title = a.sessionType || 'E4LA Strategy Session'; const timezone = a.timezone || 'America/Los_Angeles'; const ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//E4LA//Booking//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH','BEGIN:VEVENT','UID:' + Date.now() + '-e4la-booking','DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z'),'DTSTART;TZID=' + timezone + ':' + calendarStamp(a.date, a.startTime),'DTEND;TZID=' + timezone + ':' + calendarStamp(a.date, a.endTime),'SUMMARY:' + escapeIcs(title),'DESCRIPTION:' + escapeIcs('E4LA booking details completed. Meeting link will be provided when the backend is connected.'),'END:VEVENT','END:VCALENDAR'].join('\r\n'); const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'e4la-vision-strategy-session.ics'; document.body.appendChild(link); link.click(); link.remove(); window.setTimeout(() => URL.revokeObjectURL(link.href), 1000); }
+  function openBooking(event) { if (event) event.preventDefault(); syncAppointmentFromCalendar(); if (!hasValidAppointment()) { window.E4LABookingCalendar?.showMessage?.('Please select a date and time before booking.'); document.getElementById('coaching')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; } lastFocused = document.activeElement; applyStateToUI(); setBookingStep(1, { force: true }); modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); document.body.classList.add('booking-modal-open'); }
+  function closeBooking(event) { if (event) event.preventDefault(); modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); document.body.classList.remove('booking-modal-open'); if (lastFocused?.focus) lastFocused.focus({ preventScroll: true }); }
+  function openNotice(event) { if (event) event.preventDefault(); syncPersonalInfo(); syncOptionalDetails(); if (!isStep2Valid(true)) { focusFirstInvalid(2); return; } lastNoticeTrigger = event.currentTarget; notice?.classList.add('is-open'); notice?.setAttribute('aria-hidden', 'false'); document.body.classList.add('booking-notice-open'); requestAnimationFrame(() => noticeAnswer?.focus({ preventScroll: true })); }
+  function closeNotice(event, returnFocus = true) { if (event) event.preventDefault(); notice?.classList.remove('is-open'); notice?.setAttribute('aria-hidden', 'true'); document.body.classList.remove('booking-notice-open'); if (returnFocus && lastNoticeTrigger?.focus) lastNoticeTrigger.focus({ preventScroll: true }); }
+  function getNoticeFocusable() { return Array.from(notice?.querySelectorAll('button:not([disabled]), a[href], input:not([disabled]), [tabindex]:not([tabindex="-1"])') || []); }
+  function openAppointmentEditor(event) { if (event) event.preventDefault(); if (!appointmentEditor || !appointmentEditorControl) return; syncAppointmentFromCalendar(); if (!hasValidAppointment()) return; lastAppointmentEditTrigger = event?.currentTarget || document.activeElement; appointmentEditorControl.open(bookingState.appointment); appointmentEditor.classList.add('is-open'); appointmentEditor.setAttribute('aria-hidden', 'false'); document.body.classList.add('appointment-editor-open'); requestAnimationFrame(() => appointmentEditorControl.focusInitial?.()); }
+  function closeAppointmentEditor(event, options = {}) { if (event) event.preventDefault(); appointmentEditor?.classList.remove('is-open'); appointmentEditor?.setAttribute('aria-hidden', 'true'); document.body.classList.remove('appointment-editor-open'); if (options.returnFocus !== false && lastAppointmentEditTrigger?.focus) lastAppointmentEditTrigger.focus({ preventScroll: true }); }
+  function saveAppointmentEditor(event) { if (event) event.preventDefault(); if (!appointmentEditorControl || appointmentSaveLocked || !appointmentEditorControl.isValid()) return; appointmentSaveLocked = true; if (appointmentSaveButton) appointmentSaveButton.disabled = true; const previous = clone(bookingState.appointment); try { bookingState.appointment = mergeState(defaultState.appointment, appointmentEditorControl.getDraft()); saveBookingState(); window.E4LABookingCalendar?.setAppointment?.(bookingState.appointment); updateSummary(); renderReviewSection(); closeAppointmentEditor(null, { returnFocus: true }); } catch (error) { bookingState.appointment = previous; saveBookingState(); updateSummary(); } finally { window.setTimeout(() => { appointmentSaveLocked = false; }, 240); } }
+  function formatDateDisplay(iso) { const [year, month, day] = iso.split('-').map(Number); return new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date(year, month - 1, day)); }
+  function formatTimeRange(start, end, timezone, isoDate) { return formatTime(start) + ' - ' + formatTime(end) + ' (' + getTimezoneName(timezone, isoDate) + ')'; }
+  function formatTime(time) { const [hours, minutes] = time.split(':').map(Number); return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(new Date(2026, 0, 1, hours, minutes)); }
+  function getTimezoneName(timezone, isoDate) { const date = isoDate ? new Date(isoDate + 'T12:00:00') : new Date(); const parts = new Intl.DateTimeFormat('en-US', { timeZone: timezone || 'America/Los_Angeles', timeZoneName: 'short' }).formatToParts(date); return parts.find((part) => part.type === 'timeZoneName')?.value || 'PT'; }
+  function escapeHtml(value) { return String(value || '').replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char])); }
+  function shorten(value, max) { value = String(value || ''); return value.length > max ? value.slice(0, max - 1) + '...' : value; }
+  Object.values(fields).forEach((field) => { field?.addEventListener('input', () => { syncPersonalInfo(); syncOptionalDetails(); }); field?.addEventListener('change', () => { syncPersonalInfo(); syncOptionalDetails(); }); });
+  modal.querySelectorAll('input[name="booking-focus"]').forEach((choice) => { const card = choice.closest('.booking-choice'); card?.setAttribute('tabindex', '0'); card?.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); choice.checked = true; choice.dispatchEvent(new Event('change', { bubbles: true })); } }); choice.addEventListener('change', () => { bookingState.bookingReason = choice.checked ? choice.value : ''; modal.querySelectorAll('.booking-choice').forEach((item) => item.classList.remove('is-selected')); card?.classList.toggle('is-selected', choice.checked); saveBookingState(); updateSummary(); updateButtons(); }); });
+  modal.querySelectorAll('input[name="consultant-before"], input[name="ai-use"]').forEach((input) => input.addEventListener('change', syncOptionalDetails));
+  reviewInputs.forEach((input) => { const card = input.closest('.booking-final-card'); card?.setAttribute('tabindex', '0'); card?.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); input.checked = !input.checked; input.dispatchEvent(new Event('change', { bubbles: true })); } }); input.addEventListener('change', () => { card?.classList.toggle('is-selected', input.checked); syncOptionalDetails(); }); });
+  priorityCards.forEach((card) => card.addEventListener('click', () => togglePriority(card.dataset.priority)));
+  if (uploadBrowse && uploadInput) uploadBrowse.addEventListener('click', () => uploadInput.click());
+  uploadInput?.addEventListener('change', () => { addFinalFiles(uploadInput.files); uploadInput.value = ''; });
+  uploadDrop?.addEventListener('dragover', (event) => { event.preventDefault(); uploadDrop.classList.add('is-dragging'); }); uploadDrop?.addEventListener('dragleave', () => uploadDrop.classList.remove('is-dragging')); uploadDrop?.addEventListener('drop', (event) => { event.preventDefault(); uploadDrop.classList.remove('is-dragging'); addFinalFiles(event.dataTransfer?.files); });
+  uploadList?.addEventListener('click', (event) => { const button = event.target.closest('[data-remove-file]'); if (!button) return; activeFinalFiles.splice(Number(button.dataset.removeFile), 1); syncOptionalDetails(); });
+  policyInput?.addEventListener('change', () => { bookingState.finalDetails.policyAccepted = Boolean(policyInput.checked); saveBookingState(); updateButtons(); });
+  openers.forEach((opener) => opener.addEventListener('click', openBooking)); closers.forEach((closer) => closer.addEventListener('click', closeBooking)); stepButtons.forEach((button) => button.addEventListener('click', (event) => { event.preventDefault(); attemptStepChange(Number(button.dataset.bookingStep) || 1); })); skipButtons.forEach((button) => button.addEventListener('click', (event) => { event.preventDefault(); syncOptionalDetails(); setBookingStep(Number(button.dataset.bookingSkip) || 6, { force: true }); }));
+  modal.querySelector('[data-open-optional-notice]')?.addEventListener('click', openNotice); noticeCloseButtons.forEach((button) => button.addEventListener('click', (event) => closeNotice(event, true))); noticeAnswer?.addEventListener('click', (event) => { closeNotice(event, false); setBookingStep(3, { force: true }); }); noticeSkip?.addEventListener('click', (event) => { closeNotice(event, false); setBookingStep(6, { force: true }); }); confirmButton?.addEventListener('click', confirmBooking); addCalendarButton?.addEventListener('click', downloadCalendarFile); returnHomeButton?.addEventListener('click', (event) => { event.preventDefault(); closeBooking(event); window.scrollTo({ top: 0, behavior: 'smooth' }); }); summaryEditButtons.forEach((button) => button.addEventListener('click', openAppointmentEditor)); appointmentCancelButtons.forEach((button) => button.addEventListener('click', (event) => closeAppointmentEditor(event, { returnFocus: true }))); appointmentSaveButton?.addEventListener('click', saveAppointmentEditor); modal.addEventListener('click', (event) => { if (event.target.classList.contains('booking-modal__backdrop')) closeBooking(event); });
+  document.addEventListener('keydown', (event) => { if (notice?.classList.contains('is-open')) { if (event.key === 'Escape') { closeNotice(event, true); return; } if (event.key === 'Tab') { const focusable = getNoticeFocusable(); const first = focusable[0]; const last = focusable[focusable.length - 1]; if (!first) return; if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); } } return; } if (!modal.classList.contains('is-open')) return; if (event.key === 'Escape') closeBooking(event); });
+  window.E4LABookingFlow = { refreshSummary() { bookingState = loadBookingState(); applyStateToUI(); }, getState: () => clone(bookingState) };
+  applyStateToUI();
+})();
+
 

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -10,8 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=2026071913">
-  <link rel="stylesheet" href="assets/css/nav.css?v=2026071907">
+<link rel="stylesheet" href="style.css?v=2026072007">
+  <link rel="stylesheet" href="assets/css/nav.css?v=2026071918">
+<link rel="stylesheet" href="auth.css?v=2026072008">
 <link rel=icon type=image/png href=assets/e4la-logo-palm.png?v=2026071916>
 <link rel=apple-touch-icon href=assets/e4la-logo-palm.png?v=2026071916>
 </head>
@@ -50,11 +51,11 @@
       <li><a class="nav__link" href="index.html?v=2026071901#coaching">Advisory</a></li>
     </ul>
 
-    <a class="nav__cta nav__cta--readmore" href="mailto:info@e4la.org">
+    <a class="nav__cta nav__cta--readmore" href="sign-in.html" aria-label="Sign in to your E4LA account" data-auth-control>
       <svg class="cta-neon__beam" aria-hidden="true"><rect class="cta-neon__beam-rect"></rect></svg>
           <span class="cta-neon__fill" aria-hidden="true"></span>
-      <span class="cta-neon__badge" aria-hidden="true"><img class="cta-neon__palm" src="assets/palm-01.png" alt=""></span>
-      <span class="cta-neon__label">Let's Connect</span>
+      <span class="cta-neon__badge" aria-hidden="true" hidden></span>
+      <span class="cta-neon__label">Sign In</span>
     </a>
 
     <button type="button" class="nav__burger" id="js-nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="js-nav-mobile">
@@ -69,11 +70,11 @@
       <li><a href="index.html?v=2026071901#approach">Approach</a></li>
       <li><a href="index.html?v=2026071901#coaching">Advisory</a></li>
     </ul>
-    <a class="nav__mobile-cta nav__cta--readmore" href="mailto:info@e4la.org">
+    <a class="nav__mobile-cta nav__cta--readmore" href="sign-in.html" aria-label="Sign in to your E4LA account" data-auth-control>
       <svg class="cta-neon__beam" aria-hidden="true"><rect class="cta-neon__beam-rect"></rect></svg>
           <span class="cta-neon__fill" aria-hidden="true"></span>
-      <span class="cta-neon__badge" aria-hidden="true"><img class="cta-neon__palm" src="assets/palm-01.png" alt=""></span>
-      <span class="cta-neon__label">Let's Connect</span>
+      <span class="cta-neon__badge" aria-hidden="true" hidden></span>
+      <span class="cta-neon__label">Sign In</span>
     </a>
   </div>
 </header>
@@ -290,11 +291,17 @@
   </div>
 </footer>
 
-<script src="script.js?v=2026071841"></script>
+<script src="script.js?v=2026072010"></script>
+<script src="auth.js?v=2026072002" defer></script>
 <script type="module" src="motion.js"></script>
 
 </body>
 </html>
+
+
+
+
+
 
 
 
