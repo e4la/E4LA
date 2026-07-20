@@ -17151,8 +17151,9 @@ svg {
     position: absolute !important;
     inset: 0 !important;
     display: grid !important;
-    grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr) !important;
-    column-gap: clamp(14px, 4vw, 24px) !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    row-gap: clamp(24px, 5svh, 42px) !important;
     align-content: center !important;
     width: 100% !important;
     height: 100% !important;
@@ -17185,20 +17186,25 @@ svg {
   .svcd-page .svcd-pin__copy {
     grid-column: 1 !important;
     grid-row: 1 !important;
-    align-self: center !important;
+    align-self: end !important;
+    justify-self: start !important;
+    width: min(78%, 360px) !important;
     min-width: 0 !important;
+    top: clamp(18px, 3svh, 28px) !important;
   }
   .svcd-page .svcd-pin__tags {
-    grid-column: 2 !important;
-    grid-row: 1 !important;
-    align-self: center !important;
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    align-self: start !important;
+    justify-self: end !important;
     display: flex !important;
     flex-direction: column !important;
     flex-wrap: nowrap !important;
     align-items: flex-start !important;
     gap: 14px !important;
-    width: 100% !important;
+    width: min(72%, 320px) !important;
     margin: 0 !important;
+    left: clamp(42px, 10vw, 88px) !important;
     transform: none !important;
     opacity: 1 !important;
     pointer-events: auto !important;
@@ -17256,25 +17262,63 @@ svg {
   }
   .svcd-page .svcd-cta__inner { padding: 22px; }
   .svcd-page .svcd-cta__btn { width: 100%; justify-content: center; }
+  /* Service 05: compact outlined Paint Events pill on mobile. */
+  .svcd-page .svcd-pin__tags li.svcd-pin__tag--paint,
+  .svcd-page .svcd-pin__tags li.svcd-pin__tag--paint.is-tag-active {
+    width: max-content !important;
+    max-width: 100% !important;
+    min-height: 48px !important;
+    padding: 10px 22px 10px 16px !important;
+    border: 2px solid rgba(255,255,255,.96) !important;
+    border-radius: 999px !important;
+    background: rgba(9,7,18,.12) !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: #fff !important;
+    -webkit-text-fill-color: currentColor !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+  }
+  .svcd-page .svcd-pin__tags li.svcd-pin__tag--paint::after,
+  .svcd-page .svcd-pin__tags li.svcd-pin__tag--paint.is-tag-active::after {
+    display: none !important;
+    content: none !important;
+  }
+  .svcd-page .svcd-pin__tags li.svcd-pin__tag--paint::before,
+  .svcd-page .svcd-pin__tags li.svcd-pin__tag--paint.is-tag-active::before {
+    position: static !important;
+    width: 12px !important;
+    height: 12px !important;
+    border: 0 !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
 }
 @media (max-width: 639px) and (prefers-reduced-motion: reduce) {
   .svcd-page .svcd-pin__panel,
   .svcd-page .svcd-pin__mobile-blob { transition: none !important; }
 }
-/* BOOKING SUCCESS MOBILE ROBOT FALLBACK */
-.booking-success-visual__fallback { display: none; }
-@media (max-width: 640px) {
-  .booking-success-visual {
-    min-height: 260px !important;
-    display: grid !important;
-    place-items: center !important;
-  }
-  .booking-success-visual__fallback {
-    display: block !important;
-    width: min(82vw, 320px) !important;
-    height: auto !important;
-    object-fit: contain !important;
-    filter: drop-shadow(0 24px 64px rgba(188, 66, 255, .24));
-  }
-  .booking-success-visual video { display: none !important; }
+/* BOOKING CONFIRMATION VIDEO BACKGROUND REMOVAL */
+.booking-modal.is-booking-success .booking-success-visual {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  isolation: auto !important;
+}
+.booking-modal.is-booking-success .booking-success-visual video {
+  background: transparent !important;
+  mix-blend-mode: screen !important;
+}
+/* BOOKING CONFIRMATION TRANSPARENT ANIMATION */
+.booking-success-visual__animation {
+  display: block !important;
+  width: min(100%, 430px) !important;
+  height: auto !important;
+  object-fit: contain !important;
+  background: transparent !important;
+  filter: drop-shadow(0 24px 64px rgba(188, 66, 255, .24));
+}
+@media (max-width: 900px) {
+  .booking-success-visual__animation { width: min(100%, 320px) !important; }
 }

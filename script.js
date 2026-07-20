@@ -1,7 +1,16 @@
-(function(){
+﻿(function(){
 'use strict';
 
-/* â”€â”€ Scroll reveal â”€â”€ */
+/* Keep a clean mobile Home entry at the true top of the document. */
+if(window.matchMedia('(max-width: 767px)').matches && !window.location.hash){
+  if('scrollRestoration' in history) history.scrollRestoration='manual';
+  var resetMobileHomeScroll=function(){window.scrollTo(0,0)};
+  resetMobileHomeScroll();
+  requestAnimationFrame(resetMobileHomeScroll);
+  window.addEventListener('pageshow',resetMobileHomeScroll,{once:true});
+}
+
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Scroll reveal Ã¢â€â‚¬Ã¢â€â‚¬ */
 var io=new IntersectionObserver(function(entries){
   entries.forEach(function(e){
     if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}
@@ -9,7 +18,7 @@ var io=new IntersectionObserver(function(entries){
 },{threshold:.08,rootMargin:'0px 0px -20px 0px'});
 document.querySelectorAll('[data-r]').forEach(function(el){io.observe(el)});
 
-/* â”€â”€ Nav border on scroll â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Nav border on scroll Ã¢â€â‚¬Ã¢â€â‚¬ */
 var nav=document.getElementById('js-nav');
 var raf=false;
 window.addEventListener('scroll',function(){
@@ -22,7 +31,7 @@ window.addEventListener('scroll',function(){
   raf=true
 },{passive:true});
 
-/* â”€â”€ Scroll delegation â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Scroll delegation Ã¢â€â‚¬Ã¢â€â‚¬ */
 document.addEventListener('click',function(e){
   var el=e.target.closest('[data-scroll-to]');
   if(!el)return;
@@ -30,7 +39,7 @@ document.addEventListener('click',function(e){
   if(dest){e.preventDefault();dest.scrollIntoView({behavior:'smooth'})}
 });
 
-/* â”€â”€ Word scramble â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Word scramble Ã¢â€â‚¬Ã¢â€â‚¬ */
 var wordEl=document.getElementById('js-word');
 if(wordEl){
   var words=['experiences','brands','stories','presence','impact','culture'];
@@ -49,7 +58,7 @@ if(wordEl){
   setInterval(function(){idx=(idx+1)%words.length;scramble(words[idx])},2000);
 }
 
-/* â”€â”€ Audience cards â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Audience cards Ã¢â€â‚¬Ã¢â€â‚¬ */
 document.querySelectorAll('.aud-card').forEach(function(card){
   function select(){
     document.querySelectorAll('.aud-card').forEach(function(c){
@@ -70,7 +79,7 @@ document.querySelectorAll('.aud-card').forEach(function(card){
   });
 });
 
-/* â”€â”€ Calendar date selection â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Calendar date selection Ã¢â€â‚¬Ã¢â€â‚¬ */
 document.querySelectorAll('.cal__date:not(.cal__date--empty)').forEach(function(d){
   d.addEventListener('click',function(){
     document.querySelectorAll('.cal__date--today').forEach(function(x){
@@ -80,7 +89,7 @@ document.querySelectorAll('.cal__date:not(.cal__date--empty)').forEach(function(
   });
 });
 
-/* â”€â”€ Book session â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Book session Ã¢â€â‚¬Ã¢â€â‚¬ */
 var bookBtn=document.getElementById('js-book');
 if(bookBtn && !bookBtn.hasAttribute('data-booking-open')){
   bookBtn.addEventListener('click',function(){
@@ -88,7 +97,7 @@ if(bookBtn && !bookBtn.hasAttribute('data-booking-open')){
   });
 }
 
-/* â”€â”€ Newsletter â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Newsletter Ã¢â€â‚¬Ã¢â€â‚¬ */
 var nlForm=document.getElementById('js-nl');
 if(nlForm){
   nlForm.addEventListener('submit',function(e){
@@ -96,17 +105,17 @@ if(nlForm){
     var inp=document.getElementById('nl-email');
     var sub=nlForm.querySelector('.footer__submit');
     if(!inp.value)return;
-    sub.textContent='âœ“';sub.disabled=true;inp.value='';
+    sub.textContent='Ã¢Å“â€œ';sub.disabled=true;inp.value='';
     setTimeout(function(){sub.textContent='Go';sub.disabled=false},3000);
   });
 }
 
 }());
 
-/* FINAL SERVICES 3D TILT — REVERSED. Cards now auto-wobble on their
+/* FINAL SERVICES 3D TILT â€” REVERSED. Cards now auto-wobble on their
    own continuously at rest (a slow, gentle, desynced drift per
    card), and freeze to perfectly flat/static the moment the card is
-   hovered — the exact opposite of the original mouse-tracking-tilt-
+   hovered â€” the exact opposite of the original mouse-tracking-tilt-
    on-hover behavior. No more pointermove tracking at all: hovering
    just means "hold still," it doesn't drive the tilt angle anymore. */
 (() => {
@@ -120,12 +129,12 @@ if(nlForm){
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const ease = 0.09;      // easing for both drift and freeze
 
-  // Distinct per-card motion "personality" — different frequency
+  // Distinct per-card motion "personality" â€” different frequency
   // RATIOS (not just a time-shift of the same wave), so each card
   // traces its own genuinely different Lissajous-style path instead
   // of all 5 looking like copies of one wave offset in time. Cycled
   // by index so it also holds up if more/fewer cards are ever added.
-  /* Amplitudes roughly halved from the original 3.5-4.5deg range —
+  /* Amplitudes roughly halved from the original 3.5-4.5deg range â€”
      the full-strength drift read as too much motion at rest; the
      halved range keeps the alive feel but stays subtle. */
   const personalities = [
@@ -156,7 +165,7 @@ if(nlForm){
       state.targetScale = 1;
       state.targetLift = 0;
     } else if (state.hovering) {
-      // Hovered: ease to flat (no tilt) but pop the card outward —
+      // Hovered: ease to flat (no tilt) but pop the card outward â€”
       // a bit larger and lifted up, instead of just freezing flat.
       state.targetX = 0;
       state.targetY = 0;
@@ -297,7 +306,7 @@ if(nlForm){
    size), flush against the left edge.
 
    It can NOT be read from btn.offsetHeight while the badge is at its
-   real, final size — that's circular: setting the badge bigger grows
+   real, final size â€” that's circular: setting the badge bigger grows
    the button (auto height), which re-fires the ResizeObserver, which
    reads the new bigger height and grows the badge again, unbounded
    (this happened once already and produced a giant badge covering
@@ -305,7 +314,7 @@ if(nlForm){
 
    Fix: for each button, temporarily zero out the badge's own box,
    read btn.offsetHeight (now driven only by that button's real label
-   + padding + whatever else the cascade applies to it — this
+   + padding + whatever else the cascade applies to it â€” this
    stylesheet has many override layers, so this measures the true
    value directly instead of assuming which rule wins), then restore
    the badge and compute from that reading. A negative vertical
@@ -322,7 +331,7 @@ if(nlForm){
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var SVG_NS = 'http://www.w3.org/2000/svg';
 
-  /* Blend a #rrggbb color toward white by `amt` (0-1) — used to make
+  /* Blend a #rrggbb color toward white by `amt` (0-1) â€” used to make
      the bright "shine" stops a lighter tint of the button's own neon
      color, instead of plain white. */
   function lighten(hex, amt) {
@@ -342,7 +351,7 @@ if(nlForm){
      perimeter/PEAK_COUNT (updated on every layout pass, since it
      depends on that button's real measured perimeter), so there are
      always exactly PEAK_COUNT bright spots evenly spaced around the
-     loop — not a dense sea-wave of many small ripples. A native SVG
+     loop â€” not a dense sea-wave of many small ripples. A native SVG
      <animateTransform> continuously translates the gradient by
      exactly one period, which loops seamlessly and makes the 3
      spots appear to travel together around the border. */
@@ -380,7 +389,7 @@ if(nlForm){
      (re)creates its <animateTransform> so the change takes effect
      immediately (SMIL animations don't reliably pick up attribute
      edits on an already-running element, so this recreates it fresh
-     each time the period actually changes — cheap and only happens
+     each time the period actually changes â€” cheap and only happens
      on load/resize, not every frame). */
   function updateGradientPeriod(grad, period) {
     if (grad._period === period) return;
@@ -461,10 +470,10 @@ if(nlForm){
     var borderW = parseFloat(cs.borderTopWidth) || 0;
 
     /* badgeD = naturalH minus only the border (the exact padding-box
-       height — flush to the inner edge of the border on all sides).
+       height â€” flush to the inner edge of the border on all sides).
        marginY cancels exactly the badge's added height beyond the
        original content line, so re-applying the real badgeD can
-       never change naturalH on a later pass — no feedback possible. */
+       never change naturalH on a later pass â€” no feedback possible. */
     var badgeD = Math.max(naturalH - borderW * 2, 16);
     var contentLineH = naturalH - padTop - padBottom - borderW * 2;
     var marginY = -((badgeD - contentLineH) / 2);
@@ -536,8 +545,8 @@ if(nlForm){
   }
 })();
 
-/* FINAL — APPROACH TIMELINE AUTO-CYCLE. Lights up each step (01..06)
-   in sequence automatically, one at a time, forever — no hover
+/* FINAL â€” APPROACH TIMELINE AUTO-CYCLE. Lights up each step (01..06)
+   in sequence automatically, one at a time, forever â€” no hover
    needed. Reuses the exact same "lit" look already built for :hover
    (see .tstep--auto-active in style.css), just toggled by a timer
    instead of the mouse. Pauses while the tab is hidden so it doesn't
@@ -585,21 +594,21 @@ if(nlForm){
   }
 })();
 
-/* FINAL v3 — SERVICE CARD VIDEO: always-on autoplay loop, not
+/* FINAL v3 â€” SERVICE CARD VIDEO: always-on autoplay loop, not
    hover-triggered. Each clip starts playing as soon as it has enough
    data and just keeps looping (the <video> tags already carry the
-   `loop` attribute) — no pointer listeners needed anymore. Still
+   `loop` attribute) â€” no pointer listeners needed anymore. Still
    pauses when the tab is hidden and resumes when it's visible again,
    so 5 looping videos aren't burning CPU/battery in a background
    tab. Respects prefers-reduced-motion by leaving the clip on its
    first frame instead of autoplaying. */
 (() => {
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // Rest-frame offset (seconds) for each card, in DOM order —
+  // Rest-frame offset (seconds) for each card, in DOM order â€”
   // explicit values requested by the user.
   var REST_OFFSETS = [4.9, 4.3, 2.8, 2.4, 4];
   // No real hover on touch devices, so the mouseenter/mouseleave pair
-  // below never fires there — the clip just sat on its rest frame
+  // below never fires there â€” the clip just sat on its rest frame
   // forever, which read as "no video at all" on mobile. On these
   // devices, play the clip once its card scrolls prominently into
   // view instead, and drop it back to rest once it scrolls back out.
@@ -662,7 +671,7 @@ if(nlForm){
   });
 })();
 
-/* FINAL — "HOW THE SESSION WORKS" TIMELINE AUTO-CYCLE. Same exact
+/* FINAL â€” "HOW THE SESSION WORKS" TIMELINE AUTO-CYCLE. Same exact
    mechanism as the Approach timeline above: lights up each of the 5
    steps in sequence automatically, one at a time, forever, no hover
    needed, 2s per step. Toggles .is-ctime-active (see style.css for
@@ -710,7 +719,7 @@ if(nlForm){
   }
 })();
 
-/* ── SERVICES DETAIL — pinned scroll-STEP controller (services.html) ──
+/* â”€â”€ SERVICES DETAIL â€” pinned scroll-STEP controller (services.html) â”€â”€
    Discrete, locked steps rather than a continuous scroll-scrub: one wheel
    gesture = exactly one step forward or back (blob rises & settles -> each
    service holds fully in view, one at a time -> blob shrinks & exits), never
@@ -719,7 +728,7 @@ if(nlForm){
    settling on screen, and let a small scroll leave things half-transitioned.
    Locking to discrete steps (via wheel-event hijacking + preventDefault
    while "engaged") guarantees every service is fully shown before the next
-   one can appear. Disabled below 901px — that breakpoint falls back to a
+   one can appear. Disabled below 901px â€” that breakpoint falls back to a
    plain stacked list via CSS, so no scroll-jacking on touch/small screens. */
 (function () {
   var pin = document.querySelector('.svcd-pin');
@@ -735,7 +744,7 @@ if(nlForm){
 
 
   // A single persistent blob replaces the old one-per-panel setup: it rises
-  // and grows exactly once, then freezes in place — only its color keeps
+  // and grows exactly once, then freezes in place â€” only its color keeps
   // changing to track whichever service is active. It lives in panel 0's own
   // ".svcd-pin__visual" in the markup (so mobile's plain stacked fallback,
   // which never runs the desktop code below, keeps showing it there,
@@ -794,7 +803,7 @@ if(nlForm){
 
   // Every value below animates via a current->target lerp (same technique as
   // the homepage service-card tilt in this same file), run continuously off
-  // its own rAF loop — this is what makes each step's transition feel smooth
+  // its own rAF loop â€” this is what makes each step's transition feel smooth
   // rather than snapping instantly the moment a step change is requested.
   var EASE = 0.11; // responsive glide: less stuck, still eased
   var smoothRunning = false;
@@ -824,7 +833,7 @@ if(nlForm){
     if (!isDesktop.matches) return;
     // During a hash/deep-link entry hold (see openServiceFromHash), the
     // target panel is displayed by a pure-CSS rule and must not be
-    // repainted from panelState — a queued frame carrying stale "hidden"
+    // repainted from panelState â€” a queued frame carrying stale "hidden"
     // values would stamp inline !important opacity over it and blank the
     // very content the visitor came to read. The hold lifts on the first
     // real step change (goToStep) and painting resumes seamlessly from
@@ -883,7 +892,7 @@ if(nlForm){
      ever dies while smoothRunning is still true (an exception mid-tick,
      a cancel that raced a queued frame, browser rAF starvation during
      heavy page load being resumed inconsistently...), every later
-     ensureSmoothing() call became a silent no-op — steps kept advancing
+     ensureSmoothing() call became a silent no-op â€” steps kept advancing
      (dots, robot, blob colors are all painted directly, not via this
      loop) but panel text froze at whatever opacity the last painted
      frame left it (~0.1 = invisible). Unconditionally cancelling and
@@ -898,7 +907,7 @@ if(nlForm){
 
   // Bug fix: without this, a still-running smoothTick loop would keep
   // repainting panels/blob every frame using stale JS state even after
-  // layoutStatic() had just cleared their inline styles on disengage —
+  // layoutStatic() had just cleared their inline styles on disengage â€”
   // instantly overwriting the "hidden/static" reset with whatever
   // mid-transition values were still animating, which is what let stray
   // content flash back on top of the section right after it should have
@@ -910,17 +919,17 @@ if(nlForm){
   }
 
   // Must mirror the CSS fallback query exactly (max-width:639px, pointer:coarse)
-  // — gate on real touch / genuinely narrow viewports, not just "not wide",
+  // â€” gate on real touch / genuinely narrow viewports, not just "not wide",
   // so a normal (even non-maximized) desktop browser window still pins.
   var isDesktop = window.matchMedia('(min-width:640px) and (pointer:fine)');
   var activeIndex = -999; // never a real index/-1, so the very first setActive(-1) isn't a same-value no-op (it must actually strip the hardcoded "is-active" class the markup ships with on panel 0)
 
-  // STEP MODEL — discrete, locked steps instead of a continuous scroll-scrub:
+  // STEP MODEL â€” discrete, locked steps instead of a continuous scroll-scrub:
   //   0                       -> blob rises from below and settles, centered
   //   1..panels.length        -> that panel (step-1) held fully in view
   //   panels.length+1 (LAST)  -> blob shrinks and exits, then the section
   //                              releases into whatever comes after it
-  // One wheel gesture = exactly one step forward or back, never partial —
+  // One wheel gesture = exactly one step forward or back, never partial â€”
   // this is what guarantees every service is fully shown before the next
   // can appear, regardless of how fast or slow the scroll gesture was.
   var STEP_PANEL_BASE = 1;
@@ -931,10 +940,10 @@ if(nlForm){
   var locked = false;
   // Deliberately NOT tied to the (slow) visual settle time: the lerp can
   // smoothly retarget mid-transition if a new step is requested before the
-  // previous one finished playing out — that's normal, gapless tweening.
+  // previous one finished playing out â€” that's normal, gapless tweening.
   // Needs to be long enough that a single real scroll gesture (a mouse
   // wheel is rarely exactly one notch; a trackpad swipe fires many wheel
-  // events over a few hundred ms) reads as ONE step, not several — too
+  // events over a few hundred ms) reads as ONE step, not several â€” too
   // short and one scroll motion blows through multiple services at once.
   var LOCK_MS = 1080;
   var wheelAccum = 0;
@@ -949,14 +958,14 @@ if(nlForm){
   // NEEDS directly via inline styles, so it can't be silently defeated by
   // an out-of-date cached copy of style.css that's missing these rules
   // (this file has repeatedly appeared to "not update" for reasons that
-  // traced back to stale CSS/JS caches — this removes that dependency
+  // traced back to stale CSS/JS caches â€” this removes that dependency
   // for the pin/slide mechanic specifically). Visual styling like colors
   // and fonts still comes from style.css; only the load-bearing layout
   // properties are re-asserted here.
   // set(el, prop, value) uses setProperty(...,'important') instead of the
   // plain .style.prop = value shorthand. A plain inline style can still be
   // beaten by an external stylesheet rule that happens to use !important
-  // (this codebase's style.css has plenty of those from older passes) —
+  // (this codebase's style.css has plenty of those from older passes) â€”
   // an inline !important declaration beats every author-stylesheet rule,
   // !important or not, so this is the one thing that truly cannot be
   // silently defeated by CSS, cached or otherwise.
@@ -1089,7 +1098,7 @@ if(nlForm){
   }
 
   // Cycles each tag li bold + its bullet filled, one at a time, automatically
-  // — but only ever as a small embellishment *within* an already-held,
+  // â€” but only ever as a small embellishment *within* an already-held,
   // already-locked step, never as something that advances the section
   // itself. Starts once the tags' own slide-in tween has had time to settle.
   function manageTagCycle(step) {
@@ -1186,7 +1195,7 @@ if(nlForm){
     // CSS rule (.is-hash-entry/.is-hash-active in style.css) instead of
     // the JS paint pipeline. Every previous JS-side guarantee (snap,
     // self-healing rAF, direct inline writes) still intermittently lost
-    // to *something* stamping the panel back to hidden on real machines —
+    // to *something* stamping the panel back to hidden on real machines â€”
     // so at entry the panel's inline styles are stripped entirely (an
     // inline !important always beats the stylesheet, even a stale one)
     // and paintFrame explicitly skips this panel while the hold is on.
@@ -1206,7 +1215,7 @@ if(nlForm){
       set(tags, 'opacity', '');
     }
     // Sync the tween bookkeeping to the visible values so the moment the
-    // hold lifts, painting resumes from exactly what's on screen — no jump.
+    // hold lifts, painting resumes from exactly what's on screen â€” no jump.
     var s = panelState[step - STEP_PANEL_BASE];
     if (s) { s.curTy = s.ty = 0; s.curOp = s.op = 1; s.curBlur = s.blur = 0; }
     var ts = tagsState[step - STEP_PANEL_BASE];
@@ -1359,10 +1368,10 @@ if(nlForm){
     else completedForward = false;
     if (pageBody) pageBody.classList.toggle('is-past-services', !!forward);
     // We've been fully absorbing wheel input while engaged, so real scrollY
-    // hasn't moved from the point of engagement — nudge it clear of the
+    // hasn't moved from the point of engagement â€” nudge it clear of the
     // wrapper so checkEngage()'s "dominant in viewport" test (below) no
     // longer holds. This does NOT need to fully clear the wrapper's whole
-    // height (the page's content below it may not even be that tall) —
+    // height (the page's content below it may not even be that tall) â€”
     // checkEngage() only re-triggers once this section stops dominating the
     // viewport, not on every last pixel of overlap.
     var docTop = pin.getBoundingClientRect().top + window.scrollY;
@@ -1391,16 +1400,16 @@ if(nlForm){
   }
 
   // Continuous, scroll-tied pre-engagement: the blob's rise is NOT a step
-  // and NOT a timer here — it tracks the scrollbar 1:1 as the wrapper enters
+  // and NOT a timer here â€” it tracks the scrollbar 1:1 as the wrapper enters
   // the viewport, exactly mirroring how the blob's exit already behaves at
   // the other end of the sequence. This is what removes the old dead-zone
   // (a long stretch of scrolling with zero visible feedback before the blob
-  // would suddenly pop in) — the very first pixel of scroll into this
+  // would suddenly pop in) â€” the very first pixel of scroll into this
   // section already moves the blob. Only once it's fully arrived does the
   // locked step-by-step system for the panels actually engage.
   function updateApproach() {
     // Once the forward journey through this section has ever been fully
-    // completed, this function has NOTHING further to do — re-entry from
+    // completed, this function has NOTHING further to do â€” re-entry from
     // below is handled exclusively by onWheel()'s own deltaY direction (see
     // above), never by re-deriving direction from scrollY here. Continuing
     // to scroll down (or sitting still at whatever the page's natural
@@ -1411,7 +1420,7 @@ if(nlForm){
     ensureBlobInSlot();
     var rect = pin.getBoundingClientRect();
 
-    // 0 = the very top of the page (scrollY 0) — the hero shows clean, blob
+    // 0 = the very top of the page (scrollY 0) â€” the hero shows clean, blob
     // fully small/hidden; 1 = fully arrived (wrapper's top at the viewport's
     // own top). Uses the WHOLE natural pre-arrival scroll distance, not a
     // fixed vh window, so it always starts genuinely small regardless of
@@ -1424,7 +1433,7 @@ if(nlForm){
     if (blobWrap) {
       // Exact mirror of the exit (ty:-100->stays put here, scale:BIG->FAR,
       // rot:90->180 reversed to 0->90, op:1->0 reversed, blur:0->9 reversed)
-      // — "from far, closer, bigger", never "up from below": ty stays 0 the
+      // â€” "from far, closer, bigger", never "up from below": ty stays 0 the
       // whole time by explicit request, everything else is the exit's own
       // math run backwards.
       var easedApproach = 1 - Math.pow(1 - approachT, 2.2);
@@ -1467,7 +1476,7 @@ if(nlForm){
     // stays clamped at 1 for EVERY scroll event for the rest of the page's
     // life once you've passed this section (scrollY only grows), which was
     // dragging the user back into step 0 no matter how far down the page
-    // they'd scrolled — the site could never actually reach its own footer.
+    // they'd scrolled â€” the site could never actually reach its own footer.
     // rect.bottom>0 means the wrapper is still genuinely at/near the
     // viewport; once truly scrolled past it, this must never re-fire.
     // Wheel owns the actual pin/step handoff. updateApproach only previews the approach state.
@@ -1477,7 +1486,7 @@ if(nlForm){
   // on-page diagnostics (panel opacity 1, text fully painted, yet panel
   // rect exactly one full height ABOVE the stage): the browser's own
   // scroll-to-#fragment logic targets the panel INSIDE .svcd-pin__list /
-  // .svcd-pin__stage — both overflow:hidden — and scrolls their internal
+  // .svcd-pin__stage â€” both overflow:hidden â€” and scrolls their internal
   // scrollTop instead of only the window, silently shoving the whole
   // stacked-panel canvas out of view. These containers are never meant to
   // scroll internally, on any breakpoint: pin them to 0 permanently, and
@@ -1501,7 +1510,7 @@ if(nlForm){
       // Belt-and-suspenders against real-world trackpad/mouse momentum
       // scrolling: some browsers don't fully honor wheel preventDefault()
       // during inertial momentum, letting real scrollY creep even while
-      // "engaged" — which would let the section below peek into view while
+      // "engaged" â€” which would let the section below peek into view while
       // this one is still supposed to be pinned. Snap straight back.
       if (!exitingToHero && window.scrollY !== anchorScrollY) window.scrollTo(0, anchorScrollY);
       return;
@@ -1521,7 +1530,7 @@ if(nlForm){
   updateApproach();
 })();
 
-/* MOBILE SERVICES — SINGLE CLEAN PINNED CONTROLLER.
+/* MOBILE SERVICES â€” SINGLE CLEAN PINNED CONTROLLER.
    One state machine owns Hero -> five services -> CTA. */
 (function () {
   var mobile = window.matchMedia('(max-width: 639px), (pointer: coarse)');
@@ -1684,7 +1693,7 @@ if(nlForm){
 })();
 /* Robot handoff is now owned by the services controller above. */
 /* FAQ accordion (post-booking section, index.html). Independent
-   toggles — opening one doesn't close the others. Height animation
+   toggles â€” opening one doesn't close the others. Height animation
    is handled purely in CSS via grid-template-rows driven by
    aria-expanded, so this just flips the attribute. */
 (function(){
@@ -1701,7 +1710,7 @@ if(nlForm){
    grid-template-rows 0fr/1fr transition (see style.css) instead of an
    instant show/hide, so the sections unfold smoothly. On open, the
    .coaching-more button/text block is smoothly scrolled to the top of
-   the viewport at the same time — so it settles near the top and
+   the viewport at the same time â€” so it settles near the top and
    stays visible while the content grows in below it, instead of the
    page jumping straight down to the revealed content. FAQ and the
    Schedule CTA live outside this wrapper in the markup, so they're
@@ -1779,7 +1788,7 @@ if(nlForm){
   }
 })();
 
-/* "What You'll Gain" auto-cycle — same mechanism as the why-stats
+/* "What You'll Gain" auto-cycle â€” same mechanism as the why-stats
    one above (see style.css .is-gain-active). */
 (() => {
   var items = Array.from(document.querySelectorAll('.gain-grid .gain-item'));
@@ -1818,7 +1827,7 @@ if(nlForm){
   }
 })();
 
-/* "How We Work Together" auto-cycle — same mechanism, driven in
+/* "How We Work Together" auto-cycle â€” same mechanism, driven in
    step order (see style.css .is-howwork-active). */
 (() => {
   var steps = Array.from(document.querySelectorAll('.howwork-steps .howwork-step'));
@@ -2624,7 +2633,7 @@ document.querySelectorAll('.sec-services .svc-card[data-service-target]').forEac
       const badge = item.querySelector('b');
       item.classList.toggle('is-complete', itemStep < step);
       item.classList.toggle('is-active', itemStep === step);
-      if (badge) badge.textContent = itemStep < step ? '✓' : String(itemStep);
+      if (badge) badge.textContent = itemStep < step ? 'âœ“' : String(itemStep);
     });
   }
 
@@ -2963,5 +2972,6 @@ document.querySelectorAll('.sec-services .svc-card[data-service-target]').forEac
   window.E4LABookingFlow = { refreshSummary() { bookingState = loadBookingState(); applyStateToUI(); }, getState: () => clone(bookingState) };
   applyStateToUI();
 })();
+
 
 
