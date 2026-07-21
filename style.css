@@ -1,9 +1,9 @@
-/* â”€â”€ Reset â”€â”€ */
+﻿/* Ã¢â€â‚¬Ã¢â€â‚¬ Reset Ã¢â€â‚¬Ã¢â€â‚¬ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:'Manrope',system-ui,sans-serif;background:#07060D;color:#fff;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 
-/* FINAL — theme the browser's own scrollbar track/thumb to match the
+/* FINAL â€” theme the browser's own scrollbar track/thumb to match the
    dark background. Without this, the native scrollbar leaves a bright
    white strip along the viewport's right edge that visibly breaks the
    full-bleed dark hero, no matter what color the page content itself is. */
@@ -17,7 +17,7 @@ a{text-decoration:none;color:inherit}
 button{font-family:inherit;border:none;cursor:pointer;background:none}
 ul,ol{list-style:none}
 
-/* â”€â”€ Design Tokens â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Design Tokens Ã¢â€â‚¬Ã¢â€â‚¬ */
 :root {
   /* Background */
   --bg-hero:   #07060D;
@@ -82,16 +82,16 @@ ul,ol{list-style:none}
   --shadow-lg: 0 6px 24px rgba(0,0,0,.1);
 }
 
-/* â”€â”€ Skip link â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Skip link Ã¢â€â‚¬Ã¢â€â‚¬ */
 .skip-link{position:absolute;top:-100%;left:var(--s5);padding:var(--s2) var(--s5);background:var(--gold);color:#000;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;z-index:9999;border-radius:0 0 var(--r-md) var(--r-md);transition:top .2s}
 .skip-link:focus{top:0}
 
-/* â”€â”€ Visually hidden â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Visually hidden Ã¢â€â‚¬Ã¢â€â‚¬ */
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
    NAV
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 .nav{
   position:sticky;top:0;z-index:100;
   height:66px;padding:0 var(--pad-x);
@@ -101,7 +101,7 @@ ul,ol{list-style:none}
   backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)
 }
 
-/* PASS 1 â€” Logo: official asset placeholder.
+/* PASS 1 Ã¢â‚¬â€ Logo: official asset placeholder.
    Replace .nav__logo-img src with the official E4LA logo PNG/SVG when available. */
 .nav__logo{display:flex;flex-direction:column;gap:1px;text-decoration:none;flex-shrink:0}
 .nav__logo-lockup{display:flex;align-items:flex-end;gap:0;line-height:1}
@@ -133,9 +133,9 @@ ul,ol{list-style:none}
 .nav__cta:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .nav__cta svg{width:12px;height:12px}
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
    HERO
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 .hero{
   min-height:calc(100vh - 66px);
   display:grid;grid-template-columns:42% 58%;
@@ -208,19 +208,19 @@ ul,ol{list-style:none}
 }
 .btn-play__ring svg{width:9px;height:10px;margin-left:1px}
 
-/* â”€â”€ Hero Right / Ring â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Hero Right / Ring Ã¢â€â‚¬Ã¢â€â‚¬ */
 .hero__right{
   display:flex;justify-content:center;align-items:center;
   position:relative;z-index:1
 }
 
-/* PASS 2: ring ~15% smaller than initial 520px â†’ 445px */
+/* PASS 2: ring ~15% smaller than initial 520px Ã¢â€ â€™ 445px */
 .ring-wrap{
   width:445px;height:445px;
   position:relative;flex-shrink:0
 }
 
-/* PASS 5: Outer ambient â€” much more restrained */
+/* PASS 5: Outer ambient Ã¢â‚¬â€ much more restrained */
 .ring-wrap::before{
   content:'';position:absolute;
   inset:-44px;border-radius:50%;
@@ -240,7 +240,7 @@ ul,ol{list-style:none}
   position:absolute;inset:0;border-radius:50%;z-index:1
 }
 
-/* Ring border â€” sharper, less bloom */
+/* Ring border Ã¢â‚¬â€ sharper, less bloom */
 .ring::before{
   content:'';position:absolute;
   inset:-2px;border-radius:50%;
@@ -262,7 +262,7 @@ ul,ol{list-style:none}
   mask:radial-gradient(farthest-side,transparent calc(100% - 3.5px),white calc(100% - 2.5px))
 }
 
-/* Tighter glow halo â€” no heavy blur */
+/* Tighter glow halo Ã¢â‚¬â€ no heavy blur */
 .ring::after{
   content:'';position:absolute;
   inset:-7px;border-radius:50%;
@@ -311,9 +311,9 @@ ul,ol{list-style:none}
   color:rgba(255,255,255,.45);margin-top:var(--s2)
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
    SERVICES
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 .sec-services{
   padding:var(--section-py) var(--pad-x);
   background:#FAFAF8
@@ -377,9 +377,9 @@ ul,ol{list-style:none}
 .svc-card:hover .svc-card__arr{background:var(--purple-lt);border-color:var(--purple-lt);color:#fff}
 .svc-card__arr:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
    APPROACH
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 .sec-approach{
   padding:var(--section-py) var(--pad-x);
   background:var(--bg-dark2)
@@ -412,7 +412,7 @@ ul,ol{list-style:none}
 .btn-outline-gold:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .btn-outline-gold svg{width:12px;height:12px}
 
-/* PASS 7: timeline â€” smaller circles */
+/* PASS 7: timeline Ã¢â‚¬â€ smaller circles */
 .timeline{position:relative;padding-top:var(--s2)}
 .timeline__track{
   position:absolute;top:26px;left:26px;right:26px;height:1px;
@@ -454,9 +454,9 @@ ul,ol{list-style:none}
   line-height:1.55;max-width:78px
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
    STATS STRIP
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 .sec-stats{
   padding:28px var(--pad-x);
   /* PASS 8: softer, less saturated gradient */
@@ -476,9 +476,9 @@ ul,ol{list-style:none}
 .stat__num{font-size:23px;font-weight:700;color:#fff;line-height:1;letter-spacing:-.3px}
 .stat__label{font-size:10px;font-weight:400;color:rgba(255,255,255,.48);margin-top:2px;letter-spacing:.2px}
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
    WHY E4LA
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 .sec-why{
   padding:var(--section-py) var(--pad-x);
   background:var(--bg-dark)
@@ -516,9 +516,9 @@ ul,ol{list-style:none}
 .why-item__title{font-size:12.5px;font-weight:700;color:var(--gold-lt)}
 .why-item__body{font-size:12px;line-height:1.68;font-weight:300;color:rgba(255,255,255,.36)}
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
    COACHING
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 .sec-coaching{
   padding:var(--section-py) var(--pad-x);
   background:#fff
@@ -615,9 +615,9 @@ ul,ol{list-style:none}
   text-align:center;margin-top:var(--s3);letter-spacing:.2px
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
    CTA BAND
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 /* PASS 11: harmonized gradient blend */
 .sec-cta{
   display:grid;grid-template-columns:1fr 1fr;
@@ -658,9 +658,9 @@ ul,ol{list-style:none}
 .cta-warm__btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .cta-warm__btn svg{width:13px;height:13px}
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
    FOOTER
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 .footer{
   background:var(--bg-dark);
   border-top:1px solid rgba(255,255,255,.04);
@@ -749,7 +749,7 @@ ul,ol{list-style:none}
   font-size:10.5px;color:rgba(255,255,255,.18);font-weight:300
 }
 
-/* â”€â”€ Reveal â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Reveal Ã¢â€â‚¬Ã¢â€â‚¬ */
 [data-r]{
   opacity:0;transform:translateY(12px);
   transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1);
@@ -762,7 +762,7 @@ ul,ol{list-style:none}
 [data-d="3"]{transition-delay:.28s}[data-d="4"]{transition-delay:.38s}
 [data-d="5"]{transition-delay:.48s}[data-d="6"]{transition-delay:.58s}
 
-/* â”€â”€ Responsive â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Responsive Ã¢â€â‚¬Ã¢â€â‚¬ */
 @media(max-width:1120px){
   .hero{grid-template-columns:1fr;min-height:auto;padding-bottom:var(--s7)}
   .hero__left{padding-right:0}
@@ -791,7 +791,7 @@ ul,ol{list-style:none}
   .services-top{grid-template-columns:1fr}
 }
 
-/* â”€â”€ A11y â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ A11y Ã¢â€â‚¬Ã¢â€â‚¬ */
 :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:var(--r-sm)}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
@@ -800,7 +800,7 @@ ul,ol{list-style:none}
 }
 
 /* ================================================================
-   REFERENCE FIDELITY PASS â€” geometry sampled from the supplied art
+   REFERENCE FIDELITY PASS Ã¢â‚¬â€ geometry sampled from the supplied art
    ================================================================ */
 :root{
   --ref-black:#020713;
@@ -2051,7 +2051,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
   transition:transform .32s cubic-bezier(.22,1,.36,1), box-shadow .32s cubic-bezier(.22,1,.36,1), filter .32s cubic-bezier(.22,1,.36,1), background .32s cubic-bezier(.22,1,.36,1) !important;
 }
 /* Hover previously scaled/lifted/brightened the circle and lit up
-   the name/sub text — removed entirely per request. Only the JS
+   the name/sub text â€” removed entirely per request. Only the JS
    auto-cycle's .tstep--auto-active class controls the lit look now;
    hovering a step (active or not) no longer changes its appearance
    at all. */
@@ -2374,7 +2374,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
   backdrop-filter:blur(18px) !important;
   -webkit-backdrop-filter:blur(18px) !important;
 }
-/* main#main no longer needs its own top padding for nav clearance —
+/* main#main no longer needs its own top padding for nav clearance â€”
    the newer shared .e4la-site-nav system (bottom of this file) already
    reserves that space via `html body { padding-top }`. Keeping BOTH
    was double-counting nav height (body pushed everything down once,
@@ -3773,7 +3773,7 @@ html,body,button,input,textarea,select,a,p,h1,h2,h3,h4,h5,h6,span,li,div{
 @media(max-width:640px){
   /* On phones the description sits directly above the arrow with
      nothing to push them apart (auto-height cards, so the desc's
-     flex:1 grow has no extra space to consume) — 26px reads as too
+     flex:1 grow has no extra space to consume) â€” 26px reads as too
      tight against the site's usual mobile rhythm. Widen just this
      gap on real phones; tablets keep the 26px above. */
   .sec-services .svc-card .svc-card__arr{margin-top:40px !important;}
@@ -3977,7 +3977,7 @@ html,body,button,input,textarea,select,a,p,h1,h2,h3,h4,h5,h6,span,li,div{
   right:24px !important;
 }
 
-/* FINAL — soften the timeline connector line. The base rule for
+/* FINAL â€” soften the timeline connector line. The base rule for
    .timeline__track winning at cascade-time was a flat, fully-opaque
    6-stop rainbow gradient (from an older "reference fidelity" pass)
    at only 1px tall, which reads as a hard, sharp painted wire rather
@@ -4267,7 +4267,7 @@ li{
   max-width:150px !important;
 }
 
-/* FINAL — no full card wrap after all; instead a thin top/bottom
+/* FINAL â€” no full card wrap after all; instead a thin top/bottom
    rule using the exact same stroke color as the site's card borders
    (.coaching-card / .sec-faq .faq-layout: rgba(157,129,255,.28)) so
    Approach reads as its own distinct section without a full card
@@ -6499,7 +6499,7 @@ a {
 }
 
 /* .faq-item__q was briefly grouped with the bold card-title role
-   above (20px/800) — direct feedback was that this read as too
+   above (20px/800) â€” direct feedback was that this read as too
    heavy/bold for a clickable question row, so it now shares the
    small-text scale instead, with its own semibold (not bold) weight
    set right below, same treatment as .gain-item__text /
@@ -6786,7 +6786,7 @@ a {
 }
 
 /* FINAL SERVICES CARD GRID + 3D HOVER */
-/* FINAL v5 — DARK GLASS REDESIGN, matching the about.html reference
+/* FINAL v5 â€” DARK GLASS REDESIGN, matching the about.html reference
    (dark base + soft blurred brand-color glow blobs, translucent
    "glass" cards on top). Reuses the site's own dark/brand palette
    (#07060D + purple/magenta/gold) instead of about.css's separate
@@ -6809,7 +6809,7 @@ a {
   font-family: 'Manrope', Arial, sans-serif !important;
   isolation: isolate !important;
 }
-/* FINAL — the left-to-right color wash used to sit at full strength
+/* FINAL â€” the left-to-right color wash used to sit at full strength
    starting at y:0, i.e. right where the hero's flat black ends, so it
    read as a visible seam no matter how the vertical fade above was
    tuned. Move it to a masked ::before that only fades in after the
@@ -6825,18 +6825,18 @@ a {
   background: linear-gradient(90deg, rgba(79, 125, 255, .18) 0%, rgba(124, 58, 237, .18) 50%, rgba(219, 39, 119, .15) 100%) !important;
   /* Top edge (hero -> services): soft fade back in, restoring the
      smooth blend that existed before the approach-boundary hard-cut
-     fix collapsed this mask to a near-instant 6px reveal — that
+     fix collapsed this mask to a near-instant 6px reveal â€” that
      6px value made the color wash snap on abruptly right under the
      hero, which is the harsh line being complained about here.
      Bottom edge stays untouched: solid all the way to 100%, no
      fade-out, per the earlier explicit "hard boundary at approach"
-     requirement — only the top got softened. */
+     requirement â€” only the top got softened. */
   -webkit-mask-image: linear-gradient(180deg, transparent 0px, #000 90px, #000 100%) !important;
   mask-image: linear-gradient(180deg, transparent 0px, #000 90px, #000 100%) !important;
   pointer-events: none !important;
 }
 
-/* FINAL — the boundary itself (the border-top line on .sec-approach)
+/* FINAL â€” the boundary itself (the border-top line on .sec-approach)
    is meant to BE the hard edge: colored wash above it, flat dark
    hero-color below it, no fade on either side. The wash above now
    runs at full strength all the way down to the line; .sec-approach
@@ -7490,7 +7490,7 @@ a {
   }
 }
 /* ================================================================
-   FINAL PATCH — SERVICES 3D CARD + INNER MOTION
+   FINAL PATCH â€” SERVICES 3D CARD + INNER MOTION
    Keep this as the LAST services block. Do not add service-card rules after it.
    ================================================================ */
 
@@ -7726,7 +7726,7 @@ a {
   }
 }
 
-/* FINAL SERVICES SECTION — ICON SIZE/POSITION + HOVER MOTION */
+/* FINAL SERVICES SECTION â€” ICON SIZE/POSITION + HOVER MOTION */
 /* Single consolidated source of truth for .svc-icon. Only touches the icon inside
    Services cards. Card tilt, title, desc, arrow, and every other section are untouched. */
 
@@ -7782,7 +7782,7 @@ a {
   }
 }
 
-/* FINAL SERVICES HEADING — gradient accent on "modern businesses." */
+/* FINAL SERVICES HEADING â€” gradient accent on "modern businesses." */
 .sec-services .services-top__h2 .grad-text {
   background: linear-gradient(92deg, #7c3aed 0%, #a855f7 45%, #f97316 100%) !important;
   -webkit-background-clip: text !important;
@@ -7791,7 +7791,7 @@ a {
   color: transparent !important;
 }
 
-/* FINAL SERVICES CARD HEIGHT — taller cards, more breathing room before the arrow.
+/* FINAL SERVICES CARD HEIGHT â€” taller cards, more breathing room before the arrow.
    The arrow already sits at the bottom via the card's justify-content:space-between
    + its own margin-top:auto, so a taller card directly widens that gap. */
 .sec-services .services-grid .svc-card.svc-card {
@@ -7804,7 +7804,7 @@ a {
   }
 }
 
-/* FINAL SERVICES ICON 1 SIZE FIX — the source artwork for card 1 (assets/1.png)
+/* FINAL SERVICES ICON 1 SIZE FIX â€” the source artwork for card 1 (assets/1.png)
    only fills ~70% of its own square canvas, versus ~91-94% for icons 2-5, so it
    renders visibly smaller than the others despite an identical icon box. Scale
    just this image up to match the others' apparent size. */
@@ -7813,7 +7813,7 @@ a {
   transform-origin: center center !important;
 }
 
-/* FINAL SERVICES SECTION FULL-BLEED — remove the "floating rounded card" look.
+/* FINAL SERVICES SECTION FULL-BLEED â€” remove the "floating rounded card" look.
    Section now spans edge-to-edge and sits flush against the sections above/below
    (no side inset, no rounded corners, no vertical margin gap). Inner padding is
    unchanged so the heading/cards still have breathing room from the edges. */
@@ -7940,7 +7940,7 @@ body.nav-open {
   }
   /* Nav links used to only hide at max-width:700px (see the older
      700px pass above) while .nav__cta and the nav's own compact
-     sizing already switch at 780px (line ~924) — that left a ~79px
+     sizing already switch at 780px (line ~924) â€” that left a ~79px
      window (701-780px) where the CTA button vanished with no burger
      menu yet shown to reach it. Hiding the links at the same 780px
      breakpoint the burger now appears at closes that gap. */
@@ -7956,7 +7956,7 @@ body.nav-open {
 }
 
 /* ============================================================
-   FINAL CTA — NEON PALM PILL (permanent, site-wide, reusable).
+   FINAL CTA â€” NEON PALM PILL (permanent, site-wide, reusable).
    Single shared system, applied via the existing .cta-neon class
    already present on all 7 CTAs (nav__cta, nav__mobile-cta,
    btn-outline-white, btn-play, btn-outline-gold.section-cta,
@@ -7966,19 +7966,19 @@ body.nav-open {
 
    Default: dark pill fill, colored neon stroke (gold or purple,
    per the --cta-neon--gold/--cta-neon--purple variant already on
-   each button) with a soft static glow — always visible, not
+   each button) with a soft static glow â€” always visible, not
    hover-only. Left badge is a FILLED circle that stretches to the
    button's own line-height and is pulled outward via negative
    margin so it reads flush/plugged-in with the pill's edges
    (visually very close to full CTA height on every variant, per
-   spec — an exact px-perfect fit differs slightly per button
+   spec â€” an exact px-perfect fit differs slightly per button
    since each has a different base padding). White palm icon
    inside, text unchanged to the right.
 
    Hover/focus: glow intensifies, a tiny 1.01 scale (no layout
    shift, transform never affects box size), and one bright comet
    continuously traces the exact rounded-rect perimeter (SVG rect
-   + stroke-dasharray, sized live by script.js — mechanism
+   + stroke-dasharray, sized live by script.js â€” mechanism
    unchanged from before).
    ============================================================ */
 
@@ -8042,12 +8042,12 @@ body.nav-open {
 /* Left badge: diameter = the button's exact rendered height (padding-
    box, i.e. the full visible pill height minus only the thin border
    stroke), flush against the left wall. Computed live by script.js
-   from the LABEL's own height + the button's static CSS padding —
+   from the LABEL's own height + the button's static CSS padding â€”
    never from the button's own offsetHeight, which would be circular
    (see the long comment in script.js: an earlier version measured
    offsetHeight directly and produced a runaway badge that grew to
    cover most of the page). max-width/max-height below are a hard
-   safety ceiling — comfortably above every real button on this site,
+   safety ceiling â€” comfortably above every real button on this site,
    so even if the computed value were ever wrong, the badge still
    cannot balloon past a sane size. The em-based values are only the
    fallback for the instant before JS runs on load. */
@@ -8093,9 +8093,9 @@ body.nav-open {
 
 /* Beam overlay: sized/positioned to the button in JS (script.js).
    The rect's stroke covers the button's full perimeter (no dasharray
-   gap — previously it was a short comet). Its color is a repeating
+   gap â€” previously it was a short comet). Its color is a repeating
    gradient built and tinted in JS from THIS button's own --neon
-   (gold or purple) — not white — with exactly 3 bright "shine"
+   (gold or purple) â€” not white â€” with exactly 3 bright "shine"
    peaks evenly spaced around the loop (period = perimeter/3, not a
    dense sea-wave of many small ripples), continuously traveling
    together via a native SVG animation. Glow is tinted to --neon too. */
@@ -8134,7 +8134,7 @@ body.nav-open {
 }
 
 /* ============================================================
-   CTA HARDENING — extra-specificity reinforcement for the 5
+   CTA HARDENING â€” extra-specificity reinforcement for the 5
    buttons that have many separate historical rules targeting their
    own class name directly, scattered across this file from past
    editing passes (.nav__cta: 12 rules, .nav__mobile-cta, .btn-
@@ -8144,7 +8144,7 @@ body.nav-open {
 
    Every selector below is doubled (e.g. .btn-outline-white.cta-neon)
    so its specificity is strictly higher than a lone rule anywhere
-   else in the file — this wins regardless of what else is declared
+   else in the file â€” this wins regardless of what else is declared
    for these specific classes, past or future.
 
    .nav__cta / .nav__mobile-cta have been removed from this shared
@@ -8239,7 +8239,7 @@ body.nav-open {
 
 /* Root cause of the visible square in "Learn Our Approach"'s corner:
    an old rule scoped to .sec-approach forces ANY svg inside
-   .btn-outline-gold.section-cta down to a fixed 16x16px —
+   .btn-outline-gold.section-cta down to a fixed 16x16px â€”
    `.sec-approach .btn-outline-gold.section-cta svg { width:16px;
    height:16px !important }` (line ~4039). That selector has higher
    specificity (3 classes + 1 type) than the hardening rule just
@@ -8293,17 +8293,17 @@ body.nav-open {
 }
 
 /* ============================================================
-   #js-book (Book Session / cal__cta) — MAXIMUM-SPECIFICITY fix.
+   #js-book (Book Session / cal__cta) â€” MAXIMUM-SPECIFICITY fix.
    An ID selector beats every class-based rule in this file
    outright, no ambiguity, so this is the definitive word on this
    one button regardless of anything else declared for .cal__cta
    anywhere (there are ~19 separate historical rules touching it).
 
    Also: this is the ONLY CTA sitting on a LIGHT background
-   (.calendar-widget is cream/white — every other CTA sits on a
+   (.calendar-widget is cream/white â€” every other CTA sits on a
    dark section). The same soft colored glow that reads as "neon"
    against black looks like a hazy smudge against white, which is
-   almost certainly the "fog" being described — so the glow here is
+   almost certainly the "fog" being described â€” so the glow here is
    tightened (smaller blur radius, lower opacity, no outer bloom)
    instead of the wider ambient glow used elsewhere. */
 #js-book.cta-neon {
@@ -8312,7 +8312,7 @@ body.nav-open {
   align-items: center !important;
   /* justify-content:center here now only affects the LABEL (the
      badge is pulled out of flex flow below, so it doesn't
-     participate) — this is what actually centers the button's
+     participate) â€” this is what actually centers the button's
      text while the badge is independently pinned to the left. */
   justify-content: center !important;
   border-radius: 999px !important;
@@ -8337,7 +8337,7 @@ body.nav-open {
 }
 
 /* Per request: the badge must be pinned flush to the left wall
-   while the label text stays centered in the full pill — those are
+   while the label text stays centered in the full pill â€” those are
    two different alignment rules for two different elements, which
    plain flex justify-content can't express at once (it only
    controls the group as a whole). Fix: take the badge OUT of the
@@ -8345,7 +8345,7 @@ body.nav-open {
    it's independent of alignment, pinned via `left` directly against
    the border's inner edge. With the badge no longer a flex
    participant, the button's justify-content:center (above) now
-   centers the LABEL ALONE within the full button width — exactly
+   centers the LABEL ALONE within the full button width â€” exactly
    the requested behavior. */
 #js-book.cta-neon .cta-neon__badge {
   display: inline-flex !important;
@@ -8353,11 +8353,11 @@ body.nav-open {
   justify-content: center !important;
   position: absolute !important;
   /* For an absolutely positioned child, the containing block is the
-     PADDING box of the nearest positioned ancestor (per spec) — NOT
+     PADDING box of the nearest positioned ancestor (per spec) â€” NOT
      the border box. That padding box already starts ~1.5px in from
      the true edge (this button's own border-width), so `left:0`
      alone still leaves a hair of a gap, and the previous `left:2px`
-     added an extra 2px on top of that (~3.5px total) — visible as
+     added an extra 2px on top of that (~3.5px total) â€” visible as
      the persisting gap. Shifting left by the border-width itself
      lands the circle exactly on the border line, touching it with
      no gap at all. */
@@ -8423,24 +8423,24 @@ body.nav-open {
 }
 
 /* ============================================================
-   FINAL "LET'S CONNECT" (cta-warm__btn) — same hardening pattern.
+   FINAL "LET'S CONNECT" (cta-warm__btn) â€” same hardening pattern.
    This one was assumed fine earlier (it renders reasonably on the
    surface), but it was never actually added to the reinforcement
    block, and it turns out to have the exact same two problems as
    the other buttons did:
    1) `.sec-cta .cta-warm__btn { justify-content: space-between
-      !important }` — this button has a forced min-width (220-
+      !important }` â€” this button has a forced min-width (220-
       250px, wider than its natural content), so space-between
       shoves the badge and label apart with a large gap, unlike
       every other CTA's tight, consistent spacing.
    2) `.sec-cta .cta-warm__btn svg { width:18px; height:18px
       !important }` (2 classes + svg tag) has higher specificity
       than the generic .cta-neon__beam rule (1 class), so its beam
-      SVG was ALSO being shrunk to an 18x18 square — the same bug
+      SVG was ALSO being shrunk to an 18x18 square â€” the same bug
       already fixed for "Learn Our Approach".
    Background stays dark (unlike Book Session) since this button
    sits on the warm gold gradient band, which was already working
-   visually — only alignment + beam sizing needed correcting. */
+   visually â€” only alignment + beam sizing needed correcting. */
 .sec-cta .cta-warm__btn.cta-neon,
 .cta-warm__btn.cta-neon {
   position: relative !important;
@@ -8551,7 +8551,7 @@ body.nav-open {
   }
 }
 
-/* FINAL CTA TYPOGRAPHY — regular weight for every CTA label.
+/* FINAL CTA TYPOGRAPHY â€” regular weight for every CTA label.
    Historical per-button rules across this file set font-weight to
    700/800/850/900 for nav__cta, nav__mobile-cta, btn-outline-white,
    btn-outline-gold, cal__cta, cta-warm__btn and btn-play at various
@@ -8566,7 +8566,7 @@ body.nav-open {
 }
 
 /* ============================================================
-   FINAL COACHING SECTION REDESIGN — light "book a session" layout
+   FINAL COACHING SECTION REDESIGN â€” light "book a session" layout
    matching the reference mockup (soft gradient wash, left content
    stack: intro + meta row + focus cards + session timeline, right
    column: calendar + Book Session CTA (unchanged neon style, kept
@@ -8594,7 +8594,7 @@ body.nav-open {
   overflow: visible !important;
   isolation: isolate !important;
 }
-/* FINAL — match the services section's left-to-right color wash so
+/* FINAL â€” match the services section's left-to-right color wash so
    the booking section's background reads as the same family instead
    of a plain flat dark fade. Same masked ::before technique: color
    only appears in the middle band, fading out near the top/bottom
@@ -9019,7 +9019,7 @@ body.nav-open {
   #coaching .ctime__sub { max-width: none !important; }
 }
 
-/* FINAL BOOK SESSION CTA — white matte pill with black text, per
+/* FINAL BOOK SESSION CTA â€” white matte pill with black text, per
    direct request (the surrounding calendar card is now dark glass,
    so a solid black button on it read as almost invisible; flipping
    to a light pill gives it real contrast as the primary action). */
@@ -9048,7 +9048,7 @@ body.nav-open {
   opacity: 0 !important;
 }
 
-/* FINAL FOCUS-ON CARD ICONS — user-supplied artwork (target rings /
+/* FINAL FOCUS-ON CARD ICONS â€” user-supplied artwork (target rings /
    starburst / magnifying glass) replacing the inline SVG icons for
    the 3 "What We'll Focus On" cards. Used as-is, not redrawn. */
 #coaching .aud-card__ico {
@@ -9081,9 +9081,9 @@ body.nav-open {
   background-image: url('assets/booking1-03.png') !important;
 }
 
-/* FINAL v4 — "HOW THE SESSION WORKS" TIMELINE ICONS. The uploaded
+/* FINAL v4 â€” "HOW THE SESSION WORKS" TIMELINE ICONS. The uploaded
    artwork (booking 3-01..05.png) was a RASTER export (1467x1469px)
-   despite looking like clean vector line-art — a raster file is
+   despite looking like clean vector line-art â€” a raster file is
    always bound to its pixel grid, so once the browser scales it down
    into a ~46-54px badge it can look visibly softer than true vector
    line-art, no matter how high the source resolution is. Traced each
@@ -9100,14 +9100,14 @@ body.nav-open {
 #coaching .ctime__ico svg { display: none !important; }
 /* The icon artwork moved from .ctime__ico's own background to a
    ::after pseudo-element. Reason: a box's own background always
-   paints FIRST within its stacking context, before any descendant —
+   paints FIRST within its stacking context, before any descendant â€”
    including a negative z-index pseudo-element. The frosted-glass
    layer added below is .ctime__ico::before at z-index:-1, which is
    meant to sit behind the icon, but with the icon as .ctime__ico's
    own background it was actually behind the icon already at the
    box level, so the glass pseudo (a descendant, painted after the
    box's own background regardless of its negative z-index) ended up
-   rendering ON TOP of the icon artwork instead — the reported "glass
+   rendering ON TOP of the icon artwork instead â€” the reported "glass
    circle needs to go behind the icons" bug. Moving the artwork onto
    ::after (a real descendant, z-index:1) puts it in its own paint
    step after ::before, so the stacking order becomes correct: glass
@@ -9140,7 +9140,7 @@ body.nav-open {
 }
 
 /* ============================================================
-   FINAL CTA COLOR REFRESH — retiring the flat gold/purple neon
+   FINAL CTA COLOR REFRESH â€” retiring the flat gold/purple neon
    colors. The site already has an established gradient identity
    used on bold accent text (hero word, services heading accent):
    --g-orange #F97316 -> --g-pink #DB2777 -> --g-purple #7C3AED.
@@ -9178,14 +9178,14 @@ body.nav-open {
   background: radial-gradient(circle at 32% 28%, #fdba74, #F97316 24%, #DB2777 60%, #7C3AED 100%) !important;
 }
 
-/* FINAL BOOK SESSION CTA — remove the palm badge circle entirely,
+/* FINAL BOOK SESSION CTA â€” remove the palm badge circle entirely,
    per direct request; the button is now a plain black pill with
    just its label. */
 #js-book.cta-neon .cta-neon__badge {
   display: none !important;
 }
 
-/* FINAL "EXPLORE OUR SERVICES" CTA — reversed treatment, per direct
+/* FINAL "EXPLORE OUR SERVICES" CTA â€” reversed treatment, per direct
    request: gradient FILL instead of gradient stroke/border, and a
    plain black circle badge instead of the gradient-filled badge
    used on the other CTAs. */
@@ -9204,7 +9204,7 @@ body.nav-open {
 
 /* Paint-wipe reveal: as the badge travels left -> right on hover, a
    wash of its own color (white, frosted, same tone as the badge)
-   sweeps across the button behind it — like the circle is a brush
+   sweeps across the button behind it â€” like the circle is a brush
    dragging a new color across the pill. Synced to the exact same
    duration/easing as the badge's own "left" transition so they
    visibly move together. */
@@ -9259,11 +9259,11 @@ body.nav-open {
   left: calc(100% + 1.5px - var(--badge-d, 2.2em)) !important;
 }
 
-/* FINAL "HOW WE WORK" CTA — same badge-travel + paint-wipe mechanism
+/* FINAL "HOW WE WORK" CTA â€” same badge-travel + paint-wipe mechanism
    as Explore Our Services (white, 40% opacity, frosted badge sliding
    left -> right on hover). The one difference: this button's fill
    starts black at rest, so the wipe it drags reveals the orange-
-   pink-purple gradient instead of white — the CTA itself changes
+   pink-purple gradient instead of white â€” the CTA itself changes
    color from black to gradient as the badge passes over it. */
 .btn-play.cta-neon {
   padding-left: calc(var(--badge-d, 2.2em) + 14px) !important;
@@ -9282,7 +9282,7 @@ body.nav-open {
 .btn-play.cta-neon:focus-visible .cta-neon__badge {
   left: calc(100% + 1.5px - var(--badge-d, 2.2em)) !important;
 }
-/* Rebuilt to animate width (left-anchored) instead of clip-path —
+/* Rebuilt to animate width (left-anchored) instead of clip-path â€”
    see the matching note on .btn-outline-white.cta-neon::before just
    above for why: a resized plain box keeps correctly rounded corners
    automatically, with no risk of the jagged-corner/ghosting artifacts
@@ -9305,7 +9305,7 @@ body.nav-open {
   width: calc(100% + 3px) !important;
 }
 
-/* FINAL — enlarge both traveling-badge CTAs (Explore Our Services,
+/* FINAL â€” enlarge both traveling-badge CTAs (Explore Our Services,
    How We Work) so the badge has room to slide across without
    covering the label text; and fade the label to black on hover, in
    step with the badge/wipe transition, so the text stays readable
@@ -9322,7 +9322,7 @@ body.nav-open {
 }
 
 /* The top nav "Let's Connect" (desktop + mobile menu) padding is no
-   longer set here — nav.css owns the CTA's full box model as a fixed,
+   longer set here â€” nav.css owns the CTA's full box model as a fixed,
    non-animated pill. See nav.css. */
 .btn-play.cta-neon:hover .cta-neon__label,
 .btn-play.cta-neon:focus-visible .cta-neon__label {
@@ -9335,7 +9335,7 @@ body.nav-open {
   font-weight: 700 !important;
 }
 
-/* FINAL "LET'S CONNECT" (final section CTA) — reverted back to flat
+/* FINAL "LET'S CONNECT" (final section CTA) â€” reverted back to flat
    purple per direct request; this one button opts out of the
    orange-pink-purple gradient treatment applied to the rest. */
 .cta-warm__btn.cta-neon {
@@ -9355,7 +9355,7 @@ body.nav-open {
 }
 
 /* ============================================================
-   FINAL HERO VIDEO — square video (960x960) placed on the right
+   FINAL HERO VIDEO â€” square video (960x960) placed on the right
    side of the hero, on top of the existing hero background image
    (left untouched, per request). A left-edge gradient mask on the
    frame itself blends its edge into the hero's own dark vignette
@@ -9400,7 +9400,7 @@ body.nav-open {
 
 @media (max-width: 900px) {
   /* Was position:static, pushing the video into normal flow BELOW
-     the hero text with its own margin/height — on top of .hero's
+     the hero text with its own margin/height â€” on top of .hero's
      own solid #000 background (see the "remove the old hero photo"
      rule further down) that left a dead black gap under the video
      wherever .hero's padding/min-height ran taller than the text.
@@ -9435,7 +9435,7 @@ body.nav-open {
   }
 }
 
-/* FINAL — remove the old hero photo entirely now that the video
+/* FINAL â€” remove the old hero photo entirely now that the video
    covers that area. The .hero background is set via the `background`
    shorthand across ~8 different breakpoint rules throughout this
    file, each bundling its own gradient + the photo url(). Rather
@@ -9448,13 +9448,13 @@ body.nav-open {
   background-color: var(--bg-hero) !important;
 }
 
-/* FINAL — the "Let's Connect" CTA in the page-bottom section adopts
+/* FINAL â€” the "Let's Connect" CTA in the page-bottom section adopts
    the exact same mechanism as How We Work: black at rest, a gradient
    badge that travels left -> right on hover, and a gradient
    paint-wipe reveal. This also undoes the earlier flat-purple-only
    treatment given to the final section's Let's Connect, per this
    newer, broader consistency request. (The top-nav / mobile-nav
-   Let's Connect CTAs are no longer styled here — that component now
+   Let's Connect CTAs are no longer styled here â€” that component now
    lives exclusively in nav.css, which owns its own static badge with
    no travel/wipe animation. See nav.css.) */
 .cta-warm__btn.cta-neon {
@@ -9480,7 +9480,7 @@ body.nav-open {
   transition: left .45s cubic-bezier(.4, 0, .2, 1) !important;
 }
 /* The badge-travel + gradient-wipe below is a :hover effect, but
-   touch devices don't have a real "hover" — a tap fires :hover and
+   touch devices don't have a real "hover" â€” a tap fires :hover and
    then leaves the button stuck showing it (classic mobile Safari/
    Chrome behavior) until the person taps elsewhere. That read as the
    button being broken/unresponsive on phones (badge stuck on the
@@ -9496,7 +9496,7 @@ body.nav-open {
 .cta-warm__btn.cta-neon:focus-visible .cta-neon__badge {
   left: calc(100% + 1.5px - var(--badge-d, 2.2em)) !important;
 }
-/* Rebuilt to animate width (left-anchored) instead of clip-path — see
+/* Rebuilt to animate width (left-anchored) instead of clip-path â€” see
    the matching note on .btn-outline-white.cta-neon::before for why. */
 .cta-warm__btn.cta-neon::before {
   content: '' !important;
@@ -9527,7 +9527,7 @@ body.nav-open {
   }
 }
 
-/* FINAL — APPROACH TIMELINE AUTO-CYCLE. Mirrors the exact "lit" look
+/* FINAL â€” APPROACH TIMELINE AUTO-CYCLE. Mirrors the exact "lit" look
    already defined for :hover, but driven by a JS-toggled class
    (.tstep--auto-active) instead, so the steps light up one at a
    time on their own, continuously, without needing the mouse. See
@@ -9551,7 +9551,7 @@ body.nav-open {
   color: rgba(255, 255, 255, .94) !important;
 }
 
-/* FINAL — Book Session: taller, and flush with the calendar's own
+/* FINAL â€” Book Session: taller, and flush with the calendar's own
    left/right edges (same width as the header/date-grid above it,
    inside the calendar card's padding, with zero extra margin of its
    own that could inset it further). */
@@ -9566,7 +9566,7 @@ body.nav-open {
   align-items: stretch !important;
 }
 
-/* FINAL — "Let's Connect" (final section) reverted to purple, per
+/* FINAL â€” "Let's Connect" (final section) reverted to purple, per
    direct request: keeps the exact same badge-travel + paint-wipe
    mechanism as How We Work (flush-left at rest, slides to flush-
    right on hover), just recolored from the orange-pink-purple
@@ -9599,10 +9599,10 @@ body.nav-open {
   font-weight: 700 !important;
 }
 
-/* FINAL — "Schedule Your Session" recolored to match the NAV "Let's
-   Connect" CTA (gold border-glow + orange→pink→purple gradient
+/* FINAL â€” "Schedule Your Session" recolored to match the NAV "Let's
+   Connect" CTA (gold border-glow + orangeâ†’pinkâ†’purple gradient
    badge), per direct request. This deliberately does NOT touch the
-   bottom-of-page ".sec-cta" "Let's Connect" button just above — that
+   bottom-of-page ".sec-cta" "Let's Connect" button just above â€” that
    one shares the same .cta-warm__btn.cta-neon base classes but was
    purposefully kept purple per an earlier, separate direct request
    (see the comment above). Scoping to .schedule-card__btn specifically
@@ -9625,7 +9625,7 @@ body.nav-open {
 }
 
 /* ============================================================
-   FINAL — BULLETPROOF BADGE-TRAVEL FIX (all 5 traveling CTAs).
+   FINAL â€” BULLETPROOF BADGE-TRAVEL FIX (all 5 traveling CTAs).
 
    Root cause of "the badge stops short / floats away from the
    button, overlapping other page text": this stylesheet has a very
@@ -9633,7 +9633,7 @@ body.nav-open {
    each button from reliably being its own positioning container.
    When an absolutely-positioned child's nearest ancestor isn't
    actually positioned, the browser walks UP the tree to the next
-   one that is — for these buttons that turned out to be a much
+   one that is â€” for these buttons that turned out to be a much
    bigger, differently-sized ancestor (the whole text+button row),
    so "left" percentages were being measured against the WRONG box
    entirely. That also meant the old hover formula
@@ -9644,18 +9644,18 @@ body.nav-open {
    Fix, in two parts:
    1) Re-assert `position: relative` on the button itself at maximum
       selector specificity (class repeated 4x) so nothing earlier in
-      the file can contest it — the button is now guaranteed to be
+      the file can contest it â€” the button is now guaranteed to be
       the badge's containing block.
    2) Replace the hover math so it no longer needs to know the
       badge's exact diameter at all: `left: 100%` anchors the
       badge's left edge to the button's right wall, and
       `translateX(-100%)` (a transform percentage, which is always
       relative to the badge's OWN rendered size, whatever that
-      actually is) pulls it back by exactly its own width — landing
+      actually is) pulls it back by exactly its own width â€” landing
       it flush on the right, correctly, regardless of what
       --badge-d resolves to. +1.5px mirrors the -1.5px used at rest
       to cancel the border width on both sides. */
-/* nav__cta / nav__mobile-cta removed from this system entirely —
+/* nav__cta / nav__mobile-cta removed from this system entirely â€”
    their badge is now a fixed, non-traveling circle owned solely by
    nav.css. Only the other 3 buttons that still use the classic
    hover-travel badge remain here. */
@@ -9680,7 +9680,7 @@ body.nav-open {
 }
 
 /* cta-warm__btn's :hover portion is gated to real-hover devices
-   only — see the touch "stuck hover" note near its base rule.
+   only â€” see the touch "stuck hover" note near its base rule.
    btn-outline-white and btn-play aren't part of that report, so
    their :hover stays ungated here. */
 .btn-outline-white.cta-neon.cta-neon.cta-neon:hover .cta-neon__badge,
@@ -9701,7 +9701,7 @@ body.nav-open {
   transform: translateY(-50%) translateX(calc(-100% + 1.5px)) !important;
 }
 
-/* FINAL — "Explore Our Services" badge: white stroke ring around the
+/* FINAL â€” "Explore Our Services" badge: white stroke ring around the
    circle at rest, and once it finishes traveling to the right wall
    on hover, its fill switches from frosted white to the same orange-
    pink-purple gradient used everywhere else on the site. */
@@ -9716,10 +9716,10 @@ body.nav-open {
   border-color: rgba(255, 255, 255, .5) !important;
 }
 
-/* FINAL v2 — service card hover-video icons (cards 1-4: Experience
+/* FINAL v2 â€” service card hover-video icons (cards 1-4: Experience
    Strategy, Creative Direction, SEO & GEO Growth, AI & Digital
    Innovation): the video IS the icon now (no more static <img>, no
-   more swapping between two elements — that swap was what caused
+   more swapping between two elements â€” that swap was what caused
    the visible size-jump on hover). Each sits paused on its first
    frame at rest (looks like a normal static icon) and only starts
    playing while hovered; script.js handles the actual play()/
@@ -9739,7 +9739,7 @@ body.nav-open {
   margin: 0 auto !important;
 }
 
-/* FINAL — these 4 video icons read ~20% smaller than intended (the
+/* FINAL â€” these 4 video icons read ~20% smaller than intended (the
    source clips are full-bleed line art with no internal padding, so
    at the same box size they look lighter/smaller than the old flat
    PNG icons). Scale the icon box itself up 20% so the enlargement
@@ -9753,7 +9753,7 @@ body.nav-open {
   /* Superseded by FIX v3 below: the icon box is now sized to exactly
      match the card's content box (100% width, 0 margin), so the old
      "left:50% + translateX(-50%)" centering trick is not just
-     unnecessary but actively wrong — on a 100%-wide box it shifts the
+     unnecessary but actively wrong â€” on a 100%-wide box it shifts the
      whole element half the card's width to the LEFT, which is exactly
      the "video is outside the card" bug. Neutralized to no transform. */
   transform: none !important;
@@ -9811,7 +9811,7 @@ body.nav-open {
   }
 }
 
-/* FINAL — Book Session: robust re-assert that the button spans the
+/* FINAL â€” Book Session: robust re-assert that the button spans the
    exact same left/right edges as the calendar above it (belt-and-
    braces re-declaration in case anything upstream still constrains
    its width), plus swap the hover feedback from a soft blurred glow
@@ -9838,12 +9838,12 @@ body.nav-open {
     0 6px 10px -2px rgba(14, 12, 20, .35) !important;
 }
 
-/* FINAL — kill any leftover forced height on the calendar widget
+/* FINAL â€” kill any leftover forced height on the calendar widget
    (an earlier layout pass used an internal 3-row grid with a fixed-
    height middle row for the date grid; if any part of that is still
    in effect it leaves visible dead space inside the card before the
    next card below it). The widget's height is now purely content-
-   driven end to end: header, then the date grid, then the footer —
+   driven end to end: header, then the date grid, then the footer â€”
    nothing forced taller than it needs to be. */
 #coaching .calendar-widget {
   display: flex !important;
@@ -9857,18 +9857,18 @@ body.nav-open {
   min-height: 0 !important;
 }
 
-/* FINAL — real root cause of the huge blank gap at the bottom of the
+/* FINAL â€” real root cause of the huge blank gap at the bottom of the
    whole coaching card: several old rules from an earlier grid-based
    layout (.sec-coaching .audience-cards { height: 260px / 288px /
    340px !important }, scattered across multiple past redesign
-   passes) were never actually overridden — the current #coaching-
+   passes) were never actually overridden â€” the current #coaching-
    scoped redesign block sets display/columns/gap on .audience-cards
    but never touches its height, so those old fixed pixel heights
    were still winning (class selectors don't need to beat an ID rule
    that simply never mentions the property). Since .audience-cards
    and its wrapper are plain transparent layout boxes (no card
    background of their own), that forced extra height was invisible
-   empty space, not a visible box — reading as "empty space at the
+   empty space, not a visible box â€” reading as "empty space at the
    bottom" once it pushed the whole section's auto-height taller
    than its actual visible content. Re-asserted at ID specificity so
    nothing upstream can reintroduce it. */
@@ -9888,7 +9888,7 @@ body.nav-open {
   max-height: none !important;
 }
 
-/* FINAL v2 — bottom-align the two columns again now that the real
+/* FINAL v2 â€” bottom-align the two columns again now that the real
    root cause of the old empty-space bug (a stale grid-template-rows:
    auto 260px auto reserving a fixed empty row) is fixed below via
    grid-template-rows:auto. That means align-items:stretch is safe
@@ -9896,14 +9896,14 @@ body.nav-open {
    its flex-column parent (.coaching-side), so when the grid stretches
    it taller to match the left column, the card's own background
    grows to fill that space (centering its items) instead of leaving
-   dead air — the timeline and the checklist now end at the same
+   dead air â€” the timeline and the checklist now end at the same
    baseline. */
 #coaching .coaching-layout {
   align-items: stretch !important;
   grid-template-rows: auto !important;
 }
 
-/* FINAL — the whole coaching section reads as a separate floating
+/* FINAL â€” the whole coaching section reads as a separate floating
    rounded card (margin above/below, radius on all 4 corners), unlike
    every other section on the page (services, approach, why, cta),
    which are all flush, full-bleed, edge-to-edge. Matching that here:
@@ -9916,12 +9916,12 @@ body.nav-open {
   padding-bottom: clamp(32px, 4vw, 52px) !important;
 }
 
-/* FINAL — "What We'll Focus On" cards: equalize height + enlarge
+/* FINAL â€” "What We'll Focus On" cards: equalize height + enlarge
    text. The grid (.audience-cards) already stretches its 3 <li>
    grid items to equal height by default, but .aud-card itself (the
    actual visible card box, one level down inside each <li>) had
    height:auto with no height:100%, so it only ever grew to fit its
-   OWN text — different description lengths meant different card
+   OWN text â€” different description lengths meant different card
    heights despite the equal-height grid row underneath. Filling the
    full 100% now makes all 3 literally the same height regardless of
    copy length; .aud-card__desc's existing flex:1 does the rest,
@@ -9942,7 +9942,7 @@ body.nav-open {
   margin-top: 18px !important;
 }
 
-/* FINAL — "How The Session Works" timeline: everything (icon badge,
+/* FINAL â€” "How The Session Works" timeline: everything (icon badge,
    step number, title, description) was noticeably smaller here than
    the rest of the page's type scale. Enlarging all of it, and giving
    the timeline more breathing room to match. */
@@ -9978,7 +9978,7 @@ body.nav-open {
    language already used for the Approach section's timeline
    (violet / blue / teal / gold / pink). Icons are the user's own
    colored PNG artwork on a transparent background, so the glow is
-   layered purely via box-shadow — the artwork itself is untouched.
+   layered purely via box-shadow â€” the artwork itself is untouched.
    Rest state gets a soft, subtle version of each color; the
    auto-active state (below, driven by script.js) blooms brighter,
    mirroring .tstep--auto-active exactly. */
@@ -10020,7 +10020,7 @@ body.nav-open {
   /* The unconditional "enlarge" pass above sets gap:8px for the
      desktop row layout, but that same value carries into the
      stacked mobile layout (flex-direction:column, set further up in
-     the file at this same breakpoint) — 8px between full-width rows
+     the file at this same breakpoint) â€” 8px between full-width rows
      that each carry a 45px icon + multi-line description reads as
      cramped/overlapping. Give the stacked steps real breathing room. */
   #coaching .coaching__timeline {
@@ -10031,10 +10031,10 @@ body.nav-open {
   }
 }
 
-/* FINAL — "Why E4LA" heading: remove the small stray accent rule
+/* FINAL â€” "Why E4LA" heading: remove the small stray accent rule
    that sat under "Your strategic partner." (it read as a random,
    out-of-place underline), and give "strategic partner" the site's
-   signature orange→pink→purple gradient treatment instead, matching
+   signature orangeâ†’pinkâ†’purple gradient treatment instead, matching
    the accent already used on the hero's scrambling word. */
 .why__rule {
   display: none !important;
@@ -10048,11 +10048,11 @@ body.nav-open {
   display: inline-block !important;
 }
 
-/* FINAL — real E4LA wordmark (assets/e4la-logo-palm.png, background
+/* FINAL â€” real E4LA wordmark (assets/e4la-logo-palm.png, background
    already removed) replacing the old cropped-photo placeholder in
    both the header and footer. The previous rules used object-fit:
    cover + a heavy scale() because they were zooming into a cropped
-   corner of a wide photo to fake a logo chip — wrong approach for an
+   corner of a wide photo to fake a logo chip â€” wrong approach for an
    actual logotype, which needs to be shown in FULL and undistorted.
    Switching to object-fit:contain and dropping the crop/zoom/rounded
    chip treatment entirely so the real logo just sits cleanly on the
@@ -10090,10 +10090,10 @@ body.nav-open {
   }
 }
 
-/* FINAL v3 — BOOK SESSION hover, take 3. Dropping the translateY
+/* FINAL v3 â€” BOOK SESSION hover, take 3. Dropping the translateY
    lift entirely (it read as the whole button shifting upward,
    changing its position) in favor of a scale-only "pop toward the
-   viewer" — same spot, just bigger — plus a tighter, closer, more
+   viewer" â€” same spot, just bigger â€” plus a tighter, closer, more
    defined shadow instead of a large soft blur radius (which is what
    was reading as "foggy": a big diffuse blur haze rather than a
    crisp elevation edge). Re-declared at doubled class specificity so
@@ -10108,13 +10108,13 @@ body.nav-open {
     0 2px 4px -1px rgba(14, 12, 20, .4) !important;
 }
 
-/* FINAL v2 — SERVICES CARDS: ONE continuous gradient border across
+/* FINAL v2 â€” SERVICES CARDS: ONE continuous gradient border across
    the whole row, not five independent copies of the same gradient.
    Each card is a transparent-bordered window (border-box layer) onto
-   ONE shared orange→pink→purple gradient stretched to 5x the row
+   ONE shared orangeâ†’pinkâ†’purple gradient stretched to 5x the row
    width (background-size:500%), with each card's background-position
    shifted by exactly one card-width (0/25/50/75/100%) so the color
-   a card shows picks up exactly where its neighbor left off — like
+   a card shows picks up exactly where its neighbor left off â€” like
    cutting one continuous ribbon into 5 pieces. Full-strength colors,
    no white/opacity mixed into the gradient layer itself (the frosted
    glass fill is a SEPARATE background layer in the padding-box, so
@@ -10144,17 +10144,17 @@ body.nav-open {
     linear-gradient(90deg, var(--g-orange), var(--g-pink) 50%, var(--g-purple)) !important;
 }
 
-/* FINAL v3 — full-strength vivid fill, matching the user's reference
-   swatch (deep indigo → violet → magenta → orange, same intensity as
+/* FINAL v3 â€” full-strength vivid fill, matching the user's reference
+   swatch (deep indigo â†’ violet â†’ magenta â†’ orange, same intensity as
    the site's CTA gradient) instead of the previous pastel/white-
-   diluted wash. The white overlay layer is gone entirely — the
+   diluted wash. The white overlay layer is gone entirely â€” the
    gradient itself is now the whole card's background, border
    included, so there's nothing left to mute it. Title/description
    flip to white/near-white for contrast against the now-saturated
    background; the arrow circle becomes an outlined white ring to
    match. Card icons are transparent-background videos with their own
    baked-in line colors, so they're left as-is (can't be recolored
-   via CSS) — flag if any specific icon reads poorly against its
+   via CSS) â€” flag if any specific icon reads poorly against its
    card's segment of the gradient and it can be addressed directly. */
 .sec-services .svc-card.svc-card {
   border: 0 !important;
@@ -10180,7 +10180,7 @@ body.nav-open {
    glass-hover treatment from an earlier redesign pass) is still
    winning the cascade for the `background` property specifically.
    This guarantees the card reads as the exact same solid color
-   before, during, and after hover — nothing lightens or fades. */
+   before, during, and after hover â€” nothing lightens or fades. */
 .sec-services .services-grid .svc-card.svc-card.svc-card:hover,
 .sec-services .services-grid .svc-card.svc-card.svc-card:focus-visible,
 .sec-services .services-grid .svc-card.svc-card.svc-card.is-active,
@@ -10242,14 +10242,14 @@ body.nav-open {
   stroke: #fff !important;
 }
 
-/* FINAL — recolor the service card icons to plain white so they read
+/* FINAL â€” recolor the service card icons to plain white so they read
    cleanly against the new vivid gradient fill (previously each was
-   its own theme color — purple/blue/green/amber — which no longer
+   its own theme color â€” purple/blue/green/amber â€” which no longer
    matches). The 4 animated icons are transparent-background <video>
    elements, and video color can't be changed with `color` the way an
    inline SVG can; brightness(0) crushes every opaque pixel to black
    regardless of its original hue while leaving transparent pixels
-   transparent, then invert(1) flips that black to white — the net
+   transparent, then invert(1) flips that black to white â€” the net
    effect is a clean solid-white version of the line art with the
    same shape/transparency, no matter what color it was filmed in.
    All 5 cards use this same video-icon setup, so one rule covers
@@ -10264,7 +10264,7 @@ body.nav-open {
 }
 
 /* ============================================================
-   SERVICES DETAIL PAGE (services.html) — standalone page,
+   SERVICES DETAIL PAGE (services.html) â€” standalone page,
    prefixed .svcd- to avoid colliding with the homepage's
    heavily-scoped .sec-services rules above.
    ============================================================ */
@@ -10272,7 +10272,7 @@ body.nav-open {
   background-color:#07060D;
   /* Two star layers at deliberately different, non-matching tile sizes
      (853px / 611px, coprime-ish) so their dots never re-align into an
-     obvious repeating grid the way a single small tile does — the
+     obvious repeating grid the way a single small tile does â€” the
      previous single 480x480 tile made the same handful of dots visibly
      stamp out across the page. */
   background-image:
@@ -10317,7 +10317,7 @@ body.nav-open {
     920px 920px, 920px 920px, 920px 920px, 920px 920px, 920px 920px;
   background-repeat: repeat;
   /* Pin the starfield to the viewport itself so it never drifts with
-     scroll anywhere on the page — this is what actually keeps it
+     scroll anywhere on the page â€” this is what actually keeps it
      "fixed" (previous attempt papered over it with an opaque panel
      instead, which just hid the stars; this keeps them visible AND
      still). */
@@ -10330,27 +10330,27 @@ body.nav-open {
 .svcd-h1 .is-grad{background:linear-gradient(95deg,var(--g-pink) 0%,var(--g-orange) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
 .svcd-sub{font-size:15px;line-height:1.7;font-weight:300;color:rgba(255,255,255,.55);max-width:560px;margin-bottom:56px}
 
-/* ── Pinned scroll-step interaction (fantasy.co-style) ──
+/* â”€â”€ Pinned scroll-step interaction (fantasy.co-style) â”€â”€
    One 100vh "stage" stays pinned in the viewport while a tall
    wrapper scrolls past it; JS toggles which panel is .is-active
    based on how far we've scrolled through the wrapper.
-   NOTE: this deliberately does NOT use `position:sticky` — the
+   NOTE: this deliberately does NOT use `position:sticky` â€” the
    site's global `body{overflow-x:hidden}` (style.css line 4)
    breaks sticky positioning for all descendants in Chrome/Safari
    (a well-known engine quirk: any non-visible overflow on an
    ancestor can disable sticky down the tree). So instead the JS
    toggles the stage between static / fixed / absolute-at-bottom
-   — see the "svcd-pin" controller in script.js. On narrow screens
+   â€” see the "svcd-pin" controller in script.js. On narrow screens
    the whole thing degrades to a plain stacked list (media query
    at the bottom) so nothing is scroll-jacked on mobile. */
 .svcd-pin{position:relative;height:100vh}
 .svcd-pin__stage{
   height:100vh;overflow:hidden;
   display:flex;align-items:center;
-  /* No background here on purpose — the starfield itself is pinned to
+  /* No background here on purpose â€” the starfield itself is pinned to
      the viewport via background-attachment:fixed on .svcd-page below,
      so the stars stay visible AND stationary, instead of being covered
-     up by an opaque panel (which was the wrong fix — it hid them). */
+     up by an opaque panel (which was the wrong fix â€” it hid them). */
 }
 .svcd-pin__stage.is-fixed{position:fixed;top:0;left:0;width:100%;z-index:3}
 .svcd-pin__stage.is-end{position:absolute;left:0;bottom:0;width:100%}
@@ -10386,7 +10386,7 @@ body.nav-open {
   display:grid;grid-template-columns:1.1fr .9fr;align-items:center;column-gap:48px;
   pointer-events:none;
   /* transform + opacity are driven per-frame from script.js, continuously
-     coupled to scroll position (no CSS transition — a transition here
+     coupled to scroll position (no CSS transition â€” a transition here
      would make it lag behind the scrubbing instead of tracking 1:1) */
   transform:translateY(100%);
   opacity:0;
@@ -10397,7 +10397,7 @@ body.nav-open {
 .svcd-pin__icon{display:none}
 .svcd-pin__title{font-family:'Manrope',sans-serif;font-size:clamp(36px,4.2vw,56px);font-weight:700;letter-spacing:-.6px;margin-bottom:16px;color:#fff}
 .svcd-pin__desc{font-size:30px;line-height:1.5;font-weight:300;color:rgba(255,255,255,.55);max-width:520px;margin-bottom:26px}
-/* Tags now sit over the circle itself rather than in the text column —
+/* Tags now sit over the circle itself rather than in the text column â€”
    script.js places .svcd-pin__panel's markup so this lands in the same grid
    cell as .svcd-pin__visual (see grid-column/grid-row below). Plain text,
    stacked vertically, no more pill/chip styling. */
@@ -10411,7 +10411,7 @@ body.nav-open {
   font-size:22px;font-weight:500;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.35);
 }
 /* Hollow bullet by default; script.js cycles .is-tag-active through the list
-   automatically (once settled) — bold text, bullet fills in solid. */
+   automatically (once settled) â€” bold text, bullet fills in solid. */
 .svcd-pin__tags li::before{
   content:'';width:12px;height:12px;border-radius:50%;flex-shrink:0;
   border:2px solid rgba(255,255,255,.55);background:transparent;
@@ -10420,7 +10420,7 @@ body.nav-open {
 .svcd-pin__tags li.is-tag-active{font-weight:800}
 .svcd-pin__tags li.is-tag-active::before{background:#fff;border-color:#fff}
 
-/* FINAL — "Paint Events" gradient treatment. Reuses this exact
+/* FINAL â€” "Paint Events" gradient treatment. Reuses this exact
    panel's own already-declared accent colors (--row-g2/--row-g3/
    --row-g4, set inline on .svcd-pin__panel#workshops-experiences)
    rather than importing an unrelated gradient, so the tag's color
@@ -10446,7 +10446,7 @@ body.nav-open {
    script.js from the panel's scroll progress). Kept separate from
    .svcd-pin__blob itself so it never fights with that element's own
    idle CSS "organic wobble" animation (svcd-blob-morph below), which
-   also animates `transform` — two elements, two independent transforms,
+   also animates `transform` â€” two elements, two independent transforms,
    no collision. */
 .svcd-pin__blob-wrap{
   width:100%;height:100%;
@@ -10527,18 +10527,18 @@ body.nav-open {
    .svcd-pin__panel's own grid exactly (empty first cell + visual in the
    second) so it lands in the identical on-screen slot every panel uses. */
 /* align-items:end (rather than center) plus the bottom padding anchors the
-   blob toward the bottom-right instead of filling the full stage height —
+   blob toward the bottom-right instead of filling the full stage height â€”
    leaving clear space above it for a future character/illustration to
    stand on top of it. */
 .svcd-pin__blob-slot{
   --row-c:#7C3AED;
-  /* Anchored to the VIEWPORT, not the document — this is what keeps the
+  /* Anchored to the VIEWPORT, not the document â€” this is what keeps the
      blob's approach purely a scale/rotate/blur/opacity change with zero
      scroll-linked vertical travel, mirroring the exit exactly. Before this,
      position:absolute here still scrolled with the page like any other
      in-flow content until the pinned section's own JS-driven fixed layout
      kicked in, which is what made the blob visibly "rise up from below"
-     during the approach — a plain absolute position was never going to look
+     during the approach â€” a plain absolute position was never going to look
      like the exit (which happens entirely inside the JS-fixed stage). */
   position:fixed;inset:0;height:100vh;
   max-width:1180px;padding:0 var(--pad-x) 48px;margin:0 auto;
@@ -10546,12 +10546,12 @@ body.nav-open {
   pointer-events:none;
   transform:translateY(20%); /* pushed further down, per request */
 }
-/* Each panel's OWN visual slot is desktop-hidden — panel 0's is emptied by
+/* Each panel's OWN visual slot is desktop-hidden â€” panel 0's is emptied by
    script.js (its blob moved into .svcd-pin__blob-slot above), and panels
    1-4 keep their unused blob markup only for the mobile fallback below. */
 .svcd-pin__panel .svcd-pin__visual{display:none}
 /* Mobile's own persistent sphere (separate node, see services.html + the
-   "MOBILE PINNED-SPHERE FALLBACK" block in script.js) — desktop-hidden by
+   "MOBILE PINNED-SPHERE FALLBACK" block in script.js) â€” desktop-hidden by
    default, shown fixed-to-viewport only inside the mobile media query
    below. */
 .svcd-pin__mobile-blob{display:none}
@@ -10620,7 +10620,7 @@ body.nav-open {
    used to be set up here. Removed: this was one of TWO separate,
    conflicting view-transition-name declarations for .nav in this same
    file (this one named it "site-nav", a second block further down
-   named it "e4la-nav") — only the later one actually won the cascade,
+   named it "e4la-nav") â€” only the later one actually won the cascade,
    which is exactly the kind of duplicated/competing-authority setup
    that caused the nav to behave inconsistently depending on load
    order. See the note further down (where the surviving block used
@@ -10751,10 +10751,10 @@ body.nav-open {
   }
 }
 
-/* FINAL v5 — HOMEPAGE SERVICE CARDS: dark glass treatment matching
+/* FINAL v5 â€” HOMEPAGE SERVICE CARDS: dark glass treatment matching
    the about.html reference (translucent dark card over the section's
    glow, colored per-card border, light text). Replaces the v4 "plain
-   white card" reset directly above this comment's old position —
+   white card" reset directly above this comment's old position â€”
    background/border/shadow/text-color all flipped to dark-on-dark. */
 .sec-services .svc-card.svc-card,
 .sec-services .services-grid .svc-card.svc-card {
@@ -10817,7 +10817,7 @@ body.nav-open {
 
 /* Icon area becomes a solid-white "photo header" block spanning the
    card's full width (it already is full-width/square per the FIX v3
-   sizing rules below) — this is deliberate: the 5 icon clips are
+   sizing rules below) â€” this is deliberate: the 5 icon clips are
    pre-recorded videos with a baked-in solid white background (not
    real alpha transparency), so floating them directly on a dark card
    would show an ugly white rectangle. Framing that white as an
@@ -10840,10 +10840,10 @@ body.nav-open {
   color: inherit !important;
 }
 
-/* FIX — the icon video was growing on hover from a center-anchored
+/* FIX â€” the icon video was growing on hover from a center-anchored
    transform-origin while also shifting UP 18px, so the enlarged box
    pushed past the card's own top edge (the card has overflow:visible,
-   so that spillover was fully visible instead of being clipped — read
+   so that spillover was fully visible instead of being clipped â€” read
    as "the video exits the frame from the top"). Anchoring the scale
    to the icon's own top edge (transform-origin 50% 0%) keeps that top
    edge fixed in place no matter how big it grows, so it only ever
@@ -10868,7 +10868,7 @@ body.nav-open {
 .sec-services .services-grid .svc-card.svc-card:nth-child(4) .svc-icon,
 .sec-services .services-grid .svc-card.svc-card:nth-child(5) .svc-icon {
   /* Same root-cause fix as the earlier duplicate block above: no more
-     translateX(-50%) centering on a box that's already 100% width —
+     translateX(-50%) centering on a box that's already 100% width â€”
      that was shifting the icon/video half the card's width to the
      left, i.e. the exact "video is outside the card, should come to
      the right" bug the user is seeing. */
@@ -10926,10 +10926,10 @@ body.nav-open {
   }
 }
 
-/* FIX v3 — icon FRAME truly flush on 3 sides, no calc/guessing.
+/* FIX v3 â€” icon FRAME truly flush on 3 sides, no calc/guessing.
    The previous attempt tried to cancel the card's own padding with a
    matching negative margin on the icon (width: 100% + 2*padding,
-   margin: -padding) — that depends on correctly re-guessing the
+   margin: -padding) â€” that depends on correctly re-guessing the
    card's real padding value, and if that guess is even slightly off
    (or something else in this file's long history still contributes
    to it) the icon overshoots or undershoots the real edge, which is
@@ -10937,7 +10937,7 @@ body.nav-open {
    Bulletproof fix instead: remove the card's own padding entirely
    (0 on every side), so .svc-icon (100% width, first child, 0
    margin) is now GUARANTEED to exactly match the card's real box on
-   the top/left/right with no arithmetic involved — it's simply the
+   the top/left/right with no arithmetic involved â€” it's simply the
    card's full content box. The inset that padding used to provide is
    moved onto the specific elements that still need it (title, desc,
    the "more" text, and the arrow button), via margin instead. Bottom
@@ -10970,7 +10970,7 @@ body.nav-open {
    box no matter what size it would otherwise want to render at.
    Whatever was making the clip drift left/right before, an absolutely
    positioned, inset:0, 100%x100% video inside an overflow:hidden box
-   physically cannot render outside that box's edges — this removes
+   physically cannot render outside that box's edges â€” this removes
    the guesswork entirely instead of chasing which upstream rule was
    responsible for the wrong size. */
 .sec-services .services-grid .svc-card.svc-card .svc-icon .svc-icon__video {
@@ -10985,7 +10985,7 @@ body.nav-open {
   object-position: center center !important;
 }
 /* Title/desc keep their own centering (text-align/margin:auto) from
-   the base rules — they must NOT get an explicit width:100% PLUS a
+   the base rules â€” they must NOT get an explicit width:100% PLUS a
    fixed left/right margin at the same time, because border-box only
    excludes padding/border from width, never margin: a 100%-wide box
    with extra margin-left/right on top overflows the card by 2x that
@@ -10999,25 +10999,25 @@ body.nav-open {
 }
 /* Desc/more already center themselves (max-width + margin:0 auto)
    from the base rules and are narrower than the card, so they don't
-   need — and must not get — an extra explicit left/right margin. */
+   need â€” and must not get â€” an extra explicit left/right margin. */
 
 /* Arrow centers itself horizontally via margin-left/right:auto from
    its base rule; only the bottom inset needs to be added here. Do
-   NOT set margin-left/right to a fixed value — that replaces the
+   NOT set margin-left/right to a fixed value â€” that replaces the
    auto-centering with a fixed offset and drags the button off-center.
 
    Vertical position: the card is `justify-content: space-between`
    with only 2 flex children (.svc-card__content and .svc-card__arr),
    AND the arrow's own base rule gives it `margin: auto auto 0`. Auto
    margins on a flex item always win over justify-content and absorb
-   every pixel of leftover space along the main axis — so as soon as
+   every pixel of leftover space along the main axis â€” so as soon as
    the card's min-height is taller than the actual content (which it
    now is, since the icon alone is a full-card-width square), the
    arrow gets shoved all the way down with a big dead gap above it.
    That's the "CTA went very low" bug. Fix: stop the arrow's own
    margin-top from being auto (so it can't self-absorb leftover
    space) and stop the card from distributing leftover space via
-   space-between — both must change together or the other still
+   space-between â€” both must change together or the other still
    pushes the arrow down. The selector list here matches (and beats,
    via the extra combinator entry) the higher-specificity
    ".svc-card__content + .svc-card__arr" rule that originally set
@@ -11042,7 +11042,7 @@ body.nav-open {
   }
 }
 
-/* FINAL — service card titles: gradient text instead of flat black,
+/* FINAL â€” service card titles: gradient text instead of flat black,
    using the same brand gradient already used for the "grad-text"
    accent in the services heading (purple -> orange), so it matches
    the existing gold/purple neon system instead of inventing a new
@@ -11056,10 +11056,10 @@ body.nav-open {
 }
 
 /* ============================================================
-   NEW — "Why E4LA" stats band, rebuilt from scratch and repositioned
+   NEW â€” "Why E4LA" stats band, rebuilt from scratch and repositioned
    right after #coaching. Deliberately uses a NEW section class
    (.sec-why2, keeping the existing id="why" so the footer's "About
-   Us" anchor still works) instead of reusing .sec-why — the old
+   Us" anchor still works) instead of reusing .sec-why â€” the old
    .sec-why class carries a long history of dark-theme overrides
    (backgrounds, colors, the old 6-item .why-grid layout) scattered
    across this file; fighting all of them with !important would be
@@ -11149,7 +11149,7 @@ body.nav-open {
 .why-stat__ico--green  { background: rgba(5, 150, 105, .1);  color: #059669; box-shadow: 0 0 0 1px rgba(5, 150, 105, .22),  0 0 14px rgba(5, 150, 105, .16); }
 .why-stat__ico--blue   { background: rgba(37, 99, 235, .1);  color: #2563eb; box-shadow: 0 0 0 1px rgba(37, 99, 235, .22),  0 0 14px rgba(37, 99, 235, .16); }
 
-/* Auto-cycle "light up" state — same mechanism as #coaching
+/* Auto-cycle "light up" state â€” same mechanism as #coaching
    .coaching__timeline (is-ctime-active): script.js cycles one
    .why-stat active every 2s via .is-why-active, the icon blooms
    brighter + scales up, and the number brightens to match. */
@@ -11210,7 +11210,7 @@ body.nav-open {
     flex: 0 0 auto;
   }
   .why-stat__label {
-    /* Was capped at 13ch for the centered column layout — in this row
+    /* Was capped at 13ch for the centered column layout â€” in this row
        layout that made longer labels ("Event participants &
        communities") wrap narrower than the row has room for. Let it
        fill the remaining row width instead so wrapping is even. */
@@ -11220,7 +11220,7 @@ body.nav-open {
 }
 
 /* ============================================================
-   FINAL — post-booking sections: What You'll Gain / How We Work
+   FINAL â€” post-booking sections: What You'll Gain / How We Work
    Together / FAQ / final Schedule CTA card. Converted from the old
    light (cream/white) theme to the same dark theme already used by
    the hero, .sec-services, .sec-approach and #coaching above these
@@ -11275,7 +11275,7 @@ body.nav-open {
 }
 
 /* FAQ band: the section now shares the same dark theme as its
-   neighbors — the brand gradient (same one used by the closing
+   neighbors â€” the brand gradient (same one used by the closing
    "Ready to elevate..." CTA band) is scoped to the card box
    (.faq-layout) only, sized to the question grid's own content
    width, NOT full-bleed. The mascot video sits outside/beside that
@@ -11331,7 +11331,7 @@ body.nav-open {
   gap: 10px;
 }
 
-/* Decorative mascot video — real alpha-transparent WebM (luminance-
+/* Decorative mascot video â€” real alpha-transparent WebM (luminance-
    keyed from the source clip), so it floats cleanly over the plain
    section background instead of showing a background box. Sits
    outside the gradient card, sized generously since it now has its
@@ -11394,7 +11394,7 @@ body.nav-open {
 .gain-item__ico--green  { background: rgba(5, 150, 105, .1);  color: #059669; box-shadow: 0 0 0 1px rgba(5, 150, 105, .26),  0 0 16px rgba(5, 150, 105, .18); }
 .gain-item__ico--blue   { background: rgba(37, 99, 235, .1);  color: #2563eb; box-shadow: 0 0 0 1px rgba(37, 99, 235, .26),  0 0 16px rgba(37, 99, 235, .18); }
 
-/* Auto-cycle "light up" — same mechanism as #coaching
+/* Auto-cycle "light up" â€” same mechanism as #coaching
    .coaching__timeline / .why-stats, driven by script.js toggling
    .is-gain-active every 2s. */
 .gain-item.is-gain-active .gain-item__ico { transform: scale(1.12); }
@@ -11433,12 +11433,12 @@ body.nav-open {
   padding: 0 12px;
 }
 /* Connector: a dashed line + arrowhead from THIS step's icon toward
-   the NEXT step's icon (1→2, 2→3, 3→4). Both ends are inset by the
+   the NEXT step's icon (1â†’2, 2â†’3, 3â†’4). Both ends are inset by the
    icon's radius (27px, since the icon is now 54px) plus a fixed gap,
    so the line/arrow visibly clears each circle instead of touching
    it. Math: with equal-width columns, "50%" of one step's own box
    plus a further "100%" reaches exactly the center of the next
-   column's icon regardless of actual column width — so these
+   column's icon regardless of actual column width â€” so these
    offsets work without knowing the column's pixel width. */
 .howwork-step:not(:last-child)::after {
   content: "";
@@ -11479,7 +11479,7 @@ body.nav-open {
 .howwork-step__ico--amber  { background: rgba(217, 119, 6, .1);  color: #d97706; box-shadow: 0 0 0 1px rgba(217, 119, 6, .28),  0 0 16px rgba(217, 119, 6, .18); }
 .howwork-step__ico--green  { background: rgba(5, 150, 105, .1);  color: #059669; box-shadow: 0 0 0 1px rgba(5, 150, 105, .26),  0 0 16px rgba(5, 150, 105, .18); }
 
-/* Auto-cycle "light up" — same mechanism as #coaching
+/* Auto-cycle "light up" â€” same mechanism as #coaching
    .coaching__timeline / .why-stats / .gain-item, driven by
    script.js toggling .is-howwork-active every 2s. */
 .howwork-step.is-howwork-active .howwork-step__ico { transform: scale(1.12); }
@@ -11508,6 +11508,7 @@ body.nav-open {
 .faq-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  align-items: start;
   gap: 14px 20px;
   margin-top: 28px;
 }
@@ -11622,7 +11623,7 @@ body.nav-open {
   gap: 8px;
 }
 /* Restyled to match the About page's "Book a Strategy Call" button
-   (flat gradient rounded-rect, no badge/beam) per direct request —
+   (flat gradient rounded-rect, no badge/beam) per direct request â€”
    replaces the previous .cta-warm__btn/.cta-neon pill+badge reuse.
    Same recipe as about.css's ".btn": linear gradient fill, 8px
    radius (not a pill), plain trailing arrow icon, soft lift on
@@ -11662,7 +11663,7 @@ body.nav-open {
    sits in a special full-bleed grid built just for the 2-tone CTA
    band (.sec-cta uses its own smart calc()-based padding formula,
    unlike the normal max-width+auto-margin content wrapper every
-   other section — including this Schedule card — uses), and per
+   other section â€” including this Schedule card â€” uses), and per
    direct visual comparison it currently reaches slightly further
    right than the Schedule button above it. Pull it in to match. */
 .sec-cta .cta-warm__btn {
@@ -11701,7 +11702,7 @@ body.nav-open {
     grid-template-columns: 1fr 1fr;
   }
   /* 5 items in a 2-column grid leaves the last one stranded alone on
-     its own row with a lopsided gap beside it — span it across both
+     its own row with a lopsided gap beside it â€” span it across both
      columns and center it instead. */
   .gain-item:last-child {
     grid-column: 1 / -1;
@@ -11827,7 +11828,7 @@ body.nav-open {
   transform: rotate(180deg);
 }
 
-/* Smooth open/close for the revealed sections — same grid-template-
+/* Smooth open/close for the revealed sections â€” same grid-template-
    rows 0fr/1fr trick already used for .faq-item__a, so height animates
    to the real content height with no JS measurement needed. The
    .coaching-more button stays in place (not inside this wrapper) and
@@ -11943,12 +11944,12 @@ body.nav-open {
   transform: translate3d(0, 0, 0);
 }
 
-/* FINAL — reskinned to match Home's established dark-glass card
+/* FINAL â€” reskinned to match Home's established dark-glass card
    treatment (.sec-services .svc-card: border rgba(157,129,255,.28),
    background-color #03041D, inset-highlight + drop-shadow box-shadow;
    hover deepens both) instead of this card's previous distinct
    gradient-border-banner look. Content/layout/padding/radius/place-
-   in-page are all unchanged — only background/border/shadow moved
+   in-page are all unchanged â€” only background/border/shadow moved
    to the shared card language. The old padding:1.5px + gradient
    background "clip trick" (used to fake a gradient border) is
    replaced by a real 1px border directly on .svcd-cta__box, so
@@ -12316,7 +12317,7 @@ body.svcd-page {
    98%) and y stays balanced with no empty/overcrowded patches. Same
    per-star size/opacity formula and background-repeat/position/
    attachment mechanics as before, so the appearance and "fixed"
-   pinned-backdrop behavior are unchanged — just fewer of them. */
+   pinned-backdrop behavior are unchanged â€” just fewer of them. */
 body.svcd-page {
   background-color: var(--bg-hero) !important;
   background-image:
@@ -12350,19 +12351,19 @@ body.svcd-page {
    site-wide now. Root cause found via a screen recording: on a real
    navigation, the browser applied the DESTINATION page's nav state
    (e.g. its correct active-link color) instantly, while the outgoing
-   page's body kept cross-fading out underneath for up to ~260ms — and
+   page's body kept cross-fading out underneath for up to ~260ms â€” and
    under some timing/interruption conditions that mismatched state
    (new nav + stale old body) lingered far longer than the declared
    260ms before resolving. This file also had TWO different, competing
    view-transition-name values assigned to .nav (one earlier in this
-   file named it "site-nav", this block named it "e4la-nav") — only
+   file named it "site-nav", this block named it "e4la-nav") â€” only
    one can ever win the cascade, so the other was silently dead code,
    the same "duplicated authority across the file" problem that caused
    the earlier plain-CSS nav bugs. A plain instant full-page swap (the
    default with this feature off) can't produce a mismatched nav/body
    state, so that's what every page gets now. */
 
-/* Nav/header sizing, links, CTA, badge, mobile menu — all of it —
+/* Nav/header sizing, links, CTA, badge, mobile menu â€” all of it â€”
    now lives exclusively in nav.css (loaded last on every page) as a
    single shared component. The three separate copies that used to
    sit here (FINAL SHARED NAV COMPONENT / FINAL NAV TYPOGRAPHY LOCK /
@@ -12370,14 +12371,14 @@ body.svcd-page {
    escalating !important/specificity tricks, were the actual cause
    of the nav rendering inconsistently between pages: whichever rule
    happened to win in a given context differed page to page. Do not
-   re-add nav rules here — edit nav.css instead. */
+   re-add nav rules here â€” edit nav.css instead. */
 
 /* ============================================================
-   FINAL SHARED TYPOGRAPHY TOKEN SYSTEM — Home + Services
+   FINAL SHARED TYPOGRAPHY TOKEN SYSTEM â€” Home + Services
    consolidates the roles below onto one shared scale so the same
    kind of title/subtitle/body copy reads identically everywhere
    it appears on these two pages. about.html does not load this
-   stylesheet (it has its own assets/css/about.css) — matching
+   stylesheet (it has its own assets/css/about.css) â€” matching
    concrete values are mirrored there so About stays visually in
    sync without merging the two separate CSS architectures.
    Roles covered: hero/page title, section title, subtitle/eyebrow,
@@ -12404,7 +12405,7 @@ body.svcd-page {
   --fw-cta: 400;
 }
 
-/* Hero / page title — Home's marketing hero and Services' page
+/* Hero / page title â€” Home's marketing hero and Services' page
    title are the same semantic role and now share one scale. */
 .hero__h1,
 .svcd-h1 {
@@ -12414,7 +12415,7 @@ body.svcd-page {
   line-height: var(--line-height-hero) !important;
   letter-spacing: normal !important;
 }
-/* Consistent mobile breakpoint for the hero/page-title role — Home
+/* Consistent mobile breakpoint for the hero/page-title role â€” Home
    already had its own 700px override to keep the headline from
    wrapping awkwardly on phones; giving Services' page title the
    same breakpoint + value keeps the two in sync at every width. */
@@ -12425,7 +12426,7 @@ body.svcd-page {
   }
 }
 
-/* Section titles — brings the booking headline (previously its
+/* Section titles â€” brings the booking headline (previously its
    own ID-scoped 36px/800 override) in line with Approach/Why so
    every "normal" section title matches. The larger Home-services
    intro heading (.services-top__h2, ~66px) is a deliberately
@@ -12487,30 +12488,30 @@ body.svcd-page {
    size/line-height so Gain/Schedule read consistently with Approach),
    but that shared rule also normalizes font-weight to 400 for every
    selector in its list. These two were originally semi-bold (600) by
-   design — restoring that here so only size/line-height unified,
+   design â€” restoring that here so only size/line-height unified,
    not the intentional weight difference. */
 .gain-item__text,
 .schedule-card__meta li {
   font-weight: 600 !important;
 }
-/* .faq-item__q: explicitly semibold, NOT bold, per direct feedback —
+/* .faq-item__q: explicitly semibold, NOT bold, per direct feedback â€”
    enough weight to read as a clickable question row without looking
    like a heading. */
 .faq-item__q {
   font-weight: 600 !important;
 }
 
-/* CTA / button labels — non-nav buttons (.site-cta group, line
+/* CTA / button labels â€” non-nav buttons (.site-cta group, line
    ~6514) already share font-family:Manrope / font-size:13px, and
    the earlier "FINAL CTA TYPOGRAPHY" rule already collapsed every
-   one of them to font-weight:400 — so this role is already
+   one of them to font-weight:400 â€” so this role is already
    consistent and is intentionally left untouched here. The nav
    CTA ("Let's Connect") deliberately keeps its own Inter/11px
    styling as part of the nav, which is a distinct role (see Nav
    labels below) and is NOT targeted by this token block. */
 
 /* ============================================================
-   FINAL FROSTED-GLASS ACTIVE-STATE LAYER — illuminated circles
+   FINAL FROSTED-GLASS ACTIVE-STATE LAYER â€” illuminated circles
    Scope (explicitly named, not a blanket ".circle" selector):
      - #coaching .ctime__ico       (booking "how it works" icons)
      - .why-stat__ico              (Why-E4LA stat icons)
@@ -12518,20 +12519,20 @@ body.svcd-page {
      - .gain-item__ico             (What You'll Gain icons)
      - .howwork-step__ico          (How We Work Together step icons)
    EXCLUDED, per explicit instruction: every circle inside the
-   Approach section (.tstep__circle / .timeline__track family) —
+   Approach section (.tstep__circle / .timeline__track family) â€”
    none of the selectors below reference .sec-approach or
    .tstep__circle, so that section is untouched.
    .gain-item__ico and .howwork-step__ico use a child <svg> for their
    icon (not a background-image on the circle itself, like
    #coaching .ctime__ico did before its fix), so the plain z-index:-1
-   ::before trick already sits correctly behind their icon — no
+   ::before trick already sits correctly behind their icon â€” no
    ::after relocation needed for these two.
    Each circle gets one ::before glass layer, inset:0 so it tracks
    the circle's own size exactly (no oversized blob), sitting
    behind it (z-index:-1) via a local stacking context, hidden
    (opacity:0, pointer-events:none) until the SAME trigger that
    already drives that circle's own glow/illumination switches it
-   on — no new animation timing is introduced, no glow color is
+   on â€” no new animation timing is introduced, no glow color is
    changed, and layout is unaffected since the layer is absolutely
    positioned and never influences box size. */
 #coaching .ctime__ico,
@@ -12552,7 +12553,7 @@ body.svcd-page {
   inset: 0;
   z-index: -1;
   border-radius: 50%;
-  /* Resting state is deliberately faint — a permanent opacity:1 at
+  /* Resting state is deliberately faint â€” a permanent opacity:1 at
      the ORIGINAL hover-tier strength (0.07 bg + 14px blur + a wide
      0 8px 28px shadow) turned every icon into a bright frosted-white
      disc that visually swallowed the icon's own color/artwork
@@ -12572,7 +12573,7 @@ body.svcd-page {
 /* .btn-play__ring carries a real 1px solid border (see line ~836:
    .btn-play__ring{border:1px solid #fff}), never overridden. inset:0
    on an absolutely positioned ::before resolves against the PADDING
-   box of its containing block, i.e. just inside that border — so at
+   box of its containing block, i.e. just inside that border â€” so at
    inset:0 this layer sat 1px inward on every edge, ~2px smaller in
    diameter than the visible ring (the reported "not precise" gap).
    #coaching .ctime__ico resolves to border:0 (see line ~9101) and
@@ -15086,7 +15087,7 @@ body.appointment-editor-open {
 
 .booking-priority-card.is-selected::after,
 .booking-final-card.is-selected::after {
-  content: "✓";
+  content: "âœ“";
   position: absolute;
   top: 11px;
   right: 11px;
@@ -15370,7 +15371,7 @@ body.booking-notice-open {
 }
 
 .booking-field--select::after {
-  content: "⌄";
+  content: "âŒ„";
   position: absolute;
   right: 34px;
   bottom: 20px;
@@ -17010,7 +17011,7 @@ svg {
     font-size: 16px !important;
   }
 }
-/* FINAL BOOKING MOBILE HEADER — close button scrolls with modal content */
+/* FINAL BOOKING MOBILE HEADER â€” close button scrolls with modal content */
 @media (max-width: 640px) {
   .booking-modal__shell {
     padding-top: 76px !important;
@@ -17022,7 +17023,7 @@ svg {
     z-index: 10 !important;
   }
 }
-/* FINAL MOBILE SESSION TIMELINE — remove iOS square blur artifacts and align copy */
+/* FINAL MOBILE SESSION TIMELINE â€” remove iOS square blur artifacts and align copy */
 @media (max-width: 700px) {
   #coaching .coaching__timeline li {
     display: grid !important;
@@ -17060,7 +17061,7 @@ svg {
     margin: 0 !important;
   }
 }
-/* FINAL MOBILE TIMELINE FLOW — each description follows its own title */
+/* FINAL MOBILE TIMELINE FLOW â€” each description follows its own title */
 @media (max-width: 700px) {
   #coaching .coaching__timeline li {
     display: flex !important;
@@ -17091,14 +17092,14 @@ svg {
     margin: 0 0 0 20px !important;
   }
 }
-/* FINAL MOBILE TIMELINE LAST ROW — compensate for the wrapped title box */
+/* FINAL MOBILE TIMELINE LAST ROW â€” compensate for the wrapped title box */
 @media (max-width: 700px) {
   #coaching .coaching__timeline li:last-child .ctime__sub {
     margin-left: 6px !important;
   }
 }
 
-/* MOBILE SERVICES — RESTORED PINNED VISUAL, SINGLE AUTHORITY */
+/* MOBILE SERVICES â€” RESTORED PINNED VISUAL, SINGLE AUTHORITY */
 @media (max-width: 639px), (pointer: coarse) {
   html {
     scroll-snap-type: none !important;
@@ -17322,3 +17323,4 @@ svg {
 @media (max-width: 900px) {
   .booking-success-visual__animation { width: min(100%, 320px) !important; }
 }
+
