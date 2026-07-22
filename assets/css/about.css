@@ -263,3 +263,29 @@ h1{max-width:760px;font-family:var(--font-primary);font-size:var(--text-hero);li
 @media(max-width:860px){
   .final-cta .btn { width: 100% !important; }
 }
+/* MOBILE ABOUT IMAGES — FULL FRAME, NO CROPPING */
+@media (max-width: 640px) {
+  .timeline .media,
+  .team-layout .portrait {
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: auto !important;
+    overflow: hidden;
+  }
+
+  .timeline .media img,
+  .team-layout .portrait img {
+    display: block;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    object-position: center !important;
+  }
+
+  .timeline .media--paint img {
+    width: 100% !important;
+    padding: 12px;
+  }
+}
+
