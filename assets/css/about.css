@@ -1,4 +1,4 @@
-﻿*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;scrollbar-color:rgba(168,113,255,.45) #07060D;scrollbar-width:thin}
 ::-webkit-scrollbar{width:10px;height:10px}
 ::-webkit-scrollbar-track{background:#07060D}
@@ -289,3 +289,116 @@ h1{max-width:760px;font-family:var(--font-primary);font-size:var(--text-hero);li
   }
 }
 
+
+/* ABOUT HERO + INSET GLASS CARD REFINEMENT */
+.hero-copy h1{
+  max-width:720px;
+  color:#fff;
+  font-family:var(--font-primary);
+  font-size:var(--text-hero);
+  font-weight:var(--fw-hero);
+  line-height:var(--line-height-hero);
+  letter-spacing:0;
+}
+.hero-copy .lede,
+.hero-copy .body-copy{
+  max-width:620px;
+  color:rgba(236,242,255,.78);
+  font-family:var(--font-primary);
+  font-size:var(--text-body);
+  font-weight:var(--fw-body);
+  line-height:var(--line-height-body);
+}
+.card{
+  background:linear-gradient(145deg,rgba(14,17,32,.84),rgba(5,7,18,.76));
+  backdrop-filter:blur(22px) saturate(125%);
+  -webkit-backdrop-filter:blur(22px) saturate(125%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.11),
+    inset 1px 0 0 rgba(255,255,255,.035),
+    inset 0 -14px 28px rgba(0,0,0,.30),
+    inset 0 0 24px rgba(var(--accent-rgb,124,60,255),.065);
+}
+.card:hover,
+.card:focus-within{
+  background:linear-gradient(145deg,rgba(17,20,38,.88),rgba(5,7,18,.80));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.14),
+    inset 1px 0 0 rgba(255,255,255,.045),
+    inset 0 -18px 34px rgba(0,0,0,.34),
+    inset 0 0 30px rgba(var(--accent-rgb,124,60,255),.09);
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .card{background:#0b0e1b}
+  .card:hover,.card:focus-within{background:#0e1222}
+}
+/* ABOUT HERO TITLE — SHARP LUMINOUS SITE SIGNATURE */
+.hero-copy h1{
+  color:#fff;
+  font-family:'Manrope',Arial,sans-serif;
+  font-size:clamp(36px,4vw,66px);
+  font-weight:700;
+  line-height:1.04;
+  letter-spacing:-.025em;
+  text-rendering:geometricPrecision;
+  -webkit-font-smoothing:antialiased;
+  text-shadow:0 0 18px rgba(255,255,255,.10);
+}
+.hero-copy h1 .gradient-text{
+  display:inline-block;
+  background:linear-gradient(95deg,#F97316 0%,#DB2777 48%,#7C3AED 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  color:transparent;
+  filter:drop-shadow(0 0 7px rgba(219,39,119,.34)) drop-shadow(0 0 15px rgba(124,58,237,.20));
+}
+@media(max-width:700px){
+  .hero-copy h1{font-size:clamp(36px,12vw,58px);letter-spacing:-.02em}
+}
+@media(prefers-reduced-motion:reduce){
+  .hero-copy h1 .gradient-text{filter:drop-shadow(0 0 7px rgba(219,39,119,.28))}
+}
+/* ABOUT HERO — EXACT SERVICES VISUAL MATCH */
+.hero-copy .eyebrow{
+  margin-bottom:16px;
+  color:#7C3AED;
+  font-family:'Manrope',Arial,sans-serif;
+  font-size:14px;
+  font-weight:800;
+  line-height:1.1;
+  letter-spacing:.24em;
+}
+.hero-copy h1{
+  max-width:640px;
+  margin-bottom:18px;
+  color:#fff;
+  font-family:'Manrope',Arial,sans-serif;
+  font-size:clamp(30px,4vw,46px);
+  font-weight:700;
+  line-height:1.12;
+  letter-spacing:-1px;
+  text-shadow:none;
+  text-rendering:geometricPrecision;
+}
+.hero-copy h1 .gradient-text{
+  display:inline-block;
+  background:linear-gradient(95deg,#DB2777 0%,#F97316 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  color:transparent;
+  filter:none;
+}
+.hero-copy .lede{
+  max-width:560px;
+  margin-top:0;
+  color:rgba(255,255,255,.55);
+  font-family:'Manrope',Arial,sans-serif;
+  font-size:15px;
+  font-weight:300;
+  line-height:1.7;
+}
+@media(max-width:700px){
+  .hero-copy h1{font-size:clamp(30px,10vw,46px);letter-spacing:-1px}
+}

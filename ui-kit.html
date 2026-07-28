@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#07060D">
+<meta name="robots" content="noindex,nofollow">
+<title>UI Kit — E4LA Internal Design Reference</title>
+<meta name="description" content="Internal design system reference for the E4LA website: colors, typography, spacing, and components from style.css.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=2026072041">
+<link rel="stylesheet" href="assets/css/nav.css?v=2026072019">
+<link rel="stylesheet" href="assets/css/ui-kit.css?v=1">
+<link rel=icon type=image/png href=assets/e4la-logo-palm2.png?v=2026072044>
+</head>
+<body>
+
+<!-- ── SVG symbol library (subset used on this page) ── -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <defs>
+    <symbol id="i-chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4l4 4 4-4"/></symbol>
+    <symbol id="i-arr" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M8 3l5 5-5 5"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="i-type" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="4,7 4,4 20,4 20,7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3"/></symbol>
+    <symbol id="i-clip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></symbol>
+    <symbol id="i-palette" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10c0 1.657-1.343 3-3 3h-1.5a1.5 1.5 0 0 0 0 3H18"/><circle cx="8" cy="12" r="1"/><circle cx="12" cy="8" r="1"/><circle cx="16" cy="12" r="1"/></symbol>
+  </defs>
+</svg>
+
+<!-- Real site header, copied verbatim from index.html so the header's own
+     CTA (.nav__cta--readmore, styled centrally in nav.css) renders live
+     instead of being re-created out of context. -->
+<header>
+  <nav class="nav e4la-site-nav" id="js-nav" role="navigation" aria-label="Main navigation">
+    <a class="nav__logo" href="index.html" aria-label="E4LA - Elevation for Los Angeles">
+      <img class="brand-asset" src="assets/e4la-logo-palm.png" alt="E4LA - Elevation for Los Angeles" width="1022" height="533">
+    </a>
+    <ul class="nav__links" role="list">
+      <li><a class="nav__link" href="services.html">Services</a></li>
+      <li><a class="nav__link" href="about.html">About Us</a></li>
+      <li><a class="nav__link" href="ui-kit.html" aria-current="page">UI Kit</a></li>
+    </ul>
+    <a class="nav__cta nav__cta--readmore" href="sign-in.html" aria-label="Sign in to your E4LA account" data-auth-control>
+      <svg class="cta-neon__beam" aria-hidden="true"><rect class="cta-neon__beam-rect"></rect></svg>
+      <span class="cta-neon__fill" aria-hidden="true"></span>
+      <span class="cta-neon__badge" aria-hidden="true" hidden></span>
+      <span class="cta-neon__label">Sign In</span>
+    </a>
+    <button type="button" class="nav__burger" id="js-nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="js-nav-mobile">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+  <div class="nav__mobile" id="js-nav-mobile" aria-hidden="true">
+    <ul class="nav__mobile-links" role="list">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="about.html">About Us</a></li>
+    </ul>
+    <a class="nav__mobile-cta nav__cta--readmore" href="sign-in.html" aria-label="Sign in to your E4LA account" data-auth-control>
+      <svg class="cta-neon__beam" aria-hidden="true"><rect class="cta-neon__beam-rect"></rect></svg>
+      <span class="cta-neon__fill" aria-hidden="true"></span>
+      <span class="cta-neon__badge" aria-hidden="true" hidden></span>
+      <span class="cta-neon__label">Sign In</span>
+    </a>
+  </div>
+</header>
+
+<div class="uikit-shell">
+
+  <div class="uikit-intro">
+    <p class="uikit-intro__kicker">Internal Reference — Not Linked From Nav</p>
+    <h1>Design system reference for the E4LA site.</h1>
+    <p>This page catalogs the <strong>canonical visual system</strong> defined in <code>style.css</code> — the one CLAUDE.md protects as "the existing visual identity": dark <code>#07060D</code> base, Manrope typography, gold/purple neon CTAs. Every example below renders with the real stylesheet, not a re-creation, so it stays accurate as the site evolves.</p>
+    <div class="uikit-flag">
+      <strong>Scope note:</strong> <code>about.html</code>, and the auth/portal pages (<code>sign-in</code>, <code>sign-up</code>, <code>forgot-password</code>, <code>verify-email</code>, <code>portal</code>) currently run on two <em>different</em> token sets (<code>assets/css/about.css</code>, <code>auth.css</code> + <code>portal.css</code>) and Portal loads Inter instead of Manrope. This kit documents the canonical system only — see <a href="#drift">"Design drift found"</a> below for details. Nothing in those files was changed to build this page.
+    </div>
+  </div>
+
+  <nav class="uikit-toc" aria-label="Page sections">
+    <a href="#colors">Colors</a>
+    <a href="#typography">Typography</a>
+    <a href="#spacing">Spacing &amp; Radius</a>
+    <a href="#buttons">Buttons &amp; CTAs</a>
+    <a href="#cards">Cards</a>
+    <a href="#section-pattern">Section Header Pattern</a>
+    <a href="#timeline">Timeline Steps</a>
+    <a href="#icons">Icons</a>
+    <a href="#forms">Forms</a>
+    <a href="#motion">Motion &amp; Interaction</a>
+    <a href="#drift">Design Drift Found</a>
+    <a href="#guidelines">Usage Guidelines</a>
+  </nav>
+
+  <!-- ═══════════ COLORS ═══════════ -->
+  <section class="uikit-section" id="colors">
+    <p class="uikit-section__eyebrow">Foundations</p>
+    <h2 class="uikit-section__title">Color</h2>
+    <p class="uikit-section__desc">All colors are defined once as CSS custom properties in <code>style.css</code> (<code>:root</code>, lines 21–83). Use the variable, never the raw hex, in new rules.</p>
+    <div class="uikit-section__body">
+
+      <p class="uikit-subhead">Backgrounds</p>
+      <div class="uikit-swatches">
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--bg-hero)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Hero</div><div class="uikit-swatch__hex">#07060D</div><div class="uikit-swatch__var">--bg-hero</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--bg-dark)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Dark</div><div class="uikit-swatch__hex">#08070E</div><div class="uikit-swatch__var">--bg-dark</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--bg-dark2)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Dark 2</div><div class="uikit-swatch__hex">#0B0A14</div><div class="uikit-swatch__var">--bg-dark2</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--bg-light)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Light</div><div class="uikit-swatch__hex">#F9F7F4</div><div class="uikit-swatch__var">--bg-light</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--bg-card)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Card</div><div class="uikit-swatch__hex">#FFFFFF</div><div class="uikit-swatch__var">--bg-card</div></div></div>
+      </div>
+
+      <p class="uikit-subhead">Brand — Gold</p>
+      <div class="uikit-swatches">
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--gold)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Gold</div><div class="uikit-swatch__hex">#C8A84B</div><div class="uikit-swatch__var">--gold</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--gold-lt)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Gold Light</div><div class="uikit-swatch__hex">#DFC06E</div><div class="uikit-swatch__var">--gold-lt</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--gold-dk)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Gold Dark</div><div class="uikit-swatch__hex">#A8892C</div><div class="uikit-swatch__var">--gold-dk</div></div></div>
+      </div>
+
+      <p class="uikit-subhead">Accent — Purple</p>
+      <div class="uikit-swatches">
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--purple)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Purple</div><div class="uikit-swatch__hex">#6D28D9</div><div class="uikit-swatch__var">--purple</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--purple-lt)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Purple Light</div><div class="uikit-swatch__hex">#7C3AED</div><div class="uikit-swatch__var">--purple-lt</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--purple-dk)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Purple Dark</div><div class="uikit-swatch__hex">#4C1D95</div><div class="uikit-swatch__var">--purple-dk</div></div></div>
+      </div>
+
+      <p class="uikit-subhead">Secondary accents (service icon chips)</p>
+      <div class="uikit-swatches">
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--indigo)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Indigo</div><div class="uikit-swatch__hex">#3730A3</div><div class="uikit-swatch__var">--indigo</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--teal)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Teal</div><div class="uikit-swatch__hex">#0D9488</div><div class="uikit-swatch__var">--teal</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--blue)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Blue</div><div class="uikit-swatch__hex">#2563EB</div><div class="uikit-swatch__var">--blue</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--green)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Green</div><div class="uikit-swatch__hex">#059669</div><div class="uikit-swatch__var">--green</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--amber)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Amber</div><div class="uikit-swatch__hex">#D97706</div><div class="uikit-swatch__var">--amber</div></div></div>
+      </div>
+
+      <p class="uikit-subhead">Gradient stops (restrained use only — CTA beam, .grad-text)</p>
+      <div class="uikit-swatches">
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--g-orange)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Gradient Orange</div><div class="uikit-swatch__hex">#F97316</div><div class="uikit-swatch__var">--g-orange</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--g-pink)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Gradient Pink</div><div class="uikit-swatch__hex">#DB2777</div><div class="uikit-swatch__var">--g-pink</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--g-purple)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Gradient Purple</div><div class="uikit-swatch__hex">#7C3AED</div><div class="uikit-swatch__var">--g-purple</div></div></div>
+      </div>
+
+      <p class="uikit-subhead">Text</p>
+      <div class="uikit-swatches">
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:#fff"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Primary (on dark)</div><div class="uikit-swatch__hex">#FFFFFF</div><div class="uikit-swatch__var">color:#fff</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:var(--text-ink)"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Ink (on light cards)</div><div class="uikit-swatch__hex">#0F0E18</div><div class="uikit-swatch__var">--text-ink</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-swatch__fill" style="background:#3a3648"></div><div class="uikit-swatch__meta"><div class="uikit-swatch__name">Dim (on dark)</div><div class="uikit-swatch__hex">rgba(255,255,255,.45)</div><div class="uikit-swatch__var">--text-dim</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ TYPOGRAPHY ═══════════ -->
+  <section class="uikit-section" id="typography">
+    <p class="uikit-section__eyebrow">Foundations</p>
+    <h2 class="uikit-section__title">Typography</h2>
+    <p class="uikit-section__desc">Manrope only, loaded at weights 200–800, with <code>system-ui</code>/Arial fallback. Never introduce a second family for body or heading text.</p>
+    <div class="uikit-section__body">
+
+      <p class="uikit-subhead">Weights</p>
+      <div class="uikit-type-row"><div class="uikit-type-row__meta">200 · Extralight</div><div style="font-weight:200;font-size:20px">Elevation for Los Angeles</div></div>
+      <div class="uikit-type-row"><div class="uikit-type-row__meta">300 · Light</div><div style="font-weight:300;font-size:20px">Elevation for Los Angeles</div></div>
+      <div class="uikit-type-row"><div class="uikit-type-row__meta">400 · Regular</div><div style="font-weight:400;font-size:20px">Elevation for Los Angeles</div></div>
+      <div class="uikit-type-row"><div class="uikit-type-row__meta">500 · Medium</div><div style="font-weight:500;font-size:20px">Elevation for Los Angeles</div></div>
+      <div class="uikit-type-row"><div class="uikit-type-row__meta">600 · Semibold</div><div style="font-weight:600;font-size:20px">Elevation for Los Angeles</div></div>
+      <div class="uikit-type-row"><div class="uikit-type-row__meta">700 · Bold</div><div style="font-weight:700;font-size:20px">Elevation for Los Angeles</div></div>
+      <div class="uikit-type-row"><div class="uikit-type-row__meta">800 · Extrabold</div><div style="font-weight:800;font-size:20px">Elevation for Los Angeles</div></div>
+
+      <p class="uikit-subhead">Recurring text roles</p>
+      <div class="uikit-type-row"><div class="uikit-type-row__meta">.section-eyebrow</div><p class="section-eyebrow" style="margin:0">WHAT WE DO BEST</p></div>
+      <div class="uikit-type-row"><div class="uikit-type-row__meta">.section-heading</div><h3 class="section-heading" style="margin:0;font-size:clamp(22px,2.2vw,32px)">End-to-end solutions for <span class="grad-text">modern businesses.</span></h3></div>
+      <div class="uikit-type-row"><div class="uikit-type-row__meta">.section-description</div><p class="section-description" style="margin:0;max-width:460px">A focused 1:1 session to gain clarity, explore opportunities, and uncover the next best steps.</p></div>
+      <div class="uikit-type-row"><div class="uikit-type-row__meta">body text</div><p style="margin:0;max-width:460px;font-size:15px;line-height:1.68;color:rgba(255,255,255,.7)">Helping businesses define direction, identify opportunities, and build sustainable growth.</p></div>
+
+      <div class="uikit-code">&lt;p class="section-eyebrow"&gt;WHAT WE DO BEST&lt;/p&gt;
+&lt;h2 class="section-heading"&gt;End-to-end solutions for &lt;span class="grad-text"&gt;modern businesses.&lt;/span&gt;&lt;/h2&gt;
+&lt;p class="section-description"&gt;Supporting copy goes here.&lt;/p&gt;</div>
+    </div>
+  </section>
+
+  <!-- ═══════════ SPACING / RADIUS / SHADOW ═══════════ -->
+  <section class="uikit-section" id="spacing">
+    <p class="uikit-section__eyebrow">Foundations</p>
+    <h2 class="uikit-section__title">Spacing, Radius &amp; Shadow</h2>
+    <p class="uikit-section__desc">An 11-step spacing scale (<code>--s1</code>–<code>--s11</code>), five radii, and four restrained shadow levels. Pick from these instead of ad hoc px values.</p>
+    <div class="uikit-section__body">
+
+      <p class="uikit-subhead">Spacing scale</p>
+      <div class="uikit-tokens">
+        <div class="uikit-token-row"><span class="uikit-token-row__name">--s1</span><span class="uikit-token-row__val">4px</span><div class="uikit-token-row__bar" style="width:4px"></div></div>
+        <div class="uikit-token-row"><span class="uikit-token-row__name">--s2</span><span class="uikit-token-row__val">8px</span><div class="uikit-token-row__bar" style="width:8px"></div></div>
+        <div class="uikit-token-row"><span class="uikit-token-row__name">--s3</span><span class="uikit-token-row__val">12px</span><div class="uikit-token-row__bar" style="width:12px"></div></div>
+        <div class="uikit-token-row"><span class="uikit-token-row__name">--s4</span><span class="uikit-token-row__val">16px</span><div class="uikit-token-row__bar" style="width:16px"></div></div>
+        <div class="uikit-token-row"><span class="uikit-token-row__name">--s5</span><span class="uikit-token-row__val">20px</span><div class="uikit-token-row__bar" style="width:20px"></div></div>
+        <div class="uikit-token-row"><span class="uikit-token-row__name">--s6</span><span class="uikit-token-row__val">24px</span><div class="uikit-token-row__bar" style="width:24px"></div></div>
+        <div class="uikit-token-row"><span class="uikit-token-row__name">--s7</span><span class="uikit-token-row__val">32px</span><div class="uikit-token-row__bar" style="width:32px"></div></div>
+        <div class="uikit-token-row"><span class="uikit-token-row__name">--s8</span><span class="uikit-token-row__val">40px</span><div class="uikit-token-row__bar" style="width:40px"></div></div>
+        <div class="uikit-token-row"><span class="uikit-token-row__name">--s9</span><span class="uikit-token-row__val">56px</span><div class="uikit-token-row__bar" style="width:56px"></div></div>
+        <div class="uikit-token-row"><span class="uikit-token-row__name">--s10</span><span class="uikit-token-row__val">72px</span><div class="uikit-token-row__bar" style="width:72px"></div></div>
+        <div class="uikit-token-row"><span class="uikit-token-row__name">--s11</span><span class="uikit-token-row__val">96px</span><div class="uikit-token-row__bar" style="width:96px"></div></div>
+      </div>
+
+      <p class="uikit-subhead">Radius</p>
+      <div class="uikit-swatches" style="grid-template-columns:repeat(auto-fill,minmax(100px,1fr))">
+        <div class="uikit-swatch"><div class="uikit-token-row__swatch" style="border-radius:var(--r-sm);margin:14px auto 0"></div><div class="uikit-swatch__meta" style="text-align:center"><div class="uikit-swatch__var">--r-sm · 6px</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-token-row__swatch" style="border-radius:var(--r-md);margin:14px auto 0"></div><div class="uikit-swatch__meta" style="text-align:center"><div class="uikit-swatch__var">--r-md · 10px</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-token-row__swatch" style="border-radius:var(--r-lg);margin:14px auto 0"></div><div class="uikit-swatch__meta" style="text-align:center"><div class="uikit-swatch__var">--r-lg · 14px</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-token-row__swatch" style="border-radius:var(--r-xl);margin:14px auto 0"></div><div class="uikit-swatch__meta" style="text-align:center"><div class="uikit-swatch__var">--r-xl · 20px</div></div></div>
+        <div class="uikit-swatch"><div class="uikit-token-row__swatch" style="border-radius:var(--r-pill);margin:14px auto 0"></div><div class="uikit-swatch__meta" style="text-align:center"><div class="uikit-swatch__var">--r-pill · 100px</div></div></div>
+      </div>
+
+      <p class="uikit-subhead">Shadow (minimal use — dark theme relies mostly on borders/glow, not drop shadow)</p>
+      <div class="uikit-demo uikit-demo--light">
+        <div><div class="uikit-token-row__shadow" style="box-shadow:var(--shadow-xs)"></div><div class="uikit-swatch__var" style="margin-top:8px;color:#333">--shadow-xs</div></div>
+        <div><div class="uikit-token-row__shadow" style="box-shadow:var(--shadow-sm)"></div><div class="uikit-swatch__var" style="margin-top:8px;color:#333">--shadow-sm</div></div>
+        <div><div class="uikit-token-row__shadow" style="box-shadow:var(--shadow-md)"></div><div class="uikit-swatch__var" style="margin-top:8px;color:#333">--shadow-md</div></div>
+        <div><div class="uikit-token-row__shadow" style="box-shadow:var(--shadow-lg)"></div><div class="uikit-swatch__var" style="margin-top:8px;color:#333">--shadow-lg</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ BUTTONS & CTAS ═══════════ -->
+  <section class="uikit-section" id="buttons">
+    <p class="uikit-section__eyebrow">Components</p>
+    <h2 class="uikit-section__title">Buttons &amp; CTAs</h2>
+    <p class="uikit-section__desc">The <code>.cta-neon</code> treatment (animated SVG shimmer border + palm badge, sized/built by <code>script.js</code>) always pairs with a base button class — <code>.btn-outline-white.cta-neon</code> or <code>.btn-outline-gold.cta-neon</code> — plus a gold/purple beam variant.</p>
+    <div class="uikit-section__body">
+
+      <p class="uikit-subhead">Neon CTA — gold beam</p>
+      <div class="uikit-demo">
+        <a class="btn-outline-white cta-neon cta-neon--gold" href="#buttons">
+          <svg class="cta-neon__beam" aria-hidden="true"><rect class="cta-neon__beam-rect"></rect></svg>
+          <span class="cta-neon__badge" aria-hidden="true"><img class="cta-neon__palm" src="assets/palm-01.png" alt=""></span>
+          <span class="cta-neon__label">Explore Our Services</span>
+        </a>
+        <a class="btn-outline-gold cta-neon cta-neon--gold" href="#buttons">
+          <svg class="cta-neon__beam" aria-hidden="true"><rect class="cta-neon__beam-rect"></rect></svg>
+          <span class="cta-neon__badge" aria-hidden="true"><img class="cta-neon__palm" src="assets/palm-01.png" alt=""></span>
+          <span class="cta-neon__label">Book Session</span>
+        </a>
+      </div>
+
+      <p class="uikit-subhead">Neon CTA — purple beam</p>
+      <div class="uikit-demo">
+        <button class="btn-play cta-neon cta-neon--purple" type="button">
+          <svg class="cta-neon__beam" aria-hidden="true"><rect class="cta-neon__beam-rect"></rect></svg>
+          <span class="btn-play__ring cta-neon__badge" aria-hidden="true"><img class="cta-neon__palm" src="assets/palm-01.png" alt=""></span>
+          <span class="cta-neon__label">How We Work</span>
+        </button>
+      </div>
+
+      <p class="uikit-subhead">Outline buttons (no neon beam)</p>
+      <div class="uikit-demo">
+        <a class="btn-outline-white" href="#buttons">Sign In</a>
+        <a class="btn-outline-gold" href="#buttons">Learn More</a>
+      </div>
+
+      <p class="uikit-subhead">Text link with arrow</p>
+      <div class="uikit-demo">
+        <a class="services-top__link section-cta" href="#buttons">View All Services<svg aria-hidden="true"><use href="#i-arr"/></svg></a>
+      </div>
+      <div class="uikit-note">Shown here in its base form (color + arrow, no pill). Inside <code>.sec-services</code> on the live Home page it additionally gets a pill background/border — wrapping it in that full section class to preview here caused the link to collapse to 0×0 (the section's own grid/layout rules take over), so this demo intentionally stays unwrapped rather than showing something broken.</div>
+
+      <p class="uikit-subhead">Nav CTA — Sign In</p>
+      <div class="uikit-note">This one is live in the header at the very top of this page — the <code>.nav__cta--readmore</code> variant. It skips the palm badge (<code>hidden</code>) and beam entirely in favor of an animated fill-sweep on hover, and is styled centrally in <code>assets/css/nav.css</code> (the single source of truth for the header, shared by <code>index.html</code>, <code>services.html</code>, and <code>about.html</code>) rather than in <code>style.css</code>. Swaps to "My Account" when signed in, via <code>auth.js</code>.</div>
+
+      <p class="uikit-subhead">Disabled state</p>
+      <div class="uikit-demo">
+        <div class="sec-coaching" style="display:contents">
+          <button class="cal__cta cta-neon cta-neon--gold" type="button" disabled aria-disabled="true">
+            <svg class="cta-neon__beam" aria-hidden="true"><rect class="cta-neon__beam-rect"></rect></svg>
+            <span class="cta-neon__badge" aria-hidden="true"><img class="cta-neon__palm" src="assets/palm-01.png" alt=""></span>
+            <span class="cta-neon__label">Book Session</span>
+          </button>
+        </div>
+      </div>
+      <div class="uikit-note">The real "Book Session" button (<code>#js-book</code>, coaching calendar) starts <code>disabled</code> until a date is picked. Always demo the disabled state alongside the active one — it's easy to ship a CTA that only ever looks right when enabled.</div>
+
+      <p class="uikit-subhead">Closing CTA band</p>
+      <div class="uikit-demo">
+        <div class="uikit-demo__label">Home — .schedule-card__btn</div>
+        <a class="schedule-card__btn" href="#buttons">Schedule Your Session <svg aria-hidden="true"><use href="#i-arr"/></svg></a>
+      </div>
+      <div class="uikit-demo" style="margin-top:14px">
+        <div class="uikit-demo__label">Services — .svcd-cta__btn (needs .svcd-page .svcd-after-services ancestry; the section is hidden by default and only revealed once <code>body.is-past-services</code> is set, after the visitor scrolls past the pinned service panels — added here so the button isn't invisible out of context)</div>
+        <div class="svcd-page is-past-services" style="display:contents">
+          <div class="svcd-after-services" style="display:inline-flex">
+            <a class="svcd-cta__btn" href="#buttons"><span>Book a Strategy Call</span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="uikit-code">&lt;a class="btn-outline-white cta-neon cta-neon--gold" href="..."&gt;
+  &lt;svg class="cta-neon__beam" aria-hidden="true"&gt;&lt;rect class="cta-neon__beam-rect"&gt;&lt;/rect&gt;&lt;/svg&gt;
+  &lt;span class="cta-neon__badge" aria-hidden="true"&gt;&lt;img class="cta-neon__palm" src="assets/palm-01.png" alt=""&gt;&lt;/span&gt;
+  &lt;span class="cta-neon__label"&gt;Button Text&lt;/span&gt;
+&lt;/a&gt;
+&lt;!-- script.js measures the button on load/resize and builds the shimmer beam + badge size --&gt;</div>
+      <div class="uikit-note"><strong>Reuse this exact markup shape</strong> for any new CTA — the beam/badge JS in <code>script.js</code> (~line 340–500) expects <code>.cta-neon__beam</code>, <code>.cta-neon__badge</code>, and <code>.cta-neon__label</code> children in that order.</div>
+    </div>
+  </section>
+
+  <!-- ═══════════ CARDS ═══════════ -->
+  <section class="uikit-section" id="cards">
+    <p class="uikit-section__eyebrow">Components</p>
+    <h2 class="uikit-section__title">Service Card</h2>
+    <p class="uikit-section__desc"><code>.svc-card</code> — white card, muted video icon (frozen on first frame, plays on hover/focus), title, description, and an arrow button. Idle cards auto-drift via per-card CSS custom properties; hover/focus freezes the tilt. Gated to <code>hover:hover</code> + <code>pointer:fine</code> + <code>min-width:900px</code>, disabled under reduced motion.</p>
+    <div class="uikit-section__body">
+      <ul class="uikit-card-demo uikit-demo--light" style="display:grid;padding:32px;border-radius:16px">
+        <li class="svc-card" tabindex="0" role="button" aria-expanded="false">
+          <div class="svc-card__content">
+            <div class="svc-icon svc-icon--purple" aria-hidden="true">
+              <video class="svc-icon__video" muted loop playsinline preload="auto" poster="assets/svc-hover-01-poster.jpg?v=2026071827">
+                <source src="assets/svc-hover-01.webm?v=2026071827" type="video/webm">
+                <source src="assets/svc-hover-01.mp4?v=2026071827" type="video/mp4">
+              </video>
+            </div>
+            <p class="svc-card__title">Strategy &amp; Growth</p>
+            <p class="svc-card__desc">Helping businesses define direction, identify opportunities, and build sustainable growth.</p>
+          </div>
+          <button class="svc-card__arr" aria-label="Learn about Strategy and Growth"><svg aria-hidden="true"><use href="#i-arr"/></svg></button>
+        </li>
+      </ul>
+      <div class="uikit-note"><strong>Icon color variants:</strong> <code>svc-icon--purple</code>, <code>svc-icon--blue</code>, <code>svc-icon--green</code>, <code>svc-icon--amber</code>, <code>svc-icon--indigo</code> — one per service category, cycled in source order.</div>
+    </div>
+  </section>
+
+  <!-- ═══════════ SECTION HEADER PATTERN ═══════════ -->
+  <section class="uikit-section" id="section-pattern">
+    <p class="uikit-section__eyebrow">Components</p>
+    <h2 class="uikit-section__title">Section Header Pattern</h2>
+    <p class="uikit-section__desc">The single most-repeated structural pattern on the site: eyebrow label → heading (optionally with a <code>.grad-text</code> highlighted span) → supporting description. Used identically across Services, Approach, Coaching, Why E4LA, and the closing CTA.</p>
+    <div class="uikit-section__body">
+      <div class="uikit-demo" style="display:block;text-align:left">
+        <p class="section-eyebrow">Why E4LA</p>
+        <h2 class="section-heading" style="font-size:clamp(24px,2.4vw,34px)">Experience across disciplines.<br>Insight that <span class="grad-text">connects everything.</span></h2>
+        <p class="section-description" style="margin-top:14px;max-width:520px">A multidisciplinary team combining strategy, UX, brand, and AI — so nothing you build lives in a silo.</p>
+      </div>
+      <div class="uikit-code">&lt;p class="section-eyebrow"&gt;Label&lt;/p&gt;
+&lt;h2 class="section-heading"&gt;Heading with &lt;span class="grad-text"&gt;a highlighted phrase&lt;/span&gt;&lt;/h2&gt;
+&lt;p class="section-description"&gt;Supporting copy, one to two sentences.&lt;/p&gt;</div>
+    </div>
+  </section>
+
+  <!-- ═══════════ TIMELINE / TSTEP ═══════════ -->
+  <section class="uikit-section" id="timeline">
+    <p class="uikit-section__eyebrow">Components</p>
+    <h2 class="uikit-section__title">Timeline Steps</h2>
+    <p class="uikit-section__desc"><code>.tstep--1</code> through <code>.tstep--6</code> each carry a distinct border/glow color, auto-cycling on a timer (1100ms) via <code>script.js</code>, pausing when the tab is hidden and respecting reduced motion. Reused for the Approach ("Discover → Elevate") and Coaching "how it works" timelines.</p>
+    <div class="uikit-section__body">
+      <div class="uikit-demo">
+        <div class="timeline">
+          <div class="timeline__track" aria-hidden="true"></div>
+          <ol class="timeline__steps">
+            <li class="tstep tstep--1"><div class="tstep__circle" aria-hidden="true">01</div><p class="tstep__name">Discover</p><p class="tstep__sub">Understand the challenge</p></li>
+            <li class="tstep tstep--2"><div class="tstep__circle" aria-hidden="true">02</div><p class="tstep__name">Insight</p><p class="tstep__sub">Uncover opportunities</p></li>
+            <li class="tstep tstep--3"><div class="tstep__circle" aria-hidden="true">03</div><p class="tstep__name">Strategize</p><p class="tstep__sub">Set measurable goals</p></li>
+            <li class="tstep tstep--4"><div class="tstep__circle" aria-hidden="true">04</div><p class="tstep__name">Design</p><p class="tstep__sub">Build the experience</p></li>
+            <li class="tstep tstep--5"><div class="tstep__circle" aria-hidden="true">05</div><p class="tstep__name">Execute</p><p class="tstep__sub">Launch with precision</p></li>
+            <li class="tstep tstep--6"><div class="tstep__circle" aria-hidden="true">06</div><p class="tstep__name">Elevate</p><p class="tstep__sub">Measure and improve</p></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ ICONS ═══════════ -->
+  <section class="uikit-section" id="icons">
+    <p class="uikit-section__eyebrow">Components</p>
+    <h2 class="uikit-section__title">Icon System</h2>
+    <p class="uikit-section__desc">One inline <code>&lt;symbol&gt;</code> library defined per page, referenced via <code>&lt;use href="#i-..."&gt;</code>. No icon font, no emoji-as-icon. This is a subset — each page defines only the icons it uses.</p>
+    <div class="uikit-section__body">
+      <div class="uikit-icons">
+        <div class="uikit-icon"><svg><use href="#i-arr"/></svg><span>i-arr</span></div>
+        <div class="uikit-icon"><svg><use href="#i-chev"/></svg><span>i-chev</span></div>
+        <div class="uikit-icon"><svg><use href="#i-target"/></svg><span>i-target</span></div>
+        <div class="uikit-icon"><svg><use href="#i-search"/></svg><span>i-search</span></div>
+        <div class="uikit-icon"><svg><use href="#i-cpu"/></svg><span>i-cpu</span></div>
+        <div class="uikit-icon"><svg><use href="#i-clip"/></svg><span>i-clip</span></div>
+        <div class="uikit-icon"><svg><use href="#i-users"/></svg><span>i-users</span></div>
+        <div class="uikit-icon"><svg><use href="#i-star"/></svg><span>i-star</span></div>
+        <div class="uikit-icon"><svg><use href="#i-globe"/></svg><span>i-globe</span></div>
+        <div class="uikit-icon"><svg><use href="#i-zap"/></svg><span>i-zap</span></div>
+        <div class="uikit-icon"><svg><use href="#i-clock"/></svg><span>i-clock</span></div>
+        <div class="uikit-icon"><svg><use href="#i-palette"/></svg><span>i-palette</span></div>
+      </div>
+      <div class="uikit-code">&lt;svg aria-hidden="true"&gt;&lt;use href="#i-arr"/&gt;&lt;/svg&gt;</div>
+    </div>
+  </section>
+
+  <!-- ═══════════ FORMS ═══════════ -->
+  <section class="uikit-section" id="forms">
+    <p class="uikit-section__eyebrow">Components</p>
+    <h2 class="uikit-section__title">Form Input</h2>
+    <p class="uikit-section__desc">The only form pattern in the canonical system today: the footer newsletter signup. Client-side only — no backend submission.</p>
+    <div class="uikit-section__body">
+      <div class="uikit-demo">
+        <form class="footer__form" aria-label="Newsletter signup" novalidate onsubmit="return false">
+          <label for="uk-nl-email" class="sr-only">Email address</label>
+          <input class="footer__input" id="uk-nl-email" type="email" placeholder="Enter your email" autocomplete="email">
+          <button class="footer__submit" type="submit" aria-label="Subscribe">Go</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ MOTION & INTERACTION ═══════════ -->
+  <section class="uikit-section" id="motion">
+    <p class="uikit-section__eyebrow">Behavior</p>
+    <h2 class="uikit-section__title">Motion &amp; Interaction Principles</h2>
+    <p class="uikit-section__desc">All interaction logic lives in <code>script.js</code> (plain script, not a module). <code>motion.js</code> is reserved for Motion-for-JS-driven work and today only targets <code>.auth-page</code>. Every pattern below respects <code>prefers-reduced-motion</code>.</p>
+    <div class="uikit-section__body">
+      <ul class="uikit-guidelines">
+        <li><strong>Scroll reveal</strong> — any <code>[data-r]</code> element (optionally staggered with <code>data-d="n"</code>) fades/slides in once via <code>IntersectionObserver</code>, adding an <code>.in</code> class.</li>
+        <li><strong>Service card drift</strong> — idle <code>.svc-card</code> elements auto-drift with a per-card sine-wave "personality"; hover/focus freezes the card flat. Desktop + fine-pointer only.</li>
+        <li><strong>CTA neon beam</strong> — <code>.cta-neon</code> buttons get a live-measured circular badge and a repeating SVG gradient beam (3 animated peaks via SMIL) recomputed on load/resize.</li>
+        <li><strong>Timeline auto-cycle</strong> — <code>.tstep</code> and coaching timeline steps advance on a timer, pausing on hidden tabs and reduced motion.</li>
+        <li><strong>Pinned scroll</strong> (services.html only) — <code>.svcd-pin</code> manually toggles fixed/absolute/flow positioning (not <code>position:sticky</code>, which breaks under this site's global <code>overflow-x:hidden</code>). Gated to <code>min-width:640px</code> + <code>pointer:fine</code>; falls back to a plain stacked list otherwise.</li>
+        <li><strong>Hero word scramble</strong> — <code>#js-word</code> cycles a word list with a scramble/decode effect every 2s.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ═══════════ DRIFT FOUND ═══════════ -->
+  <section class="uikit-section" id="drift">
+    <p class="uikit-section__eyebrow">Findings</p>
+    <h2 class="uikit-section__title">Design Drift Found</h2>
+    <p class="uikit-section__desc">While building this kit, three separate token sets turned up across the site. Documented here for visibility — none of these files were changed.</p>
+    <div class="uikit-section__body">
+      <div class="uikit-drift">
+        <div class="uikit-drift__card">
+          <h3>Home / Services (canonical)</h3>
+          <div class="uikit-drift__chips">
+            <div class="uikit-drift__chip" style="background:#07060D"></div>
+            <div class="uikit-drift__chip" style="background:#C8A84B"></div>
+            <div class="uikit-drift__chip" style="background:#6D28D9"></div>
+          </div>
+          <p>Manrope. Gold/purple neon CTAs. This is the system documented above.</p>
+          <div class="uikit-drift__file">style.css</div>
+        </div>
+        <div class="uikit-drift__card">
+          <h3>About page</h3>
+          <div class="uikit-drift__chips">
+            <div class="uikit-drift__chip" style="background:#020817"></div>
+            <div class="uikit-drift__chip" style="background:#7c3cff"></div>
+            <div class="uikit-drift__chip" style="background:#e94bb9"></div>
+          </div>
+          <p>Manrope + Instrument Serif. Violet/pink/orange gradient system, own <code>--bg</code>/<code>--panel</code> tokens. Does not load style.css.</p>
+          <div class="uikit-drift__file">assets/css/about.css</div>
+        </div>
+        <div class="uikit-drift__card">
+          <h3>Auth &amp; Portal</h3>
+          <div class="uikit-drift__chips">
+            <div class="uikit-drift__chip" style="background:#07060d"></div>
+            <div class="uikit-drift__chip" style="background:#ff6b1a"></div>
+            <div class="uikit-drift__chip" style="background:#8b35f6"></div>
+          </div>
+          <p>Orange→pink→purple gradient system. Portal loads <strong>Inter</strong>, not Manrope — the only page on the site that does.</p>
+          <div class="uikit-drift__file">auth.css, portal.css</div>
+        </div>
+      </div>
+      <div class="uikit-note" style="margin-top:24px"><strong>Recommendation (not actioned):</strong> when about/auth/portal are next touched, consider migrating them onto the canonical <code>style.css</code> token set — starting with Portal's font (Inter → Manrope) since that's the most visible brand inconsistency, a user could notice it in a single session.</div>
+    </div>
+  </section>
+
+  <!-- ═══════════ USAGE GUIDELINES ═══════════ -->
+  <section class="uikit-section" id="guidelines">
+    <p class="uikit-section__eyebrow">Working Agreement</p>
+    <h2 class="uikit-section__title">Usage Guidelines</h2>
+    <p class="uikit-section__desc">From this project's CLAUDE.md — restated here so this reference is self-contained.</p>
+    <div class="uikit-section__body">
+      <ul class="uikit-guidelines">
+        <li>Vanilla HTML/CSS/JS only. No React, Tailwind, or shadcn — not even for one component.</li>
+        <li>Reuse existing classes (<code>svc-card</code>, <code>cta-neon</code>, <code>tstep</code>, <code>grad-text</code>, <code>section-heading</code>, <code>data-r</code>/<code>data-d</code>) instead of inventing new ones.</li>
+        <li>When adding classes to an element, keep every class already on it.</li>
+        <li><code>script.js</code> stays plain (non-module) and holds core interaction logic; <code>motion.js</code> is the only place for Motion-for-JS work, loaded as a module.</li>
+        <li>Edit <code>style.css</code> section by section — it's an additive/override history of dated passes; add new scoped blocks rather than restructuring old ones.</li>
+        <li>Don't redesign or make visible UI changes without explicit approval first.</li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+
+<script src="script.js?v=2026072301"></script>
+</body>
+</html>

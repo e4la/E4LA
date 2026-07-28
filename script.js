@@ -606,7 +606,7 @@ if(nlForm){
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   // Rest-frame offset (seconds) for each card, in DOM order â€”
   // explicit values requested by the user.
-  var REST_OFFSETS = [4.9, 4.3, 2.8, 2.4, 4];
+  var REST_OFFSETS = [4.9, 4.3, 2.8, 4.3, 4.5];
   // No real hover on touch devices, so the mouseenter/mouseleave pair
   // below never fires there â€” the clip just sat on its rest frame
   // forever, which read as "no video at all" on mobile. On these

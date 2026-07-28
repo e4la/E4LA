@@ -1,0 +1,112 @@
+/* ============================================================
+   UI KIT — page-specific chrome only.
+   Real component styling comes from style.css (loaded alongside).
+   This file styles the kit's own scaffolding: topbar, TOC, swatch
+   grids, token tables, code blocks, notes. It never redefines a
+   component class from style.css.
+   ============================================================ */
+
+.uikit-shell{max-width:1180px;margin:0 auto;padding:0 var(--pad-x) 120px}
+
+/* ---- Intro ---- */
+.uikit-intro{padding:56px 0 8px}
+.uikit-intro__kicker{font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--purple-lt);margin-bottom:14px}
+.uikit-intro h1{font-family:'Manrope',sans-serif;font-size:clamp(28px,3.4vw,44px);font-weight:700;letter-spacing:-.5px;line-height:1.1;max-width:720px}
+.uikit-intro p{margin-top:16px;max-width:640px;font-size:15px;line-height:1.7;color:rgba(255,255,255,.62)}
+
+/* ---- Callouts / notes ---- */
+.uikit-note,.uikit-flag{
+  margin-top:24px;padding:16px 18px;border-radius:12px;
+  border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);
+  font-size:13.5px;line-height:1.6;color:rgba(255,255,255,.75);max-width:760px;
+}
+.uikit-note{border-left:3px solid var(--purple-lt)}
+.uikit-flag{border-left:3px solid var(--amber)}
+.uikit-note strong,.uikit-flag strong{color:#fff}
+
+/* ---- Table of contents ---- */
+.uikit-toc{display:flex;flex-wrap:wrap;gap:8px;padding:28px 0 48px;border-bottom:1px solid rgba(255,255,255,.08)}
+.uikit-toc a{
+  font-size:12px;font-weight:700;letter-spacing:.3px;color:rgba(255,255,255,.7);
+  padding:8px 14px;border-radius:100px;border:1px solid rgba(255,255,255,.12);
+}
+.uikit-toc a:hover{color:#fff;border-color:rgba(255,255,255,.3)}
+
+/* ---- Section scaffolding ---- */
+.uikit-section{padding:64px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.uikit-section:last-child{border-bottom:none}
+.uikit-section__eyebrow{font-size:10.5px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold-lt);margin-bottom:10px}
+.uikit-section__title{font-family:'Manrope',sans-serif;font-size:clamp(22px,2vw,28px);font-weight:700;letter-spacing:-.3px;color:#fff}
+.uikit-section__desc{margin-top:10px;max-width:620px;font-size:14px;line-height:1.65;color:rgba(255,255,255,.55)}
+.uikit-section__body{margin-top:32px}
+.uikit-subhead{font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.4);margin:36px 0 16px}
+.uikit-subhead:first-child{margin-top:0}
+
+/* ---- Swatches (color tokens) ---- */
+.uikit-swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+.uikit-swatch{border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02)}
+.uikit-swatch__fill{height:64px}
+.uikit-swatch__meta{padding:10px 12px}
+.uikit-swatch__name{font-size:12.5px;font-weight:700;color:#fff}
+.uikit-swatch__hex{font:11.5px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:rgba(255,255,255,.45);margin-top:2px}
+.uikit-swatch__var{font:11.5px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--gold-lt);margin-top:2px}
+
+/* ---- Token tables (spacing / radius / shadow) ---- */
+.uikit-tokens{display:grid;gap:10px}
+.uikit-token-row{display:grid;grid-template-columns:120px 80px 1fr;align-items:center;gap:18px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.uikit-token-row__name{font:12.5px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--gold-lt)}
+.uikit-token-row__val{font-size:12px;color:rgba(255,255,255,.5)}
+.uikit-token-row__bar{height:10px;background:var(--purple-lt);border-radius:3px}
+.uikit-token-row__swatch{width:56px;height:56px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}
+.uikit-token-row__shadow{width:80px;height:44px;border-radius:8px;background:#fff}
+
+/* ---- Demo panels ---- */
+.uikit-demo{
+  display:flex;flex-wrap:wrap;align-items:center;gap:18px;
+  padding:32px;border-radius:16px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);
+}
+.uikit-demo--light{background:var(--bg-light)}
+.uikit-demo__label{width:100%;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:4px}
+
+/* ---- Type samples ---- */
+.uikit-type-row{display:flex;align-items:baseline;gap:20px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.uikit-type-row__meta{width:150px;flex-shrink:0;font-size:11.5px;color:rgba(255,255,255,.4)}
+
+/* ---- Code blocks ---- */
+.uikit-code{
+  margin-top:14px;background:#0B0A14;border:1px solid rgba(255,255,255,.08);border-radius:10px;
+  padding:16px 18px;font:12.5px/1.7 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color:rgba(223,192,110,.9);overflow-x:auto;white-space:pre;
+}
+
+/* ---- Icon grid ---- */
+.uikit-icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:12px}
+.uikit-icon{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;border-radius:12px;border:1px solid rgba(255,255,255,.07)}
+.uikit-icon svg{width:20px;height:20px;color:var(--gold-lt)}
+.uikit-icon span{font:10.5px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:rgba(255,255,255,.45)}
+
+/* ---- Card demo grid ---- */
+.uikit-card-demo{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;max-width:640px}
+.uikit-card-demo .svc-card{list-style:none}
+
+/* ---- Timeline demo width guard ---- */
+.uikit-demo .timeline{width:100%}
+
+/* ---- Drift comparison table ---- */
+.uikit-drift{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.uikit-drift__card{border-radius:14px;border:1px solid rgba(255,255,255,.08);padding:18px;background:rgba(255,255,255,.02)}
+.uikit-drift__card h3{font-size:13px;font-weight:800;color:#fff;margin-bottom:8px}
+.uikit-drift__card p{font-size:12.5px;line-height:1.6;color:rgba(255,255,255,.55)}
+.uikit-drift__chips{display:flex;gap:6px;margin:10px 0}
+.uikit-drift__chip{width:22px;height:22px;border-radius:6px;border:1px solid rgba(255,255,255,.15)}
+.uikit-drift__file{margin-top:10px;font:11px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:rgba(255,255,255,.35)}
+
+/* ---- Guidelines list ---- */
+.uikit-guidelines{display:grid;gap:12px;max-width:720px}
+.uikit-guidelines li{padding-left:22px;position:relative;font-size:13.5px;line-height:1.65;color:rgba(255,255,255,.68)}
+.uikit-guidelines li::before{content:'';position:absolute;left:0;top:9px;width:8px;height:1.5px;background:var(--gold)}
+
+@media (max-width:700px){
+  .uikit-token-row{grid-template-columns:100px 60px 1fr}
+  .uikit-topbar{padding:14px 20px}
+}
