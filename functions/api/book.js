@@ -108,6 +108,99 @@ async function getAccessToken(env) {
   return body.access_token;
 }
 
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[character]));
+}
+
+function getMeetLink(event) {
+  return event.hangoutLink
+    || event.conferenceData?.entryPoints?.find((entry) => entry.entryPointType === 'video')?.uri
+    || '';
+}
+
+async function sendConsultantBookingEmail(env, booking, event, meetLink) {
+  if (!env.RESEND_API_KEY || !env.CONSULTANT_EMAIL || !env.EMAIL_FROM) {
+    console.warn('Consultant email skipped: RESEND_API_KEY, CONSULTANT_EMAIL, or EMAIL_FROM is missing.');
+    return false;
+  }
+
+  const calendarLink = event.htmlLink || '';
+  const safe = {
+    customerName: escapeHtml(booking.customerName),
+    customerEmail: escapeHtml(booking.customerEmail),
+    consultation: escapeHtml(booking.consultation),
+    bookingDate: escapeHtml(booking.bookingDate),
+    startTime: escapeHtml(booking.startTime),
+    endTime: escapeHtml(booking.endTime),
+    customerTimeZone: escapeHtml(booking.customerTimeZone),
+    bookingGoal: escapeHtml(booking.bookingGoal || 'Not provided'),
+    message: escapeHtml(booking.message || 'Not provided'),
+    meetLink: escapeHtml(meetLink),
+    calendarLink: escapeHtml(calendarLink)
+  };
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;line-height:1.6;color:#171717;max-width:640px;margin:0 auto">
+      <h1 style="font-size:24px;margin:0 0 20px">New booking received</h1>
+      <p><strong>Client:</strong> ${safe.customerName}</p>
+      <p><strong>Email:</strong> ${safe.customerEmail}</p>
+      <p><strong>Session:</strong> ${safe.consultation}</p>
+      <p><strong>Date:</strong> ${safe.bookingDate}</p>
+      <p><strong>Time:</strong> ${safe.startTime}–${safe.endTime}</p>
+      <p><strong>Client time zone:</strong> ${safe.customerTimeZone}</p>
+      <p><strong>Booking goal:</strong><br>${safe.bookingGoal.replace(/\n/g, '<br>')}</p>
+      <p><strong>Message:</strong><br>${safe.message.replace(/\n/g, '<br>')}</p>
+      ${meetLink ? `<p><a href="${safe.meetLink}" style="display:inline-block;padding:12px 18px;background:#111;color:#fff;text-decoration:none;border-radius:8px">Join Google Meet</a></p>` : ''}
+      ${calendarLink ? `<p><a href="${safe.calendarLink}">Open in Google Calendar</a></p>` : ''}
+    </div>
+  `;
+
+  const plainText = [
+    'New booking received',
+    `Client: ${booking.customerName}`,
+    `Email: ${booking.customerEmail}`,
+    `Session: ${booking.consultation}`,
+    `Date: ${booking.bookingDate}`,
+    `Time: ${booking.startTime}-${booking.endTime}`,
+    `Client time zone: ${booking.customerTimeZone}`,
+    `Booking goal: ${booking.bookingGoal || 'Not provided'}`,
+    `Message: ${booking.message || 'Not provided'}`,
+    meetLink ? `Google Meet: ${meetLink}` : '',
+    calendarLink ? `Google Calendar: ${calendarLink}` : ''
+  ].filter(Boolean).join('\n\n');
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+      'Idempotency-Key': `e4la-booking-${event.id}`
+    },
+    body: JSON.stringify({
+      from: env.EMAIL_FROM,
+      to: [env.CONSULTANT_EMAIL],
+      subject: `New booking: ${booking.consultation} — ${booking.customerName}`,
+      html,
+      text: plainText
+    })
+  });
+
+  let responseBody = {};
+  try { responseBody = await response.json(); } catch (error) {}
+
+  if (!response.ok) {
+    throw new Error(`Consultant email failed (${response.status}): ${responseBody.message || 'Unknown error'}`);
+  }
+
+  return true;
+}
+
 export async function onRequestPost(context) {
   const { request, env } = context;
   const requiredVariables = ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_REFRESH_TOKEN', 'GOOGLE_CALENDAR_ID', 'CONSULTANT_TIME_ZONE'];
@@ -138,7 +231,7 @@ export async function onRequestPost(context) {
       booking.message ? `Message:\n${booking.message}` : ''
     ].filter(Boolean).join('\n\n');
     const calendarId = encodeURIComponent(env.GOOGLE_CALENDAR_ID);
-    const event = await googleRequest(`${GOOGLE_CALENDAR_API}/calendars/${calendarId}/events?sendUpdates=all`, {
+    const event = await googleRequest(`${GOOGLE_CALENDAR_API}/calendars/${calendarId}/events?conferenceDataVersion=1&sendUpdates=all`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -148,15 +241,35 @@ export async function onRequestPost(context) {
         end: { dateTime: `${booking.bookingDate}T${booking.endTime}:00`, timeZone: env.CONSULTANT_TIME_ZONE },
         attendees: [{ email: booking.customerEmail, displayName: booking.customerName }],
         guestsCanInviteOthers: false,
+        conferenceData: {
+          createRequest: {
+            requestId: `e4la-${crypto.randomUUID()}`,
+            conferenceSolutionKey: { type: 'hangoutsMeet' }
+          }
+        },
         extendedProperties: { private: { source: 'e4la-website', customerTimeZone: booking.customerTimeZone } }
       })
     }, accessToken);
+
+    const meetLink = getMeetLink(event);
+    let consultantEmailSent = false;
+
+    try {
+      consultantEmailSent = await sendConsultantBookingEmail(env, booking, event, meetLink);
+    } catch (emailError) {
+      // The calendar event already exists. Do not return a booking failure,
+      // because retrying could create a duplicate event.
+      console.error('Consultant notification email failed:', emailError.message);
+    }
+
     return jsonResponse({
       eventId: event.id,
       iCalUID: event.iCalUID,
       startTime: new Date(event.start.dateTime).toISOString(),
       endTime: new Date(event.end.dateTime).toISOString(),
       htmlLink: event.htmlLink,
+      meetLink,
+      consultantEmailSent,
       calendar: { id: env.GOOGLE_CALENDAR_ID, timeZone: env.CONSULTANT_TIME_ZONE }
     }, 201);
   } catch (error) {
