@@ -146,8 +146,12 @@ ul,ol{list-style:none}
    so browsers that support it use the dynamic viewport (mobile URL bar);
    the vh line is the fallback. Mirrored in about.css. */
 .page>.section:first-child{
-  min-height:calc(100vh - var(--e4la-nav-h,80px));
-  min-height:calc(100dvh - var(--e4la-nav-h,80px));
+  /* Capped at 820px (roughly the 900px-tall-viewport case) — uncapped,
+     align-content:end let the empty space above the hero copy grow with
+     the viewport's own height, so a tall desktop monitor left several
+     hundred extra pixels of dead air under the nav before any content. */
+  min-height:clamp(560px,calc(100vh - var(--e4la-nav-h,80px)),820px);
+  min-height:clamp(560px,calc(100dvh - var(--e4la-nav-h,80px)),820px);
   display:grid;
   align-content:end;
   padding-top:clamp(32px,6vh,88px);
@@ -651,6 +655,7 @@ ul,ol{list-style:none}
 .status--neutral h4{color:var(--gold-lt)}
 .status--neutral li::before{background:var(--gold-lt)}
 .coming-soon{align-self:flex-start;margin-top:auto;padding:8px 13px;border-radius:999px;border:1px dashed rgba(200,168,75,.5);color:var(--gold-lt);font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+.project-feature__content>.text-link{margin-top:auto}
 .project-feature__quote{padding-left:14px;border-left:2px solid var(--gold-lt);color:rgba(255,255,255,.86);font-size:13.5px;font-style:italic;line-height:1.6}
 
 .project-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}

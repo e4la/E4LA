@@ -133,8 +133,11 @@ ul,ol{list-style:none}
    bar at 980px. dvh is declared second so browsers that support it use the
    dynamic viewport; the vh line is the fallback. Mirrored in our-work.css. */
 .page>.section:first-child{
-  min-height:calc(100vh - var(--e4la-nav-h,80px));
-  min-height:calc(100dvh - var(--e4la-nav-h,80px));
+  /* Capped at 820px — see the matching rule in our-work.css for why
+     (uncapped, align-content:end let a tall desktop monitor leave
+     hundreds of extra px of dead air above the hero copy). */
+  min-height:clamp(560px,calc(100vh - var(--e4la-nav-h,80px)),820px);
+  min-height:clamp(560px,calc(100dvh - var(--e4la-nav-h,80px)),820px);
   display:grid;
   align-content:end;
   padding-top:clamp(32px,6vh,88px);
