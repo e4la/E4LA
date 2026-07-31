@@ -527,7 +527,7 @@ ul,ol{list-style:none}
    the same plain flex-column layout as every other impact card so the
    four read as one consistent set. Keep the accent tint. */
 .impact-card--mortgage{--accent-rgb:79,125,255;--card-line:rgba(79,125,255,.34)}
-.impact-card--zenith{--accent-rgb:233,75,185;--card-line:rgba(233,75,185,.34)}
+.impact-card--paint{--accent-rgb:200,168,75;--card-line:rgba(200,168,75,.34)}
 .impact-card--radio{--accent-rgb:255,138,76;--card-line:rgba(255,138,76,.34)}
 .impact-card__top{position:relative;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .impact-card__number{width:34px;height:34px;flex:0 0 auto;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(var(--accent-rgb,124,60,255),.6);color:#fff;font-size:12px;font-weight:800;box-shadow:0 0 20px rgba(var(--accent-rgb,124,60,255),.2) inset}
@@ -545,11 +545,6 @@ ul,ol{list-style:none}
 .impact-card--enrich h3{font-weight:600}
 .tag-list{position:relative;display:flex;flex-wrap:wrap;gap:7px;margin-top:auto;padding-top:6px}
 .tag-list li{border:1px solid rgba(124,60,255,.34);border-radius:6px;padding:6px 9px;background:rgba(124,60,255,.1);color:#d7c4ff;font-size:10px;font-weight:800;line-height:1}
-/* Same monochrome treatment as the wall, so this mark and the wall
-   read as one system rather than two logo styles on one page. */
-.radio-brand{position:relative;height:52px;display:grid;place-items:center;justify-items:start;background:none}
-.radio-brand img{width:auto;height:40px;object-fit:contain;filter:brightness(0) invert(1);opacity:.72}
-
 /* ── PAINT EVENTS / TEAM BUILDING ─────────────────────────── */
 .paint__layout{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1fr);gap:clamp(26px,3.4vw,56px);align-items:center}
 /* width:100% is load-bearing. With only max-width + justify-self:center
@@ -637,6 +632,7 @@ ul,ol{list-style:none}
 .project-feature__content h3{color:#fff;font-size:clamp(20px,1.7vw,27px);line-height:1.2;font-weight:800}
 .project-feature__content p:not(.project-kicker){color:var(--soft);font-size:14px;line-height:1.62}
 .status-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:2px}
+.status-grid--2col{grid-template-columns:repeat(2,minmax(0,1fr))}
 .status{padding:14px;border-radius:9px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.055);box-shadow:var(--glass-depth-inner)}
 .status h4{margin-bottom:9px;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
 .status--complete h4{color:#7ee0b0}
@@ -648,25 +644,19 @@ ul,ol{list-style:none}
 .status--complete li::before{background:#7ee0b0}
 .status--progress li::before{background:#ffd166}
 .status--planned li::before{background:#9db4ff}
+/* Neutral variant for completed retrospective case studies (Hosein Aura,
+   Paint Events) — these list finished deliverables/results, not a
+   complete/in-progress/planned pipeline, so they get one consistent gold
+   accent instead of the green/amber/blue progress-state colors above. */
+.status--neutral h4{color:var(--gold-lt)}
+.status--neutral li::before{background:var(--gold-lt)}
 .coming-soon{align-self:flex-start;margin-top:auto;padding:8px 13px;border-radius:999px;border:1px dashed rgba(200,168,75,.5);color:var(--gold-lt);font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+.project-feature__quote{padding-left:14px;border-left:2px solid var(--gold-lt);color:rgba(255,255,255,.86);font-size:13.5px;font-style:italic;line-height:1.6}
 
-.project-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.project-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .project-card{display:flex;flex-direction:column}
-.project-card--innoghte{--accent-rgb:168,85,247;--card-line:rgba(168,85,247,.32)}
 .project-card--social{--accent-rgb:233,75,185;--card-line:rgba(233,75,185,.32)}
 .project-card--saffron{--accent-rgb:255,138,76;--card-line:rgba(255,138,76,.32)}
-.project-card__visual{position:relative;height:150px;display:grid;place-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.06);background:radial-gradient(circle at 50% 20%,rgba(var(--accent-rgb),.22),transparent 62%)}
-.project-card__visual b{color:#fff;font-size:34px;font-weight:800;letter-spacing:.02em}
-.project-card__visual span{color:rgba(255,255,255,.72);font-size:11px;font-weight:800;letter-spacing:.2em;text-transform:uppercase}
-/* Same monochrome treatment as the organization wall (brightness(0)
-   invert(1), dissolved into the background) so a real third-party logo
-   sitting in a showcase card reads as the same system as the wall below,
-   rather than introducing a second logo style on the page. Opacity is
-   higher than the wall's resting .55 (this card has no siblings competing
-   for attention, so it can afford to be the clearer of the two). */
-.project-card__visual img{width:auto;height:46px;object-fit:contain;filter:brightness(0) invert(1);opacity:.78}
-.saffron-s{color:#fff;font-family:'Instrument Serif',Georgia,serif;font-size:44px;letter-spacing:0}
-.saffron-thread{position:absolute;width:96px;height:1px;transform:rotate(-24deg);background:linear-gradient(90deg,transparent,rgba(255,138,76,.8),transparent)}
 .project-card__body{position:relative;padding:20px;display:flex;flex-direction:column;gap:10px;flex:1}
 .project-card__body h3{color:#fff;font-size:var(--text-card-title);line-height:var(--line-height-card-title);font-weight:var(--fw-card-title)}
 .project-card__body p:not(.project-kicker){color:var(--soft);font-size:13.5px;line-height:1.6}
@@ -678,9 +668,7 @@ ul,ol{list-style:none}
 .documentary{--accent-rgb:200,168,75;--card-line:rgba(200,168,75,.3);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1fr);align-items:stretch}
 .documentary__art{position:relative;display:grid;place-content:center;gap:2px;padding:26px;text-align:center;background:radial-gradient(circle at 50% 22%,rgba(200,168,75,.2),transparent 62%)}
 .documentary__year{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.3em}
-.documentary__crown{color:var(--gold-lt);font-size:19px;line-height:1}
-.documentary__art strong{color:#fff;font-family:'Instrument Serif',Georgia,serif;font-size:clamp(24px,2.4vw,36px);font-weight:400;line-height:1.05;letter-spacing:.02em}
-.documentary__art em{color:var(--gold);font-family:'Instrument Serif',Georgia,serif;font-size:18px;font-style:italic}
+.documentary__art img{width:100%;max-width:220px;height:auto;margin:8px auto 0}
 .documentary__art small{margin-top:9px;color:var(--muted);font-size:11px;line-height:1.4}
 .documentary__copy{position:relative;padding:26px;display:flex;flex-direction:column;gap:12px}
 .documentary__copy h3{color:#fff;font-size:clamp(20px,1.7vw,26px);line-height:1.2;font-weight:800}
