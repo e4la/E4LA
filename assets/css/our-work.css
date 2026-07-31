@@ -403,7 +403,7 @@ ul,ol{list-style:none}
 .organization-card{--logo-scale:1;border:0;background:none}
 .organization-card[hidden]{display:none}
 .organization-card__link{display:grid;grid-template-rows:auto auto;gap:14px;height:100%;padding:0;text-align:center}
-.organization-card__brand{--logo-base:38px;height:64px;display:grid;place-items:center}
+.organization-card__brand{--logo-base:42px;height:64px;display:grid;place-items:center}
 .organization-card__brand img{
   width:100%;
   height:calc(var(--logo-base) * var(--logo-scale));
@@ -504,7 +504,7 @@ ul,ol{list-style:none}
    whatever each logo happens to measure. */
 .orgrow .organization-card{flex:0 0 auto;width:190px}
 .orgrow .organization-card__link{display:grid;grid-template-rows:52px auto;gap:10px;align-content:start;height:100%;padding:0;text-align:center}
-.orgrow .organization-card__brand{--logo-base:30px;height:52px;display:grid;place-items:center;overflow:hidden}
+.orgrow .organization-card__brand{--logo-base:33px;height:52px;display:grid;place-items:center;overflow:hidden}
 .orgrow .organization-card__brand img{width:auto;max-width:100%;height:calc(var(--logo-base) * var(--logo-scale,1))}
 .orgrow .organization-card__brand--text{display:grid;place-items:center}
 .orgrow .organization-card__brand--text strong{max-width:100%;white-space:normal;font-size:13px;line-height:1.08}
@@ -791,7 +791,7 @@ ul,ol{list-style:none}
 @media(max-width:768px){
   .section{padding-left:20px;padding-right:20px}
   .organization-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:30px 18px}
-  .organization-card__brand{--logo-base:30px;height:52px}
+  .organization-card__brand{--logo-base:33px;height:52px}
   .organization-card__brand--text strong{font-size:15px}
   /* Filter row scrolls horizontally instead of wrapping to four
      rows and pushing the wall below the fold. */

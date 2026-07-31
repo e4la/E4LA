@@ -167,8 +167,8 @@
   var grid = document.getElementById('organization-grid');
 
   /* ---------- Logo marquee ----------
-     The logos scroll as four short rows in alternating directions instead
-     of sitting in seven static grid rows. Four short rows rather than one
+     The logos scroll as three short rows in alternating directions instead
+     of sitting in seven static grid rows. Short rows rather than one
      or two long ones is the whole point: a row of ~9 loops quickly, so
      every logo comes back around often.
 
@@ -178,7 +178,7 @@
      and those are hidden from assistive tech and taken out of the tab
      order. The grid element stays in the document as the no-JS and
      reduced-motion form and is only hidden once the rows are built. */
-  var ROW_TARGET = 4;
+  var ROW_TARGET = 3;
   var marquee = null;
 
   var buildMarquee = function (visible) {
