@@ -105,7 +105,7 @@ if(nlForm){
     var inp=document.getElementById('nl-email');
     var sub=nlForm.querySelector('.footer__submit');
     if(!inp.value)return;
-    sub.textContent='Ã¢Å“â€œ';sub.disabled=true;inp.value='';
+    sub.textContent='✓';sub.disabled=true;inp.value='';
     setTimeout(function(){sub.textContent='Go';sub.disabled=false},3000);
   });
 }

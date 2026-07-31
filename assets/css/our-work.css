@@ -1,0 +1,836 @@
+/* ============================================================
+   E4LA — OUR WORK / PORTFOLIO PAGE
+   Standalone page stylesheet, same architecture as about.css:
+   this file owns the page, ../css/nav.css owns the header/nav,
+   and no nav rules may be added here (see nav.css header note).
+
+   Base reset, tokens, typography, .card material, .btn, footer
+   and [data-r] reveal are mirrored from about.css so Home /
+   Services / About / Our Work render identically. Page-specific
+   blocks start at "HERO ACCORDION".
+   ============================================================ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scrollbar-color:rgba(168,113,255,.45) #07060D;scrollbar-width:thin}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:#07060D}
+::-webkit-scrollbar-thumb{background:rgba(168,113,255,.45);border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:rgba(168,113,255,.65)}
+body{font-family:'Manrope',system-ui,sans-serif;background:#07060D;color:#fff;overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img,svg{display:block;max-width:100%}
+a{text-decoration:none;color:inherit}
+button,input{font:inherit}
+ul,ol{list-style:none}
+
+:root{
+  --bg:#020817;--bg-2:#050b1f;--panel:#07112d;--panel-2:#0a1536;
+  --gold:#C8A84B;--gold-lt:#DFC06E;
+  --violet:#7c3cff;--purple:#a855f7;--pink:#e94bb9;--rose:#ff497d;--orange:#ff8a4c;--blue:#4f7dff;
+  --text:#f8fafc;--soft:rgba(236,242,255,.78);--muted:rgba(236,242,255,.58);--faint:rgba(236,242,255,.14);
+  --line:rgba(157,129,255,.28);--radius:12px;--radius-sm:8px;
+  --pad-x:clamp(22px,4.86vw,94px);--section-py:clamp(54px,7vw,104px);
+  --shell:min(100%,1220px);--hero-shell:min(100%,1360px);
+  --grad:linear-gradient(100deg,var(--violet),var(--pink) 56%,var(--orange));
+  /* Shared typography tokens — kept numerically identical to the
+     matching tokens in about.css / ../../style.css. This page does
+     not load style.css, so the values are mirrored rather than
+     shared, keeping all four pages' typography in sync. */
+  --font-primary:'Manrope',Arial,sans-serif;
+  --text-hero:clamp(36px,4vw,66px);
+  --fw-hero:700;
+  --line-height-hero:1.04;
+  --text-section-title:clamp(32px,2.4vw,44px);
+  --fw-section-title:700;
+  --line-height-heading:1.12;
+  --text-subtitle:14px;
+  --fw-subtitle:800;
+  --ls-subtitle:0.24em;
+  --text-body:clamp(14.5px,1vw,16px);
+  --fw-body:400;
+  --line-height-body:1.56;
+  --text-small:clamp(14px,.95vw,15.5px);
+  --line-height-small:1.52;
+  --text-card-title:clamp(16px,1.1vw,20px);
+  --fw-card-title:800;
+  --line-height-card-title:1.24;
+  /* Frosted-glass card material. One recipe, applied to every card-like
+     surface on the page so they read as the same physical object.
+
+     --glass-fill is a light translucent veil rather than the dark fill these
+     cards used to have, so the page's colour shows through the panel instead
+     of being blocked by it. --glass-blur is what makes it frosted rather
+     than merely transparent.
+
+     --glass-depth is the 3D part. Four inset layers do the work: a bright
+     catch along the top edge, a hairline around the whole inner perimeter,
+     then a wide soft shade drawn inward from every edge — that inner-wall
+     shade is what reads as thickness — and finally two drop shadows to lift
+     the panel off the page. Order matters: the wide inner shade must come
+     after the hairline or it washes it out.
+
+     Mirrored in about.css — change both together. */
+  --glass-fill:linear-gradient(150deg,rgba(255,255,255,.12),rgba(255,255,255,.05) 52%,rgba(255,255,255,.08));
+  --glass-fill-hover:linear-gradient(150deg,rgba(255,255,255,.16),rgba(255,255,255,.07) 52%,rgba(255,255,255,.105));
+  --glass-blur:blur(26px) saturate(150%);
+  --glass-depth:
+    inset 0 1px 0 rgba(255,255,255,.26),
+    inset 0 0 0 1px rgba(255,255,255,.055),
+    inset 0 0 30px 2px rgba(2,3,10,.5),
+    0 24px 52px rgba(0,0,0,.44),
+    0 4px 12px rgba(0,0,0,.28);
+  --glass-depth-hover:
+    inset 0 1px 0 rgba(255,255,255,.34),
+    inset 0 0 0 1px rgba(255,255,255,.08),
+    inset 0 0 34px 2px rgba(2,3,10,.44),
+    0 30px 60px rgba(0,0,0,.5),
+    0 6px 16px rgba(0,0,0,.32);
+  /* Shallower variant for panels nested inside a card — stacking a second
+     blur inside the first turns both to mud, so these get the inner-wall
+     shade only. */
+  --glass-depth-inner:
+    inset 0 1px 0 rgba(255,255,255,.14),
+    inset 0 0 18px 1px rgba(2,3,10,.4);
+  /* Motion tokens — one rhythm for the whole page. */
+  --ease-out:cubic-bezier(.22,1,.36,1);
+  --dur-fast:180ms;
+  --dur:280ms;
+  --dur-slow:620ms;
+}
+
+.skip-link{position:absolute;top:-100%;left:20px;z-index:999999;min-height:44px;display:flex;align-items:center;padding:10px 16px;border-radius:0 0 8px 8px;background:var(--gold);color:#050505;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px}
+.skip-link:focus{top:0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+:focus-visible{outline:2px solid #fff;outline-offset:4px;border-radius:8px}
+.icon-library{display:none}
+.brand-asset{display:block;object-fit:contain;object-position:center;mix-blend-mode:screen}
+
+/* Same background treatment as about.html's .page: blue -> purple
+   -> pink horizontal wash over the near-black vertical base. */
+.page{position:relative;overflow:hidden;background:linear-gradient(90deg,rgba(79,125,255,.18) 0%,rgba(124,58,237,.18) 50%,rgba(219,39,119,.15) 100%),linear-gradient(180deg,#07060D 0%,#0c0a17 50%,#07060D 100%)}
+/* Hero band: the colour wash above covers the whole page, which left the
+   hero tinted purple from the very first pixel. This lays the plain site
+   base over roughly one desktop viewport, then fades out so the wash comes
+   up underneath it — same "dark at the top, colour further down" read as
+   Home, whose hero is its own near-black block of about the same height.
+   The solid part is 100vh (59% of 170vh); the rest is the fade, kept long
+   so the handover is not a visible seam. Sits at z-index 0 and .shell is
+   z-index 1, so all content stays above it. Mirrored in about.css — change
+   both together. */
+.page::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;
+  height:170vh;
+  background:linear-gradient(180deg,#07060D 0%,#07060D 59%,rgba(7,6,13,0) 100%);
+  pointer-events:none;
+  z-index:0;
+}
+.shell{width:var(--shell);margin:0 auto;position:relative;z-index:1}
+.section{padding:var(--section-py) var(--pad-x)}
+/* The hero owns a full viewport below the fixed nav. Content sits toward the
+   bottom of that viewport (align-content:end) rather than centred or pinned
+   to the top — the requested "bring it lower" — which leaves open space
+   under the nav and lets the copy breathe just above the fold.
+
+   This stays safe on short/mobile viewports where the stacked hero-copy +
+   hero-visual are taller than one screen: min-height is a floor, not a
+   ceiling, so once content exceeds it the box simply grows to fit and
+   align-content has nothing to distribute — there is no "extra space" for
+   end-alignment to act on, so content still starts right under the nav
+   rather than overflowing upward behind it. That growth is also what keeps
+   the metrics section from ever showing inside the hero's own viewport:
+   metrics only starts once the (possibly taller-than-100vh) hero box ends.
+
+   --e4la-nav-h comes from nav.css and already swaps to the shorter mobile
+   bar at 980px, so this stays correct at both sizes. dvh is declared second
+   so browsers that support it use the dynamic viewport (mobile URL bar);
+   the vh line is the fallback. Mirrored in about.css. */
+.page>.section:first-child{
+  min-height:calc(100vh - var(--e4la-nav-h,80px));
+  min-height:calc(100dvh - var(--e4la-nav-h,80px));
+  display:grid;
+  align-content:end;
+  padding-top:clamp(32px,6vh,88px);
+  padding-bottom:clamp(32px,6vh,88px);
+}
+
+.eyebrow{margin-bottom:16px;color:#7C3AED;font-family:var(--font-primary);font-size:var(--text-subtitle);font-weight:var(--fw-subtitle);line-height:1.1;letter-spacing:var(--ls-subtitle);text-transform:uppercase}
+.gradient-text{display:inline-block;background:linear-gradient(95deg,#DB2777 0%,#F97316 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+
+/* ── SECTION HEADS ───────────────────────────────────────── */
+.section-head{margin-bottom:34px}
+.section-head h2{font-family:var(--font-primary);font-size:var(--text-section-title);line-height:var(--line-height-heading);letter-spacing:0;font-weight:var(--fw-section-title)}
+.section-head p{margin-top:14px;max-width:650px;color:var(--muted);font-family:var(--font-primary);font-size:var(--text-body);line-height:var(--line-height-body);font-weight:var(--fw-body)}
+.section-head--split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.85fr);gap:clamp(20px,3vw,48px);align-items:end}
+.section-head--split p{margin-top:0}
+
+/* ── FROSTED GLASS CARD MATERIAL (mirrors about.css) ─────── */
+.card{
+  position:relative;
+  border:1px solid var(--card-line,rgba(255,255,255,.17));
+  border-radius:var(--radius);
+  background:var(--glass-fill);
+  backdrop-filter:var(--glass-blur);
+  -webkit-backdrop-filter:var(--glass-blur);
+  box-shadow:var(--glass-depth);
+  overflow:hidden;
+  transition:border-color var(--dur) ease,box-shadow var(--dur) ease,background var(--dur) ease;
+}
+.card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 14% 0,rgba(var(--accent-rgb,124,60,255),.2),transparent 42%);pointer-events:none}
+.card:hover,.card:focus-within{
+  border-color:var(--card-line,rgba(255,255,255,.28));
+  background:var(--glass-fill-hover);
+  box-shadow:var(--glass-depth-hover);
+}
+/* Without backdrop-filter there is nothing to frost, so a translucent veil
+   would just look thin. Falls back to an opaque panel light enough to still
+   read as glass rather than reverting to the old dark card. */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .card{background:#1c1c28}
+  .card:hover,.card:focus-within{background:#22222f}
+}
+
+/* ── BUTTONS ──────────────────────────────────────────────
+   .btn--primary is the same pill as About's final-CTA button
+   (which itself matches the nav "Let's Connect" treatment), so
+   every page's primary action reads as one component. */
+.btn{min-height:46px;display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:13px 22px;border-radius:999px;font-family:Inter,Manrope,'Helvetica Neue',Arial,sans-serif;font-size:11.5px;line-height:1;font-weight:700;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;cursor:pointer;transition:transform var(--dur) ease,box-shadow var(--dur) ease,filter var(--dur) ease,background var(--dur) ease,border-color var(--dur) ease}
+.btn svg{width:13px;height:13px;flex:0 0 auto}
+.btn--primary{border:0;color:#fff;background:linear-gradient(100deg,#F97316 0%,#DB2777 52%,#7C3AED 100%);box-shadow:0 12px 30px rgba(219,39,119,.24),0 4px 14px rgba(124,58,237,.18)}
+.btn--primary:hover{transform:translateY(-1px);filter:saturate(1.06) brightness(1.03);box-shadow:0 16px 34px rgba(219,39,119,.30),0 6px 18px rgba(124,58,237,.22)}
+.btn--ghost{border:1px solid rgba(255,255,255,.24);color:#fff;background:rgba(255,255,255,.03)}
+.btn--ghost:hover{border-color:rgba(200,168,75,.62);background:rgba(200,168,75,.08)}
+
+.text-link{display:inline-flex;align-items:center;gap:8px;min-height:44px;color:var(--gold-lt);font-size:13px;font-weight:800;letter-spacing:.02em}
+.text-link svg{width:14px;height:14px;transition:transform var(--dur) var(--ease-out)}
+.text-link:hover svg{transform:translateX(4px)}
+
+/* ── HERO ─────────────────────────────────────────────────── */
+.hero-grid{width:var(--hero-shell);display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1fr);gap:clamp(24px,3vw,52px);align-items:center}
+.hero-copy{max-width:640px}
+.hero-copy h1{
+  max-width:640px;
+  margin-bottom:18px;
+  color:#fff;
+  font-family:'Manrope',Arial,sans-serif;
+  font-size:clamp(30px,4vw,46px);
+  font-weight:700;
+  line-height:1.12;
+  letter-spacing:-1px;
+  text-rendering:geometricPrecision;
+}
+.hero-copy .lede{max-width:560px;color:rgba(255,255,255,.55);font-family:'Manrope',Arial,sans-serif;font-size:15px;font-weight:300;line-height:1.7}
+.hero-copy .lede + .lede{margin-top:12px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+
+/* ── HERO ACCORDION ───────────────────────────────────────
+   Vanilla reimplementation of the interactive image-accordion
+   pattern: one expanded panel, siblings collapsed to a vertical
+   label strip. Rebuilt with flex-grow ratios instead of fixed px
+   widths so the rail always fills its container at any viewport
+   size, and each panel is a real <a> to its section — the hero
+   doubles as the page's overview and jump navigation, which is
+   the point of putting it above a long page.
+
+   Only flex-grow / transform / opacity animate. Nothing here
+   changes the height of the rail, so expanding a panel can never
+   shift the rest of the page (CLS-safe). */
+.hero-rail{
+  position:relative;
+  display:flex;
+  gap:10px;
+  height:clamp(300px,32vw,436px);
+  padding:10px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:linear-gradient(145deg,rgba(14,17,32,.78),rgba(5,7,18,.66));
+  backdrop-filter:blur(20px) saturate(125%);
+  -webkit-backdrop-filter:blur(20px) saturate(125%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 24px 58px rgba(0,0,0,.42);
+}
+.hero-rail__panel{
+  position:relative;
+  flex:1 1 0;
+  min-width:0;
+  display:block;
+  border-radius:12px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.09);
+  /* Closed: one dark surface, identical on every panel. The accent tint
+     and the artwork both belong to the open state — five tinted, imaged
+     strips side by side left the closed rail with no focal point. */
+  background:linear-gradient(168deg,rgba(12,10,26,.5) 0%,rgba(6,5,14,.86) 70%,rgba(10,8,22,.6) 100%);
+  transition:flex-grow var(--dur-slow) var(--ease-out),border-color 380ms ease,box-shadow 380ms ease;
+  /* Contains the artwork's screen blend to this panel — without it the
+     blend would reach through to the page background. */
+  isolation:isolate;
+}
+.hero-rail__panel.is-active{
+  flex-grow:5.4;
+  border-color:rgba(var(--accent-rgb),.58);
+  box-shadow:0 0 0 1px rgba(var(--accent-rgb),.26),0 18px 46px rgba(0,0,0,.44);
+  background:
+    radial-gradient(circle at 50% 6%,rgba(var(--accent-rgb),.40),transparent 58%),
+    linear-gradient(168deg,rgba(var(--accent-rgb),.20) 0%,rgba(5,7,18,.94) 66%);
+}
+/* Mascot artwork per panel.
+
+   Each source is the E4LA mascot glowing on a solid black field.
+   mix-blend-mode:screen drops that black to nothing and contributes only
+   the light, so the artwork sits on the panel without covering the
+   panel's own accent gradient with an opaque rectangle.
+
+   --focal is set per panel inline and carries BOTH axes on purpose. The
+   sources are square but the panel's aspect ratio flips with the layout:
+   portrait in the two-column hero (cover crops the sides) and landscape
+   once the hero stacks to one column (cover crops top and bottom). Only
+   the overflowing axis uses its value, so each panel's pair is tuned to
+   keep the mascot's head in frame either way — with a plain centre crop
+   the head was cut off below ~1100px. */
+.hero-rail__media{position:absolute;inset:0;overflow:hidden}
+.hero-rail__media img{
+  width:100%;height:100%;
+  object-fit:cover;
+  object-position:var(--focal,center);
+  mix-blend-mode:screen;
+  opacity:0;
+  transform:scale(1.05);
+  transition:opacity 500ms ease,transform 800ms var(--ease-out);
+}
+.hero-rail__panel.is-active .hero-rail__media img{opacity:.92;transform:scale(1)}
+/* Scrim keeps the label at >=4.5:1 over the artwork, and fades in with it
+   so it cannot darken a closed panel and break the uniform closed surface. */
+.hero-rail__scrim{position:absolute;inset:0;opacity:0;background:linear-gradient(180deg,rgba(3,4,12,0) 24%,rgba(3,4,12,.58) 62%,rgba(3,4,12,.9) 100%);pointer-events:none;transition:opacity 500ms ease}
+.hero-rail__panel.is-active .hero-rail__scrim{opacity:1}
+.hero-rail__num{position:absolute;top:14px;left:0;right:0;text-align:center;font-size:10.5px;font-weight:800;letter-spacing:.2em;color:rgba(255,255,255,.62);transition:color var(--dur) ease}
+.hero-rail__panel.is-active .hero-rail__num{color:rgba(255,255,255,.86)}
+/* minmax(0,1fr) is load-bearing: the description below has a fixed
+   width, and without it that width sizes the grid track, so the
+   centred label of a collapsed 56px panel gets centred on a ~238px
+   track and lands outside the panel entirely. Capping the track lets
+   the description overflow (and be clipped) instead. */
+/* Closed, the body fills the panel and centres its one visible child, so
+   every closed label lands on the same centre line. Open, it collapses
+   back to the bottom-anchored stack (label, description, cue) — that open
+   layout is unchanged. */
+.hero-rail__body{position:absolute;inset:0;padding:18px 16px;display:grid;grid-template-columns:minmax(0,1fr);align-content:center;justify-items:center;gap:0;pointer-events:none}
+.hero-rail__panel.is-active .hero-rail__body{top:auto;align-content:end;justify-items:start;padding:20px}
+/* Taken out of flow while closed so their height cannot pull the centred
+   label off that shared centre line — the reason the closed labels used to
+   sit at five different heights. They are already opacity:0 here. */
+.hero-rail__panel:not(.is-active) .hero-rail__meta,
+.hero-rail__panel:not(.is-active) .hero-rail__cue{position:absolute;bottom:20px;left:20px}
+/* Rotated (not writing-mode-switched) so the label rotation is a real
+   animatable transform rather than an unanimatable snap. Closed, the label
+   is the panel's whole content, so it goes large and bold and carries the
+   site's own gradient — the same #DB2777 -> #F97316 that .gradient-text
+   puts on the h1 beside it. Open, it reverts to the small solid-white
+   label that sits above the description. */
+.hero-rail__title{
+  transform-origin:center;
+  transform:rotate(-90deg);
+  white-space:nowrap;
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:.03em;
+  background:linear-gradient(95deg,#DB2777 0%,#F97316 100%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  color:transparent;
+  transition:transform 520ms var(--ease-out);
+}
+.hero-rail__panel.is-active .hero-rail__title{
+  transform:rotate(0deg);
+  font-size:14px;
+  letter-spacing:.06em;
+  background:none;
+  -webkit-text-fill-color:#fff;
+  color:#fff;
+}
+/* Fixed width, not max-width: while the panel expands, a percentage
+   width would re-wrap this paragraph on every frame of the flex-grow
+   transition. At a fixed width it is simply clipped by the panel's
+   overflow until there is room for it. */
+.hero-rail__meta{
+  margin-top:10px;width:30ch;
+  opacity:0;transform:translateY(10px);
+  color:rgba(255,255,255,.72);font-size:13px;font-weight:400;line-height:1.5;
+  transition:opacity 340ms ease 120ms,transform 340ms var(--ease-out) 120ms;
+}
+.hero-rail__cue{display:flex;align-items:center;gap:7px;margin-top:12px;opacity:0;transform:translateY(10px);color:var(--gold-lt);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;transition:opacity 340ms ease 180ms,transform 340ms var(--ease-out) 180ms}
+.hero-rail__cue svg{width:12px;height:12px}
+.hero-rail__panel.is-active .hero-rail__meta,
+.hero-rail__panel.is-active .hero-rail__cue{opacity:1;transform:none}
+.hero-rail__panel:focus-visible{outline:2px solid #fff;outline-offset:-4px}
+.hero-rail__hint{margin-top:12px;color:rgba(255,255,255,.4);font-size:12px;letter-spacing:.02em}
+
+/* ── METRICS ──────────────────────────────────────────────── */
+.metrics{padding:clamp(26px,3.4vw,48px) var(--pad-x)}
+.metrics__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.metric{padding:20px 22px;border-radius:var(--radius);border:1px solid rgba(255,255,255,.17);background:var(--glass-fill);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-depth)}
+.metric__value{display:block;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-size:clamp(28px,3vw,44px);font-weight:800;line-height:1.05;font-variant-numeric:tabular-nums}
+.metric__value--word{font-size:clamp(22px,2.2vw,32px)}
+.metric span{display:block;margin-top:8px;color:var(--muted);font-size:13px;line-height:1.45}
+
+/* ── ORGANIZATION WALL ────────────────────────────────────── */
+.filters{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:26px}
+.filter{min-height:44px;padding:10px 16px;border:1px solid rgba(255,255,255,.14);border-radius:999px;background:rgba(255,255,255,.03);color:var(--soft);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:border-color var(--dur) ease,color var(--dur) ease,background var(--dur) ease}
+.filter:hover{border-color:rgba(200,168,75,.55);color:#fff}
+.filter.is-active{border:1px solid transparent;background:linear-gradient(#0b0a16,#0b0a16) padding-box,var(--grad) border-box;color:#fff;box-shadow:0 8px 24px rgba(124,60,255,.16)}
+
+/* No cards, no tiles: each mark is flattened to one monochrome tone
+   and sits directly on the page background, so the wall reads as a
+   single field rather than 34 boxes.
+
+   brightness(0) invert(1) is what makes "one theme" possible. The
+   source marks have opposite ink polarity — some are dark artwork on
+   transparency (USC, PwC, Hilton), others light (Team Prime Time,
+   HumanGood) — so no tint, grayscale or blend mode can normalise all
+   of them. Flattening every mark to a white silhouette and dissolving
+   it with opacity is the only treatment that lands identically on
+   mixed sources. Trade-off accepted deliberately: brand colour is
+   lost, which is standard for a monochrome logo wall.
+
+   Three sources had opaque backgrounds (electica + paint-events on
+   white, pars-equality on #013772) and would have flattened into
+   solid white blocks, so they use alpha-keyed *-alpha.png variants.
+   The full-colour originals are kept next to them. */
+.organization-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(28px,3.2vw,54px) clamp(20px,2.4vw,44px)}
+.organization-card{--logo-scale:1;border:0;background:none}
+.organization-card[hidden]{display:none}
+.organization-card__link{display:grid;grid-template-rows:auto auto;gap:14px;height:100%;padding:0;text-align:center}
+.organization-card__brand{--logo-base:38px;height:64px;display:grid;place-items:center}
+.organization-card__brand img{
+  width:100%;
+  height:calc(var(--logo-base) * var(--logo-scale));
+  object-fit:contain;
+  filter:brightness(0) invert(1);
+  opacity:.55;
+  transition:opacity var(--dur) ease;
+}
+/* Optical size pass: the row height is fixed, only the mark scales.
+   Square and portrait marks need more height than a wide wordmark to
+   carry the same visual weight, otherwise the wall looks like it has
+   random holes in it. Grouped by intrinsic aspect ratio.
+
+   These are multipliers, not absolute heights, on purpose: as
+   per-organization selectors they outrank any plain
+   ".organization-card__brand img" rule, so absolute values here would
+   survive the mobile breakpoint and overflow the shorter box. With
+   multipliers, the breakpoint only has to move --logo-base. */
+.organization-card--lmu,
+.organization-card--paint-events,
+.organization-card--pars-equality,
+.organization-card--innoghte,
+.organization-card--sola-impact{--logo-scale:1.47}
+.organization-card--pwc,
+.organization-card--team-prime-time,
+.organization-card--davita,
+.organization-card--roosterfish{--logo-scale:1.26}
+.organization-card--nipoc,
+.organization-card--kirn,
+.organization-card--golden-hippo,
+.organization-card--hilton-foundation{--logo-scale:1.1}
+/* Text wordmark fallback for names without a confidently matched
+   official asset — intentional, not a missing-image placeholder. Set
+   at the same tone as the silhouettes so both read as one system. */
+.organization-card__brand--text{background:none}
+.organization-card__brand--text::before{content:none}
+.organization-card__brand--text strong{
+  max-width:100%;
+  color:rgba(255,255,255,.62);
+  font-family:'Instrument Serif',Georgia,serif;
+  font-size:clamp(17px,1.5vw,23px);
+  font-weight:400;
+  line-height:1.06;
+  text-align:center;
+  letter-spacing:-.01em;
+  transition:color var(--dur) ease;
+}
+.organization-card__link:hover .organization-card__brand img,
+.organization-card__link:focus-visible .organization-card__brand img{opacity:1}
+.organization-card__link:hover .organization-card__brand--text strong,
+.organization-card__link:focus-visible .organization-card__brand--text strong{color:#fff}
+.organization-card__meta{display:grid;align-content:start;gap:4px;padding:0}
+/* Tone-unified with the marks — no gold accent here, so nothing in
+   the wall competes with the logos. Both sizes stay at or above the
+   10px floor used elsewhere on this page. */
+.organization-card__category{color:rgba(236,242,255,.6);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.organization-card__relationship{color:rgba(236,242,255,.62);font-size:12px;line-height:1.4}
+/* ── LOGO MARQUEE ─────────────────────────────────────────
+   The 34 logos scroll as four rows in alternating directions rather
+   than the seven static grid rows they occupied before. Four short rows
+   instead of one or two long ones is the point: a row of ~9 completes
+   its loop quickly, so every logo comes back around often instead of
+   the reader having to wait for it.
+
+   .organization-grid stays in the HTML as the no-JS and reduced-motion
+   form — our-work.js moves the real cards into these rows and only then
+   hides the grid, so nothing depends on the script to be present. */
+.orgmarquee{
+  display:grid;
+  gap:clamp(16px,2vw,28px);
+  /* Rows run past the container edge; fade them out instead of cutting. */
+  mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%);
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%);
+}
+/* Fixed row height so the four rows stay evenly spaced — left to content,
+   a row whose tallest mark is small came out shorter than its neighbours.
+   Tall enough to carry each logo's category and role underneath it. */
+.orgrow{display:flex;align-items:stretch;height:112px;overflow:hidden}
+.orgrow__track{
+  display:flex;
+  flex:0 0 auto;
+  align-items:center;
+  gap:clamp(30px,3.6vw,58px);
+  /* --span is set per row by JS: the fraction of the track that equals
+     one full copy of the row's logos, so the loop is seamless. */
+  animation:orgscroll var(--speed,38s) linear infinite;
+  animation-direction:var(--dir,normal);
+  will-change:transform;
+}
+@keyframes orgscroll{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+/* Moving link targets are hard to hit, so the whole set stops on hover
+   and on keyboard focus — which is also the pause mechanism auto-moving
+   content needs to be accessible. */
+.orgmarquee:hover .orgrow__track,
+.orgmarquee:focus-within .orgrow__track{animation-play-state:paused}
+/* Fixed item width, so the category and role underneath have a column to
+   wrap in and the rows stay on an even rhythm instead of stretching to
+   whatever each logo happens to measure. */
+.orgrow .organization-card{flex:0 0 auto;width:190px}
+.orgrow .organization-card__link{display:grid;grid-template-rows:52px auto;gap:10px;align-content:start;height:100%;padding:0;text-align:center}
+.orgrow .organization-card__brand{--logo-base:30px;height:52px;display:grid;place-items:center;overflow:hidden}
+.orgrow .organization-card__brand img{width:auto;max-width:100%;height:calc(var(--logo-base) * var(--logo-scale,1))}
+.orgrow .organization-card__brand--text{display:grid;place-items:center}
+.orgrow .organization-card__brand--text strong{max-width:100%;white-space:normal;font-size:13px;line-height:1.08}
+.orgrow .organization-card__meta{display:grid;gap:3px;padding:0;justify-items:center}
+.orgrow .organization-card__relationship{
+  /* Two lines is enough for every current value, the longest being
+     "Employment & business-growth contribution"; the clamp is a guard so a
+     longer one added later cannot push the row out of alignment. */
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  font-size:11px;line-height:1.32;
+}
+@media(prefers-reduced-motion:reduce){
+  .orgrow__track{animation:none}
+}
+
+.trademark-note{margin-top:26px;max-width:900px;color:rgba(236,242,255,.6);font-size:12px;line-height:1.6}
+.empty-message{grid-column:1/-1;padding:34px;text-align:center;color:var(--muted);font-size:14px}
+
+/* ── IMPACT STORIES ───────────────────────────────────────── */
+.impact-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.impact-card{padding:24px;display:flex;flex-direction:column;gap:14px}
+.impact-card--enrich{--accent-rgb:124,60,255;--card-line:rgba(124,60,255,.34)}
+/* No longer the odd one out with a full-bleed image split — flattened to
+   the same plain flex-column layout as every other impact card so the
+   four read as one consistent set. Keep the accent tint. */
+.impact-card--mortgage{--accent-rgb:79,125,255;--card-line:rgba(79,125,255,.34)}
+.impact-card--zenith{--accent-rgb:233,75,185;--card-line:rgba(233,75,185,.34)}
+.impact-card--radio{--accent-rgb:255,138,76;--card-line:rgba(255,138,76,.34)}
+.impact-card__top{position:relative;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.impact-card__number{width:34px;height:34px;flex:0 0 auto;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(var(--accent-rgb,124,60,255),.6);color:#fff;font-size:12px;font-weight:800;box-shadow:0 0 20px rgba(var(--accent-rgb,124,60,255),.2) inset}
+.impact-card__relationship{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.impact-card__org{position:relative;margin-bottom:6px;color:#b785ff;font-size:13px;font-weight:800;letter-spacing:.02em}
+.impact-card h3{position:relative;color:#fff;font-size:clamp(18px,1.5vw,23px);line-height:1.24;font-weight:800}
+/* :not() exclusions matter here — .impact-card__org / .project-kicker
+   are <p> elements too, and a bare ".impact-card p" (one class + one
+   type) outranks a single-class label rule, which silently reset the
+   labels to body colour and size. */
+.impact-card p:not(.impact-card__org):not(.impact-card__note):not(.project-kicker){position:relative;color:var(--soft);font-size:14px;line-height:1.62}
+/* De-emphasised at Nasim's request — see the HTML comment on
+   .impact-card--enrich. Weight only, not size: dropping size too would
+   misalign its baseline against the other three impact-card h3s. */
+.impact-card--enrich h3{font-weight:600}
+.tag-list{position:relative;display:flex;flex-wrap:wrap;gap:7px;margin-top:auto;padding-top:6px}
+.tag-list li{border:1px solid rgba(124,60,255,.34);border-radius:6px;padding:6px 9px;background:rgba(124,60,255,.1);color:#d7c4ff;font-size:10px;font-weight:800;line-height:1}
+/* Same monochrome treatment as the wall, so this mark and the wall
+   read as one system rather than two logo styles on one page. */
+.radio-brand{position:relative;height:52px;display:grid;place-items:center;justify-items:start;background:none}
+.radio-brand img{width:auto;height:40px;object-fit:contain;filter:brightness(0) invert(1);opacity:.72}
+
+/* ── PAINT EVENTS / TEAM BUILDING ─────────────────────────── */
+.paint__layout{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1fr);gap:clamp(26px,3.4vw,56px);align-items:center}
+/* width:100% is load-bearing. With only max-width + justify-self:center
+   this box is not stretched, so its width came from its content — and
+   its only in-flow child (.paint__logo-wrap) is sized as a percentage
+   of it. That circular dependency resolved to zero, collapsing the box
+   (and with it the rings, mark and stat badge) to 0x0. */
+.paint__visual{
+  /* --paint-open is driven 0 -> 1 by motion.js as this section scrolls in;
+     the frames read it to fan out from the centre. Both fallbacks matter:
+     0 would leave the frames stacked and invisible if the module never
+     loads, so the no-JS/no-module value is 1 (fully fanned, static). */
+  --paint-open:1;
+  --paint-r:184px;
+  --paint-tile:90px;
+  position:relative;width:100%;max-width:440px;margin-inline:auto;aspect-ratio:1;display:grid;place-items:center;
+}
+.paint__rings{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(255,138,76,.26);box-shadow:0 0 0 18px rgba(233,75,185,.05),0 0 0 36px rgba(124,60,255,.045),0 0 90px rgba(219,39,119,.16) inset}
+/* The white disc is gone too — with the wall dissolved, a solid white
+   circle here would be the only opaque logo surface left on the page.
+   The concentric rings still carry the composition. */
+.paint__logo-wrap{position:relative;width:64%;aspect-ratio:1;display:grid;place-items:center;border-radius:50%;background:none}
+.paint__logo-wrap img{width:74%;height:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:.88}
+/* ── PAINT EVENT-PHOTO FRAMES ─────────────────────────────
+   Eight frames sit stacked dead centre at --paint-open:0 and fan out onto
+   a ring of radius --paint-r as it reaches 1. Each frame rotates to its
+   angle, translates outward, then counter-rotates by the same angle so the
+   photo itself stays upright the whole way out — the rotation is only a
+   means of aiming the translation.
+
+   --paint-r and --paint-tile are lengths, not percentages, because a
+   percentage in translateY resolves against the frame's own height rather
+   than the circle, so they are re-set per breakpoint alongside the
+   circle's max-width. Keep the three in step: the frames have to clear the
+   logo disc (64% of the circle) without crossing the outer ring. */
+.paint__tiles{position:absolute;inset:0;pointer-events:none}
+.paint__tile{
+  position:absolute;
+  top:50%;left:50%;
+  width:var(--paint-tile);height:var(--paint-tile);
+  margin:calc(var(--paint-tile) / -2) 0 0 calc(var(--paint-tile) / -2);
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.16);
+  background:linear-gradient(150deg,rgba(255,138,76,.18),rgba(124,60,255,.16));
+  box-shadow:0 10px 26px rgba(0,0,0,.46);
+  overflow:hidden;
+  transform:rotate(var(--ang,0deg)) translateY(calc(var(--paint-open) * (0px - var(--paint-r)))) rotate(calc(var(--ang,0deg) * -1));
+  opacity:calc(.3 + var(--paint-open) * .7);
+}
+.paint__tile img{width:100%;height:100%;object-fit:cover}
+/* Placeholder hatch, shown only while a frame has no image in it. */
+.paint__tile:empty::after{
+  content:"";
+  position:absolute;inset:0;
+  background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.10) 0 1px,transparent 1px 7px);
+}
+/* The outer ring comes up with the frames so the whole circle resolves as
+   one gesture rather than a static ring with things moving inside it. */
+.paint__rings{opacity:calc(.4 + var(--paint-open) * .6);transform:scale(calc(.94 + var(--paint-open) * .06))}
+@media(prefers-reduced-motion:reduce){
+  /* Fanned out and settled — no travel, but nothing hidden either. */
+  .paint__visual{--paint-open:1}
+}
+.paint__stat{position:absolute;right:0;bottom:6%;padding:14px 18px;border-radius:14px;border:1px solid rgba(255,138,76,.34);background:rgba(9,7,18,.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);text-align:center;z-index:2}
+.paint__stat strong{display:block;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-size:clamp(22px,2.2vw,32px);font-weight:800;line-height:1}
+.paint__stat span{display:block;margin-top:4px;color:var(--muted);font-size:11px}
+.paint__copy h2{font-family:var(--font-primary);font-size:var(--text-section-title);line-height:var(--line-height-heading);font-weight:var(--fw-section-title)}
+.paint__lede{margin-top:16px;color:rgba(255,255,255,.86);font-size:var(--text-body);line-height:var(--line-height-body)}
+.paint__copy>p:not(.paint__lede){margin-top:12px;color:var(--soft);font-size:14px;line-height:1.62}
+.capability-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.capability-chips li{border:1px solid rgba(255,138,76,.3);border-radius:6px;padding:7px 10px;background:rgba(255,138,76,.09);color:#ffd9bf;font-size:10.5px;font-weight:800;line-height:1}
+
+/* ── DIGITAL / UX / AI ────────────────────────────────────── */
+.project-feature{--accent-rgb:79,125,255;--card-line:rgba(79,125,255,.32);display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1fr);gap:0;align-items:stretch;margin-bottom:16px}
+.project-feature__visual{position:relative;min-height:300px;overflow:hidden}
+.project-feature__visual img{width:100%;height:100%;object-fit:cover;object-position:center top}
+/* This slot's default (cover, cropped to fill) suits a wide website
+   screenshot, not a portrait branded logo — cover would crop into the
+   "Est. 1985" line. contain shows the whole mark instead. No fill here:
+   the logo PNG is transparent, so the card's own shared glass background
+   (.card's --glass-fill) shows through instead of a separate solid box. */
+.project-feature__visual--logo img{object-fit:contain;object-position:center}
+.project-feature__content{position:relative;padding:26px;display:flex;flex-direction:column;gap:14px}
+.project-kicker{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.project-feature__content h3{color:#fff;font-size:clamp(20px,1.7vw,27px);line-height:1.2;font-weight:800}
+.project-feature__content p:not(.project-kicker){color:var(--soft);font-size:14px;line-height:1.62}
+.status-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:2px}
+.status{padding:14px;border-radius:9px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.055);box-shadow:var(--glass-depth-inner)}
+.status h4{margin-bottom:9px;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.status--complete h4{color:#7ee0b0}
+.status--progress h4{color:#ffd166}
+.status--planned h4{color:#9db4ff}
+.status ul{display:grid;gap:6px}
+.status li{position:relative;padding-left:13px;color:var(--muted);font-size:11.5px;line-height:1.4}
+.status li::before{content:"";position:absolute;left:0;top:.5em;width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.7}
+.status--complete li::before{background:#7ee0b0}
+.status--progress li::before{background:#ffd166}
+.status--planned li::before{background:#9db4ff}
+.coming-soon{align-self:flex-start;margin-top:auto;padding:8px 13px;border-radius:999px;border:1px dashed rgba(200,168,75,.5);color:var(--gold-lt);font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+
+.project-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.project-card{display:flex;flex-direction:column}
+.project-card--innoghte{--accent-rgb:168,85,247;--card-line:rgba(168,85,247,.32)}
+.project-card--social{--accent-rgb:233,75,185;--card-line:rgba(233,75,185,.32)}
+.project-card--saffron{--accent-rgb:255,138,76;--card-line:rgba(255,138,76,.32)}
+.project-card__visual{position:relative;height:150px;display:grid;place-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.06);background:radial-gradient(circle at 50% 20%,rgba(var(--accent-rgb),.22),transparent 62%)}
+.project-card__visual b{color:#fff;font-size:34px;font-weight:800;letter-spacing:.02em}
+.project-card__visual span{color:rgba(255,255,255,.72);font-size:11px;font-weight:800;letter-spacing:.2em;text-transform:uppercase}
+/* Same monochrome treatment as the organization wall (brightness(0)
+   invert(1), dissolved into the background) so a real third-party logo
+   sitting in a showcase card reads as the same system as the wall below,
+   rather than introducing a second logo style on the page. Opacity is
+   higher than the wall's resting .55 (this card has no siblings competing
+   for attention, so it can afford to be the clearer of the two). */
+.project-card__visual img{width:auto;height:46px;object-fit:contain;filter:brightness(0) invert(1);opacity:.78}
+.saffron-s{color:#fff;font-family:'Instrument Serif',Georgia,serif;font-size:44px;letter-spacing:0}
+.saffron-thread{position:absolute;width:96px;height:1px;transform:rotate(-24deg);background:linear-gradient(90deg,transparent,rgba(255,138,76,.8),transparent)}
+.project-card__body{position:relative;padding:20px;display:flex;flex-direction:column;gap:10px;flex:1}
+.project-card__body h3{color:#fff;font-size:var(--text-card-title);line-height:var(--line-height-card-title);font-weight:var(--fw-card-title)}
+.project-card__body p:not(.project-kicker){color:var(--soft);font-size:13.5px;line-height:1.6}
+.project-card__body p.project-result{color:#7ee0b0;font-weight:600}
+.project-status{align-self:flex-start;margin-top:auto;padding:7px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.12);color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+
+/* ── MEDIA & PRODUCTION ───────────────────────────────────── */
+.media-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:16px;align-items:stretch}
+.documentary{--accent-rgb:200,168,75;--card-line:rgba(200,168,75,.3);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1fr);align-items:stretch}
+.documentary__art{position:relative;display:grid;place-content:center;gap:2px;padding:26px;text-align:center;background:radial-gradient(circle at 50% 22%,rgba(200,168,75,.2),transparent 62%)}
+.documentary__year{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.3em}
+.documentary__crown{color:var(--gold-lt);font-size:19px;line-height:1}
+.documentary__art strong{color:#fff;font-family:'Instrument Serif',Georgia,serif;font-size:clamp(24px,2.4vw,36px);font-weight:400;line-height:1.05;letter-spacing:.02em}
+.documentary__art em{color:var(--gold);font-family:'Instrument Serif',Georgia,serif;font-size:18px;font-style:italic}
+.documentary__art small{margin-top:9px;color:var(--muted);font-size:11px;line-height:1.4}
+.documentary__copy{position:relative;padding:26px;display:flex;flex-direction:column;gap:12px}
+.documentary__copy h3{color:#fff;font-size:clamp(20px,1.7vw,26px);line-height:1.2;font-weight:800}
+.documentary__copy p:not(.project-kicker){color:var(--soft);font-size:14px;line-height:1.62}
+.media-spectrum{display:grid;gap:10px;align-content:start}
+.media-spectrum>div{padding:16px 18px;border-radius:var(--radius);border:1px solid rgba(255,255,255,.17);background:var(--glass-fill);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-depth);display:grid;grid-template-columns:34px 1fr;grid-template-rows:auto auto;column-gap:13px;align-items:center}
+.media-spectrum span{grid-row:1/3;width:34px;height:34px;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(157,129,255,.44);color:#c9b6ff;font-size:11px;font-weight:800}
+.media-spectrum strong{color:#fff;font-size:15px;font-weight:800}
+.media-spectrum small{margin-top:3px;color:var(--muted);font-size:12px;line-height:1.45}
+
+/* ── FINAL CTA (mirrors about.css .final-cta) ─────────────── */
+.cta-wrap{padding-top:0}
+/* Same glass as the cards, but keeping its violet -> pink accent wash on top
+   of the veil so the closing CTA still reads as the loudest panel. */
+.final-cta{display:grid;grid-template-columns:78px 1fr auto;align-items:center;gap:28px;padding:32px clamp(24px,3vw,40px);border-radius:22px;border:1px solid rgba(255,255,255,.2);background:linear-gradient(120deg,rgba(124,58,237,.2),rgba(255,255,255,.05) 55%,rgba(219,39,119,.18));backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-depth);transition:border-color var(--dur) ease,box-shadow var(--dur) ease}
+.final-cta:hover,.final-cta:focus-within{border-color:rgba(255,255,255,.32);box-shadow:var(--glass-depth-hover)}
+.cta-icon{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:rgba(124,58,237,.14);color:#c4b5fd}
+.cta-icon svg{width:24px;height:24px;transform:rotate(-45deg)}
+.final-cta h2{font-size:clamp(22px,1.8vw,28px);line-height:1.12}
+.final-cta p{margin-top:6px;color:var(--soft);font-family:var(--font-primary);font-size:var(--text-body);line-height:var(--line-height-body);font-weight:var(--fw-body)}
+.final-cta__actions{display:flex;flex-wrap:wrap;gap:12px}
+
+/* ── FOOTER (mirrors about.css) ───────────────────────────── */
+.footer{background:#07060D;border-top:1px solid rgba(255,255,255,.05);padding:32px var(--pad-x) 18px}
+.footer__top{display:grid;grid-template-columns:180px 1fr;gap:44px;margin-bottom:18px}
+.footer__brand-logo{width:83px;height:49px;overflow:hidden}
+.footer__brand-logo .brand-asset{width:100%;height:100%}
+.footer__tagline{font-family:var(--font-primary);font-size:var(--text-body);font-weight:var(--fw-body);line-height:var(--line-height-body);margin:14px 0 16px;max-width:240px;color:rgba(255,255,255,.48)}
+.footer__socials{display:flex;gap:10px}
+.footer__soc{width:28px;height:28px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.14);border-radius:50%;color:#fff}
+.footer__soc svg{width:14px;height:14px}
+.footer__cols{display:grid;grid-template-columns:repeat(4,1fr);gap:26px}
+.footer__col-head{font-family:var(--font-primary);font-size:var(--text-card-title);font-weight:var(--fw-card-title);line-height:var(--line-height-card-title);letter-spacing:0;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.footer__links{display:grid;gap:8px}
+.footer__links a,.footer__nl-note{font-family:var(--font-primary);font-size:var(--text-small);line-height:var(--line-height-small);color:rgba(255,255,255,.7)}
+.footer__links a[aria-current="page"]{color:var(--gold)}
+.footer__form{height:36px;display:flex;border:1px solid rgba(200,168,75,.52);border-radius:6px;overflow:hidden}
+.footer__input{min-width:0;flex:1;border:0;background:transparent;color:#fff;padding:8px 12px;font-family:var(--font-primary);font-size:14px}
+.footer__submit{border:0;background:transparent;color:var(--gold);font-size:22px;padding:4px 12px;cursor:pointer}
+.footer__bottom{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:12px;border-top:1px solid rgba(255,255,255,.05)}
+.footer__copy,.footer__made{font-family:var(--font-primary);font-size:12.5px;line-height:1.5;color:rgba(255,255,255,.48)}
+
+/* ── SCROLL REVEAL ────────────────────────────────────────── */
+[data-r]{opacity:0;transform:translateY(14px);transition:opacity .6s var(--ease-out),transform .6s var(--ease-out)}
+[data-r].in{opacity:1;transform:none}
+
+/* ── RESPONSIVE ───────────────────────────────────────────── */
+@media(max-width:1280px){
+  .organization-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:1100px){
+  .hero-grid{grid-template-columns:1fr;gap:30px}
+  .hero-copy{max-width:760px}
+  .hero-rail{height:clamp(280px,42vw,380px)}
+  .section-head--split{grid-template-columns:1fr;align-items:start;gap:14px}
+  .impact-grid{grid-template-columns:1fr}
+  .project-feature{grid-template-columns:1fr}
+  .media-grid{grid-template-columns:1fr}
+  .paint__layout{grid-template-columns:1fr}
+  /* Ring radius and frame size step down with the circle — see the note on
+     .paint__tile for why these cannot just be percentages. */
+  .paint__visual{max-width:355px;--paint-r:148px;--paint-tile:72px}
+}
+@media(max-width:980px){
+  .metrics__grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .organization-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .project-grid{grid-template-columns:1fr}
+  .documentary{grid-template-columns:1fr}
+  .status-grid{grid-template-columns:1fr}
+}
+/* Below 900px the accordion turns its axis instead of turning into a list.
+   Same behaviour — one panel open, the rest collapsed, closed panels dark
+   with a gradient label and no artwork — but stacked vertically, because a
+   horizontal rail here cannot work: at 375px the four closed columns come
+   out ~36px wide, under the 44px touch-target minimum, and squeezing the
+   open panel to buy them width leaves it too narrow to show anything.
+   Turned vertical, a closed bar is full-width x 58px, which clears the
+   minimum comfortably.
+
+   Labels are horizontal in both states on this axis — a rotated label
+   inside a short full-width bar would read sideways for no reason.
+
+   Total rail height is constant (four closed bars + one open) regardless
+   of which panel is open, so switching panels never shifts the page.
+   Activation is by tap and lives in our-work.js: the first tap opens a
+   panel, a second follows the link. */
+@media(max-width:900px){
+  .hero-rail{flex-direction:column;height:auto;gap:8px;padding:8px;border-radius:14px}
+  .hero-rail__panel{
+    flex:0 0 auto;
+    height:58px;
+    border-radius:10px;
+    transition:height 520ms var(--ease-out),border-color 380ms ease,box-shadow 380ms ease;
+  }
+  .hero-rail__panel.is-active{height:min(58vw,268px)}
+  /* Closed: number left, label centred on the bar. Open: both move to the
+     top-left and the description stack fills in below. */
+  .hero-rail__body{inset:0;padding:0 18px 0 52px;align-content:center;justify-items:start}
+  .hero-rail__panel.is-active .hero-rail__body{top:auto;align-content:end;padding:18px 18px 18px 52px}
+  .hero-rail__num{top:50%;left:18px;right:auto;text-align:left;transform:translateY(-50%)}
+  .hero-rail__panel.is-active .hero-rail__num{top:18px;left:18px;right:auto;text-align:left;transform:none}
+  .hero-rail__title,.hero-rail__panel.is-active .hero-rail__title{transform:none;font-size:16px;letter-spacing:.03em}
+  .hero-rail__meta{width:auto;max-width:none}
+  .hero-rail__hint{display:none}
+  .footer__top{grid-template-columns:1fr}
+  .footer__cols{grid-template-columns:1fr 1fr}
+  .footer__soc{width:44px;height:44px}
+  .footer__links a{min-height:44px;display:flex;align-items:center}
+  .footer__form{height:46px}
+  .footer__input,.footer__submit{min-height:44px}
+  .footer__submit{min-width:44px}
+  .final-cta{grid-template-columns:1fr;align-items:start}
+  .final-cta__actions .btn{width:100%}
+}
+@media(max-width:768px){
+  .section{padding-left:20px;padding-right:20px}
+  .organization-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:30px 18px}
+  .organization-card__brand{--logo-base:30px;height:52px}
+  .organization-card__brand--text strong{font-size:15px}
+  /* Filter row scrolls horizontally instead of wrapping to four
+     rows and pushing the wall below the fold. */
+  .filters{flex-wrap:nowrap;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x proximity;scrollbar-width:thin}
+  .filter{flex:0 0 auto;scroll-snap-align:start}
+  .impact-card,.project-feature__content,.documentary__copy,.project-card__body{padding:18px}
+  .project-feature__visual{min-height:200px}
+}
+@media(max-width:560px){
+  .metrics__grid{grid-template-columns:1fr}
+  .footer__cols{grid-template-columns:1fr}
+  .paint__stat{right:auto;left:50%;bottom:-8px;transform:translateX(-50%)}
+  .final-cta{padding:24px}
+  .documentary__art{padding:22px}
+}
+@media(max-width:480px){
+  .organization-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 16px}
+}
+@media(max-width:400px){
+  .section{padding-left:16px;padding-right:16px}
+}
+@media(min-width:1640px){
+  .organization-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+}
+
+/* ── REDUCED MOTION ───────────────────────────────────────── */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  [data-r]{opacity:1!important;transform:none!important}
+  .btn:hover{transform:none}
+  /* The rail keeps working — every transition above is already zeroed, so
+     the active panel, its artwork and its label snap into place instead of
+     easing. The label's rotation is deliberately left alone: un-rotating it
+     would break the closed strips, where the rotated label is the layout. */
+}

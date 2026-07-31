@@ -108,5 +108,64 @@
 
 @media (max-width:700px){
   .uikit-token-row{grid-template-columns:100px 60px 1fr}
-  .uikit-topbar{padding:14px 20px}
+}
+
+/* ---- Print (used to export the PDF version of this reference) ----
+   A .uikit-section runs taller than one page, so break-inside:avoid on
+   the section itself is a no-op — the renderer breaks somewhere inside
+   regardless. What actually matters is protecting each atomic unit
+   (one swatch, one demo panel, one note) from being split, and keeping
+   a heading glued to the block that follows it. */
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact}
+  body>header{position:static!important}
+  html body{padding-top:0!important}
+  .uikit-toc{display:none}
+
+  .uikit-demo,
+  .uikit-note,
+  .uikit-flag,
+  .uikit-swatch,
+  .uikit-token-row,
+  .uikit-type-row,
+  .uikit-icon,
+  .uikit-code,
+  .uikit-drift__card,
+  .svc-card,
+  .uikit-card-demo{
+    break-inside:avoid;page-break-inside:avoid;
+  }
+
+  .uikit-subhead,
+  .uikit-section__eyebrow,
+  .uikit-section__title,
+  .uikit-section__desc{
+    break-after:avoid;page-break-after:avoid;
+  }
+
+  /* Chromium's print pagination does not reliably honor break-inside:avoid
+     on flex/grid containers — it can still slice straight through them.
+     .uikit-demo and .uikit-card-demo are flex/grid on screen, so for print
+     only, drop the CONTAINER to block layout (a fragmentation-safe
+     context). Their children (buttons, .svc-card) are already
+     inline-flex/flex in their own component CSS, so they still lay out
+     side by side and wrap normally — only the outer box's fragmentation
+     behavior changes. */
+  .uikit-demo,
+  .uikit-card-demo{
+    display:block!important;
+  }
+
+  /* Inline-level boxes (this link is display:inline-flex in its own
+     component CSS) fragment like a line of text — break-inside:avoid on
+     an ancestor does not stop the browser splitting the box itself
+     across a page boundary. Forcing it to inline-block for print only
+     makes it an atomic unit, like an image, that can't be sliced. Its
+     content (text + one small icon) survives losing flex layout fine;
+     do NOT apply this to the .cta-neon buttons — they rely on flex to
+     center an absolutely-laid-out badge/beam and would visibly break. */
+  .services-top__link{
+    display:inline-block!important;
+    break-inside:avoid;page-break-inside:avoid;
+  }
 }

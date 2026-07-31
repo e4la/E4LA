@@ -40,6 +40,37 @@ ul,ol{list-style:none}
   --text-card-title:clamp(16px,1.1vw,20px);
   --fw-card-title:800;
   --line-height-card-title:1.24;
+  /* Frosted-glass card material. One recipe, applied to every card-like
+     surface on the page so they read as the same physical object.
+
+     --glass-fill is a light translucent veil rather than the dark fill these
+     cards used to have, so the page's colour shows through the panel instead
+     of being blocked by it. --glass-blur is what makes it frosted rather
+     than merely transparent.
+
+     --glass-depth is the 3D part. Four inset layers do the work: a bright
+     catch along the top edge, a hairline around the whole inner perimeter,
+     then a wide soft shade drawn inward from every edge — that inner-wall
+     shade is what reads as thickness — and finally two drop shadows to lift
+     the panel off the page. Order matters: the wide inner shade must come
+     after the hairline or it washes it out.
+
+     Mirrored in our-work.css — change both together. */
+  --glass-fill:linear-gradient(150deg,rgba(255,255,255,.12),rgba(255,255,255,.05) 52%,rgba(255,255,255,.08));
+  --glass-fill-hover:linear-gradient(150deg,rgba(255,255,255,.16),rgba(255,255,255,.07) 52%,rgba(255,255,255,.105));
+  --glass-blur:blur(26px) saturate(150%);
+  --glass-depth:
+    inset 0 1px 0 rgba(255,255,255,.26),
+    inset 0 0 0 1px rgba(255,255,255,.055),
+    inset 0 0 30px 2px rgba(2,3,10,.5),
+    0 24px 52px rgba(0,0,0,.44),
+    0 4px 12px rgba(0,0,0,.28);
+  --glass-depth-hover:
+    inset 0 1px 0 rgba(255,255,255,.34),
+    inset 0 0 0 1px rgba(255,255,255,.08),
+    inset 0 0 34px 2px rgba(2,3,10,.44),
+    0 30px 60px rgba(0,0,0,.5),
+    0 6px 16px rgba(0,0,0,.32);
 }
 .skip-link{position:absolute;top:-100%;left:20px;z-index:9999;min-height:44px;display:flex;align-items:center;padding:10px 16px;border-radius:0 0 8px 8px;background:var(--gold);color:#050505;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px}
 .skip-link:focus{top:0}
@@ -60,13 +91,55 @@ ul,ol{list-style:none}
    over the same near-black vertical base (#07060D), replacing the
    previous 3-dot radial-glow treatment. */
 .page{position:relative;overflow:hidden;background:linear-gradient(90deg,rgba(79,125,255,.18) 0%,rgba(124,58,237,.18) 50%,rgba(219,39,119,.15) 100%),linear-gradient(180deg,#07060D 0%,#0c0a17 50%,#07060D 100%)}
+/* Hero band: the colour wash above covers the whole page, which left the
+   hero tinted purple from the very first pixel. This lays the plain site
+   base over roughly one desktop viewport, then fades out so the wash comes
+   up underneath it — same "dark at the top, colour further down" read as
+   Home, whose hero is its own near-black block of about the same height.
+   The solid part is 100vh (59% of 170vh); the rest is the fade, kept long
+   so the handover is not a visible seam. Sits at z-index 0 and .shell is
+   z-index 1, so all content stays above it. Mirrored in our-work.css —
+   change both together. */
+.page::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;
+  height:170vh;
+  background:linear-gradient(180deg,#07060D 0%,#07060D 59%,rgba(7,6,13,0) 100%);
+  pointer-events:none;
+  z-index:0;
+}
 /* Grid-line pattern removed per direct request (was a faint 36px
    graph-paper overlay sitting behind the whole page). */
 .shell{width:var(--shell);margin:0 auto;position:relative;z-index:1}
 .section{padding:var(--section-py) var(--pad-x)}
 .eyebrow{margin-bottom:14px;color:#b55cff;font-family:var(--font-primary);font-size:var(--text-subtitle);font-weight:var(--fw-subtitle);letter-spacing:var(--ls-subtitle);text-transform:uppercase}
 .gradient-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.page>.section:first-child{padding-top:clamp(14px,1.8vw,28px);padding-bottom:clamp(22px,3vw,42px)}
+/* The hero owns a full viewport below the fixed nav. Content sits toward the
+   bottom of that viewport (align-content:end) rather than centred or pinned
+   to the top — the requested "bring it lower" — which leaves open space
+   under the nav and lets the copy breathe just above the fold.
+
+   This stays safe on short/mobile viewports where content grows taller than
+   one screen: min-height is a floor, not a ceiling, so once content exceeds
+   it the box simply grows to fit and align-content has nothing to
+   distribute — there is no "extra space" for end-alignment to act on, so
+   content still starts right under the nav rather than overflowing upward
+   behind it. That growth is also what keeps the next section from ever
+   showing inside the hero's own viewport: it only starts once the
+   (possibly taller-than-100vh) hero box ends.
+
+   --e4la-nav-h comes from nav.css and already swaps to the shorter mobile
+   bar at 980px. dvh is declared second so browsers that support it use the
+   dynamic viewport; the vh line is the fallback. Mirrored in our-work.css. */
+.page>.section:first-child{
+  min-height:calc(100vh - var(--e4la-nav-h,80px));
+  min-height:calc(100dvh - var(--e4la-nav-h,80px));
+  display:grid;
+  align-content:end;
+  padding-top:clamp(32px,6vh,88px);
+  padding-bottom:clamp(32px,6vh,88px);
+}
 .hero-grid{width:var(--hero-shell);display:grid;grid-template-columns:minmax(590px,.9fr) minmax(620px,1fr);gap:clamp(22px,2.6vw,36px);align-items:start}
 .hero-copy{max-width:700px}
 h1{max-width:760px;font-family:var(--font-primary);font-size:var(--text-hero);line-height:var(--line-height-hero);letter-spacing:normal;font-weight:var(--fw-hero)}
@@ -126,6 +199,35 @@ h1{max-width:760px;font-family:var(--font-primary);font-size:var(--text-hero);li
 .media--team img{object-position:center 34%}
 .media--paint{display:grid;place-items:center;background:#fff}
 .media--paint img{width:82%;height:82%;object-fit:contain}
+
+/* ── Timeline description reveal ──────────────────────────────────
+   Only the paragraph is hidden — the year and heading stay visible as the
+   card's permanent title, matching the reference sketch (Title + image
+   thumbnail by default; hovering brings the paragraph down between them,
+   pushing the image lower). Wraps the lone <p> in .milestone-reveal, a
+   single-cell grid whose row track animates 0fr -> 1fr: unlike max-height,
+   this animates to the paragraph's true natural height with no guessed
+   ceiling and no clipping. The inner <p> needs overflow:hidden and
+   min-height:0 for the 0fr state to actually reach zero (grid items don't
+   shrink below their content's min-size by default).
+
+   Default (unscoped, so it's what mobile/tablet and any non-matching
+   browser get) is the expanded 1fr state — always-visible text, same as
+   before this change — since there is no hover on touch to reveal it any
+   other way. Only min-width:861px (one pixel above the breakpoint where
+   the card switches to the side-by-side tablet layout) collapses it to 0fr
+   and wires the hover/focus expand. :focus and :focus-visible are both
+   listed so keyboard users get the same reveal via the card's
+   tabindex="0" — there is nothing focusable nested inside it to trigger
+   :focus-within instead. */
+.milestone-reveal{display:grid;grid-template-rows:1fr;transition:grid-template-rows .45s cubic-bezier(.22,1,.36,1)}
+.milestone-reveal>p{overflow:hidden;min-height:0}
+@media(min-width:861px){
+  .milestone-reveal{grid-template-rows:0fr}
+  .milestone-card:hover .milestone-reveal,
+  .milestone-card:focus .milestone-reveal,
+  .milestone-card:focus-visible .milestone-reveal{grid-template-rows:1fr}
+}
 /* align-items was "start", which let each profile card size to its
    own content height — since the two bios are different lengths,
    the shorter card's frosted-glass box stopped far short of its
@@ -160,8 +262,10 @@ h1{max-width:760px;font-family:var(--font-primary);font-size:var(--text-hero);li
    instead of the previous flat navy fill + bright rainbow border-box
    ring, which read as a different, louder material than the rest of
    the site's cards. */
-.final-cta{display:grid;grid-template-columns:78px 1fr auto;align-items:center;gap:28px;padding:32px clamp(24px,3vw,40px);border-radius:22px;border:1px solid rgba(157,129,255,.28);background:linear-gradient(120deg,rgba(124,58,237,.14),#03041D 55%,rgba(219,39,119,.12));box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 18px 46px rgba(0,0,0,.35),0 4px 14px rgba(0,0,0,.25);transition:border-color .2s ease,box-shadow .2s ease}
-.final-cta:hover,.final-cta:focus-within{border-color:rgba(157,129,255,.5)}
+/* Same glass as the cards, but keeping its violet -> pink accent wash on top
+   of the veil so the closing CTA still reads as the loudest panel. */
+.final-cta{display:grid;grid-template-columns:78px 1fr auto;align-items:center;gap:28px;padding:32px clamp(24px,3vw,40px);border-radius:22px;border:1px solid rgba(255,255,255,.2);background:linear-gradient(120deg,rgba(124,58,237,.2),rgba(255,255,255,.05) 55%,rgba(219,39,119,.18));backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-depth);transition:border-color .2s ease,box-shadow .2s ease}
+.final-cta:hover,.final-cta:focus-within{border-color:rgba(255,255,255,.32);box-shadow:var(--glass-depth-hover)}
 .cta-icon{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:rgba(124,58,237,.14);color:#c4b5fd}
 .cta-icon svg{width:24px;height:24px;transform:rotate(-45deg)}
 /* Matched to Home's ".schedule-card__h2"/"__desc" (the equivalent
@@ -309,28 +413,28 @@ h1{max-width:760px;font-family:var(--font-primary);font-size:var(--text-hero);li
   font-weight:var(--fw-body);
   line-height:var(--line-height-body);
 }
+/* Frosted glass, replacing the dark fill these cards used to have. This is
+   the block that actually wins for .card — the earlier one above is
+   overridden here, so edit this one. See --glass-* in :root. */
 .card{
-  background:linear-gradient(145deg,rgba(14,17,32,.84),rgba(5,7,18,.76));
-  backdrop-filter:blur(22px) saturate(125%);
-  -webkit-backdrop-filter:blur(22px) saturate(125%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.11),
-    inset 1px 0 0 rgba(255,255,255,.035),
-    inset 0 -14px 28px rgba(0,0,0,.30),
-    inset 0 0 24px rgba(var(--accent-rgb,124,60,255),.065);
+  border-color:var(--card-line,rgba(255,255,255,.17));
+  background:var(--glass-fill);
+  backdrop-filter:var(--glass-blur);
+  -webkit-backdrop-filter:var(--glass-blur);
+  box-shadow:var(--glass-depth);
 }
 .card:hover,
 .card:focus-within{
-  background:linear-gradient(145deg,rgba(17,20,38,.88),rgba(5,7,18,.80));
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.14),
-    inset 1px 0 0 rgba(255,255,255,.045),
-    inset 0 -18px 34px rgba(0,0,0,.34),
-    inset 0 0 30px rgba(var(--accent-rgb,124,60,255),.09);
+  border-color:var(--card-line,rgba(255,255,255,.28));
+  background:var(--glass-fill-hover);
+  box-shadow:var(--glass-depth-hover);
 }
+/* Without backdrop-filter there is nothing to frost, so a translucent veil
+   would just look thin. Falls back to an opaque panel light enough to still
+   read as glass rather than reverting to the old dark card. */
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-  .card{background:#0b0e1b}
-  .card:hover,.card:focus-within{background:#0e1222}
+  .card{background:#1c1c28}
+  .card:hover,.card:focus-within{background:#22222f}
 }
 /* ABOUT HERO TITLE — SHARP LUMINOUS SITE SIGNATURE */
 .hero-copy h1{
