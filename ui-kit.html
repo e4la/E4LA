@@ -9,7 +9,7 @@
 <meta name="description" content="Internal design system reference for the E4LA website: colors, typography, spacing, and components from style.css.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css?v=2026072041">
 <link rel="stylesheet" href="assets/css/nav.css?v=2026072019">
 <link rel="stylesheet" href="assets/css/ui-kit.css?v=1">
@@ -41,8 +41,8 @@
      instead of being re-created out of context. -->
 <header>
   <nav class="nav e4la-site-nav" id="js-nav" role="navigation" aria-label="Main navigation">
-    <a class="nav__logo" href="index.html" aria-label="E4LA - Evolve for Los Angeles">
-      <img class="brand-asset" src="assets/e4la-logo-palm.png" alt="E4LA - Evolve for Los Angeles" width="1022" height="533">
+    <a class="nav__logo" href="index.html" aria-label="E4LA - Elevation for Los Angeles">
+      <img class="brand-asset" src="assets/e4la-logo-palm.png" alt="E4LA - Elevation for Los Angeles" width="1022" height="533">
     </a>
     <ul class="nav__links" role="list">
       <li><a class="nav__link" href="services.html">Services</a></li>
@@ -161,13 +161,13 @@
     <div class="uikit-section__body">
 
       <p class="uikit-subhead">Weights</p>
-      <div class="uikit-type-row"><div class="uikit-type-row__meta">200 · Extralight</div><div style="font-weight:200;font-size:20px">Evolve for Los Angeles</div></div>
-      <div class="uikit-type-row"><div class="uikit-type-row__meta">300 · Light</div><div style="font-weight:300;font-size:20px">Evolve for Los Angeles</div></div>
-      <div class="uikit-type-row"><div class="uikit-type-row__meta">400 · Regular</div><div style="font-weight:400;font-size:20px">Evolve for Los Angeles</div></div>
-      <div class="uikit-type-row"><div class="uikit-type-row__meta">500 · Medium</div><div style="font-weight:500;font-size:20px">Evolve for Los Angeles</div></div>
-      <div class="uikit-type-row"><div class="uikit-type-row__meta">600 · Semibold</div><div style="font-weight:600;font-size:20px">Evolve for Los Angeles</div></div>
-      <div class="uikit-type-row"><div class="uikit-type-row__meta">700 · Bold</div><div style="font-weight:700;font-size:20px">Evolve for Los Angeles</div></div>
-      <div class="uikit-type-row"><div class="uikit-type-row__meta">800 · Extrabold</div><div style="font-weight:800;font-size:20px">Evolve for Los Angeles</div></div>
+      <div class="uikit-type-row"><div class="uikit-type-row__meta">200 · Extralight</div><div style="font-weight:200;font-size:20px">Elevation for Los Angeles</div></div>
+      <div class="uikit-type-row"><div class="uikit-type-row__meta">300 · Light</div><div style="font-weight:300;font-size:20px">Elevation for Los Angeles</div></div>
+      <div class="uikit-type-row"><div class="uikit-type-row__meta">400 · Regular</div><div style="font-weight:400;font-size:20px">Elevation for Los Angeles</div></div>
+      <div class="uikit-type-row"><div class="uikit-type-row__meta">500 · Medium</div><div style="font-weight:500;font-size:20px">Elevation for Los Angeles</div></div>
+      <div class="uikit-type-row"><div class="uikit-type-row__meta">600 · Semibold</div><div style="font-weight:600;font-size:20px">Elevation for Los Angeles</div></div>
+      <div class="uikit-type-row"><div class="uikit-type-row__meta">700 · Bold</div><div style="font-weight:700;font-size:20px">Elevation for Los Angeles</div></div>
+      <div class="uikit-type-row"><div class="uikit-type-row__meta">800 · Extrabold</div><div style="font-weight:800;font-size:20px">Elevation for Los Angeles</div></div>
 
       <p class="uikit-subhead">Recurring text roles</p>
       <div class="uikit-type-row"><div class="uikit-type-row__meta">.section-eyebrow</div><p class="section-eyebrow" style="margin:0">WHAT WE DO BEST</p></div>
@@ -391,14 +391,18 @@
     </div>
   </section>
 
-  <!-- ═══════════ CONTACT ═══════════ -->
+  <!-- ═══════════ FORMS ═══════════ -->
   <section class="uikit-section" id="forms">
     <p class="uikit-section__eyebrow">Components</p>
-    <h2 class="uikit-section__title">Footer Contact Link</h2>
-    <p class="uikit-section__desc">A direct, functional email path for project inquiries. E4LA does not display a newsletter form until a real subscription system is connected.</p>
+    <h2 class="uikit-section__title">Form Input</h2>
+    <p class="uikit-section__desc">The only form pattern in the canonical system today: the footer newsletter signup. Client-side only — no backend submission.</p>
     <div class="uikit-section__body">
       <div class="uikit-demo">
-        <a class="footer__contact" href="mailto:info@e4la.org?subject=E4LA%20Project%20Inquiry">Email E4LA <span aria-hidden="true">→</span></a>
+        <form class="footer__form" aria-label="Newsletter signup" novalidate onsubmit="return false">
+          <label for="uk-nl-email" class="sr-only">Email address</label>
+          <input class="footer__input" id="uk-nl-email" type="email" placeholder="Enter your email" autocomplete="email">
+          <button class="footer__submit" type="submit" aria-label="Subscribe">Go</button>
+        </form>
       </div>
     </div>
   </section>
