@@ -817,9 +817,6 @@ ul,ol{list-style:none}
   .organization-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
 }
 
-.footer__contact{min-height:42px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:8px 12px;border:1px solid rgba(200,168,75,.52);border-radius:6px;color:#fff;font-family:var(--font-primary);font-size:12px;font-weight:650;text-decoration:none;transition:border-color .2s ease,background .2s ease}
-.footer__contact span{color:var(--gold);font-size:18px}.footer__contact:hover{border-color:var(--gold);background:rgba(200,168,75,.08)}.footer__contact:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-
 /* ── REDUCED MOTION ───────────────────────────────────────── */
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}

@@ -4,7 +4,7 @@ Summary of the current site, based solely on the project files as they exist tod
 
 ## What E4LA is
 
-E4LA ("Evolve for Los Angeles") is a founder-led strategy, UX/UI, SEO/GEO, AI, and business visibility consultancy in Los Angeles (est. 2017), plus a 1:1 advisory/coaching session product. Contact is via `info@e4la.org`.
+E4LA ("Elevation for Los Angeles") is a strategy and creative consultancy in Los Angeles (est. 2017), offering experience strategy, creative direction, SEO/GEO, and AI/digital innovation services, plus a 1:1 advisory/coaching session product. Contact is via `info@e4la.org`.
 
 ## Pages
 
