@@ -822,7 +822,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
 .nav__link{font-size:9px;letter-spacing:0;font-weight:600;color:#fff}
 .nav__cta{border-radius:5px;padding:10px 14px;font-size:9px;letter-spacing:0;border-color:rgba(255,255,255,.45)}
 
-.hero{height:calc(100vh - 76px);min-height:540px;max-height:720px;grid-template-columns:46% 54%;padding:12px var(--pad-x) 14px;background:linear-gradient(90deg,#02050d 0%,#02050d 30%,rgba(2,5,13,.8) 43%,rgba(2,5,13,.24) 62%,#02050d 100%),radial-gradient(ellipse at 70% 52%,rgba(124,58,237,.18),transparent 56%),url('assets/e4la-hero-highres.jpeg') #02050d;background-repeat:no-repeat;background-size:auto auto,auto auto,cover;background-position:center,right center,center center}
+.hero{height:calc(100vh - 76px);min-height:540px;max-height:720px;grid-template-columns:46% 54%;padding:12px var(--pad-x) 14px;background:linear-gradient(90deg,#02050d 0%,#02050d 30%,rgba(2,5,13,.8) 43%,rgba(2,5,13,.24) 62%,#02050d 100%),radial-gradient(ellipse at 70% 52%,rgba(124,58,237,.18),transparent 56%),url('assets/hero-video-poster.jpg') #02050d;background-repeat:no-repeat;background-size:auto auto,auto auto,cover;background-position:center,right center,center center}
 .hero::before{display:none}
 .hero__left{padding-right:18px;transform:translateY(-28px)}
 .hero__eyebrow{display:none}
@@ -944,7 +944,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
 .hero{
   background:
     linear-gradient(90deg,#02050d 0%,rgba(2,5,13,.96) 24%,rgba(2,5,13,.68) 42%,rgba(2,5,13,.16) 64%,rgba(2,5,13,.12) 100%),
-    url('assets/e4la-hero-highres.jpeg') #02050d !important;
+    url('assets/hero-video-poster.jpg') #02050d !important;
   background-repeat:no-repeat !important;
   background-size:auto calc(100% - 18px) !important;
   background-position:right center !important;
@@ -975,7 +975,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
   padding:clamp(36px,4vw,64px) var(--pad-x) clamp(32px,4vw,56px) !important;
   background:
     linear-gradient(90deg,rgba(2,5,13,.98) 0%,rgba(2,5,13,.92) 28%,rgba(2,5,13,.58) 46%,rgba(2,5,13,.12) 66%,rgba(2,5,13,.05) 100%),
-    url('assets/e4la-hero-highres.jpeg') #02050d !important;
+    url('assets/hero-video-poster.jpg') #02050d !important;
   background-repeat:no-repeat !important;
   background-size:cover !important;
   background-position:center center !important;
@@ -1018,7 +1018,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
     padding:34px 24px !important;
     background:
       linear-gradient(180deg,rgba(2,5,13,.98) 0%,rgba(2,5,13,.82) 48%,rgba(2,5,13,.2) 100%),
-      url('assets/e4la-hero-highres.jpeg') #02050d !important;
+      url('assets/hero-video-poster.jpg') #02050d !important;
     background-size:cover !important;
     background-position:center bottom !important;
   }
@@ -1045,7 +1045,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
   padding:clamp(28px,3.2vw,52px) var(--pad-x) clamp(24px,3vw,44px) !important;
   background:
     linear-gradient(90deg,rgba(2,5,13,.99) 0%,rgba(2,5,13,.94) 25%,rgba(2,5,13,.62) 45%,rgba(2,5,13,.18) 68%,rgba(2,5,13,.06) 100%),
-    url('assets/e4la-hero-highres.jpeg') #02050d !important;
+    url('assets/hero-video-poster.jpg') #02050d !important;
   background-repeat:no-repeat !important;
   background-size:auto 100% !important;
   background-position:right center !important;
@@ -1077,7 +1077,7 @@ body{background:var(--ref-black);font-family:'Manrope',Arial,sans-serif}
     padding:30px 24px !important;
     background:
       linear-gradient(180deg,rgba(2,5,13,.98) 0%,rgba(2,5,13,.86) 44%,rgba(2,5,13,.28) 100%),
-      url('assets/e4la-hero-highres.jpeg') #02050d !important;
+      url('assets/hero-video-poster.jpg') #02050d !important;
     background-size:auto 46% !important;
     background-position:right bottom !important;
   }
@@ -2404,7 +2404,7 @@ main#main{
 .hero{
   background:
     linear-gradient(90deg,rgba(2,5,13,.99) 0%,rgba(2,5,13,.94) 24%,rgba(2,5,13,.58) 43%,rgba(2,5,13,.12) 66%,rgba(2,5,13,.04) 100%),
-    url('assets/e4la-hero-highres.jpeg') #02050d !important;
+    url('assets/hero-video-poster.jpg') #02050d !important;
   background-repeat:no-repeat !important;
   background-size:auto 100% !important;
   background-position:right center !important;
@@ -6697,7 +6697,7 @@ a {
     max-width: 100% !important;
     position: relative !important;
     overflow: visible !important;
-    background-image: url('assets/e4la-hero-highres.jpeg') !important;
+    background-image: url('assets/hero-video-poster.jpg') !important;
     background-repeat: no-repeat !important;
     background-size: contain !important;
     background-position: center center !important;
@@ -17324,3 +17324,22 @@ svg {
   .booking-success-visual__animation { width: min(100%, 320px) !important; }
 }
 
+/* Honest footer contact path (replaces the previous non-functional newsletter form). */
+.footer__contact {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 12px;
+  border: 1px solid rgba(200, 168, 75, .52);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 650;
+  text-decoration: none;
+  transition: border-color .2s ease, background .2s ease;
+}
+.footer__contact span { color: #c8a84b; font-size: 18px; }
+.footer__contact:hover { border-color: #c8a84b; background: rgba(200, 168, 75, .08); }
+.footer__contact:focus-visible { outline: 2px solid #c8a84b; outline-offset: 3px; }
