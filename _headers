@@ -1,0 +1,47 @@
+/portal
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/portal.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/sign-in
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/sign-in.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/sign-up
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/sign-up.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/forgot-password
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/forgot-password.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/verify-email
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/verify-email.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/ui-kit
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/ui-kit.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+https://e4la.pages.dev/*
+  X-Robots-Tag: noindex
+
+https://:version.e4la.pages.dev/*
+  X-Robots-Tag: noindex
+
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
+
+/sitemap.xml
+  Content-Type: application/xml; charset=utf-8

@@ -97,19 +97,6 @@ if(bookBtn && !bookBtn.hasAttribute('data-booking-open')){
   });
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Newsletter Ã¢â€â‚¬Ã¢â€â‚¬ */
-var nlForm=document.getElementById('js-nl');
-if(nlForm){
-  nlForm.addEventListener('submit',function(e){
-    e.preventDefault();
-    var inp=document.getElementById('nl-email');
-    var sub=nlForm.querySelector('.footer__submit');
-    if(!inp.value)return;
-    sub.textContent='✓';sub.disabled=true;inp.value='';
-    setTimeout(function(){sub.textContent='Go';sub.disabled=false},3000);
-  });
-}
-
 }());
 
 /* FINAL SERVICES 3D TILT â€” REVERSED. Cards now auto-wobble on their
@@ -2988,7 +2975,6 @@ document.querySelectorAll('.sec-services .svc-card[data-service-target]').forEac
   window.E4LABookingFlow = { refreshSummary() { bookingState = loadBookingState(); applyStateToUI(); }, getState: () => clone(bookingState) };
   applyStateToUI();
 })();
-
 
 
 
