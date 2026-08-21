@@ -1,0 +1,10 @@
+{
+  "name": "e4la-client-operations",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:phase-b": "node --test tests/phase-b.test.mjs",
+    "test:phase-c": "node --test tests/phase-c.test.mjs",
+    "test": "node --test tests/*.test.mjs"
+  }
+}

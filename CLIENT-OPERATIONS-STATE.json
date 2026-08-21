@@ -1,0 +1,212 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-08-20T22:30:03-07:00",
+  "project": "E4LA Client Operations System",
+  "status": "NOT READY",
+  "current_phase": "Phase D - Cloudflare Access gate and final handoff",
+  "feature_scope_frozen": true,
+  "preview": {
+    "stable_url": "https://e4la-client-operations-preview.pages.dev",
+    "latest_known_deployment_id": "56f14ffe",
+    "latest_known_deployment_url": "https://56f14ffe.e4la-client-operations-preview.pages.dev",
+    "pages_project_name": "e4la-client-operations-preview",
+    "pages_project_id": "db56b063-dcf4-4445-b1bf-88bf3dd37ab0",
+    "environment": "preview",
+    "production_isolated": true
+  },
+  "blockers": [
+    "Cloudflare Access is not enabled/configured; current response is access.api.error.not_enabled and connected tokens lack Access write authority",
+    "Stripe Sandbox resources, secrets, and end-to-end test matrix are not configured",
+    "Resend preview integration is deferred until Access and Stripe pass",
+    "Final legal language and data-policy decisions are pending approval",
+    "Rendered browser, screenshot, responsive, hydration, cross-browser, and manual accessibility QA are blocked"
+  ],
+  "completed_gates": [
+    "isolated_preview_pages_project",
+    "preview_d1_created_and_bound",
+    "migrations_0001_and_0002_applied_to_preview",
+    "fictional_preview_fixtures_loaded",
+    "application_session_csrf_and_authorization_foundation",
+    "stripe_test_safe_architecture_and_webhook_idempotency",
+    "email_templates_and_outbound_idempotency_schema",
+    "automated_tests_22_of_22",
+    "public_source_isolation_check"
+  ],
+  "pending_gates_in_order": [
+    "cloudflare_access",
+    "stripe_sandbox",
+    "resend_preview",
+    "rendered_qa",
+    "legal_approval",
+    "production_candidate_review"
+  ],
+  "database": {
+    "binding": "ENROLLMENT_DB",
+    "name": "e4la-client-operations-preview",
+    "id": "2d6a0170-f8b9-496d-acd4-50adf3cf9e58",
+    "environment_marker": "preview",
+    "migrations": [
+      "migrations/0001_client_operations.sql",
+      "migrations/0002_phase_c_preview.sql"
+    ],
+    "fixture": "fixtures/client-operations.preview.sql",
+    "counts": {
+      "clients": 6,
+      "projects": 6,
+      "agreements": 6,
+      "agreement_versions": 6,
+      "agreement_acceptances": 5,
+      "enrollments": 5,
+      "identity_links": 0,
+      "active_sessions": 0,
+      "non_fictional_clients": 0
+    },
+    "immutable_or_append_only": [
+      "agreement_versions",
+      "agreement_acceptances",
+      "audit_events",
+      "identity_link_subject_ownership",
+      "environment_marker"
+    ]
+  },
+  "tests": {
+    "command": "npm test",
+    "passing": 22,
+    "total": 22,
+    "last_known_result": "pass"
+  },
+  "roles": [
+    "e4la_admin",
+    "e4la_collaborator",
+    "client_owner",
+    "authorized_signer",
+    "client_viewer",
+    "agreement_signer"
+  ],
+  "prepared_preview_identities": {
+    "admin": "nasim@e4la.org",
+    "fictional_client_owner": "nasim+e4la-client-owner@e4la.org",
+    "fictional_client_viewer": "nasim+e4la-client-viewer@e4la.org",
+    "collaborator_fixture": "phase-c-collaborator@example.test"
+  },
+  "routes": [
+    "/client-agreement/",
+    "/client-agreement/{opaque-id}#invite={one-time-token}",
+    "/client-portal/",
+    "/admin/"
+  ],
+  "endpoints": [
+    "POST /api/ops/auth/admin",
+    "POST /api/ops/auth/client",
+    "POST /api/ops/invites/exchange",
+    "GET /api/ops/session",
+    "POST /api/ops/session/logout",
+    "GET /api/ops/agreements/current",
+    "POST /api/ops/agreements/accept",
+    "POST /api/ops/checkout",
+    "GET /api/ops/enrollment/status",
+    "POST /api/ops/billing/portal",
+    "GET /api/ops/portal",
+    "GET /api/ops/admin/summary",
+    "POST /api/ops/admin/clients-projects",
+    "PATCH /api/ops/admin/clients/{client-id}",
+    "POST /api/ops/admin/agreements",
+    "POST /api/ops/admin/agreements/{agreement-id}/invites",
+    "POST /api/ops/admin/projects/{project-id}/items",
+    "POST /api/ops/admin/publication",
+    "POST /api/ops/admin/enrollments/{enrollment-id}/activate",
+    "GET /api/ops/admin/preview/{client-id}",
+    "POST /api/stripe/webhook"
+  ],
+  "critical_files": [
+    "CLAUDE-HANDOFF-E4LA-CLIENT-OPERATIONS.md",
+    "CLIENT-OPERATIONS-STATE.json",
+    "client-agreement/index.html",
+    "client-portal/index.html",
+    "admin/index.html",
+    "assets/css/operations.css",
+    "assets/css/client-agreement.css",
+    "assets/css/operations-dashboard.css",
+    "assets/js/client-agreement.js",
+    "assets/js/client-portal.js",
+    "assets/js/admin.js",
+    "assets/js/ops-model.js",
+    "functions/api/ops/[[path]].js",
+    "functions/api/stripe/webhook.js",
+    "functions/_shared/ops-security.js",
+    "functions/_shared/cloudflare-access.js",
+    "functions/_shared/environment.js",
+    "functions/_shared/stripe.js",
+    "functions/_shared/portal-activation.js",
+    "functions/_shared/email-templates.js",
+    "migrations/0001_client_operations.sql",
+    "migrations/0002_phase_c_preview.sql",
+    "tests/phase-b.test.mjs",
+    "tests/phase-c.test.mjs",
+    "wrangler.preview.jsonc"
+  ],
+  "protected_files": [
+    "index.html",
+    "services.html",
+    "our-work.html",
+    "about.html",
+    "style.css",
+    "script.js",
+    "motion.js",
+    "assets/css/nav.css",
+    "functions/api/book.js",
+    "sitemap.xml",
+    "robots.txt"
+  ],
+  "required_variables": [
+    "ENVIRONMENT",
+    "PUBLIC_SITE_URL",
+    "ENROLLMENT_DB",
+    "ENROLLMENT_SESSION_SECRET",
+    "ACCESS_TEAM_DOMAIN",
+    "ADMIN_ACCESS_AUD",
+    "CLIENT_ACCESS_AUD",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
+    "STRIPE_API_VERSION",
+    "STRIPE_PORTAL_CONFIGURATION_ID"
+  ],
+  "outstanding_external_configuration": {
+    "cloudflare": [
+      "Enable Zero Trust/Access account state",
+      "Create/confirm preview-safe team domain",
+      "Configure controlled email identity provider",
+      "Create separate Admin and Client Access applications/policies on preview hostname only",
+      "Retrieve AUD values and set ACCESS_TEAM_DOMAIN, ADMIN_ACCESS_AUD, CLIENT_ACCESS_AUD on preview",
+      "Validate identities, roles, scope, session rotation/revocation/logout, and Admin Preview"
+    ],
+    "stripe": [
+      "After Access passes, confirm Sandbox API version in Workbench",
+      "Create test Prices and restricted Customer Portal configuration",
+      "Configure preview-only secret/webhook secret and endpoint",
+      "Run full payment/installment/failure/idempotency matrix"
+    ],
+    "resend": [
+      "After Access and Stripe pass, configure preview-only sender/key/test recipients",
+      "Connect inert templates and prove delivery idempotency"
+    ],
+    "legal": [
+      "Approve agreement/payment/e-sign/privacy/retention/offboarding language and final archival artifact policy"
+    ],
+    "browser": [
+      "Use a permitted managed browser to complete screenshots, responsive, hydration, console/network, keyboard, zoom, contrast, reduced-motion, Chromium and Safari/WebKit QA"
+    ]
+  },
+  "production": {
+    "configured": false,
+    "touched": false,
+    "forbidden_without_explicit_approval": [
+      "production D1 creation or migration",
+      "production Access applications",
+      "live Stripe objects or charges",
+      "real invitations or client identities",
+      "production Resend delivery",
+      "production DNS or MX changes"
+    ]
+  }
+}

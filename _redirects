@@ -2,3 +2,7 @@
 /services.html     /services  301
 /our-work.html     /our-work  301
 /about.html        /about     301
+
+/client-agreement/*  /client-agreement/  200
+/client-portal/*     /client-portal/     200
+/admin/*             /admin/             200

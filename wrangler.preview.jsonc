@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "e4la-client-operations-preview",
+  "pages_build_output_dir": ".",
+  "compatibility_date": "2026-08-20",
+  "vars": {
+    "ENVIRONMENT": "preview",
+    "PUBLIC_SITE_URL": "https://e4la-client-operations-preview.pages.dev"
+  },
+  "d1_databases": [
+    {
+      "binding": "ENROLLMENT_DB",
+      "database_name": "e4la-client-operations-preview",
+      "database_id": "2d6a0170-f8b9-496d-acd4-50adf3cf9e58"
+    }
+  ]
+}

@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'">
+  <title>Client Agreement | E4LA</title>
+  <link rel="icon" href="/assets/e4la-logo-palm2.png">
+  <link rel="stylesheet" href="/assets/css/operations.css">
+  <link rel="stylesheet" href="/assets/css/client-agreement.css">
+</head>
+<body data-ops-surface="agreement">
+  <a class="ops-skip" href="#agreement-main">Skip to agreement</a>
+  <header class="ops-header">
+    <a class="ops-brand" href="/" aria-label="E4LA home">
+      <img src="/assets/e4la-logo-palm.png" alt="E4LA">
+      <span class="ops-brand__label">Client Enrollment</span>
+    </a>
+    <a class="ops-back" href="/">← <span>Back to E4LA</span></a>
+  </header>
+
+  <main id="agreement-main" class="ops-main">
+    <section id="agreement-loading" class="ops-shell agreement-state" aria-live="polite">
+      <div class="agreement-state__mark" aria-hidden="true">✦</div>
+      <h1>Opening your secure agreement</h1>
+      <p>We’re verifying this invitation and preparing the agreement details.</p>
+    </section>
+
+    <section id="agreement-state" class="ops-shell agreement-state" hidden aria-live="assertive">
+      <div class="agreement-state__mark" id="agreement-state-icon" aria-hidden="true">!</div>
+      <h1 id="agreement-state-title">Agreement unavailable</h1>
+      <p id="agreement-state-copy">This secure agreement link is invalid or has expired.</p>
+      <button class="ops-button ops-button--primary" id="agreement-state-action" type="button" hidden>Continue</button>
+      <a class="ops-button ops-button--secondary" href="mailto:hello@e4la.org">Contact E4LA</a>
+    </section>
+
+    <div id="agreement-app" hidden>
+      <section class="ops-shell agreement-hero" aria-labelledby="agreement-title">
+        <p class="ops-eyebrow">A committed 90-day partnership</p>
+        <h1 class="ops-display" id="agreement-title">E4LA 90-Day <span class="ops-gradient-text">Growth Program</span> Agreement</h1>
+        <p class="ops-lede">Strategic growth. Measurable progress. A committed 90-day partnership.</p>
+        <div class="agreement-progress" aria-label="Enrollment step 1 of 3"><span></span><span></span><span></span></div>
+
+        <div class="ops-card ops-card--flat agreement-summary" aria-labelledby="summary-title">
+          <div class="agreement-summary__top">
+            <p id="summary-title">Agreement Summary</p>
+            <span class="ops-status ops-status--pending" id="agreement-status">Ready for review</span>
+          </div>
+          <dl class="agreement-summary__grid">
+            <div class="agreement-summary__item"><dt>Program</dt><dd id="summary-program">—</dd></div>
+            <div class="agreement-summary__item"><dt>Initial term</dt><dd id="summary-term">—</dd></div>
+            <div class="agreement-summary__item"><dt>Total investment</dt><dd id="summary-total">—</dd></div>
+            <div class="agreement-summary__item"><dt>Start date</dt><dd id="summary-start">—</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="ops-shell ops-section ops-layout">
+        <form id="agreement-form" class="agreement-form" novalidate>
+          <div id="form-alert" class="ops-alert" role="alert" tabindex="-1" hidden>
+            <span aria-hidden="true">!</span>
+            <div><h2>Please review the highlighted items</h2><p id="form-alert-copy">Complete the required fields before continuing.</p></div>
+          </div>
+
+          <section class="ops-card agreement-block" aria-labelledby="client-info-title">
+            <div class="agreement-block__head">
+              <span class="agreement-block__number" aria-hidden="true">01</span>
+              <div><h2 id="client-info-title">Confirm client information</h2><p>Review the business and authorized contact details for this agreement.</p></div>
+            </div>
+            <div class="agreement-field-grid">
+              <div class="ops-field">
+                <label for="legal-business-name">Legal Business Name <span class="ops-required" aria-hidden="true">*</span></label>
+                <input class="ops-input" id="legal-business-name" name="legalBusinessName" autocomplete="organization" required maxlength="180" aria-describedby="legal-business-name-error">
+                <p class="ops-error" id="legal-business-name-error" hidden></p>
+              </div>
+              <div class="ops-field">
+                <label for="dba">DBA / Business Name</label>
+                <input class="ops-input" id="dba" name="dba" autocomplete="organization" maxlength="180">
+              </div>
+              <div class="ops-field">
+                <label for="contact-name">Contact Person Full Name <span class="ops-required" aria-hidden="true">*</span></label>
+                <input class="ops-input" id="contact-name" name="contactName" autocomplete="name" required maxlength="160" aria-describedby="contact-name-error">
+                <p class="ops-error" id="contact-name-error" hidden></p>
+              </div>
+              <div class="ops-field">
+                <label for="email">Email Address <span class="ops-required" aria-hidden="true">*</span></label>
+                <input class="ops-input" id="email" name="email" type="email" inputmode="email" autocomplete="email" required maxlength="180" aria-describedby="email-error">
+                <p class="ops-error" id="email-error" hidden></p>
+              </div>
+              <div class="ops-field">
+                <label for="phone">Phone Number <span class="ops-required" aria-hidden="true">*</span></label>
+                <input class="ops-input" id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required maxlength="40" aria-describedby="phone-error">
+                <p class="ops-error" id="phone-error" hidden></p>
+              </div>
+              <div class="ops-field">
+                <label for="title">Title / Position <span class="ops-required" aria-hidden="true">*</span></label>
+                <input class="ops-input" id="title" name="title" autocomplete="organization-title" required maxlength="100" aria-describedby="title-error">
+                <p class="ops-error" id="title-error" hidden></p>
+              </div>
+              <div class="ops-field agreement-field--wide">
+                <label for="billing-address">Billing Address <span class="ops-required" aria-hidden="true">*</span></label>
+                <input class="ops-input" id="billing-address" name="billingAddress" autocomplete="street-address" required maxlength="180" aria-describedby="billing-address-error">
+                <p class="ops-error" id="billing-address-error" hidden></p>
+              </div>
+            </div>
+            <div class="agreement-address-grid ops-mt-18">
+              <div class="ops-field"><label for="city">City <span class="ops-required" aria-hidden="true">*</span></label><input class="ops-input" id="city" name="city" autocomplete="address-level2" required maxlength="80" aria-describedby="city-error"><p class="ops-error" id="city-error" hidden></p></div>
+              <div class="ops-field"><label for="state">State <span class="ops-required" aria-hidden="true">*</span></label><input class="ops-input" id="state" name="state" autocomplete="address-level1" required maxlength="40" aria-describedby="state-error"><p class="ops-error" id="state-error" hidden></p></div>
+              <div class="ops-field"><label for="zip">ZIP Code <span class="ops-required" aria-hidden="true">*</span></label><input class="ops-input" id="zip" name="zip" inputmode="numeric" autocomplete="postal-code" required maxlength="20" aria-describedby="zip-error"><p class="ops-error" id="zip-error" hidden></p></div>
+            </div>
+            <label class="ops-check ops-mt-20"><input type="checkbox" id="client-authority" required aria-describedby="client-authority-error"><span>I confirm that I am authorized to enter into this Agreement on behalf of the Client.</span></label>
+            <p class="ops-error" id="client-authority-error" hidden></p>
+          </section>
+
+          <section class="ops-card agreement-block" aria-labelledby="payment-plan-title">
+            <div class="agreement-block__head">
+              <span class="agreement-block__number" aria-hidden="true">02</span>
+              <div><h2 id="payment-plan-title">Select the payment schedule</h2><p>Every option represents the same fixed program fee. Installments are a payment schedule only.</p></div>
+            </div>
+            <fieldset class="ops-fieldset" aria-describedby="payment-plan-error">
+              <legend class="ops-legend">Approved payment schedules <span class="ops-required" aria-hidden="true">*</span></legend>
+              <div class="payment-plans ops-mt-12" id="payment-plans"></div>
+              <p class="ops-error" id="payment-plan-error" hidden>Select a payment schedule.</p>
+            </fieldset>
+          </section>
+
+          <section class="ops-card agreement-block" aria-labelledby="agreement-highlights-title">
+            <div class="agreement-block__head">
+              <span class="agreement-block__number" aria-hidden="true">03</span>
+              <div><h2 id="agreement-highlights-title">Agreement highlights</h2><p>Confirm each key condition before reviewing the full legal agreement.</p></div>
+            </div>
+            <div class="agreement-clauses" id="agreement-clauses"></div>
+            <p class="ops-error" id="agreement-clauses-error" hidden></p>
+          </section>
+
+          <section class="ops-card agreement-block" aria-labelledby="legal-agreement-title">
+            <div class="agreement-block__head">
+              <span class="agreement-block__number" aria-hidden="true">04</span>
+              <div><h2 id="legal-agreement-title">Full Legal Agreement</h2><p>This is separate from the agreement summary above.</p></div>
+            </div>
+            <div class="agreement-legal" id="legal-agreement" tabindex="0" aria-label="Full legal agreement text"></div>
+          </section>
+
+          <section class="ops-card agreement-block" aria-labelledby="acceptance-title">
+            <div class="agreement-block__head">
+              <span class="agreement-block__number" aria-hidden="true">05</span>
+              <div><h2 id="acceptance-title">Electronic acceptance</h2><p>Your typed name and acceptance are recorded with the agreement version and server timestamp.</p></div>
+            </div>
+            <div class="agreement-field-grid">
+              <div class="ops-field"><label for="signer-name">Full Legal Name <span class="ops-required" aria-hidden="true">*</span></label><input class="ops-input" id="signer-name" name="signerName" autocomplete="name" required maxlength="160" aria-describedby="signer-name-error"><p class="ops-error" id="signer-name-error" hidden></p></div>
+              <div class="ops-field"><label for="signer-role">Title <span class="ops-required" aria-hidden="true">*</span></label><input class="ops-input" id="signer-role" name="signerRole" autocomplete="organization-title" required maxlength="100" aria-describedby="signer-role-error"><p class="ops-error" id="signer-role-error" hidden></p></div>
+              <div class="ops-field"><label for="signer-company">Company <span class="ops-required" aria-hidden="true">*</span></label><input class="ops-input" id="signer-company" name="signerCompany" autocomplete="organization" required maxlength="180" aria-describedby="signer-company-error"><p class="ops-error" id="signer-company-error" hidden></p></div>
+              <div class="ops-field"><label for="acceptance-date">Acceptance date/time</label><input class="ops-input" id="acceptance-date" readonly aria-readonly="true" value="Recorded securely when submitted"></div>
+              <div class="ops-field agreement-field--wide"><label for="typed-acceptance">Electronic Signature — Type Full Legal Name <span class="ops-required" aria-hidden="true">*</span></label><input class="ops-input" id="typed-acceptance" name="typedAcceptance" required maxlength="160" aria-describedby="typed-acceptance-hint typed-acceptance-error"><p class="ops-hint" id="typed-acceptance-hint">Typing your full legal name and submitting indicates your electronic acceptance.</p><p class="ops-error" id="typed-acceptance-error" hidden></p></div>
+            </div>
+            <label class="ops-check ops-mt-20"><input type="checkbox" id="signer-authority" required aria-describedby="signer-authority-error"><span>I confirm that I am authorized to sign and accept this Agreement for the Client.</span></label>
+            <p class="ops-error" id="signer-authority-error" hidden></p>
+            <p class="agreement-signature-note"><span aria-hidden="true">◇</span> This implementation records acceptance evidence but makes no claim of legal compliance pending attorney review.</p>
+          </section>
+        </form>
+
+        <aside class="ops-sidebar" aria-label="Agreement total and secure payment">
+          <div class="ops-card ops-card__body">
+            <p class="ops-eyebrow">Enrollment summary</p>
+            <h2 class="agreement-sidebar__program" id="sidebar-program">90-Day Brand Visibility &amp; Growth Program</h2>
+            <p class="agreement-sidebar__price" id="sidebar-total">$3,600</p>
+            <p class="agreement-sidebar__meta">Fixed program fee</p>
+            <div class="agreement-sidebar__list">
+              <div class="agreement-sidebar__row"><span>Term</span><strong id="sidebar-term">90 days</strong></div>
+              <div class="agreement-sidebar__row"><span>Schedule</span><strong id="sidebar-schedule">Select a schedule</strong></div>
+              <div class="agreement-sidebar__row"><span>Next step</span><strong>Stripe Checkout</strong></div>
+            </div>
+            <button class="ops-button ops-button--primary ops-button--full" id="agreement-submit" type="submit" form="agreement-form">I Agree &amp; Continue to Secure Payment <span aria-hidden="true">→</span></button>
+            <p class="agreement-cta-note">You’ll review and confirm your payment securely on the next step.</p>
+            <div class="agreement-trust">
+              <p><span aria-hidden="true">✓</span> Secure payment processing by Stripe</p>
+              <p><span aria-hidden="true">✓</span> E4LA does not store full card details</p>
+              <p><span aria-hidden="true">✓</span> Agreement and enrollment data stays server-side</p>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="ops-shell ops-section" aria-labelledby="next-title">
+        <div class="ops-section__head"><p class="ops-eyebrow">Clear from here</p><h2 class="ops-title" id="next-title">What happens next?</h2></div>
+        <div class="ops-card agreement-next">
+          <article class="agreement-next__step"><span class="agreement-next__number">1</span><h3>Confirm</h3><p>Review and accept the agreement.</p></article>
+          <article class="agreement-next__step"><span class="agreement-next__number">2</span><h3>Secure Payment</h3><p>Complete payment setup through Stripe.</p></article>
+          <article class="agreement-next__step"><span class="agreement-next__number">3</span><h3>Get Started</h3><p>Receive confirmation and onboarding instructions.</p></article>
+          <article class="agreement-next__step"><span class="agreement-next__number">4</span><h3>Grow Together</h3><p>E4LA executes, measures, optimizes, and reports.</p></article>
+        </div>
+      </section>
+    </div>
+  </main>
+  <footer class="ops-footer">© E4LA · Client Operations · Secure payment processing by Stripe</footer>
+  <script type="module" src="/assets/js/client-agreement.js"></script>
+</body>
+</html>
