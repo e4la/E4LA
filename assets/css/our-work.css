@@ -554,14 +554,19 @@ ul,ol{list-style:none}
    one deliberately related editorial system rather than two designs. */
 .impact-grid{display:flex;flex-direction:column;gap:14px}
 .impact-card{padding:clamp(20px,2.2vw,28px) clamp(22px,2.8vw,34px);display:flex;align-items:center;gap:clamp(20px,2.8vw,36px)}
+/* Selected Impact Stories sequence: purple -> pink -> orange -> yellow/
+   gold. Professional Journey: row 1 (enrich) approved as-is (violet);
+   rows 2-4 corrected to pink -> orange -> gold. --accent-rgb drives the
+   number ring/solar glow/border everywhere already, so retuning these
+   eight values is the entire fix — no other rule needs to change. */
 .impact-card--enrich{--accent-rgb:124,60,255;--card-line:rgba(124,60,255,.34)}
-.impact-card--mortgage{--accent-rgb:79,125,255;--card-line:rgba(79,125,255,.34)}
-.impact-card--paint{--accent-rgb:200,168,75;--card-line:rgba(200,168,75,.34)}
-.impact-card--radio{--accent-rgb:255,138,76;--card-line:rgba(255,138,76,.34)}
+.impact-card--mortgage{--accent-rgb:168,85,247;--card-line:rgba(168,85,247,.34)}
+.impact-card--paint{--accent-rgb:255,138,76;--card-line:rgba(255,138,76,.34)}
+.impact-card--radio{--accent-rgb:233,75,185;--card-line:rgba(233,75,185,.34)}
 .impact-card--weho{--accent-rgb:233,75,185;--card-line:rgba(233,75,185,.34)}
-.impact-card--e4la{--accent-rgb:168,85,247;--card-line:rgba(168,85,247,.34)}
-.impact-card--jeffreys{--accent-rgb:233,75,185;--card-line:rgba(233,75,185,.34)}
-.impact-card--saffron{--accent-rgb:255,138,76;--card-line:rgba(255,138,76,.34)}
+.impact-card--e4la{--accent-rgb:200,168,75;--card-line:rgba(200,168,75,.34)}
+.impact-card--jeffreys{--accent-rgb:255,138,76;--card-line:rgba(255,138,76,.34)}
+.impact-card--saffron{--accent-rgb:200,168,75;--card-line:rgba(200,168,75,.34)}
 /* Column 1 — number, relationship label, dates. Fixed-ish width so every
    row's identity column lines up regardless of label length. */
 .impact-card__top{position:relative;flex:0 0 clamp(108px,10vw,148px);display:flex;flex-direction:column;align-items:flex-start;gap:9px}
@@ -686,9 +691,10 @@ ul,ol{list-style:none}
   pointer-events:none;z-index:0;
   background:linear-gradient(0deg,
     rgba(124,60,255,.26) 0%,
-    rgba(219,39,119,.22) 45%,
-    rgba(249,115,22,.16) 78%,
-    rgba(249,115,22,0) 100%);
+    rgba(219,39,119,.22) 40%,
+    rgba(249,115,22,.18) 66%,
+    rgba(200,168,75,.13) 86%,
+    rgba(200,168,75,0) 100%);
   mask-image:linear-gradient(to top,#000 0%,#000 52%,transparent 100%);
   -webkit-mask-image:linear-gradient(to top,#000 0%,#000 52%,transparent 100%);
   transform-origin:50% 100%;
