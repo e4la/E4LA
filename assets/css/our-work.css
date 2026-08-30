@@ -167,13 +167,14 @@ ul,ol{list-style:none}
 .section-head p{margin-top:14px;max-width:650px;color:var(--muted);font-family:var(--font-primary);font-size:var(--text-body);line-height:var(--line-height-body);font-weight:var(--fw-body)}
 .section-head--split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.85fr);gap:clamp(20px,3vw,48px);align-items:end}
 .section-head--split p{margin-top:0}
-/* Impact Stories only — a decorative visual anchor beside the heading.
-   Reuses the exact mascot artwork already shown for this section in the
-   hero rail (assets/our-work/hero/impact.webp) with that same panel's
-   glow/scrim treatment at a much smaller scale, but with no title/meta
-   text: purely an image, aria-hidden. */
-.section-head--impact{grid-template-columns:auto minmax(0,1fr) minmax(0,.85fr);align-items:center}
-.section-head__mascot{position:relative;width:clamp(76px,6.4vw,104px);aspect-ratio:1;border-radius:50%;overflow:hidden;border:1px solid rgba(79,125,255,.42);background:radial-gradient(circle at 50% 22%,rgba(79,125,255,.34),rgba(5,7,18,.94) 72%);box-shadow:0 0 0 1px rgba(79,125,255,.2),0 14px 32px rgba(0,0,0,.4)}
+/* Section mascot header — a decorative visual identifier reused across
+   Impact Stories, Digital Work, Professional Journey and Media (each
+   pointing at the matching assets/our-work/hero/*.webp already shown for
+   that section in the hero rail) with that same panel's glow/scrim
+   treatment, scaled up into a real section identifier rather than a
+   small icon. No title/meta text baked in: purely an image, aria-hidden. */
+.section-head--mascot{grid-template-columns:auto minmax(0,1fr) minmax(0,.8fr);align-items:center;gap:clamp(24px,3.4vw,52px)}
+.section-head__mascot{position:relative;width:clamp(150px,12.6vw,204px);aspect-ratio:1;border-radius:50%;overflow:hidden;border:1px solid rgba(79,125,255,.42);background:radial-gradient(circle at 50% 22%,rgba(79,125,255,.34),rgba(5,7,18,.94) 72%);box-shadow:0 0 0 1px rgba(79,125,255,.2),0 20px 46px rgba(0,0,0,.42)}
 .section-head__mascot-media{position:absolute;inset:0}
 .section-head__mascot-media img{width:100%;height:100%;object-fit:cover;object-position:50% 26%;mix-blend-mode:screen;opacity:.92}
 .section-head__mascot-scrim{position:absolute;inset:0;background:radial-gradient(circle at 50% 105%,rgba(3,4,12,.55),transparent 62%)}
@@ -572,13 +573,12 @@ ul,ol{list-style:none}
 .tag-list{position:relative;flex:0 0 auto;display:flex;flex-wrap:wrap;gap:7px;max-width:260px}
 .tag-list li{border:1px solid rgba(124,60,255,.34);border-radius:6px;padding:6px 9px;background:rgba(124,60,255,.1);color:#d7c4ff;font-size:10px;font-weight:800;line-height:1}
 .impact-card .text-link,.impact-card .project-status{flex:0 0 auto;align-self:center;margin-top:0}
-/* ── IMPACT/JOURNEY NUMBER — enlarged, glowing, one point of light
-   orbiting the ring. The orbit is a single full-circle pseudo-element
-   carrying one bright dot near its top edge, continuously rotated — reads
-   as one traveling point rather than a spinning rainbow. Respects the
-   page-wide prefers-reduced-motion rule at the bottom of this file, which
-   already collapses any animation-duration to near-zero (frozen, not
-   removed — the static glow below is unaffected either way). */
+/* ── IMPACT/JOURNEY NUMBER — enlarged, glowing, a small sun orbiting the
+   ring. The "sun" is a layered radial-gradient (warm near-white core ->
+   amber -> transparent) on a full-circle pseudo-element, continuously
+   rotated — reads as one small luminous body traveling the ring rather
+   than a spinning rainbow or a plain dot. Slow rotation (9s) is
+   deliberate: fast felt like a loading spinner. */
 .impact-card__number{
   position:relative;
   width:clamp(50px,4.8vw,62px);height:clamp(50px,4.8vw,62px);
@@ -590,40 +590,62 @@ ul,ol{list-style:none}
   box-shadow:0 0 0 1px rgba(var(--accent-rgb,124,60,255),.28),0 0 24px rgba(var(--accent-rgb,124,60,255),.5),inset 0 0 18px rgba(var(--accent-rgb,124,60,255),.28);
 }
 .impact-card__number::after{
-  content:"";position:absolute;inset:-5px;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle 2.4px at 50% 4px,#fff 0 2.4px,rgba(var(--accent-rgb,124,60,255),.9) 3.4px,transparent 5px);
-  animation:number-orbit 5.5s linear infinite;
+  content:"";position:absolute;inset:-9px;border-radius:50%;pointer-events:none;
+  background:
+    radial-gradient(circle 3px at 50% 9px,#fffaf0 0%,#ffe9b8 60%,rgba(255,233,184,0) 100%),
+    radial-gradient(circle 7.5px at 50% 9px,rgba(255,201,120,.6) 0%,rgba(255,159,64,.32) 45%,rgba(255,159,64,0) 78%);
+  animation:number-orbit 9s linear infinite;
 }
 @keyframes number-orbit{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){
+  /* Sits at its unrotated position — a still, warm highlight at the top of
+     the ring rather than a mid-spin freeze. */
+  .impact-card__number::after{animation:none}
+}
 
 /* ── CAPABILITIES ─────────────────────────────────────────── */
 .capabilities-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
-.capability-group{--accent-rgb:200,168,75;--card-line:rgba(200,168,75,.3);padding:20px}
+.capability-group{--accent-rgb:200,168,75;--card-line:rgba(200,168,75,.3);padding:20px;position:relative;isolation:isolate}
 .capability-group h3{position:relative;color:#fff;font-size:15px;font-weight:800;line-height:1.25}
 .capability-group .capability-chips{position:relative;margin-top:16px}
-/* Traveling light band around each card's border, in the site's own
-   brand gradient (violet -> pink -> orange) — one coordinated system
-   across all five cards, not five unrelated accent colors. Standard
-   gradient-border technique: a full-size pseudo-element masked down to
-   just a thin band at the edge (mask-composite:exclude leaves only the
-   padding-defined ring visible), then rotated. Mostly-transparent conic
-   stops so it reads as one comet of light sweeping the perimeter rather
-   than a static rainbow ring. */
-.capability-group::after{
-  content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;
-  pointer-events:none;
-  background:conic-gradient(from 0deg,
-    transparent 0deg,transparent 250deg,
-    rgba(124,60,255,.85) 268deg,
-    rgba(219,39,119,.95) 285deg,
-    rgba(249,115,22,.85) 302deg,
-    transparent 320deg,transparent 360deg);
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;
-  mask-composite:exclude;
-  animation:capability-spin 7s linear infinite;
+/* Replaces an earlier rotating gradient-border treatment that read as too
+   busy. A translucent E4LA-gradient fill now rises slowly from the card's
+   own bottom edge, recedes back down, and repeats — like a very slow,
+   quiet tide rather than a moving border. Pure `transform:scaleY`
+   (compositor-only, no layout/paint cost per frame) rather than animating
+   height directly. mask-image feathers the rising edge instead of a hard
+   line, and stands in for a blur filter at a fraction of the paint cost.
+   Sits behind the real content (plain DOM/paint order, same as .card's
+   own ::before wash elsewhere on the page) — h3/.capability-chips already
+   carry position:relative so they stay on top. */
+.capability-group::before{
+  content:"";position:absolute;inset:auto 0 0 0;height:100%;border-radius:inherit;
+  pointer-events:none;z-index:0;
+  background:linear-gradient(0deg,
+    rgba(124,60,255,.26) 0%,
+    rgba(219,39,119,.22) 45%,
+    rgba(249,115,22,.16) 78%,
+    rgba(249,115,22,0) 100%);
+  mask-image:linear-gradient(to top,#000 0%,#000 52%,transparent 100%);
+  -webkit-mask-image:linear-gradient(to top,#000 0%,#000 52%,transparent 100%);
+  transform-origin:50% 100%;
+  transform:scaleY(.14);
+  animation:capability-fill 12s ease-in-out infinite;
 }
-@keyframes capability-spin{to{transform:rotate(360deg)}}
+@keyframes capability-fill{
+  0%,100%{transform:scaleY(.14)}
+  50%{transform:scaleY(.78)}
+}
+/* Small per-card offsets so the five cards breathe as one calm system
+   rather than pulsing in lockstep. */
+.capability-group:nth-child(1)::before{animation-delay:0s}
+.capability-group:nth-child(2)::before{animation-delay:1.6s}
+.capability-group:nth-child(3)::before{animation-delay:3.2s}
+.capability-group:nth-child(4)::before{animation-delay:4.8s}
+.capability-group:nth-child(5)::before{animation-delay:6.4s}
+@media(prefers-reduced-motion:reduce){
+  .capability-group::before{animation:none;transform:scaleY(.4)}
+}
 /* Section-title-level typography for the capability labels themselves —
    same family/weight as headings like "Strategy & Growth", just smaller,
    so the individual skills read with heading authority rather than as a
@@ -653,7 +675,11 @@ ul,ol{list-style:none}
    circle here would be the only opaque logo surface left on the page.
    The concentric rings still carry the composition. */
 .paint__logo-wrap{position:relative;width:64%;aspect-ratio:1;display:grid;place-items:center;border-radius:50%;background:none}
-.paint__logo-wrap img{width:74%;height:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:.88}
+/* Original-color mark here deliberately — this is Paint Events' own brand
+   identity as a business, not a wall entry, so no monochrome/invert
+   treatment (unlike the organization wall's silhouette version of the
+   same logo, which stays untouched). */
+.paint__logo-wrap img{width:74%;height:auto;object-fit:contain;opacity:1}
 /* ── PAINT EVENT-PHOTO FRAMES ─────────────────────────────
    Eight frames sit stacked dead centre at --paint-open:0 and fan out onto
    a ring of radius --paint-r as it reaches 1. Each frame rotates to its
@@ -704,40 +730,50 @@ ul,ol{list-style:none}
 .capability-chips li{border:1px solid rgba(255,138,76,.3);border-radius:6px;padding:7px 10px;background:rgba(255,138,76,.09);color:#ffd9bf;font-size:10.5px;font-weight:800;line-height:1}
 
 /* ── DIGITAL / UX / AI ────────────────────────────────────── */
-.project-feature{--accent-rgb:79,125,255;--card-line:rgba(79,125,255,.32);display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1fr);gap:0;align-items:stretch;margin-bottom:16px}
-.project-feature__visual{position:relative;min-height:240px;overflow:hidden}
+.project-feature{--accent-rgb:79,125,255;--card-line:rgba(79,125,255,.32);display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1fr);gap:0;align-items:stretch;margin-bottom:12px}
+.project-feature__visual{position:relative;min-height:190px;overflow:hidden}
 .project-feature__visual img{width:100%;height:100%;object-fit:cover;object-position:center top}
 /* This slot's default (cover, cropped to fill) suits a wide website
    screenshot, not a portrait branded logo — cover would crop into the
    "Est. 1985" line. contain shows the whole mark instead. No fill here:
    the logo PNG is transparent, so the card's own shared glass background
-   (.card's --glass-fill) shows through instead of a separate solid box.
-
-   The mark itself is capped at half the panel's width/height (~25% of
-   its previous displayed area) and centred with real padding around it —
-   at 100%/100% the high-resolution source marks filled the whole panel
-   edge to edge, reading as oversized next to the rest of the page's
-   restrained logo treatment. */
-.project-feature__visual--logo{display:flex;align-items:center;justify-content:center;padding:28px}
-.project-feature__visual--logo img{width:50%;height:50%;object-fit:contain;object-position:center}
+   (.card's --glass-fill) shows through instead of a separate solid box. */
+.project-feature__visual--logo{display:flex;align-items:center;justify-content:center;padding:22px}
+/* Optical, not uniform, sizing. A blanket 50%/50% here previously read as
+   "only Mortgage Bankers got smaller" — measured why: these five source
+   PNGs have very different amounts of built-in canvas padding around the
+   actual mark (checked via each file's real alpha-channel content box),
+   so an identical container percentage produces wildly different visible
+   mark sizes. Mortgage Bankers' mark fills ~80%/54% of its own canvas
+   (real padding baked in); WeHo Grill, Paint Events, E4LA and Innoghte
+   each fill 93-100% of theirs (essentially none). Percentages below are
+   back-solved per logo so the actual visible mark — not the source
+   canvas — lands at a consistent, deliberately modest size, with
+   Innoghte smallest to match its reduced-priority position in this list. */
+.project-feature__visual--logo img{object-fit:contain;object-position:center}
+#mortgage-project .project-feature__visual--logo img{width:38%;height:38%}
+#weho-grill-project .project-feature__visual--logo img{width:29%;height:29%}
+#paint-events-project .project-feature__visual--logo img{width:30%;height:30%}
+#e4la-project .project-feature__visual--logo img{width:29%;height:29%}
+#hosein-aura-project .project-feature__visual--logo img{width:21%;height:21%}
 /* Innoghte/Hosein Aura only — kept in the same component (so none of its
    verified detail is lost) but visibly one tier down from the four
    flagship projects above it: a smaller visual panel and tighter
    spacing throughout. */
-.project-feature--minor{margin-top:4px}
-.project-feature--minor .project-feature__visual{min-height:170px}
-.project-feature--minor .project-feature__visual--logo{padding:20px}
-.project-feature--minor .project-feature__content{padding:20px}
+.project-feature--minor{margin-top:2px}
+.project-feature--minor .project-feature__visual{min-height:130px}
+.project-feature--minor .project-feature__visual--logo{padding:16px}
+.project-feature--minor .project-feature__content{padding:18px}
 .project-feature--minor .project-feature__content h3{font-size:clamp(18px,1.4vw,22px)}
 .project-feature--minor .status-grid{gap:8px}
 .project-feature--minor .status{padding:11px}
-.project-feature__content{position:relative;padding:26px;display:flex;flex-direction:column;gap:14px}
+.project-feature__content{position:relative;padding:20px;display:flex;flex-direction:column;gap:10px}
 .project-kicker{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
-.project-feature__content h3{color:#fff;font-size:clamp(20px,1.7vw,27px);line-height:1.2;font-weight:800}
-.project-feature__content p:not(.project-kicker){color:var(--soft);font-size:14px;line-height:1.62}
-.status-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:2px}
+.project-feature__content h3{color:#fff;font-size:clamp(19px,1.6vw,25px);line-height:1.2;font-weight:800}
+.project-feature__content p:not(.project-kicker){color:var(--soft);font-size:13.5px;line-height:1.56}
+.status-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:0}
 .status-grid--2col{grid-template-columns:repeat(2,minmax(0,1fr))}
-.status{padding:14px;border-radius:9px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.055);box-shadow:var(--glass-depth-inner)}
+.status{padding:12px;border-radius:9px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.055);box-shadow:var(--glass-depth-inner)}
 .status h4{margin-bottom:9px;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
 .status--complete h4{color:#7ee0b0}
 .status--progress h4{color:#ffd166}
@@ -830,6 +866,7 @@ ul,ol{list-style:none}
   .hero-copy{max-width:760px}
   .hero-rail{height:clamp(280px,42vw,380px)}
   .section-head--split{grid-template-columns:1fr;align-items:start;gap:14px}
+  .section-head__mascot{width:130px;margin-bottom:4px}
   .project-feature{grid-template-columns:1fr}
   .media-grid{grid-template-columns:1fr}
   .paint__layout{grid-template-columns:1fr}
@@ -907,8 +944,8 @@ ul,ol{list-style:none}
   .filters{flex-wrap:nowrap;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x proximity;scrollbar-width:thin}
   .filter{flex:0 0 auto;scroll-snap-align:start}
   .impact-card,.project-feature__content,.documentary__copy,.project-card__body{padding:18px}
-  .project-feature__visual{min-height:160px}
-  .section-head--impact .section-head__mascot{width:60px}
+  .project-feature__visual{min-height:130px}
+  .section-head__mascot{width:96px}
 }
 @media(max-width:560px){
   .metrics__grid{grid-template-columns:1fr}
