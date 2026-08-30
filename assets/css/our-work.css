@@ -174,10 +174,24 @@ ul,ol{list-style:none}
    treatment, scaled up into a real section identifier rather than a
    small icon. No title/meta text baked in: purely an image, aria-hidden. */
 .section-head--mascot{grid-template-columns:auto minmax(0,1fr) minmax(0,.8fr);align-items:center;gap:clamp(24px,3.4vw,52px)}
-.section-head__mascot{position:relative;width:clamp(150px,12.6vw,204px);aspect-ratio:1;border-radius:50%;overflow:hidden;border:1px solid rgba(79,125,255,.42);background:radial-gradient(circle at 50% 22%,rgba(79,125,255,.34),rgba(5,7,18,.94) 72%);box-shadow:0 0 0 1px rgba(79,125,255,.2),0 20px 46px rgba(0,0,0,.42)}
+/* Square frame (was circular) — refined sharp-corner treatment, not a
+   rounded pill. --mascot-rgb carries the per-section accent (set below,
+   one per body section) with the original blue as a harmless fallback;
+   only the colour changes per section, frame size/border-width/glow
+   intensity/mascot treatment all stay identical across the four. */
+.section-head__mascot{position:relative;width:clamp(150px,12.6vw,204px);aspect-ratio:1;border-radius:14px;overflow:hidden;border:1px solid rgba(var(--mascot-rgb,79,125,255),.42);background:radial-gradient(circle at 50% 22%,rgba(var(--mascot-rgb,79,125,255),.34),rgba(5,7,18,.94) 72%);box-shadow:0 0 0 1px rgba(var(--mascot-rgb,79,125,255),.2),0 20px 46px rgba(0,0,0,.42)}
 .section-head__mascot-media{position:absolute;inset:0}
 .section-head__mascot-media img{width:100%;height:100%;object-fit:cover;object-position:50% 26%;mix-blend-mode:screen;opacity:.92}
 .section-head__mascot-scrim{position:absolute;inset:0;background:radial-gradient(circle at 50% 105%,rgba(3,4,12,.55),transparent 62%)}
+/* Four-section identity sequence, purple -> pink -> orange -> yellow,
+   replacing the single shared blue every section used previously. Values
+   reuse existing on-palette tones already used elsewhere on this page
+   (--purple/--pink/--orange on various impact-card accents; gold is the
+   page's established warm-yellow). No new colours introduced. */
+#impact-stories .section-head__mascot{--mascot-rgb:168,85,247}
+#digital-work .section-head__mascot{--mascot-rgb:233,75,185}
+#professional-journey .section-head__mascot{--mascot-rgb:255,138,76}
+#media-production .section-head__mascot{--mascot-rgb:200,168,75}
 
 /* ── FROSTED GLASS CARD MATERIAL (mirrors about.css) ─────── */
 .card{
@@ -918,7 +932,7 @@ ul,ol{list-style:none}
   .hero-copy{max-width:760px}
   .hero-rail{height:clamp(280px,42vw,380px)}
   .section-head--split{grid-template-columns:1fr;align-items:start;gap:14px}
-  .section-head__mascot{width:130px;margin-bottom:4px}
+  .section-head__mascot{width:130px;border-radius:11px;margin-bottom:4px}
   .media-grid{grid-template-columns:1fr}
   .paint__layout{grid-template-columns:1fr}
   /* Ring radius and frame size step down with the circle — see the note on
@@ -1006,7 +1020,7 @@ ul,ol{list-style:none}
   .impact-card,.project-feature__body,.documentary__copy,.project-card__body{padding:18px}
   .project-feature__top{flex-wrap:wrap;padding:12px 16px}
   .project-feature__identity .project-dates{margin-left:0;flex-basis:100%}
-  .section-head__mascot{width:96px}
+  .section-head__mascot{width:96px;border-radius:9px}
 }
 @media(max-width:560px){
   .metrics__grid{grid-template-columns:1fr}
