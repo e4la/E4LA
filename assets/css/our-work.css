@@ -574,11 +574,16 @@ ul,ol{list-style:none}
 .tag-list li{border:1px solid rgba(124,60,255,.34);border-radius:6px;padding:6px 9px;background:rgba(124,60,255,.1);color:#d7c4ff;font-size:10px;font-weight:800;line-height:1}
 .impact-card .text-link,.impact-card .project-status{flex:0 0 auto;align-self:center;margin-top:0}
 /* ── IMPACT/JOURNEY NUMBER — enlarged, glowing, a small sun orbiting the
-   ring. The "sun" is a layered radial-gradient (warm near-white core ->
-   amber -> transparent) on a full-circle pseudo-element, continuously
-   rotated — reads as one small luminous body traveling the ring rather
-   than a spinning rainbow or a plain dot. Slow rotation (9s) is
-   deliberate: fast felt like a loading spinner. */
+   ring. Two synchronised pseudo-elements, same keyframe/duration so they
+   always sit at the same angle: ::after is the sun itself, sitting right
+   on the ring's edge with three stacked radial-gradients (bright
+   warm-white core, amber mid-glow, soft outer halo) so light reads as
+   bloom rather than a hard-edged dot, extending a little outside the
+   ring; ::before is a softer echo just inside the ring, screen-blended so
+   it can only brighten (never sit as an opaque patch over the digit),
+   giving the "light spills toward the number" half of the effect without
+   ever obscuring it. Slow rotation (9s) is deliberate: faster read as a
+   loading spinner in review. */
 .impact-card__number{
   position:relative;
   width:clamp(50px,4.8vw,62px);height:clamp(50px,4.8vw,62px);
@@ -589,23 +594,43 @@ ul,ol{list-style:none}
   color:#fff;font-size:clamp(17px,1.6vw,21px);font-weight:800;font-variant-numeric:tabular-nums;
   box-shadow:0 0 0 1px rgba(var(--accent-rgb,124,60,255),.28),0 0 24px rgba(var(--accent-rgb,124,60,255),.5),inset 0 0 18px rgba(var(--accent-rgb,124,60,255),.28);
 }
+.impact-card__number::before{
+  content:"";position:absolute;inset:7px;border-radius:50%;pointer-events:none;
+  mix-blend-mode:screen;
+  background:radial-gradient(circle 5px at 50% 5px,rgba(255,241,214,.6) 0%,rgba(255,201,120,.26) 55%,rgba(255,201,120,0) 82%);
+  animation:number-orbit 9s linear infinite;
+}
 .impact-card__number::after{
-  content:"";position:absolute;inset:-9px;border-radius:50%;pointer-events:none;
+  content:"";position:absolute;inset:-15px;border-radius:50%;pointer-events:none;
   background:
-    radial-gradient(circle 3px at 50% 9px,#fffaf0 0%,#ffe9b8 60%,rgba(255,233,184,0) 100%),
-    radial-gradient(circle 7.5px at 50% 9px,rgba(255,201,120,.6) 0%,rgba(255,159,64,.32) 45%,rgba(255,159,64,0) 78%);
+    radial-gradient(circle 3.5px at 50% 15px,#fffdf6 0%,#fff1cf 55%,rgba(255,241,207,0) 100%),
+    radial-gradient(circle 9px at 50% 15px,rgba(255,203,126,.65) 0%,rgba(255,166,74,.34) 48%,rgba(255,166,74,0) 80%),
+    radial-gradient(circle 17px at 50% 15px,rgba(255,178,88,.22) 0%,rgba(255,150,60,0) 78%);
   animation:number-orbit 9s linear infinite;
 }
 @keyframes number-orbit{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){
-  /* Sits at its unrotated position — a still, warm highlight at the top of
-     the ring rather than a mid-spin freeze. */
-  .impact-card__number::after{animation:none}
+  /* Both halves settle at their unrotated position — a still, warm
+     highlight and its inward echo at the top of the ring, not a
+     mid-spin freeze. */
+  .impact-card__number::before,.impact-card__number::after{animation:none}
 }
 
 /* ── CAPABILITIES ─────────────────────────────────────────── */
 .capabilities-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
-.capability-group{--accent-rgb:200,168,75;--card-line:rgba(200,168,75,.3);padding:20px;position:relative;isolation:isolate}
+.capability-group{--accent-rgb:200,168,75;--card-line:rgba(200,168,75,.3);padding:20px;position:relative;isolation:isolate;transition:transform 280ms var(--ease-out),border-color var(--dur) ease,box-shadow 280ms var(--ease-out),background var(--dur) ease}
+/* Tactile hover/focus — lift, a touch of scale, and a stronger shadow +
+   a thin accent-tinted edge on top of .card's own generic hover state.
+   Kept small and slow on purpose (per Nasim's explicit "no dramatic zoom
+   / no springy bounce" direction) — this should read as a premium
+   interface responding to the cursor, not a game UI. */
+.capability-group:hover,.capability-group:focus-within{
+  transform:translateY(-6px) scale(1.02);
+  box-shadow:var(--glass-depth-hover),0 0 0 1px rgba(var(--accent-rgb,200,168,75),.25),0 26px 48px rgba(0,0,0,.4);
+}
+@media(prefers-reduced-motion:reduce){
+  .capability-group:hover,.capability-group:focus-within{transform:none}
+}
 .capability-group h3{position:relative;color:#fff;font-size:15px;font-weight:800;line-height:1.25}
 .capability-group .capability-chips{position:relative;margin-top:16px}
 /* Replaces an earlier rotating gradient-border treatment that read as too
@@ -730,47 +755,42 @@ ul,ol{list-style:none}
 .capability-chips li{border:1px solid rgba(255,138,76,.3);border-radius:6px;padding:7px 10px;background:rgba(255,138,76,.09);color:#ffd9bf;font-size:10.5px;font-weight:800;line-height:1}
 
 /* ── DIGITAL / UX / AI ────────────────────────────────────── */
-.project-feature{--accent-rgb:79,125,255;--card-line:rgba(79,125,255,.32);display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1fr);gap:0;align-items:stretch;margin-bottom:12px}
-.project-feature__visual{position:relative;min-height:190px;overflow:hidden}
-.project-feature__visual img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.project-feature{--accent-rgb:79,125,255;--card-line:rgba(79,125,255,.32);display:flex;flex-direction:column;margin-bottom:10px}
+.project-feature__top{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
+.project-feature__mark{position:relative;flex:0 0 auto;width:52px;height:52px;display:grid;place-items:center;border-radius:9px;background:rgba(255,255,255,.03);overflow:hidden}
+.project-feature__mark img{width:100%;height:100%;object-fit:contain}
 /* This slot's default (cover, cropped to fill) suits a wide website
    screenshot, not a portrait branded logo — cover would crop into the
    "Est. 1985" line. contain shows the whole mark instead. No fill here:
    the logo PNG is transparent, so the card's own shared glass background
    (.card's --glass-fill) shows through instead of a separate solid box. */
-.project-feature__visual--logo{display:flex;align-items:center;justify-content:center;padding:22px}
-/* Optical, not uniform, sizing. A blanket 50%/50% here previously read as
-   "only Mortgage Bankers got smaller" — measured why: these five source
-   PNGs have very different amounts of built-in canvas padding around the
-   actual mark (checked via each file's real alpha-channel content box),
-   so an identical container percentage produces wildly different visible
-   mark sizes. Mortgage Bankers' mark fills ~80%/54% of its own canvas
-   (real padding baked in); WeHo Grill, Paint Events, E4LA and Innoghte
-   each fill 93-100% of theirs (essentially none). Percentages below are
-   back-solved per logo so the actual visible mark — not the source
-   canvas — lands at a consistent, deliberately modest size, with
-   Innoghte smallest to match its reduced-priority position in this list. */
-.project-feature__visual--logo img{object-fit:contain;object-position:center}
-#mortgage-project .project-feature__visual--logo img{width:38%;height:38%}
-#weho-grill-project .project-feature__visual--logo img{width:29%;height:29%}
-#paint-events-project .project-feature__visual--logo img{width:30%;height:30%}
-#e4la-project .project-feature__visual--logo img{width:29%;height:29%}
-#hosein-aura-project .project-feature__visual--logo img{width:21%;height:21%}
+.project-feature__mark--mortgage{width:64px;height:64px}
+.project-feature__mark--innoghte{width:40px;height:40px}
+.project-feature__identity{min-width:0;flex:1 1 auto;display:flex;flex-wrap:wrap;align-items:baseline;column-gap:12px;row-gap:1px}
+.project-feature__identity .project-kicker{flex:1 1 100%}
+.project-feature__identity h3{color:#fff;font-size:clamp(16px,1.2vw,19px);line-height:1.25;font-weight:800}
+.project-feature__identity .project-dates{margin-left:auto}
+/* Optical, not uniform, sizing — carried over from the previous
+   panel-based layout. These five source PNGs have very different amounts
+   of built-in canvas padding around the actual mark (checked via each
+   file's real alpha-channel content box), so an identical box would
+   produce very different visible mark sizes. Mortgage Bankers' own mark
+   fills only ~54% of its canvas height (real padding baked in); the
+   other four fill 93-100% of theirs. Innoghte stays smallest of the five
+   to match its reduced-priority position in this list (sized above,
+   with .project-feature__mark--mortgage/--innoghte). */
 /* Innoghte/Hosein Aura only — kept in the same component (so none of its
    verified detail is lost) but visibly one tier down from the four
-   flagship projects above it: a smaller visual panel and tighter
-   spacing throughout. */
+   flagship projects above it: tighter spacing throughout. */
 .project-feature--minor{margin-top:2px}
-.project-feature--minor .project-feature__visual{min-height:130px}
-.project-feature--minor .project-feature__visual--logo{padding:16px}
-.project-feature--minor .project-feature__content{padding:18px}
-.project-feature--minor .project-feature__content h3{font-size:clamp(18px,1.4vw,22px)}
+.project-feature--minor .project-feature__top{padding:11px 16px}
+.project-feature--minor .project-feature__body{padding:14px 16px 16px}
+.project-feature--minor .project-feature__identity h3{font-size:clamp(15px,1.1vw,17px)}
 .project-feature--minor .status-grid{gap:8px}
 .project-feature--minor .status{padding:11px}
-.project-feature__content{position:relative;padding:20px;display:flex;flex-direction:column;gap:10px}
+.project-feature__body{position:relative;padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px}
 .project-kicker{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
-.project-feature__content h3{color:#fff;font-size:clamp(19px,1.6vw,25px);line-height:1.2;font-weight:800}
-.project-feature__content p:not(.project-kicker){color:var(--soft);font-size:13.5px;line-height:1.56}
+.project-feature__body p:not(.project-kicker){color:var(--soft);font-size:13px;line-height:1.5}
 .status-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:0}
 .status-grid--2col{grid-template-columns:repeat(2,minmax(0,1fr))}
 .status{padding:12px;border-radius:9px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.055);box-shadow:var(--glass-depth-inner)}
@@ -791,7 +811,7 @@ ul,ol{list-style:none}
 .status--neutral h4{color:var(--gold-lt)}
 .status--neutral li::before{background:var(--gold-lt)}
 .coming-soon{align-self:flex-start;margin-top:auto;padding:8px 13px;border-radius:999px;border:1px dashed rgba(200,168,75,.5);color:var(--gold-lt);font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
-.project-feature__content>.text-link{margin-top:auto}
+.project-feature__body>.text-link{margin-top:auto}
 .project-feature__quote{padding-left:14px;border-left:2px solid var(--gold-lt);color:rgba(255,255,255,.86);font-size:13.5px;font-style:italic;line-height:1.6}
 
 .project-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
@@ -867,7 +887,6 @@ ul,ol{list-style:none}
   .hero-rail{height:clamp(280px,42vw,380px)}
   .section-head--split{grid-template-columns:1fr;align-items:start;gap:14px}
   .section-head__mascot{width:130px;margin-bottom:4px}
-  .project-feature{grid-template-columns:1fr}
   .media-grid{grid-template-columns:1fr}
   .paint__layout{grid-template-columns:1fr}
   /* Ring radius and frame size step down with the circle — see the note on
@@ -943,8 +962,9 @@ ul,ol{list-style:none}
      rows and pushing the wall below the fold. */
   .filters{flex-wrap:nowrap;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x proximity;scrollbar-width:thin}
   .filter{flex:0 0 auto;scroll-snap-align:start}
-  .impact-card,.project-feature__content,.documentary__copy,.project-card__body{padding:18px}
-  .project-feature__visual{min-height:130px}
+  .impact-card,.project-feature__body,.documentary__copy,.project-card__body{padding:18px}
+  .project-feature__top{flex-wrap:wrap;padding:12px 16px}
+  .project-feature__identity .project-dates{margin-left:0;flex-basis:100%}
   .section-head__mascot{width:96px}
 }
 @media(max-width:560px){
