@@ -533,6 +533,8 @@ ul,ol{list-style:none}
 .impact-card--mortgage{--accent-rgb:79,125,255;--card-line:rgba(79,125,255,.34)}
 .impact-card--paint{--accent-rgb:200,168,75;--card-line:rgba(200,168,75,.34)}
 .impact-card--radio{--accent-rgb:255,138,76;--card-line:rgba(255,138,76,.34)}
+.impact-card--weho{--accent-rgb:233,75,185;--card-line:rgba(233,75,185,.34)}
+.impact-card--e4la{--accent-rgb:168,85,247;--card-line:rgba(168,85,247,.34)}
 .impact-card__top{position:relative;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .impact-card__number{width:34px;height:34px;flex:0 0 auto;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(var(--accent-rgb,124,60,255),.6);color:#fff;font-size:12px;font-weight:800;box-shadow:0 0 20px rgba(var(--accent-rgb,124,60,255),.2) inset}
 .impact-card__relationship{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
@@ -549,6 +551,13 @@ ul,ol{list-style:none}
 .impact-card--enrich h3{font-weight:600}
 .tag-list{position:relative;display:flex;flex-wrap:wrap;gap:7px;margin-top:auto;padding-top:6px}
 .tag-list li{border:1px solid rgba(124,60,255,.34);border-radius:6px;padding:6px 9px;background:rgba(124,60,255,.1);color:#d7c4ff;font-size:10px;font-weight:800;line-height:1}
+
+/* ── CAPABILITIES ─────────────────────────────────────────── */
+.capabilities-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.capability-group{--accent-rgb:200,168,75;--card-line:rgba(200,168,75,.3);padding:20px}
+.capability-group h3{position:relative;color:#fff;font-size:15px;font-weight:800;line-height:1.25}
+.capability-group .capability-chips{margin-top:16px}
+
 /* ── PAINT EVENTS / TEAM BUILDING ─────────────────────────── */
 .paint__layout{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1fr);gap:clamp(26px,3.4vw,56px);align-items:center}
 /* width:100% is load-bearing. With only max-width + justify-self:center
@@ -723,6 +732,7 @@ ul,ol{list-style:none}
 /* ── RESPONSIVE ───────────────────────────────────────────── */
 @media(max-width:1280px){
   .organization-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .capabilities-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media(max-width:1100px){
   .hero-grid{grid-template-columns:1fr;gap:30px}
@@ -741,6 +751,7 @@ ul,ol{list-style:none}
   .metrics__grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .organization-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
   .project-grid{grid-template-columns:1fr}
+  .capabilities-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .documentary{grid-template-columns:1fr}
   .status-grid{grid-template-columns:1fr}
 }
