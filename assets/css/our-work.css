@@ -552,6 +552,16 @@ ul,ol{list-style:none}
    row's identity column lines up regardless of label length. */
 .impact-card__top{position:relative;flex:0 0 clamp(108px,10vw,148px);display:flex;flex-direction:column;align-items:flex-start;gap:9px}
 .impact-card__relationship{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;line-height:1.35}
+/* Selected Impact Stories only — these four labels (Website & Digital
+   Engagement, etc.) are the row's real title, not a small eyebrow, so
+   they get roughly double the base size. The column widens to match
+   (108-148px -> 230-320px) so two-word phrases wrap across two lines
+   instead of one-word-per-line; identity/description keep their own
+   widths since the description column can flex-shrink to absorb it.
+   Professional Journey keeps the original compact label — not part of
+   this section's affected-titles list. */
+#impact-stories .impact-card__top{flex-basis:clamp(230px,22vw,320px)}
+#impact-stories .impact-card__relationship{font-size:clamp(15px,1.6vw,20px);line-height:1.22}
 .project-dates{color:var(--muted);font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
 /* Column 2 — org + headline. Fixed-ish width so a short row (Professional
    Journey) doesn't collapse narrower than a longer one above it. */
@@ -573,6 +583,20 @@ ul,ol{list-style:none}
 .tag-list{position:relative;flex:0 0 auto;display:flex;flex-wrap:wrap;gap:7px;max-width:260px}
 .tag-list li{border:1px solid rgba(124,60,255,.34);border-radius:6px;padding:6px 9px;background:rgba(124,60,255,.1);color:#d7c4ff;font-size:10px;font-weight:800;line-height:1}
 .impact-card .text-link,.impact-card .project-status{flex:0 0 auto;align-self:center;margin-top:0}
+/* Professional Journey only — three stacked zones per row (headline,
+   description, tags) instead of Impact Stories' single horizontal row.
+   .impact-card__top/__identity keep their own shared rules unchanged
+   (still used as-is by Impact Stories); here they're just laid out
+   side by side inside a new .impact-card__headline wrapper instead of
+   beside the description. align-items:stretch (overriding the shared
+   row's :center) is what lets the description and tag-list fill the
+   full card width below it. */
+#professional-journey .impact-card{flex-direction:column;align-items:stretch;gap:12px}
+#professional-journey .impact-card__headline{display:flex;align-items:center;gap:16px}
+#professional-journey .impact-card__identity{flex:1 1 auto}
+#professional-journey .impact-card p:not(.impact-card__org):not(.impact-card__note):not(.project-kicker){flex:none;width:100%}
+#professional-journey .tag-list{max-width:none;width:100%}
+#professional-journey .impact-card .project-status{align-self:flex-start}
 /* ── IMPACT/JOURNEY NUMBER — enlarged, glowing, a small sun orbiting the
    ring. Two synchronised pseudo-elements, same keyframe/duration so they
    always sit at the same angle: ::after is the sun itself, sitting right
@@ -791,6 +815,14 @@ ul,ol{list-style:none}
 .project-feature__body{position:relative;padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px}
 .project-kicker{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
 .project-feature__body p:not(.project-kicker){color:var(--soft);font-size:13px;line-height:1.5}
+/* Paint Events / Innoghte tags — .tag-list's shared max-width:260px
+   exists for the narrow trailing column it sits in on Impact Stories
+   rows; inherited here it forced 8-9 tags to wrap 4-5 lines deep for no
+   reason, since the full-width card body has plenty of room. Removing
+   the cap first (rather than shrinking font-size) is enough on its own
+   at desktop widths; flex-wrap stays on as the tablet/mobile fallback. */
+.project-feature__body .tag-list{max-width:none;gap:6px}
+.project-feature__body .tag-list li{padding:5px 8px}
 .status-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:0}
 .status-grid--2col{grid-template-columns:repeat(2,minmax(0,1fr))}
 .status{padding:12px;border-radius:9px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.055);box-shadow:var(--glass-depth-inner)}
@@ -908,6 +940,15 @@ ul,ol{list-style:none}
   .impact-card p:not(.impact-card__org):not(.impact-card__note):not(.project-kicker){flex-basis:auto;width:100%}
   .tag-list{max-width:none}
   .impact-card .text-link,.impact-card .project-status{margin-top:4px}
+  /* Keep number+title side by side in the headline row even once the
+     rest of the card stacks — the generic .impact-card__identity{width:
+     100%} above would otherwise fight .impact-card__top for the same
+     row and wrap awkwardly. ID-scoped so it wins regardless of order. */
+  #professional-journey .impact-card__identity{width:auto;flex:1 1 auto}
+  /* The desktop-only widened top column for Impact Stories' larger
+     titles is also ID-scoped, so it would otherwise keep beating this
+     block's generic flex-basis:auto reset. Revert it explicitly here. */
+  #impact-stories .impact-card__top{flex-basis:auto}
 }
 /* Below 900px the accordion turns its axis instead of turning into a list.
    Same behaviour — one panel open, the rest collapsed, closed panels dark
