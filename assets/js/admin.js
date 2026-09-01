@@ -580,8 +580,8 @@ document.querySelector('#publish-variant-form')?.addEventListener('submit', asyn
 document.querySelector('#verify-job-form')?.addEventListener('submit', async (event) => {
   event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
   const data = new FormData(form); const jobId = data.get('jobId'); const status = document.querySelector('#verify-job-status');
-  if (isPreview) return setStatus(status, `Fictional preview: job ${jobId} marked verified live.`);
-  try { await api(`/api/content/jobs/${encodeURIComponent(jobId)}/verify`, { method: 'PATCH', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify({ external_post_id: data.get('externalPostId') }) }); setStatus(status, 'Job marked verified live.'); form.reset(); } catch (error) { setStatus(status, error.message, true); }
+  if (isPreview) return setStatus(status, `Fictional preview: evidence recorded for job ${jobId} (verification_pending).`);
+  try { await api(`/api/content/jobs/${encodeURIComponent(jobId)}/verify`, { method: 'PATCH', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify({ external_post_id: data.get('externalPostId') }) }); setStatus(status, 'Evidence recorded (verification_pending) - this is not an automated live check, no provider-verification adapter exists yet.'); form.reset(); } catch (error) { setStatus(status, error.message, true); }
 });
 
 // -------------------------------------------------------------------------------------

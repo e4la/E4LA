@@ -451,8 +451,8 @@
           <pre class="ops-hint" id="publish-variant-result" hidden></pre>
         </form>
         <form class="ops-card ops-card__body ops-admin-form dashboard-section" id="verify-job-form">
-          <div class="dashboard-card-title"><h2>Verify a job as live</h2><span class="ops-status ops-status--attention">Requires real evidence</span></div>
-          <p class="ops-hint">A successful publish attempt is never automatically "live." Confirm the post is actually visible on the platform (or, for a manual export, that a human posted it), then record the real post ID/reference here.</p>
+          <div class="dashboard-card-title"><h2>Record publication evidence</h2><span class="ops-status ops-status--attention">Not a live verification</span></div>
+          <p class="ops-hint">A successful publish attempt is never automatically "live," and recording a post ID here is not an automated live check either - no platform-verification adapter exists yet. This records that a real post exists (identity evidence only) and moves the job to "verification_pending." "Verified live" is reserved for a future adapter that actually confirms the post is live with the platform itself.</p>
           <div class="ops-grid ops-grid--2">
             <label class="ops-field"><span class="ops-legend">Job ID</span><input class="ops-input" name="jobId" required></label>
             <label class="ops-field"><span class="ops-legend">External post ID / reference</span><input class="ops-input" name="externalPostId" required maxlength="300"></label>

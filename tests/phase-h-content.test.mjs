@@ -614,7 +614,13 @@ test('verified_live requires external proof and manual export can never self-ver
   database.close();
 });
 
-test('verified_live succeeds once real external proof (external_post_id) is supplied, and it is persisted on the job', async () => {
+test('recording real external proof (external_post_id) moves a job to verification_pending, never to verified_live, since no provider-verification adapter exists', async () => {
+  // An external_post_id is evidence of the post's IDENTITY - an admin (or a
+  // human using a manual_export package) observed a real post and recorded
+  // its id. It is not proof of an independent, automated live check against
+  // the platform's own API, so it can never set 'verified_live' - that status
+  // is reserved exclusively for a future adapter that actually performs that
+  // check. 'verification_pending' is the honest maximum reachable today.
   const database = previewDatabase();
   const env = contentEnvironment(database);
   const admin = await adminSession(env);
@@ -623,10 +629,11 @@ test('verified_live succeeds once real external proof (external_post_id) is supp
   }, admin.csrfToken);
   assert.equal(response.status, 200);
   const body = await response.json();
-  assert.equal(body.status, 'verified_live');
+  assert.equal(body.status, 'verification_pending');
   assert.equal(body.externalPostId, 'ig_fictional_post_12345');
   const job = database.prepare("SELECT status, external_post_id, verified_at FROM publishing_jobs WHERE id = 'pjb_preview_a'").get();
-  assert.equal(job.status, 'verified_live');
+  assert.equal(job.status, 'verification_pending');
+  assert.notEqual(job.status, 'verified_live', 'no code path may ever set verified_live without a real provider-verification adapter');
   assert.equal(job.external_post_id, 'ig_fictional_post_12345');
   assert.ok(job.verified_at);
   database.close();

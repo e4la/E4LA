@@ -531,7 +531,15 @@ test('variant creation is not gated by item status (by design - the real gate is
   database.close();
 });
 
-test('publish and verified_live are two genuinely distinct code paths - a single publish call never produces verified_live', async () => {
+test('publish, manual export, and verified_live are genuinely distinct - manual_export never reaches published or verified_live, and a single publish call never produces verified_live', async () => {
+  // manual_export never calls any platform, so generating its export package
+  // must never be represented as a publication: the job goes to 'submitted'
+  // (per 0009's own documented lifecycle) and the variant to 'publishing' (in
+  // progress - a human still has to go post it by hand). Even once real
+  // evidence (external_post_id) is recorded, that only proves the identity of
+  // a real post, not an independent provider-verified "live" check - so it
+  // moves to 'verification_pending', never 'verified_live', which remains
+  // reserved for a future adapter that actually performs that check.
   const database = previewDatabase();
   const env = contentEnvironment(database);
   const admin = await adminSession(env);
@@ -549,15 +557,16 @@ test('publish and verified_live are two genuinely distinct code paths - a single
   const publishResponse = await contentRequest(env, 'POST', `/api/content/variants/${variant.id}/publish`, admin, {}, admin.csrfToken);
   assert.equal(publishResponse.status, 201);
   const job = await publishResponse.json();
-  assert.equal(job.status, 'published');
+  assert.equal(job.status, 'submitted');
+  assert.notEqual(job.status, 'published');
   assert.notEqual(job.status, 'verified_live');
 
   const afterPublishRow = database.prepare('SELECT status, external_post_id, verified_at FROM publishing_jobs WHERE id = ?').get(job.jobId);
-  assert.equal(afterPublishRow.status, 'published');
+  assert.equal(afterPublishRow.status, 'submitted');
   assert.equal(afterPublishRow.external_post_id, null);
   assert.equal(afterPublishRow.verified_at, null);
   const variantRow = database.prepare('SELECT status FROM content_platform_variants WHERE id = ?').get(variant.id);
-  assert.equal(variantRow.status, 'published');
+  assert.equal(variantRow.status, 'publishing', 'the variant is in progress - not yet a confirmed real post');
 
   // Only this separate, explicitly-evidenced call can move it further.
   const verifyResponse = await contentRequest(env, 'PATCH', `/api/content/jobs/${job.jobId}/verify`, admin, {
@@ -565,7 +574,10 @@ test('publish and verified_live are two genuinely distinct code paths - a single
   }, admin.csrfToken);
   assert.equal(verifyResponse.status, 200);
   const afterVerifyRow = database.prepare('SELECT status, external_post_id, verified_at FROM publishing_jobs WHERE id = ?').get(job.jobId);
-  assert.equal(afterVerifyRow.status, 'verified_live');
+  assert.equal(afterVerifyRow.status, 'verification_pending', 'real identity evidence is recorded, but this is not an independent provider-verified live check');
+  assert.notEqual(afterVerifyRow.status, 'verified_live', 'verified_live is reserved exclusively for a future real provider-verification adapter');
+  const variantRowAfterVerify = database.prepare('SELECT status FROM content_platform_variants WHERE id = ?').get(variant.id);
+  assert.equal(variantRowAfterVerify.status, 'published', 'once real evidence exists, the variant itself can honestly be marked published');
   assert.equal(afterVerifyRow.external_post_id, 'manual_fictional_post_9001');
   assert.ok(afterVerifyRow.verified_at);
   database.close();
@@ -600,7 +612,7 @@ test('withdrawing a published or verified_live item writes a real audit_events r
   database2.close();
 });
 
-test('metrics can only be recorded once a publishing job is verified_live, not merely published', async () => {
+test('metrics can only be recorded once real publication evidence exists (verification_pending), not merely published/submitted', async () => {
   const database = previewDatabase();
   const env = contentEnvironment(database);
   const admin = await adminSession(env);
@@ -610,12 +622,13 @@ test('metrics can only be recorded once a publishing job is verified_live, not m
   }, admin.csrfToken);
   assert.equal(blockedResponse.status, 422);
   const blockedErrorBody = await blockedResponse.json();
-  assert.equal(blockedErrorBody.error.code, 'job_not_verified_live');
+  assert.equal(blockedErrorBody.error.code, 'job_not_verified');
 
   const verifyResponse = await contentRequest(env, 'PATCH', '/api/content/jobs/pjb_preview_a/verify', admin, {
     external_post_id: 'manual_fictional_post_already_live',
   }, admin.csrfToken);
   assert.equal(verifyResponse.status, 200);
+  assert.equal((await verifyResponse.json()).status, 'verification_pending');
 
   const allowedResponse = await contentRequest(env, 'POST', '/api/content/jobs/pjb_preview_a/metrics', admin, {
     metric_class: 'engagement', metric_key: 'likes', metric_value: 10,

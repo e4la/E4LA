@@ -713,12 +713,20 @@ async function publishVariant({ request, env }, variantId) {
 
   const jobId = opaqueId('pjb');
   if (variant.platform === 'manual_export') {
+    // manual_export never calls any platform - it hands a human an export
+    // package to go post by hand. Generating that package is NOT a
+    // publication: the job goes to 'submitted' (per this migration's own
+    // documented lifecycle comment: submitted -> published -> verified_live),
+    // never 'published' or any published-equivalent state, until a human
+    // reports back real evidence via /jobs/:id/verify. The variant mirrors
+    // this with 'publishing' (in progress, not yet a confirmed real post),
+    // matching content_platform_variants' own status vocabulary.
     await db.prepare(`INSERT INTO publishing_jobs (
       id, content_platform_variant_id, publishing_account_id, status, external_post_id,
       submitted_at, published_at, verified_at, failure_code, failure_message, created_at, updated_at
-    ) VALUES (?, ?, NULL, 'published', NULL, ?, ?, NULL, NULL, NULL, ?, ?)`)
-      .bind(jobId, variant.id, now, now, now, now).run();
-    await db.prepare("UPDATE content_platform_variants SET status = 'published', updated_at = ? WHERE id = ?").bind(now, variant.id).run();
+    ) VALUES (?, ?, NULL, 'submitted', NULL, ?, NULL, NULL, NULL, NULL, ?, ?)`)
+      .bind(jobId, variant.id, now, now, now).run();
+    await db.prepare("UPDATE content_platform_variants SET status = 'publishing', updated_at = ? WHERE id = ?").bind(now, variant.id).run();
   } else {
     // Honest failure, never a fabricated success: no real platform credential
     // exists in this environment, so this always resolves 'failed' with
@@ -751,27 +759,30 @@ async function verifyJob({ request, env }, jobId) {
   const variant = await db.prepare('SELECT * FROM content_platform_variants WHERE id = ?').bind(job.content_platform_variant_id).first();
   const item = await loadItem(db, variant.content_item_id);
   await assertAdminItemScope(db, session, item);
-  if (job.status !== 'published') {
-    throw new HttpError(409, 'job_not_published', "Only a job already in status 'published' can be moved to 'verified_live'.");
+  if (!['submitted', 'published'].includes(job.status)) {
+    throw new HttpError(409, 'job_not_submitted', "Only a job in status 'submitted' or 'published' can record verification evidence.");
   }
   const body = await request.json();
-  // "A successful request sent to a platform adapter must not automatically
-  // set status to verified_live" - this endpoint is the separate, explicit
-  // follow-up step, and it must never be a bare authenticated status flip. It
-  // requires genuine external evidence: the real post id/reference the admin
-  // observed live on the platform (or, for a manual_export job, the id/URL of
-  // the post the human actually made by hand after using the export package).
-  // No adapter call, credential, or claim of success from publishVariant ever
-  // satisfies this by itself - it must be supplied here, explicitly, per job.
+  // 'verified_live' means a real platform API independently confirmed the
+  // post is live - no such provider-verification adapter exists yet for any
+  // platform (see functions/_shared/publishing-adapters.js), so nothing in
+  // this codebase may ever set that status. An external_post_id is evidence
+  // of the post's IDENTITY (the admin, or a human using a manual_export
+  // package, observed a real post and is recording its id/URL) - it is not
+  // proof of independent live verification, so it moves the job only to
+  // 'verification_pending': attested-with-evidence, not provider-verified.
+  // 'verified_live' is reserved exclusively for a future adapter that
+  // actually calls the platform back to confirm liveness.
   const externalPostId = sanitizeText(body.external_post_id, 300);
   if (!externalPostId) {
-    throw new HttpError(422, 'external_post_id_required', 'Verifying a publishing job as live requires the real external_post_id observed on the platform.');
+    throw new HttpError(422, 'external_post_id_required', 'Recording publication evidence requires the real external_post_id observed on the platform.');
   }
   const now = new Date().toISOString();
-  await db.prepare("UPDATE publishing_jobs SET status = 'verified_live', external_post_id = ?, verified_at = ?, updated_at = ? WHERE id = ?")
+  await db.prepare("UPDATE publishing_jobs SET status = 'verification_pending', external_post_id = ?, verified_at = ?, updated_at = ? WHERE id = ?")
     .bind(externalPostId, now, now, job.id).run();
-  await audit(db, { type: 'content_job_verified_live', actorType: 'admin_user', actorId: session.actor_id, clientId: item.client_id, requestId: requestId(request), data: { jobId: job.id, externalPostId } });
-  return json({ id: job.id, status: 'verified_live', externalPostId });
+  await db.prepare("UPDATE content_platform_variants SET status = 'published', updated_at = ? WHERE id = ?").bind(now, variant.id).run();
+  await audit(db, { type: 'content_job_verification_recorded', actorType: 'admin_user', actorId: session.actor_id, clientId: item.client_id, requestId: requestId(request), data: { jobId: job.id, externalPostId, status: 'verification_pending' } });
+  return json({ id: job.id, status: 'verification_pending', externalPostId });
 }
 
 async function recordMetrics({ request, env }, jobId) {
@@ -784,15 +795,17 @@ async function recordMetrics({ request, env }, jobId) {
   const variant = await db.prepare('SELECT * FROM content_platform_variants WHERE id = ?').bind(job.content_platform_variant_id).first();
   const item = await loadItem(db, variant.content_item_id);
   await assertAdminItemScope(db, session, item);
-  // Performance metrics describe something that actually happened on a real,
-  // confirmed-live post - recording them against a job that has only reached
-  // 'published' (adapter request sent / export package generated, but never
-  // independently confirmed live) would let unverified activity masquerade as
-  // real performance data. Metrics may only be attached once the job has
-  // reached 'verified_live' via the same evidenced PATCH /jobs/:id/verify step
-  // required everywhere else in this router.
-  if (job.status !== 'verified_live') {
-    throw new HttpError(422, 'job_not_verified_live', 'Metrics can only be recorded once this publishing job has been verified live.');
+  // Performance metrics describe something that actually happened on a real
+  // post - recording them against a job that has only reached 'submitted' or
+  // 'published' (adapter request sent / export package generated, with no
+  // evidence yet at all) would let pure speculation masquerade as real
+  // performance data. 'verification_pending' (real external_post_id evidence
+  // recorded via PATCH /jobs/:id/verify) is the honest maximum currently
+  // reachable, since no platform-verification adapter exists yet;
+  // 'verified_live' remains accepted here too so this gate needs no further
+  // change once a real adapter eventually makes that status reachable.
+  if (!['verification_pending', 'verified_live'].includes(job.status)) {
+    throw new HttpError(422, 'job_not_verified', 'Metrics can only be recorded once real publication evidence has been recorded for this job.');
   }
   const body = await request.json();
   const metrics = Array.isArray(body.metrics) ? body.metrics : [body];

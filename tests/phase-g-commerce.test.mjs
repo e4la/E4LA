@@ -665,15 +665,14 @@ test('payment option total must match the quote current-version total', async ()
   database.close();
 });
 
-test('replaying the same recurring consent cannot create a second active authorization', async () => {
-  // Resolved not via an invented idempotency-key/offer-hash mechanism (out of
-  // scope per the original directive - no fee/dedup infrastructure exists to
-  // attach one to), but via the same supersede-on-approve rule that handles a
-  // genuine terms change: a replayed approve() still returns 201 (a new,
-  // real consent row is created, consistent with every other approve() call),
-  // but it immediately supersedes the prior identical-terms consent in the
-  // same request, so the actual safety invariant - never more than one
-  // 'active' authorization for a given client+service at a time - holds.
+test('exact replay of the same approval action creates no new consent record and no new billing authorization', async () => {
+  // Server-authoritative, single-use enforcement via deterministic consumption:
+  // no separate persisted-offer/idempotency-key table is invented (there is no
+  // fee/offer-lifecycle infrastructure to attach one to) - instead, a replay is
+  // detected by comparing the incoming terms against the most recent consent
+  // for this client+service. An identical replay of a still-active consent
+  // must be a true no-op: zero new rows, zero new authorizations, the original
+  // record completely untouched (not even superseded by its own replay).
   const database = previewDatabase();
   const env = operationsEnvironment(database);
   const signer = await signerSession(env);
@@ -685,16 +684,57 @@ test('replaying the same recurring consent cannot create a second active authori
   const first = await commerceRequest(env, 'POST', '/api/commerce/recurring-consent/approve', signer, payload, signer.csrfToken);
   assert.equal(first.status, 201);
   const firstBody = await first.json();
+  const countBefore = database.prepare(
+    "SELECT COUNT(*) AS count FROM recurring_service_consents WHERE client_id = ? AND service_id = ?",
+  ).get(payload.client_id, payload.service_id);
+
   const replay = await commerceRequest(env, 'POST', '/api/commerce/recurring-consent/approve', signer, payload, signer.csrfToken);
-  assert.equal(replay.status, 201, 'a replayed approve() still creates a real, auditable consent record rather than silently no-opping');
+  assert.equal(replay.status, 200, 'an exact replay is not a new approval and must not report 201 Created');
   const replayBody = await replay.json();
-  assert.notEqual(replayBody.id, firstBody.id, 'the replay is a distinct consent row, not the same one returned twice');
-  const superseded = database.prepare('SELECT status FROM recurring_service_consents WHERE id = ?').get(firstBody.id);
-  assert.equal(superseded.status, 'superseded', 'the original consent from the replayed request must be superseded, never left dangling as active');
+  assert.equal(replayBody.id, firstBody.id, 'the replay resolves to the SAME consent record, never a new one');
+  assert.equal(replayBody.replay, true);
+
+  const countAfter = database.prepare(
+    "SELECT COUNT(*) AS count FROM recurring_service_consents WHERE client_id = ? AND service_id = ?",
+  ).get(payload.client_id, payload.service_id);
+  assert.equal(countAfter.count, countBefore.count, 'record count must be unchanged after the replay - no new row created');
+
+  const original = database.prepare('SELECT status, updated_at FROM recurring_service_consents WHERE id = ?').get(firstBody.id);
+  assert.equal(original.status, 'active', 'the original consent remains the sole active authorization, never superseded by its own replay');
+
   const active = database.prepare(`SELECT COUNT(*) AS count FROM recurring_service_consents
-    WHERE client_id = 'clt_preview_d' AND service_id = 'svc_preview_2' AND billing_amount = 175000
-      AND billing_frequency = 'monthly' AND start_date = '2026-10-01' AND status = 'active'`).get();
-  assert.equal(active.count, 1, 'never more than one active authorization for the same client+service, no matter how many times approve() is replayed');
+    WHERE client_id = 'clt_preview_d' AND service_id = 'svc_preview_2' AND status = 'active'`).get();
+  assert.equal(active.count, 1, 'billing authority is unchanged: exactly one active authorization, both before and after the replay');
+  database.close();
+});
+
+test('changed commercial terms for an already-active consent require a new approval and correctly supersede the old one', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const signer = await signerSession(env);
+  const original = {
+    client_id: 'clt_preview_d', project_id: 'prj_preview_d', service_id: 'svc_preview_2', billing_amount: 175000,
+    billing_frequency: 'monthly', start_date: '2026-10-01', renewal_behavior: 'auto_renew_until_cancelled',
+    cancellation_terms_version: 'v1', consent_text_version: 'v1',
+  };
+  const first = await commerceRequest(env, 'POST', '/api/commerce/recurring-consent/approve', signer, original, signer.csrfToken);
+  assert.equal(first.status, 201);
+  const firstBody = await first.json();
+
+  // A genuinely new server-created offer with a changed amount - this must be
+  // treated as a real new approval, not a replay, and must require its own
+  // distinct client action (this same approve() call, with the new terms).
+  const changed = { ...original, billing_amount: 200000 };
+  const second = await commerceRequest(env, 'POST', '/api/commerce/recurring-consent/approve', signer, changed, signer.csrfToken);
+  assert.equal(second.status, 201, 'a genuine terms change is a real new approval, not a replay');
+  const secondBody = await second.json();
+  assert.notEqual(secondBody.id, firstBody.id);
+
+  const originalRow = database.prepare('SELECT status FROM recurring_service_consents WHERE id = ?').get(firstBody.id);
+  assert.equal(originalRow.status, 'superseded', 'the prior consent is superseded by the genuinely new, differently-termed approval');
+  const active = database.prepare(`SELECT COUNT(*) AS count FROM recurring_service_consents
+    WHERE client_id = 'clt_preview_d' AND service_id = 'svc_preview_2' AND status = 'active'`).get();
+  assert.equal(active.count, 1, 'exactly one active authorization after a genuine terms change');
   database.close();
 });
 
@@ -1075,7 +1115,11 @@ test('a cancelled consent is never mistakenly reactivated or resuperseded by a l
   database.close();
 });
 
-test('replaying an identical recurring-consent approval back-to-back results in exactly one active row', async () => {
+test('replaying an identical recurring-consent approval back-to-back results in exactly one row, not two', async () => {
+  // Server-authoritative single-use enforcement: an exact replay must resolve
+  // to the SAME record (200, no new row) rather than being treated as a new,
+  // superseding approval - creating a second row for a byte-identical replay
+  // is exactly the defect this test exists to catch.
   const database = previewDatabase();
   const env = operationsEnvironment(database);
   const signer = await signerSession(env);
@@ -1087,14 +1131,13 @@ test('replaying an identical recurring-consent approval back-to-back results in 
   const first = await commerceRequest(env, 'POST', '/api/commerce/recurring-consent/approve', signer, payload, signer.csrfToken);
   const replay = await commerceRequest(env, 'POST', '/api/commerce/recurring-consent/approve', signer, payload, signer.csrfToken);
   assert.equal(first.status, 201);
-  assert.equal(replay.status, 201, 'a replay is treated as a new (superseding) approval rather than a special-cased error - this is safe by construction, not an oversight, because the supersede fix guarantees only one row can ever remain active');
+  assert.equal(replay.status, 200, 'an exact replay must resolve to the existing consent, never report 201 Created');
   const firstBody = await first.json();
   const replayBody = await replay.json();
-  assert.notEqual(firstBody.id, replayBody.id);
-  const activeRows = database.prepare("SELECT id FROM recurring_service_consents WHERE client_id = 'clt_preview_d' AND service_id = 'svc_preview_2' AND status = 'active'").all();
-  assert.equal(activeRows.length, 1, 'replaying approve() can never leave two active consents for the same client+service');
-  assert.equal(activeRows[0].id, replayBody.id);
-  assert.equal(database.prepare('SELECT status FROM recurring_service_consents WHERE id = ?').get(firstBody.id).status, 'superseded');
+  assert.equal(firstBody.id, replayBody.id, 'replay resolves to the same record - no second row is ever created');
+  const rows = database.prepare("SELECT id, status FROM recurring_service_consents WHERE client_id = 'clt_preview_d' AND service_id = 'svc_preview_2' AND billing_amount = 210000").all();
+  assert.equal(rows.length, 1, 'exactly one row total for this client+service+terms - the replay created nothing');
+  assert.equal(rows[0].status, 'active', 'the sole row remains active, never superseded by its own replay');
   database.close();
 });
 

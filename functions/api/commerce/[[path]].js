@@ -802,14 +802,46 @@ async function approveRecurringConsent({ request, env }) {
   // authorization for what should actually be billed. Scoped to client_id+service_id only
   // (matching the recurring_service_consents indexes), and executed in the same batch as
   // the new INSERT so the supersede and the new approval are atomic.
-  const priorActive = await env.ENROLLMENT_DB.prepare(
-    "SELECT id FROM recurring_service_consents WHERE client_id = ? AND service_id = ? AND status = 'active'",
+  //
+  // Single-use replay protection: the client action of "approve these exact terms" must
+  // be consumed exactly once. Rather than inventing a separate persisted-offer/idempotency-
+  // key table (no fee/offer-lifecycle infrastructure exists to attach one to), this uses a
+  // deterministic consumption check against the one thing that already durably represents
+  // "what was approved": the most recent consent row for this client+service. If it is
+  // still 'active' AND every term field matches this request byte-for-byte, this request is
+  // a replay of an approval that has already taken effect - it must create NO new row and
+  // grant NO new authorization, just hand back the existing one. Only a request whose terms
+  // genuinely differ from the current active consent (or where there is no active consent
+  // at all - including after a deliberate cancellation, which is a real new authorization
+  // decision, not a replay) proceeds to create a new row and supersede the old one.
+  const mostRecent = await env.ENROLLMENT_DB.prepare(
+    'SELECT * FROM recurring_service_consents WHERE client_id = ? AND service_id = ? ORDER BY created_at DESC, id DESC LIMIT 1',
   ).bind(clientId, service.id).first();
+  const isExactReplayOfActive = Boolean(mostRecent) && mostRecent.status === 'active'
+    && mostRecent.billing_amount === billingAmount
+    && mostRecent.billing_frequency === billingFrequency
+    && mostRecent.start_date === startDate
+    && mostRecent.renewal_behavior === renewalBehavior
+    && mostRecent.cancellation_terms_version === cancellationTermsVersion
+    && mostRecent.consent_text_version === consentTextVersion
+    && mostRecent.quote_id === quoteId
+    && mostRecent.agreement_id === agreementId
+    && mostRecent.project_id === projectId;
+  if (isExactReplayOfActive) {
+    await audit(env.ENROLLMENT_DB, {
+      type: 'recurring_consent_replay_ignored', actorType: 'client_user', actorId: session.actor_id, clientId, projectId,
+      relatedType: 'recurring_service_consent', relatedId: mostRecent.id, requestId: requestId(request),
+    });
+    return json({
+      id: mostRecent.id, clientId, serviceId: service.id, billingAmount: mostRecent.billing_amount,
+      billingFrequency: mostRecent.billing_frequency, startDate: mostRecent.start_date, status: 'active', replay: true,
+    }, 200);
+  }
   const statements = [];
-  if (priorActive) {
+  if (mostRecent && mostRecent.status === 'active') {
     statements.push(env.ENROLLMENT_DB.prepare(
       "UPDATE recurring_service_consents SET status = 'superseded', updated_at = ? WHERE id = ?",
-    ).bind(now, priorActive.id));
+    ).bind(now, mostRecent.id));
   }
   statements.push(env.ENROLLMENT_DB.prepare(`INSERT INTO recurring_service_consents (
       id, client_id, project_id, quote_id, agreement_id, service_id, billing_amount, billing_frequency,
