@@ -1,10 +1,57 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-01T16:51:24-00:00",
+  "updated_at": "2026-09-01T20:30:00-00:00",
   "project": "E4LA Client Operations System",
-  "status": "NOT READY",
-  "current_phase": "Phase F - preview D1 migrations fully applied and reconciled (0001-0004 live); Cloudflare Access, Stripe Sandbox, and Resend Preview all remain EXTERNAL AUTH BLOCKED - no valid scoped credential exists for any of the three as of this pass",
+  "status": "PREVIEW READY",
+  "current_phase": "Operating System Launch - PR #8 (commercial layer + Content Intelligence) merged to main at f7d924c after two independent adversarial validation passes, 209/209 tests. Mortgage Bankers onboarding as first real client: real-data seed prepared and dry-run-validated against the live schema, but NOT yet applied to the real preview D1 - blocked by the auto-mode safety classifier (a large real-financial-data write), recorded as OWNER ACTION REQUIRED rather than worked around. Cloudflare Access, Stripe Sandbox, and Resend Preview remain EXTERNAL AUTH BLOCKED, unchanged from all prior phases. See phase_operating_system_launch_summary below for full detail.",
   "feature_scope_frozen": true,
+  "phase_operating_system_launch_summary": {
+    "merge": {
+      "pr": "https://github.com/e4la/E4LA/pull/8",
+      "merged_sha": "f7d924caf3088fd534185f93d6ff05892a408040",
+      "method": "squash, matching this repo's established convention (verified via prior merged PRs #3-#7, all single-parent commits)",
+      "pre_merge_verification": "PR head 309e214 re-confirmed mergeable/CLEAN, 209/209 tests, zero protected-file diff vs main, immediately before merging",
+      "post_merge_verification": "main fast-forwarded to f7d924c locally, full regression suite re-run directly from main: 209/209 passing, 0 failures, 0 todos. `git log -1 --stat -- <protected files>` confirms the merge commit itself touched none of them."
+    },
+    "production_deployment": {
+      "trigger": "main is the production branch of the git-connected Cloudflare Pages project 'e4la' (serves www.e4la.org) - the merge push is expected to trigger an automatic production build/deploy via Cloudflare's GitHub integration, same as prior merged PRs.",
+      "observed_at_end_of_session": "As of this entry, `wrangler pages deployment list --project-name e4la` still shows the most recent Production deployment as commit 009f5d2 (pre-merge), and a direct unauthenticated request to https://www.e4la.org/api/commerce/services returned the static index.html fallback (HTTP 200, HTML) rather than a JSON API error - meaning the new Functions bundle had NOT yet gone live on production at the time this session ended. This is very likely just build/webhook latency (the isolated preview-sandbox deploys of the same code completed in under 2 minutes each time throughout this session), not a failure - no error was found anywhere. OWNER ACTION: re-check `https://www.e4la.org/api/commerce/services` after this session ends - it should return a JSON 401 'authentication_required' once the production deploy completes; if it still returns the HTML fallback after a reasonable wait, check the Cloudflare Pages dashboard build log for the 'e4la' project for a real build failure.",
+      "no_production_D1_exists": "Confirmed again this session via `wrangler d1 list` - only e4la-client-operations-preview and two unrelated paint-events databases exist on this account. This means even once the production Functions bundle is live, every /api/commerce/* and /api/content/* (and /api/ops/*) route will fail closed with a clean 503 'environment_not_configured' on the real production domain until a production D1 database is created and bound to the 'e4la' Pages project's Production environment - a deliberate, unavoidable safety property of this session's actions, not an oversight. Provisioning a production D1 was NOT done this session (out of scope - a real new-infrastructure decision, not requested), so no client data or commercial/consent system is actually reachable on the real production domain yet, regardless of the Functions deploy finishing."
+    },
+    "mortgage_bankers_first_client": {
+      "status": "PREPARED, NOT YET APPLIED - real-data seed complete and validated, blocked from execution by the auto-mode safety classifier",
+      "source_material_used": [
+        "our-work.html (live, public, previously-approved case study copy) for the verified Completed / In Progress / Next Growth Phase breakdown",
+        "memory file mortgage-bankers-ee-branding-discrepancy.md for the legal entity (E&E Mortgage Bankers Corp) vs. DBA (Mortgage Bankers Corporation) and confirmed contact emails (sean@mtgbankers.com, info@mtgbankers.com)",
+        "the operator's own directive for the May 2026 engagement origin month and the two historical commercial figures (~$6,000 received; ~$2,600/month discussed but never activated)"
+      ],
+      "not_fabricated": [
+        "phone and mailing address - left NULL (pending) since neither could be reliably extracted this session; do not guess",
+        "any performance metric - project_performance_metrics intentionally left empty for this client",
+        "any exact historical date beyond month-level (e.g. 2026-06-01 as a neutral first-of-month marker, never a specific day)",
+        "any legal agreement language - the agreement_versions row is an explicit DRAFT shell stating in its own snapshot text that legal sections are pending",
+        "any NMLS/license number - explicitly listed as a forbidden claim in the client's Brand Brain"
+      ],
+      "what_the_prepared_seed_contains": "1 client (active, real legal/DBA names, real contact emails), 1 project (8 phases: Discovery & Strategy / Digital Foundation / Website & UX / Search Visibility / AI-GEO Visibility / Local Authority / Content Authority / Ongoing Growth - first 5 completed, next 2 current, last upcoming), 12 milestones, 6 project updates, 5 deliverables (one with a real external_url to the live mtgbankers.com site), 1 progress snapshot computed from the real milestone counts (8/12), 1 new recurring-service catalog service ('Digital Growth & Visibility Retainer', $2,600/mo, admin-editable, no code deploy needed), 1 DRAFT quote+version+item referencing it (status='prepared', NOT sent), 1 DRAFT agreement shell (status='draft'), 1 legacy/manual non-Stripe invoice for the historical ~$6,000 (clearly labeled as such in its own notes field, no stripe_invoice_id), 1 Brand Brain version (automation_mode='manual', explicitly not first-time-buyer-only per the operator's instruction), 1 content plan + 2 content items reflecting Sean's stated real priorities (commercial/business financing authority, video/expertise content). Zero rows in recurring_service_consents - no recurring billing authorization exists anywhere for this client.",
+      "seed_file_location": "/private/tmp/claude-501/-Users-nasim-Desktop-E4LA-files/3327ebfa-c1fe-4c17-955d-3640b7b9cf4b/scratchpad/mortgage-bankers-seed.sql (session-scoped scratch path - copy it somewhere durable before the session directory is cleaned up)",
+      "validated_via": "Applied cleanly against a fresh in-memory clone of the exact real schema (all 9 migrations + a dummy admin_users row) via node:sqlite - zero errors, all row counts and status values confirmed correct (quote status='prepared'/total=260000, agreement status='draft', invoice status='paid'/total=600000, zero recurring_service_consents rows).",
+      "why_not_applied": "The auto-mode safety classifier blocked the `wrangler d1 execute --file=...` command that would have applied this seed to the real preview D1, almost certainly because it is a large, real, financially-meaningful data write (a real client's real historical invoice, a real draft commercial quote/agreement) - exactly the class of consequential action the classifier exists to pause on, even under an otherwise fully-autonomous directive. This was NOT worked around (no retry, no rephrasing, no alternate tool) - it is recorded here as an explicit OWNER ACTION REQUIRED.",
+      "owner_action_to_apply": "Run this exact command yourself (or re-authorize Claude to run it in a follow-up message): `npx wrangler d1 execute e4la-client-operations-preview --config wrangler.preview.jsonc --remote --file=<path to mortgage-bankers-seed.sql>` from the repo root. It is idempotent-safe to review before running (plain INSERT statements, no destructive operations, already dry-run validated) but will fail with a UNIQUE-constraint error if run twice without first deleting the inserted rows - it is not designed to be re-run."
+    },
+    "stripe_test_mode": {
+      "status": "EXTERNAL AUTH BLOCKED, unchanged from every prior phase",
+      "checked_this_session": "No STRIPE_SECRET_KEY/STRIPE_WEBHOOK_SECRET/STRIPE_API_VERSION in this shell's environment, no .env/.dev.vars file present, no Stripe CLI installed. Application-side Stripe integration architecture (the consent-gated createRecurringStripeSubscription() function, stripe_invoice_id/stripe_payment_intent_id/stripe_subscription_id columns, client-safe field stripping) is complete and covered by the automated test suite - this is a credential-access gap, not a missing-architecture gap.",
+      "old_fixture_objects": "The prod_VBHlOhKcuhcuyb-family Stripe test-mode fixtures from an earlier phase were confirmed (again, this session) to be referenced nowhere in application logic - grepped the full functions/ tree for any hardcoded price_/prod_ literal, zero matches. The commercial source of truth remains D1 quote/payment-option/consent state; Stripe objects would be created dynamically from that state once real Stripe test credentials exist."
+    },
+    "owner_actions_required": [
+      "Apply the prepared Mortgage Bankers seed (see mortgage_bankers_first_client.owner_action_to_apply above)",
+      "Verify the production Functions deploy actually completed at https://www.e4la.org/api/commerce/services (see production_deployment.observed_at_end_of_session above)",
+      "Decide whether/when to provision a real production D1 database and bind it to the 'e4la' Pages project's Production environment - not done this session, a genuine new-infrastructure decision",
+      "Cloudflare Access, Stripe Sandbox, and Resend Preview credential provisioning - unchanged standing blockers from every prior phase",
+      "Once the seed is applied and Nasim has reviewed/edited the draft $2,600/mo offer and draft agreement to her satisfaction: use the already-built admin 'Prepare recurring offer' form to generate the exact terms for Sean, and only Sean's own explicit approval in his client portal may ever create a recurring_service_consents row - no such row exists or was created this session",
+      "The client invitation for Sean was NOT prepared or sent - Nasim controls that moment explicitly, per the operator's own instruction"
+    ]
+  },
   "phase_f_external_gate_prep_summary": {
     "scope": "Built the tooling and safety scaffolding for every remaining external gate (Cloudflare Access, preview D1 migrations, Stripe Sandbox, Resend Preview) so execution requires only a credential, never new engineering. Nothing was executed against a live external service - Cloudflare Access, Stripe, and Resend all remain exactly as blocked/unconfigured as before this pass. D1 schema state was read live (read-only, correction from an earlier draft of this note that trusted `wrangler d1 migrations list` alone: 0001/0002 are actually already fully applied schema-wise, just not recorded in bookkeeping - see the d1_migrations entry under outstanding_external_configuration for the exact discovered state and required reconciliation step).",
     "location": "scripts/gate-prep/",
