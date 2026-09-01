@@ -36,7 +36,12 @@ export async function onRequest(context) {
       || matchHandler(request.method, route, /^admin\/projects\/([^/]+)\/items$/, createProjectItem)
       || matchHandler(request.method, route, /^admin\/clients\/([^/]+)$/, updateClient, 'PATCH')
       || matchHandler(request.method, route, /^admin\/enrollments\/([^/]+)\/activate$/, activatePortal)
-      || matchHandler(request.method, route, /^admin\/preview\/([^/]+)$/, adminPreview, 'GET');
+      || matchHandler(request.method, route, /^admin\/preview\/([^/]+)$/, adminPreview, 'GET')
+      || matchHandler(request.method, route, /^admin\/projects\/([^/]+)\/phases$/, createPhase)
+      || matchHandler(request.method, route, /^admin\/phases\/([^/]+)$/, updatePhase, 'PATCH')
+      || matchHandler(request.method, route, /^admin\/projects\/([^/]+)\/progress-snapshots$/, createProgressSnapshot)
+      || matchHandler(request.method, route, /^admin\/projects\/([^/]+)\/performance-metrics$/, createPerformanceMetric)
+      || matchHandler(request.method, route, /^admin\/performance-metrics\/([^/]+)$/, updatePerformanceMetric, 'PATCH');
     if (!handler) throw new HttpError(404, 'not_found', 'This Client Operations endpoint is unavailable.');
     return await handler(context);
   } catch (error) {
@@ -405,9 +410,14 @@ async function loadPortalData(db, clientId) {
   const project = await db.prepare(`
     SELECT * FROM projects WHERE client_id = ? AND client_visible = 1 AND status != 'archived' ORDER BY created_at DESC LIMIT 1
   `).bind(clientId).first();
-  if (!project) return { client, project: null, milestones: [], updates: [], deliverables: [], documents: [], agreements: [], enrollment: null };
-  const [milestones, updates, deliverables, documents, agreements, enrollment] = await db.batch([
-    db.prepare(`SELECT id, title, description, status, target_date, completed_at FROM project_milestones WHERE project_id = ? AND publication_status = 'published' ORDER BY sort_order, target_date`).bind(project.id),
+  if (!project) {
+    return {
+      client, project: null, milestones: [], updates: [], deliverables: [], documents: [], agreements: [], enrollment: null,
+      progress: emptyProgressSummary(), roadmap: [], weeklyProgress: [], performanceMetrics: [],
+    };
+  }
+  const [milestones, updates, deliverables, documents, agreements, enrollment, phases, snapshots, metrics] = await db.batch([
+    db.prepare(`SELECT id, title, description, status, target_date, completed_at, phase_id FROM project_milestones WHERE project_id = ? AND publication_status = 'published' ORDER BY sort_order, target_date`).bind(project.id),
     db.prepare(`SELECT id, title, body, update_type, published_at FROM project_updates WHERE project_id = ? AND publication_status = 'published' ORDER BY published_at DESC`).bind(project.id),
     db.prepare(`SELECT id, title, description, deliverable_type, external_url, published_at, completed_at FROM deliverables WHERE project_id = ? AND publication_status = 'published' ORDER BY published_at DESC`).bind(project.id),
     db.prepare(`SELECT id, title, document_type, external_url, published_at FROM portal_documents WHERE client_id = ? AND publication_status = 'published' ORDER BY published_at DESC`).bind(clientId),
@@ -422,8 +432,68 @@ async function loadPortalData(db, clientId) {
       FROM enrollments e JOIN payment_plans pp ON pp.id = e.payment_plan_id
       JOIN agreement_acceptances aa ON aa.id = e.acceptance_id
       WHERE e.client_id = ? ORDER BY e.created_at DESC LIMIT 1`).bind(clientId),
+    db.prepare(`SELECT id, name, sequence, status, target_start_date, target_end_date, client_action_required, client_action_note FROM project_phases WHERE project_id = ? AND publication_status = 'published' ORDER BY sequence`).bind(project.id),
+    db.prepare(`SELECT week_number, snapshot_date, completed_milestones_count, total_milestones_count FROM project_progress_snapshots WHERE project_id = ? AND publication_status = 'published' ORDER BY week_number`).bind(project.id),
+    db.prepare(`SELECT metric_key, label, category, current_value, baseline_value, trend, interpretation FROM project_performance_metrics WHERE project_id = ? AND publication_status = 'published' ORDER BY sort_order`).bind(project.id),
   ]);
-  return { client, project, milestones: milestones.results, updates: updates.results, deliverables: deliverables.results, documents: documents.results, agreements: agreements.results, enrollment: enrollment.results[0] || null };
+  const publishedMilestones = milestones.results;
+  const publishedPhases = phases.results;
+  const roadmap = publishedPhases.map((phase) => {
+    const phaseMilestones = publishedMilestones.filter((item) => item.phase_id === phase.id);
+    return {
+      id: phase.id, name: phase.name, sequence: phase.sequence, status: phase.status,
+      milestoneCount: phaseMilestones.length,
+      completedMilestoneCount: phaseMilestones.filter((item) => item.status === 'completed').length,
+      targetStartDate: phase.target_start_date, targetEndDate: phase.target_end_date,
+      clientActionRequired: Boolean(phase.client_action_required), clientActionNote: phase.client_action_note,
+    };
+  });
+  const weeklyProgress = snapshots.results.map((row) => ({
+    weekNumber: row.week_number, snapshotDate: row.snapshot_date,
+    completedMilestones: row.completed_milestones_count, totalMilestones: row.total_milestones_count,
+    percentComplete: row.total_milestones_count > 0 ? Math.round((row.completed_milestones_count / row.total_milestones_count) * 100) : null,
+  }));
+  const performanceMetrics = metrics.results.map((row) => ({
+    metricKey: row.metric_key, label: row.label, category: row.category,
+    currentValue: row.current_value, baselineValue: row.baseline_value, trend: row.trend, interpretation: row.interpretation,
+  }));
+  const progress = computeProgressSummary(project, publishedPhases, publishedMilestones, updates.results);
+  return {
+    client, project, milestones: publishedMilestones, updates: updates.results, deliverables: deliverables.results,
+    documents: documents.results, agreements: agreements.results, enrollment: enrollment.results[0] || null,
+    progress, roadmap, weeklyProgress, performanceMetrics,
+  };
+}
+
+function emptyProgressSummary() {
+  return { percentComplete: null, qualitativeState: 'In progress', currentPhaseName: null, completedPhaseCount: 0, totalPhaseCount: 0, nextPhaseName: null, remainingMilestoneCount: 0, statusLabel: 'On Track' };
+}
+
+function computeProgressSummary(project, phases, milestones, updates) {
+  const totalMilestones = milestones.length;
+  const completedMilestones = milestones.filter((item) => item.status === 'completed').length;
+  const percentComplete = totalMilestones > 0 ? Math.round((completedMilestones / totalMilestones) * 100) : null;
+  let qualitativeState = 'In progress';
+  if (project.status === 'completed' || percentComplete === 100) qualitativeState = 'Complete';
+  else if (percentComplete === null) qualitativeState = phases.length === 0 ? 'Not started yet' : 'In progress';
+  else if (percentComplete < 25) qualitativeState = 'Getting started';
+  else if (percentComplete < 75) qualitativeState = 'Underway';
+  else qualitativeState = 'Nearly complete';
+  const currentPhase = phases.find((phase) => phase.status === 'current');
+  const currentIndex = currentPhase ? phases.findIndex((phase) => phase.id === currentPhase.id) : -1;
+  const nextPhase = currentIndex >= 0 ? phases[currentIndex + 1] : phases.find((phase) => phase.status === 'upcoming');
+  const hasClientActionPhase = phases.some((phase) => phase.client_action_required);
+  const hasClientRequestUpdate = updates.some((item) => item.update_type === 'client_request');
+  const statusLabel = project.status === 'completed' ? 'Completed' : (hasClientActionPhase || hasClientRequestUpdate) ? 'Needs Attention' : 'On Track';
+  return {
+    percentComplete, qualitativeState,
+    currentPhaseName: currentPhase?.name || null,
+    completedPhaseCount: phases.filter((phase) => phase.status === 'completed').length,
+    totalPhaseCount: phases.length,
+    nextPhaseName: nextPhase?.name || null,
+    remainingMilestoneCount: milestones.filter((item) => !['completed','cancelled'].includes(item.status)).length,
+    statusLabel,
+  };
 }
 
 async function adminSummary({ request, env }) {
@@ -639,7 +709,10 @@ async function updatePublication({ request, env }) {
   const session = await authenticate(request, env, ['e4la_admin','e4la_collaborator']);
   await requireCsrf(request, session);
   const body = await request.json();
-  const tables = { milestone: 'project_milestones', update: 'project_updates', deliverable: 'deliverables', document: 'portal_documents' };
+  const tables = {
+    milestone: 'project_milestones', update: 'project_updates', deliverable: 'deliverables', document: 'portal_documents',
+    phase: 'project_phases', progress_snapshot: 'project_progress_snapshots', performance_metric: 'project_performance_metrics',
+  };
   const table = tables[sanitizeText(body.entityType, 20)];
   const status = sanitizeText(body.publicationStatus, 20);
   if (!table || !['internal','reviewed','approved','published','withdrawn'].includes(status)) throw new HttpError(422, 'publication_state_invalid', 'Select a supported publication state.');
@@ -698,6 +771,159 @@ async function createProjectItem({ request, env }, projectId) {
     auditStatementForAdmin(env.ENROLLMENT_DB, 'portal_item_created', session, requestId(request), { clientId: project.client_id, projectId: project.id, entityId, entityType }),
   ]);
   return json({ id: entityId, projectId: project.id, entityType, publicationStatus: 'internal' }, 201);
+}
+
+async function assertProjectAccess(env, session, projectId) {
+  const project = await env.ENROLLMENT_DB.prepare("SELECT id, client_id FROM projects WHERE id = ? AND status != 'archived'").bind(sanitizeText(projectId, 80)).first();
+  if (!project) throw new HttpError(404, 'project_not_found', 'The selected project is unavailable.');
+  if (session.role === 'e4la_collaborator') {
+    const access = await env.ENROLLMENT_DB.prepare(`SELECT 1 AS allowed FROM admin_project_access
+      WHERE admin_user_id = ? AND project_id = ? AND permission_level IN ('contributor','manager')`)
+      .bind(session.actor_id, project.id).first();
+    if (!access) throw new HttpError(403, 'not_authorized', 'You do not have permission to manage this project.');
+  }
+  return project;
+}
+
+async function createPhase({ request, env }, projectId) {
+  requireTrustedOrigin(request, env); requireJson(request);
+  const session = await authenticate(request, env, ['e4la_admin','e4la_collaborator']);
+  await requireCsrf(request, session);
+  const project = await assertProjectAccess(env, session, projectId);
+  const body = await request.json();
+  requireFields(body, ['name']);
+  const status = sanitizeText(body.status, 20) || 'upcoming';
+  if (!['completed','current','upcoming','blocked','on_hold'].includes(status)) throw new HttpError(422, 'phase_status_invalid', 'Select a supported phase status.');
+  const sequence = Number.parseInt(body.sequence, 10);
+  if (!Number.isInteger(sequence) || sequence < 1) throw new HttpError(422, 'phase_sequence_invalid', 'Sequence must be a positive whole number.');
+  const now = new Date().toISOString();
+  const phaseId = opaqueId('phs');
+  try {
+    await env.ENROLLMENT_DB.batch([
+      env.ENROLLMENT_DB.prepare(`INSERT INTO project_phases
+        (id, project_id, name, sequence, status, target_start_date, target_end_date, client_action_required, client_action_note, publication_status, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'internal', ?, ?)`)
+        .bind(phaseId, project.id, sanitizeText(body.name, 180), sequence, status, sanitizeDate(body.target_start_date), sanitizeDate(body.target_end_date),
+          body.client_action_required === true ? 1 : 0, sanitizeText(body.client_action_note, 500), now, now),
+      auditStatementForAdmin(env.ENROLLMENT_DB, 'phase_created', session, requestId(request), { clientId: project.client_id, projectId: project.id, entityId: phaseId, entityType: 'phase' }),
+    ]);
+  } catch (error) {
+    if (String(error.message || '').includes('UNIQUE')) throw new HttpError(409, 'phase_sequence_taken', 'A phase with this sequence already exists for this project.');
+    throw error;
+  }
+  return json({ id: phaseId, projectId: project.id, publicationStatus: 'internal' }, 201);
+}
+
+async function updatePhase({ request, env }, phaseId) {
+  requireTrustedOrigin(request, env); requireJson(request);
+  const session = await authenticate(request, env, ['e4la_admin','e4la_collaborator']);
+  await requireCsrf(request, session);
+  const phase = await env.ENROLLMENT_DB.prepare('SELECT id, project_id FROM project_phases WHERE id = ?').bind(sanitizeText(phaseId, 80)).first();
+  if (!phase) throw new HttpError(404, 'phase_not_found', 'The selected phase is unavailable.');
+  await assertProjectAccess(env, session, phase.project_id);
+  const body = await request.json();
+  const fields = {};
+  if (body.status !== undefined) {
+    if (!['completed','current','upcoming','blocked','on_hold'].includes(body.status)) throw new HttpError(422, 'phase_status_invalid', 'Select a supported phase status.');
+    fields.status = body.status;
+  }
+  if (body.target_start_date !== undefined) fields.target_start_date = sanitizeDate(body.target_start_date);
+  if (body.target_end_date !== undefined) fields.target_end_date = sanitizeDate(body.target_end_date);
+  if (body.client_action_required !== undefined) fields.client_action_required = body.client_action_required === true ? 1 : 0;
+  if (body.client_action_note !== undefined) fields.client_action_note = sanitizeText(body.client_action_note, 500);
+  const keys = Object.keys(fields);
+  if (!keys.length) throw new HttpError(422, 'phase_update_empty', 'Provide at least one supported field to update.');
+  const now = new Date().toISOString();
+  await env.ENROLLMENT_DB.prepare(`UPDATE project_phases SET ${keys.map((key) => `${key} = ?`).join(', ')}, updated_at = ? WHERE id = ?`)
+    .bind(...keys.map((key) => fields[key]), now, phase.id).run();
+  return json({ id: phase.id, updated: keys });
+}
+
+async function createProgressSnapshot({ request, env }, projectId) {
+  requireTrustedOrigin(request, env); requireJson(request);
+  const session = await authenticate(request, env, ['e4la_admin','e4la_collaborator']);
+  await requireCsrf(request, session);
+  const project = await assertProjectAccess(env, session, projectId);
+  const body = await request.json();
+  requireFields(body, ['snapshot_date']);
+  const weekNumber = Number.parseInt(body.week_number, 10);
+  const completed = Number.parseInt(body.completed_milestones_count, 10);
+  const total = Number.parseInt(body.total_milestones_count, 10);
+  if (!Number.isInteger(weekNumber) || weekNumber < 1) throw new HttpError(422, 'snapshot_week_invalid', 'Week number must be a positive whole number.');
+  if (!Number.isInteger(completed) || !Number.isInteger(total) || completed < 0 || total < 0 || completed > total) {
+    throw new HttpError(422, 'snapshot_counts_invalid', 'Completed and total milestone counts must be whole numbers, and completed cannot exceed total.');
+  }
+  const snapshotDate = sanitizeDate(body.snapshot_date);
+  if (!snapshotDate) throw new HttpError(422, 'snapshot_date_invalid', 'Enter a valid snapshot date.');
+  const now = new Date().toISOString();
+  const snapshotId = opaqueId('pgs');
+  try {
+    await env.ENROLLMENT_DB.batch([
+      env.ENROLLMENT_DB.prepare(`INSERT INTO project_progress_snapshots
+        (id, project_id, snapshot_date, week_number, completed_milestones_count, total_milestones_count, publication_status, created_by_admin_id, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, 'internal', ?, ?, ?)`)
+        .bind(snapshotId, project.id, snapshotDate, weekNumber, completed, total, session.actor_id, now, now),
+      auditStatementForAdmin(env.ENROLLMENT_DB, 'progress_snapshot_created', session, requestId(request), { clientId: project.client_id, projectId: project.id, entityId: snapshotId, entityType: 'progress_snapshot' }),
+    ]);
+  } catch (error) {
+    if (String(error.message || '').includes('UNIQUE')) throw new HttpError(409, 'snapshot_week_taken', 'A progress snapshot already exists for this project and week.');
+    throw error;
+  }
+  return json({ id: snapshotId, projectId: project.id, publicationStatus: 'internal' }, 201);
+}
+
+async function createPerformanceMetric({ request, env }, projectId) {
+  requireTrustedOrigin(request, env); requireJson(request);
+  const session = await authenticate(request, env, ['e4la_admin','e4la_collaborator']);
+  await requireCsrf(request, session);
+  const project = await assertProjectAccess(env, session, projectId);
+  const body = await request.json();
+  requireFields(body, ['metric_key','label','current_value']);
+  const category = sanitizeText(body.category, 20) || 'general';
+  if (!['visibility','website_ux','content','business_growth','general'].includes(category)) throw new HttpError(422, 'metric_category_invalid', 'Select a supported metric category.');
+  const trend = sanitizeText(body.trend, 10) || 'flat';
+  if (!['up','down','flat'].includes(trend)) throw new HttpError(422, 'metric_trend_invalid', 'Select a supported trend direction.');
+  const now = new Date().toISOString();
+  const metricId = opaqueId('met');
+  try {
+    await env.ENROLLMENT_DB.batch([
+      env.ENROLLMENT_DB.prepare(`INSERT INTO project_performance_metrics
+        (id, project_id, metric_key, label, category, current_value, baseline_value, trend, interpretation, sort_order, publication_status, created_by_admin_id, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'internal', ?, ?, ?)`)
+        .bind(metricId, project.id, sanitizeText(body.metric_key, 60), sanitizeText(body.label, 120), category,
+          sanitizeText(body.current_value, 60), sanitizeText(body.baseline_value, 120), trend, sanitizeText(body.interpretation, 500),
+          Number.isInteger(body.sort_order) ? body.sort_order : 0, session.actor_id, now, now),
+      auditStatementForAdmin(env.ENROLLMENT_DB, 'performance_metric_created', session, requestId(request), { clientId: project.client_id, projectId: project.id, entityId: metricId, entityType: 'performance_metric' }),
+    ]);
+  } catch (error) {
+    if (String(error.message || '').includes('UNIQUE')) throw new HttpError(409, 'metric_key_taken', 'A metric with this key already exists for this project.');
+    throw error;
+  }
+  return json({ id: metricId, projectId: project.id, publicationStatus: 'internal' }, 201);
+}
+
+async function updatePerformanceMetric({ request, env }, metricId) {
+  requireTrustedOrigin(request, env); requireJson(request);
+  const session = await authenticate(request, env, ['e4la_admin','e4la_collaborator']);
+  await requireCsrf(request, session);
+  const metric = await env.ENROLLMENT_DB.prepare('SELECT id, project_id FROM project_performance_metrics WHERE id = ?').bind(sanitizeText(metricId, 80)).first();
+  if (!metric) throw new HttpError(404, 'metric_not_found', 'The selected metric is unavailable.');
+  await assertProjectAccess(env, session, metric.project_id);
+  const body = await request.json();
+  const fields = {};
+  if (body.current_value !== undefined) fields.current_value = sanitizeText(body.current_value, 60);
+  if (body.baseline_value !== undefined) fields.baseline_value = sanitizeText(body.baseline_value, 120);
+  if (body.trend !== undefined) {
+    if (!['up','down','flat'].includes(body.trend)) throw new HttpError(422, 'metric_trend_invalid', 'Select a supported trend direction.');
+    fields.trend = body.trend;
+  }
+  if (body.interpretation !== undefined) fields.interpretation = sanitizeText(body.interpretation, 500);
+  const keys = Object.keys(fields);
+  if (!keys.length) throw new HttpError(422, 'metric_update_empty', 'Provide at least one supported field to update.');
+  const now = new Date().toISOString();
+  await env.ENROLLMENT_DB.prepare(`UPDATE project_performance_metrics SET ${keys.map((key) => `${key} = ?`).join(', ')}, updated_at = ? WHERE id = ?`)
+    .bind(...keys.map((key) => fields[key]), now, metric.id).run();
+  return json({ id: metric.id, updated: keys });
 }
 
 async function adminPreview({ request, env }, clientId) {
