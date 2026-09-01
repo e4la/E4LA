@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-01T16:38:40-00:00",
+  "updated_at": "2026-09-01T16:51:24-00:00",
   "project": "E4LA Client Operations System",
   "status": "NOT READY",
-  "current_phase": "Phase F - external-gate preparation complete; execution blocked on Cloudflare Access credential",
+  "current_phase": "Phase F - preview D1 migrations fully applied and reconciled (0001-0004 live); Cloudflare Access, Stripe Sandbox, and Resend Preview all remain EXTERNAL AUTH BLOCKED - no valid scoped credential exists for any of the three as of this pass",
   "feature_scope_frozen": true,
   "phase_f_external_gate_prep_summary": {
     "scope": "Built the tooling and safety scaffolding for every remaining external gate (Cloudflare Access, preview D1 migrations, Stripe Sandbox, Resend Preview) so execution requires only a credential, never new engineering. Nothing was executed against a live external service - Cloudflare Access, Stripe, and Resend all remain exactly as blocked/unconfigured as before this pass. D1 schema state was read live (read-only, correction from an earlier draft of this note that trusted `wrangler d1 migrations list` alone: 0001/0002 are actually already fully applied schema-wise, just not recorded in bookkeeping - see the d1_migrations entry under outstanding_external_configuration for the exact discovered state and required reconciliation step).",
@@ -84,7 +84,8 @@
     "phase_d_email_and_agreement_immutability_hardening",
     "payment_plans_immutability_migration_0003_written_not_yet_applied_to_preview_d1",
     "agreement_invite_legal_placeholder_guard",
-    "client_portal_boot_order_defect_fixed"
+    "client_portal_boot_order_defect_fixed",
+    "preview_d1_migrations_0001_through_0004_all_applied_and_reconciled_in_bookkeeping"
   ],
   "pending_gates_in_order": [
     "cloudflare_access",
@@ -246,9 +247,7 @@
       "Then: node scripts/gate-prep/access-smoke-test.mjs against the live deployed preview to confirm unauthenticated rejection and (with a manually-obtained test session cookie) authenticated pass-through"
     ],
     "d1_migrations": [
-      "DISCOVERED: d1_migrations bookkeeping table is empty, but 0001+0002's tables/triggers/columns are all fully present live (verified column-by-column, not just table names) - almost certainly applied via `wrangler d1 execute --file=...` directly at some point rather than `wrangler d1 migrations apply`, which never records bookkeeping. `wrangler d1 migrations list` cannot see this and reports all 4 as pending. 0003/0004 are genuinely, cleanly absent (0 of their objects exist).",
-      "First: record 0001/0002 as applied - npx wrangler d1 execute e4la-client-operations-preview --config wrangler.preview.jsonc --remote --command \"INSERT INTO d1_migrations (name, applied_at) VALUES ('0001_client_operations.sql', CURRENT_TIMESTAMP), ('0002_phase_c_preview.sql', CURRENT_TIMESTAMP)\"",
-      "Then: node scripts/gate-prep/d1-migrate.mjs - now safe to run (reconciles live schema vs. bookkeeping before ever calling apply; refuses and explains rather than blind-applying while the above mismatch exists) - applies only 0003/0004 and verifies the resulting schema/triggers/publication fields live"
+      "DONE: journal reconciled (0001/0002 recorded in d1_migrations via metadata-only INSERT, no schema/data changed - validated against a disposable local D1 first) and migrations/0003+0004 applied for real to the preview database. `wrangler d1 migrations list` now reports 'No migrations to apply!'. Fixture data verified unchanged throughout (6/6/6/2 rows). No production D1 exists in this account at all (confirmed via `wrangler d1 list` - only e4la-client-operations-preview + two unrelated paint-events preview/test databases)."
     ],
     "stripe": [
       "Run: STRIPE_SECRET_KEY=sk_test_... node scripts/gate-prep/stripe-sandbox-provision.mjs - creates the three Product/Price pairs and the restricted Customer Portal configuration, prints the values payment_plans.stripe_initial_price_id/stripe_remaining_price_id need and the exact webhook event list",
