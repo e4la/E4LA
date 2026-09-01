@@ -153,6 +153,40 @@ document.querySelector('#project-item-form').addEventListener('submit', async (e
 document.querySelector('#publication-form').addEventListener('submit', async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.currentTarget)); const status = document.querySelector('#publication-status'); if (!event.currentTarget.reportValidity()) return; const payload = { entityType: data.entityType, entityId: data.entityId, publicationStatus: data.status }; if (isPreview) return setStatus(status, `Fictional preview: item moved to ${humanize(data.status)}. No database record changed.`); try { await api('/api/ops/admin/publication', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify(payload) }); setStatus(status, `Publication state updated to ${humanize(data.status)}.`); } catch (error) { setStatus(status, error.message, true); } });
 document.querySelector('#activation-form').addEventListener('submit', async (event) => { event.preventDefault(); const data = new FormData(event.currentTarget); const enrollmentId = data.get('enrollmentId'); const payload = { activationMode: data.get('activationMode'), onboardingReady: data.has('onboardingReady'), activateNow: data.has('activateNow'), scheduledAt: data.get('activationScheduledAt') ? new Date(data.get('activationScheduledAt')).toISOString() : null }; const status = document.querySelector('#activation-status'); if (!event.currentTarget.reportValidity()) return; if (isPreview) return setStatus(status, `Fictional preview: ${humanize(payload.activationMode)} activation policy saved; no database record changed.`); try { const result = await api(`/api/ops/admin/enrollments/${encodeURIComponent(enrollmentId)}/activate`, { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify(payload) }); setStatus(status, result.portalActivated ? 'Portal activated.' : 'Policy saved. Portal remains pending until eligibility requirements are met.'); } catch (error) { setStatus(status, error.message, true); } });
 
+document.querySelector('#phase-create-form').addEventListener('submit', async (event) => {
+  event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
+  const data = new FormData(form); const projectId = data.get('projectId'); const status = document.querySelector('#phase-create-status');
+  const payload = { name: data.get('name'), sequence: data.get('sequence'), status: data.get('status'), target_start_date: data.get('target_start_date') || undefined, target_end_date: data.get('target_end_date') || undefined, client_action_required: data.has('client_action_required'), client_action_note: data.get('client_action_note') || undefined };
+  if (isPreview) return setStatus(status, `Fictional preview: phase "${payload.name}" saved as Internal. Publish it from the Projects panel.`);
+  try { const result = await api(`/api/ops/admin/projects/${encodeURIComponent(projectId)}/phases`, { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify(payload) }); setStatus(status, `Phase saved as Internal (ID ${result.id}). Publish it from the Projects panel.`); form.reset(); } catch (error) { setStatus(status, error.message, true); }
+});
+document.querySelector('#snapshot-create-form').addEventListener('submit', async (event) => {
+  event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
+  const data = new FormData(form); const projectId = data.get('projectId'); const status = document.querySelector('#snapshot-create-status');
+  const payload = { week_number: data.get('week_number'), snapshot_date: data.get('snapshot_date'), completed_milestones_count: data.get('completed_milestones_count'), total_milestones_count: data.get('total_milestones_count') };
+  if (isPreview) return setStatus(status, `Fictional preview: week ${payload.week_number} snapshot saved as Internal. Publish it from the Projects panel.`);
+  try { const result = await api(`/api/ops/admin/projects/${encodeURIComponent(projectId)}/progress-snapshots`, { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify(payload) }); setStatus(status, `Snapshot saved as Internal (ID ${result.id}). Values are now permanent; publish it from the Projects panel.`); form.reset(); } catch (error) { setStatus(status, error.message, true); }
+});
+document.querySelector('#metric-create-form').addEventListener('submit', async (event) => {
+  event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
+  const data = new FormData(form); const projectId = data.get('projectId'); const status = document.querySelector('#metric-create-status');
+  const payload = { metric_key: data.get('metric_key'), label: data.get('label'), category: data.get('category'), trend: data.get('trend'), current_value: data.get('current_value'), baseline_value: data.get('baseline_value') || undefined, interpretation: data.get('interpretation') || undefined };
+  if (isPreview) return setStatus(status, `Fictional preview: metric "${payload.label}" saved as Internal. Publish it from the Projects panel.`);
+  try { const result = await api(`/api/ops/admin/projects/${encodeURIComponent(projectId)}/performance-metrics`, { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify(payload) }); setStatus(status, `Metric saved as Internal (ID ${result.id}). Publish it from the Projects panel.`); form.reset(); } catch (error) { setStatus(status, error.message, true); }
+});
+document.querySelector('#metric-update-form').addEventListener('submit', async (event) => {
+  event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
+  const data = new FormData(form); const metricId = data.get('metricId'); const status = document.querySelector('#metric-update-status');
+  const payload = {};
+  if (data.get('current_value')) payload.current_value = data.get('current_value');
+  if (data.get('baseline_value')) payload.baseline_value = data.get('baseline_value');
+  if (data.get('trend')) payload.trend = data.get('trend');
+  if (data.get('interpretation')) payload.interpretation = data.get('interpretation');
+  if (!Object.keys(payload).length) return setStatus(status, 'Enter at least one field to update.', true);
+  if (isPreview) return setStatus(status, `Fictional preview: metric ${metricId} updated in memory only.`);
+  try { await api(`/api/ops/admin/performance-metrics/${encodeURIComponent(metricId)}`, { method: 'PATCH', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify(payload) }); setStatus(status, 'Metric updated.'); } catch (error) { setStatus(status, error.message, true); }
+});
+
 function showInvite(url) { const output = document.querySelector('#invite-output'); output.hidden = false; output.querySelector('textarea').value = url; }
 function activateView(name, focus = true) { if (!document.querySelector(`#admin-${name}`)) name = 'dashboard'; document.querySelectorAll('[data-admin-panel]').forEach((panel) => { panel.hidden = panel.id !== `admin-${name}`; }); document.querySelectorAll('[data-admin-view]').forEach((link) => link.toggleAttribute('aria-current', link.dataset.adminView === name)); history.replaceState(null, '', `#${name}`); if (focus) { const heading = document.querySelector(`#admin-${name} h1`); if (heading) { heading.tabIndex = -1; heading.focus(); } } }
 function applyDemoState(data, state) { if (state === 'zero') { data.clients = []; data.milestones = []; data.activity = []; data.counts = { activeClients: 0, awaitingSignature: 0, awaitingPayment: 0, actionsRequired: 0 }; } else if (state === 'single') { data.clients = data.clients.slice(0, 1); data.milestones = data.milestones.slice(0, 1); data.counts = { activeClients: 1, awaitingSignature: 0, awaitingPayment: 0, actionsRequired: 1 }; } }
