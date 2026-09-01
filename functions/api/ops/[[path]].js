@@ -579,9 +579,10 @@ async function createAgreementInvite({ request, env }, agreementId) {
   const session = await authenticate(request, env, ['e4la_admin']);
   await requireCsrf(request, session);
   const body = await request.json();
-  const agreement = await env.ENROLLMENT_DB.prepare(`SELECT a.*, c.billing_email FROM agreements a JOIN clients c ON c.id = a.client_id WHERE a.id = ?`)
+  const agreement = await env.ENROLLMENT_DB.prepare(`SELECT a.*, c.billing_email, av.commercial_terms_json FROM agreements a JOIN clients c ON c.id = a.client_id JOIN agreement_versions av ON av.id = a.current_version_id WHERE a.id = ?`)
     .bind(sanitizeText(agreementId, 80)).first();
   if (!agreement || !['prepared','sent','viewed'].includes(agreement.status)) throw new HttpError(409, 'agreement_invite_unavailable', 'A secure invitation cannot be created for this agreement.');
+  if (parseJson(agreement.commercial_terms_json, {}).legalStatus !== 'approved') throw new HttpError(409, 'agreement_legal_unapproved', 'This agreement version uses placeholder legal language and cannot be sent to a client until E4LA approves the final legal text.');
   const token = randomToken(32);
   const inviteId = opaqueId('inv');
   const now = new Date().toISOString();

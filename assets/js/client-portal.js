@@ -5,8 +5,6 @@ const previewParameters = new URLSearchParams(location.search);
 let csrfToken = '';
 let portal = null;
 
-boot();
-
 async function boot() {
   try {
     if (isPreview) {
@@ -162,6 +160,8 @@ portalTabs.forEach((tab) => {
 document.querySelectorAll('[data-open-tab]').forEach((button) => button.addEventListener('click', () => activateTab(button.dataset.openTab)));
 document.querySelector('#billing-portal-full').addEventListener('click', openBilling);
 document.querySelector('#portal-signout').addEventListener('click', logout);
+
+boot();
 
 function activateTab(name, focus = true) {
   portalTabs.forEach((tab) => { const active = tab.dataset.portalTab === name; tab.setAttribute('aria-selected', String(active)); tab.tabIndex = active ? 0 : -1; });

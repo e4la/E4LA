@@ -16,7 +16,7 @@ export function renderOperationsEmail(type, input) {
   const content = contentFor(type, values);
   return {
     subject: content.subject,
-    text: `${content.heading}\n\n${content.body}\n\n${content.actionLabel && values.actionUrl ? `${content.actionLabel}: ${values.actionUrl}\n\n` : ''}Questions? Contact ${values.supportEmail}.\n\nE4LA`,
+    text: `Hi ${values.clientName},\n\n${content.heading}\n\n${content.body}\n\n${content.actionLabel && values.actionUrl ? `${content.actionLabel}: ${values.actionUrl}\n\n` : ''}${content.note ? `${content.note}\n\n` : ''}Questions? Contact ${values.supportEmail}.\n\nE4LA`,
     html: htmlDocument(content, values),
   };
 }
@@ -64,7 +64,7 @@ function contentFor(type, values) {
 function htmlDocument(content, values) {
   const action = content.actionLabel && values.actionUrl
     ? `<p style="margin:28px 0"><a href="${escapeHtml(values.actionUrl)}" style="display:inline-block;border-radius:999px;background:linear-gradient(100deg,#F97316,#DB2777 52%,#7C3AED);padding:16px 24px;color:#fff;font-weight:800;text-decoration:none">${escapeHtml(content.actionLabel)}</a></p>` : '';
-  return `<!doctype html><html><body style="margin:0;background:#07060D;color:#fff;font-family:Manrope,Arial,sans-serif"><div style="max-width:640px;margin:auto;padding:40px 22px"><div style="border:1px solid rgba(255,255,255,.12);border-radius:20px;background:#0B0A14;padding:32px"><p style="margin:0 0 12px;color:#F9A8D4;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase">${escapeHtml(content.eyebrow)}</p><h1 style="margin:0;font-size:30px;line-height:1.15">${escapeHtml(content.heading)}</h1><p style="margin:18px 0 0;color:rgba(255,255,255,.68);font-size:16px;line-height:1.65">${escapeHtml(content.body)}</p>${action}<p style="margin:22px 0 0;border-top:1px solid rgba(255,255,255,.1);padding-top:18px;color:rgba(255,255,255,.48);font-size:13px;line-height:1.55">${escapeHtml(content.note)}</p></div><p style="margin:20px 0 0;color:rgba(255,255,255,.42);font-size:12px">Questions? Contact ${escapeHtml(values.supportEmail)} · E4LA</p></div></body></html>`;
+  return `<!doctype html><html><body style="margin:0;background:#07060D;color:#fff;font-family:Manrope,Arial,sans-serif"><div style="max-width:640px;margin:auto;padding:40px 22px"><div style="border:1px solid rgba(255,255,255,.12);border-radius:20px;background:#0B0A14;padding:32px"><p style="margin:0 0 16px;color:rgba(255,255,255,.68);font-size:14px">Hi ${escapeHtml(values.clientName)},</p><p style="margin:0 0 12px;color:#F9A8D4;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase">${escapeHtml(content.eyebrow)}</p><h1 style="margin:0;font-size:30px;line-height:1.15">${escapeHtml(content.heading)}</h1><p style="margin:18px 0 0;color:rgba(255,255,255,.68);font-size:16px;line-height:1.65">${escapeHtml(content.body)}</p>${action}<p style="margin:22px 0 0;border-top:1px solid rgba(255,255,255,.1);padding-top:18px;color:rgba(255,255,255,.48);font-size:13px;line-height:1.55">${escapeHtml(content.note)}</p></div><p style="margin:20px 0 0;color:rgba(255,255,255,.42);font-size:12px">Questions? Contact ${escapeHtml(values.supportEmail)} · E4LA</p></div></body></html>`;
 }
 
 function text(value, max) { return String(value || '').trim().slice(0, max); }
