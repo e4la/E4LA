@@ -426,3 +426,114 @@ test('Brand Brain: never UPDATEd - a new POST always appends a new version_numbe
   assert.equal(rowCount.n, 2);
   database.close();
 });
+
+// ---------------------------------------------------------------------------
+// PR #8 parallel adversarial verification. Known policy failures are kept as
+// executable TODOs so the secure expectation is ready for Claude's core fix.
+// ---------------------------------------------------------------------------
+
+test('draft content cannot jump directly to scheduled', async () => {
+  const database = previewDatabase();
+  const env = contentEnvironment(database);
+  const admin = await adminSession(env);
+  const response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_drafting/status', admin, { status: 'scheduled' }, admin.csrfToken);
+  assert.equal(response.status, 422);
+  database.close();
+});
+
+test('YELLOW claim without verified evidence cannot approve', { todo: 'PR #8 defect: approval gate checks unresolved RED only' }, async () => {
+  const database = previewDatabase();
+  const env = contentEnvironment(database);
+  const admin = await adminSession(env);
+  const owner = await ownerSessionD(env);
+
+  let response = await contentRequest(env, 'POST', '/api/content/items/ci_preview_review/claims', admin, {
+    claim_text: 'Material yellow claim with no evidence.', risk_level: 'yellow',
+  }, admin.csrfToken);
+  assert.equal(response.status, 201);
+  response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_review/status', admin, { status: 'e4la_approved' }, admin.csrfToken);
+  assert.equal(response.status, 200);
+  response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_review/status', admin, { status: 'client_review' }, admin.csrfToken);
+  assert.equal(response.status, 200);
+  response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_review/status', owner, { status: 'approved' }, owner.csrfToken);
+  assert.equal(response.status, 422);
+  database.close();
+});
+
+test('URL-only or unverified source cannot verify a claim', { todo: 'PR #8 defect: verifyClaim checks only that source_id exists' }, async () => {
+  const database = previewDatabase();
+  const env = contentEnvironment(database);
+  const admin = await adminSession(env);
+
+  const sourceResponse = await contentRequest(env, 'POST', '/api/content/clients/clt_preview_d/sources', admin, {
+    source_type: 'url_reference', url: 'https://example.test/url-alone',
+  }, admin.csrfToken);
+  const source = await sourceResponse.json();
+  const claimResponse = await contentRequest(env, 'POST', '/api/content/items/ci_preview_review/claims', admin, {
+    claim_text: 'Claim backed only by a URL.', risk_level: 'yellow', source_id: source.id,
+  }, admin.csrfToken);
+  const claim = await claimResponse.json();
+  const verifyResponse = await contentRequest(env, 'PATCH', `/api/content/claims/${claim.id}/verify`, admin, {
+    verification_status: 'verified', source_id: source.id,
+  }, admin.csrfToken);
+  assert.equal(verifyResponse.status, 422);
+  database.close();
+});
+
+test('RED claim cannot auto-approve even after an admin marks the claim verified', { todo: 'PR #8 defect: auto policy allows verified RED claims and authorization is represented by forgeable request booleans' }, async () => {
+  const database = previewDatabase();
+  const env = contentEnvironment(database);
+  const admin = await adminSession(env);
+
+  let response = await contentRequest(env, 'PATCH', '/api/content/claims/clm_preview_red/verify', admin, {
+    verification_status: 'verified', source_id: 'src_preview_a',
+  }, admin.csrfToken);
+  assert.equal(response.status, 200);
+  response = await contentRequest(env, 'POST', '/api/content/clients/clt_preview_d/brand-brain', admin, {
+    automation_mode: 'auto_publish_approved_policy',
+    client_agreement_authorizes_auto_publish: true,
+    e4la_policy_confirmed: true,
+  }, admin.csrfToken);
+  assert.equal(response.status, 201);
+  response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_approved_e4la/status', admin, { status: 'approved' }, admin.csrfToken);
+  assert.equal(response.status, 422);
+  database.close();
+});
+
+test('existing item keeps the approval policy snapshotted by its plan', { todo: 'PR #8 defect: patchItemStatus reads the latest brand brain, so a new manual version bypasses client review retroactively' }, async () => {
+  const database = previewDatabase();
+  const env = contentEnvironment(database);
+  const admin = await adminSession(env);
+
+  let response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_review/status', admin, { status: 'e4la_approved' }, admin.csrfToken);
+  assert.equal(response.status, 200);
+  response = await contentRequest(env, 'POST', '/api/content/clients/clt_preview_d/brand-brain', admin, { automation_mode: 'manual' }, admin.csrfToken);
+  assert.equal(response.status, 201);
+  response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_review/status', admin, { status: 'approved' }, admin.csrfToken);
+  assert.equal(response.status, 422);
+  database.close();
+});
+
+test('client plan list excludes draft/internal planning records', { todo: 'PR #8 defect: client plan handlers return every status, including draft and internal_approved' }, async () => {
+  const database = previewDatabase();
+  const env = contentEnvironment(database);
+  const owner = await ownerSessionD(env);
+  const response = await contentRequest(env, 'GET', '/api/content/clients/clt_preview_d/plans', owner);
+  assert.equal(response.status, 200);
+  const payload = await response.json();
+  assert.ok(payload.plans.every((plan) => !['draft', 'internal_approved'].includes(plan.status)));
+  database.close();
+});
+
+test('verified_live requires external proof and manual export can never self-verify', { todo: 'PR #8 defect: verifyJob is an authenticated status flip with no platform evidence' }, async () => {
+  const database = previewDatabase();
+  const env = contentEnvironment(database);
+  const admin = await adminSession(env);
+  const response = await contentRequest(env, 'PATCH', '/api/content/jobs/pjb_preview_a/verify', admin, {}, admin.csrfToken);
+  assert.equal(response.status, 422);
+  const job = database.prepare("SELECT status, external_post_id, verified_at FROM publishing_jobs WHERE id = 'pjb_preview_a'").get();
+  assert.equal(job.status, 'published');
+  assert.equal(job.external_post_id, null);
+  assert.equal(job.verified_at, null);
+  database.close();
+});

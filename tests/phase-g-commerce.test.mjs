@@ -605,3 +605,97 @@ test('server rejects manipulated/forged service, quote, and payment-option IDs',
   assert.equal(response.status, 404);
   database.close();
 });
+
+// -----------------------------------------------------------------------------------
+// PR #8 parallel adversarial verification. Known defects are executable TODOs: they
+// express the required secure behavior without making the branch's baseline suite red.
+// Remove the todo marker when the corresponding core fix lands.
+// -----------------------------------------------------------------------------------
+
+test('quote version rows and line items remain immutable at the database boundary', () => {
+  const database = previewDatabase();
+  assert.throws(() => database.exec("UPDATE quote_versions SET total = 1 WHERE id = 'quov_preview_a'"), /immutable/);
+  assert.throws(() => database.exec("DELETE FROM quote_versions WHERE id = 'quov_preview_a'"), /immutable/);
+  assert.throws(() => database.exec("UPDATE quote_items SET unit_price = 1 WHERE id = 'qit_preview_a1'"), /immutable/);
+  assert.throws(() => database.exec("DELETE FROM quote_items WHERE id = 'qit_preview_a1'"), /immutable/);
+  database.close();
+});
+
+test('redirect/query parameters never mark an invoice paid', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  const createdResponse = await commerceRequest(env, 'POST', '/api/commerce/invoices', admin, {
+    client_id: 'clt_preview_d', items: [{ label: 'Server-authoritative invoice', unit_price: 25000 }],
+  }, admin.csrfToken);
+  const created = await createdResponse.json();
+
+  const response = await commerceRequest(env, 'GET', `/api/commerce/invoices/${created.id}?paid=1&status=paid&redirect_status=succeeded`, admin);
+  assert.equal(response.status, 200);
+  const payload = await response.json();
+  assert.equal(payload.invoice.status, 'draft');
+  assert.equal(payload.invoice.amount_paid, 0);
+  assert.equal(payload.invoice.paid_at, null);
+  database.close();
+});
+
+test('sent quote cannot silently replace the client-visible current version', { todo: 'PR #8 defect: POST /versions currently accepts sent/viewed quotes and swaps current_version_id without a new send' }, async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  const before = database.prepare("SELECT current_version_id, sent_at FROM quotes WHERE id = 'quo_preview_a'").get();
+  const response = await commerceRequest(env, 'POST', '/api/commerce/quotes/quo_preview_a/versions', admin, {
+    items: [{ label: 'Attacker-controlled replacement', unit_price: 1 }],
+  }, admin.csrfToken);
+  assert.equal(response.status, 409);
+  const after = database.prepare("SELECT current_version_id, sent_at FROM quotes WHERE id = 'quo_preview_a'").get();
+  assert.deepEqual(after, before);
+  database.close();
+});
+
+test('payment option total must match the quote current-version total', { todo: 'PR #8 defect: total_amount is checked only against submitted installments, not the immutable quote total' }, async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  const response = await commerceRequest(env, 'POST', '/api/commerce/quotes/quo_preview_a/payment-options', admin, {
+    option_type: 'pay_in_full', total_amount: 1, installment_count: 1,
+    installments: [{ amount: 1, due_date: '2026-09-01' }],
+  }, admin.csrfToken);
+  assert.equal(response.status, 422);
+  database.close();
+});
+
+test('replaying the same recurring consent cannot create a second active authorization', { todo: 'PR #8 defect: approval has no persisted offer, idempotency key, or uniqueness rule and returns 201 on replay' }, async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const signer = await signerSession(env);
+  const payload = {
+    client_id: 'clt_preview_d', project_id: 'prj_preview_d', service_id: 'svc_preview_2', billing_amount: 175000,
+    billing_frequency: 'monthly', start_date: '2026-10-01', renewal_behavior: 'auto_renew_until_cancelled',
+    cancellation_terms_version: 'v1', consent_text_version: 'v1',
+  };
+  const first = await commerceRequest(env, 'POST', '/api/commerce/recurring-consent/approve', signer, payload, signer.csrfToken);
+  assert.equal(first.status, 201);
+  const replay = await commerceRequest(env, 'POST', '/api/commerce/recurring-consent/approve', signer, payload, signer.csrfToken);
+  assert.ok([200, 409].includes(replay.status), 'replay must resolve idempotently or conflict, never create another consent');
+  const active = database.prepare(`SELECT COUNT(*) AS count FROM recurring_service_consents
+    WHERE client_id = 'clt_preview_d' AND service_id = 'svc_preview_2' AND billing_amount = 175000
+      AND billing_frequency = 'monthly' AND start_date = '2026-10-01' AND status = 'active'`).get();
+  assert.equal(active.count, 1);
+  database.close();
+});
+
+test('client-facing commerce responses omit internal notes, Stripe IDs, audit actors, and consent evidence', { todo: 'PR #8 defect: client GET handlers return SELECT * rows, including internal/Stripe/evidence fields' }, async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const owner = await ownerSession(env);
+
+  const quoteResponse = await commerceRequest(env, 'GET', '/api/commerce/quotes/quo_preview_a', owner);
+  const quotePayload = await quoteResponse.json();
+  for (const forbidden of ['notes', 'created_by_admin_id']) assert.ok(!(forbidden in quotePayload.quote));
+
+  const consentResponse = await commerceRequest(env, 'GET', '/api/commerce/clients/clt_preview_d/recurring-consents', owner);
+  const consentPayload = await consentResponse.json();
+  for (const forbidden of ['consent_evidence', 'stripe_subscription_id', 'actor_id']) assert.ok(!(forbidden in consentPayload.consents[0]));
+  database.close();
+});
