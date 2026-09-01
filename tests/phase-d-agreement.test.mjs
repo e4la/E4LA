@@ -11,6 +11,7 @@ import { createSession } from '../functions/_shared/ops-security.js';
 const migration1 = await readFile(new URL('../migrations/0001_client_operations.sql', import.meta.url), 'utf8');
 const migration2 = await readFile(new URL('../migrations/0002_phase_c_preview.sql', import.meta.url), 'utf8');
 const migration3 = await readFile(new URL('../migrations/0003_payment_plans_immutable.sql', import.meta.url), 'utf8');
+const migration4 = await readFile(new URL('../migrations/0004_project_progress.sql', import.meta.url), 'utf8');
 const previewFixture = await readFile(new URL('../fixtures/client-operations.preview.sql', import.meta.url), 'utf8');
 const opsRouterSource = await readFile(new URL('../functions/api/ops/[[path]].js', import.meta.url), 'utf8');
 
@@ -19,6 +20,7 @@ function previewDatabase() {
   database.exec(migration1);
   database.exec(migration2);
   database.exec(migration3);
+  database.exec(migration4);
   database.exec(previewFixture);
   return database;
 }

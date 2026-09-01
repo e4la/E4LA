@@ -17,6 +17,7 @@ import { createSession } from '../functions/_shared/ops-security.js';
 const migration1 = await readFile(new URL('../migrations/0001_client_operations.sql', import.meta.url), 'utf8');
 const migration2 = await readFile(new URL('../migrations/0002_phase_c_preview.sql', import.meta.url), 'utf8');
 const migration3 = await readFile(new URL('../migrations/0003_payment_plans_immutable.sql', import.meta.url), 'utf8');
+const migration4 = await readFile(new URL('../migrations/0004_project_progress.sql', import.meta.url), 'utf8');
 const previewFixture = await readFile(new URL('../fixtures/client-operations.preview.sql', import.meta.url), 'utf8');
 
 test('a webhook-less "success" redirect never confirms payment; only the signed Stripe webhook does', async () => {
@@ -345,7 +346,7 @@ test('Billing Portal session creation checks the caller role before ever contact
 
 function previewDatabase() {
   const database = new DatabaseSync(':memory:');
-  database.exec(migration1); database.exec(migration2); database.exec(migration3); database.exec(previewFixture);
+  database.exec(migration1); database.exec(migration2); database.exec(migration3); database.exec(migration4); database.exec(previewFixture);
   return database;
 }
 

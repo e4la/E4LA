@@ -101,3 +101,23 @@ INSERT INTO deliverables (id, project_id, title, description, deliverable_type, 
   ('del_d_pub', 'prj_preview_d', 'Discovery summary', 'Fictional preview deliverable.', 'report', 'https://example.test/fictional-report', 'published', '2026-08-01T00:00:00.000Z', '2026-08-01T00:00:00.000Z', '2026-08-01T00:00:00.000Z', '2026-08-01T00:00:00.000Z'),
   ('del_d_private', 'prj_preview_d', 'Internal working file', 'Must never appear in client output.', 'document', NULL, 'internal', NULL, NULL, '2026-08-01T00:00:00.000Z', '2026-08-01T00:00:00.000Z'),
   ('del_f_pub', 'prj_preview_f', 'Final engagement report', 'Fictional completed engagement report.', 'report', 'https://example.test/fictional-final-report', 'published', '2026-06-30T00:00:00.000Z', '2026-06-30T00:00:00.000Z', '2026-06-30T00:00:00.000Z', '2026-06-30T00:00:00.000Z');
+
+INSERT INTO project_phases (id, project_id, name, sequence, status, target_start_date, target_end_date, client_action_required, client_action_note, publication_status, published_at, created_at, updated_at) VALUES
+  ('phs_d_1', 'prj_preview_d', 'Discovery & measurement baseline', 1, 'completed', '2026-07-15', '2026-07-31', 0, NULL, 'published', '2026-08-01T00:00:00.000Z', '2026-07-15T00:00:00.000Z', '2026-08-01T00:00:00.000Z'),
+  ('phs_d_2', 'prj_preview_d', 'Visibility foundation', 2, 'current', '2026-08-01', '2026-08-31', 1, 'Approve the homepage messaging proof.', 'published', '2026-08-01T00:00:00.000Z', '2026-07-15T00:00:00.000Z', '2026-08-20T00:00:00.000Z'),
+  ('phs_d_3', 'prj_preview_d', 'Content and experience rollout', 3, 'upcoming', '2026-09-01', '2026-09-20', 0, NULL, 'published', '2026-08-01T00:00:00.000Z', '2026-07-15T00:00:00.000Z', '2026-08-01T00:00:00.000Z'),
+  ('phs_d_internal', 'prj_preview_d', 'Internal-only future phase', 4, 'upcoming', NULL, NULL, 0, NULL, 'internal', NULL, '2026-08-20T00:00:00.000Z', '2026-08-20T00:00:00.000Z');
+
+UPDATE project_milestones SET phase_id = 'phs_d_1' WHERE id = 'mil_d_1';
+UPDATE project_milestones SET phase_id = 'phs_d_2' WHERE id = 'mil_d_2';
+
+INSERT INTO project_progress_snapshots (id, project_id, snapshot_date, week_number, completed_milestones_count, total_milestones_count, publication_status, published_at, created_by_admin_id, created_at, updated_at) VALUES
+  ('pgs_d_1', 'prj_preview_d', '2026-07-19', 1, 0, 5, 'published', '2026-07-19T00:00:00.000Z', 'adm_preview_owner', '2026-07-19T00:00:00.000Z', '2026-07-19T00:00:00.000Z'),
+  ('pgs_d_2', 'prj_preview_d', '2026-07-26', 2, 1, 5, 'published', '2026-07-26T00:00:00.000Z', 'adm_preview_owner', '2026-07-26T00:00:00.000Z', '2026-07-26T00:00:00.000Z'),
+  ('pgs_d_3', 'prj_preview_d', '2026-08-02', 3, 2, 5, 'published', '2026-08-02T00:00:00.000Z', 'adm_preview_owner', '2026-08-02T00:00:00.000Z', '2026-08-02T00:00:00.000Z'),
+  ('pgs_d_internal', 'prj_preview_d', '2026-08-09', 4, 3, 5, 'internal', NULL, 'adm_preview_owner', '2026-08-09T00:00:00.000Z', '2026-08-09T00:00:00.000Z');
+
+INSERT INTO project_performance_metrics (id, project_id, metric_key, label, category, current_value, baseline_value, trend, interpretation, sort_order, publication_status, published_at, created_by_admin_id, created_at, updated_at) VALUES
+  ('met_d_visibility', 'prj_preview_d', 'local_visibility', 'Local visibility', 'visibility', '+18%', 'Aug 1 baseline', 'up', 'Local pack appearances trending up since the visibility phase began.', 1, 'published', '2026-08-20T00:00:00.000Z', 'adm_preview_owner', '2026-08-20T00:00:00.000Z', '2026-08-20T00:00:00.000Z'),
+  ('met_d_tech', 'prj_preview_d', 'technical_issues_resolved', 'Technical issues resolved', 'website_ux', '9 of 12', NULL, 'up', NULL, 2, 'published', '2026-08-20T00:00:00.000Z', 'adm_preview_owner', '2026-08-20T00:00:00.000Z', '2026-08-20T00:00:00.000Z'),
+  ('met_d_internal', 'prj_preview_d', 'internal_only_metric', 'Must never appear in client output', 'general', '0', NULL, 'flat', NULL, 3, 'internal', NULL, 'adm_preview_owner', '2026-08-20T00:00:00.000Z', '2026-08-20T00:00:00.000Z');

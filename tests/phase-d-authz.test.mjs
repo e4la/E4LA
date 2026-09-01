@@ -13,6 +13,7 @@ import { onRequest as handleOperationsRequest } from '../functions/api/ops/[[pat
 const migration1 = await readFile(new URL('../migrations/0001_client_operations.sql', import.meta.url), 'utf8');
 const migration2 = await readFile(new URL('../migrations/0002_phase_c_preview.sql', import.meta.url), 'utf8');
 const migration3 = await readFile(new URL('../migrations/0003_payment_plans_immutable.sql', import.meta.url), 'utf8');
+const migration4 = await readFile(new URL('../migrations/0004_project_progress.sql', import.meta.url), 'utf8');
 const previewFixture = await readFile(new URL('../fixtures/client-operations.preview.sql', import.meta.url), 'utf8');
 
 test('E4LA Admin authorization: admin succeeds on admin-only routes; missing session and non-admin roles are rejected', async () => {
@@ -298,7 +299,7 @@ test('Publication boundary and Admin Preview isolation: only published items are
 
 function previewDatabase() {
   const database = new DatabaseSync(':memory:');
-  database.exec(migration1); database.exec(migration2); database.exec(migration3); database.exec(previewFixture);
+  database.exec(migration1); database.exec(migration2); database.exec(migration3); database.exec(migration4); database.exec(previewFixture);
   return database;
 }
 
