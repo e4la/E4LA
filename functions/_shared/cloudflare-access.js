@@ -23,9 +23,16 @@ export async function verifyCloudflareAccess(request, env, audienceVariable) {
   if (!valid) throw new HttpError(401, 'identity_invalid', 'Your identity session could not be verified.');
 
   const now = Math.floor(Date.now() / 1000);
-  const issuer = `${teamDomain}/`;
+  // A real Cloudflare Access JWT's `iss` claim is `https://<team-domain>` with
+  // NO trailing slash (confirmed against a live token during preview Access
+  // rollout - a prior version of this check appended one unconditionally,
+  // which meant every genuinely valid Access login was rejected here as
+  // "expired"). Both forms are accepted defensively since this is purely
+  // correcting our own comparison, not loosening what token/signature/
+  // audience/expiry a request must actually present.
+  const issuerCandidates = new Set([teamDomain, `${teamDomain}/`]);
   const audiences = Array.isArray(claims.aud) ? claims.aud : [claims.aud];
-  if (claims.iss !== issuer || !audiences.includes(audience) || Number(claims.exp) <= now - 30 || Number(claims.nbf || 0) > now + 30) {
+  if (!issuerCandidates.has(claims.iss) || !audiences.includes(audience) || Number(claims.exp) <= now - 30 || Number(claims.nbf || 0) > now + 30) {
     throw new HttpError(401, 'identity_expired', 'Your identity session has expired. Sign in again.');
   }
   const email = sanitizeText(claims.email, 254).toLowerCase();

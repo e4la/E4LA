@@ -83,6 +83,14 @@ test('Cloudflare Access JWT validation checks signature, issuer, audience, expir
     assert.equal(identity.email, 'phase-c-admin@example.test');
     const wrongAudience = await signJwt(keys.privateKey, { alg: 'RS256', kid: jwk.kid }, { ...claims, aud: ['wrong'] });
     await assert.rejects(verifyCloudflareAccess(new Request(request.url, { headers: { 'Cf-Access-Jwt-Assertion': wrongAudience } }), { ACCESS_TEAM_DOMAIN: 'https://phase-c-team.example', ADMIN_ACCESS_AUD: 'admin-audience' }, 'ADMIN_ACCESS_AUD'), (error) => error.code === 'identity_expired');
+
+    // Real Cloudflare Access JWTs carry `iss` as https://<team-domain> with NO
+    // trailing slash (confirmed against a live token during the preview
+    // Access rollout) - a real login was rejected as "expired" until this was
+    // fixed to accept this form, not just the with-slash form asserted above.
+    const noSlashIssuerToken = await signJwt(keys.privateKey, { alg: 'RS256', kid: jwk.kid }, { ...claims, iss: 'https://phase-c-team.example' });
+    const noSlashIdentity = await verifyCloudflareAccess(new Request(request.url, { headers: { 'Cf-Access-Jwt-Assertion': noSlashIssuerToken } }), { ACCESS_TEAM_DOMAIN: 'https://phase-c-team.example', ADMIN_ACCESS_AUD: 'admin-audience' }, 'ADMIN_ACCESS_AUD');
+    assert.equal(noSlashIdentity.email, 'phase-c-admin@example.test');
   } finally { globalThis.fetch = originalFetch; }
 });
 
