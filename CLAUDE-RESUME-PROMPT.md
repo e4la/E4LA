@@ -4,7 +4,7 @@ Continue the E4LA Client Operations project from the repository, assuming no con
 
 1. Read `CLAUDE-HANDOFF-E4LA-CLIENT-OPERATIONS.md` completely first.
 2. Then inspect `CLIENT-OPERATIONS-STATE.json`, `CLIENT-OPERATIONS-PHASE-D.md`, `migrations/0001_client_operations.sql` through `0003_payment_plans_immutable.sql`, `functions/api/ops/[[path]].js`, `functions/api/stripe/webhook.js`, and all five test files.
-3. Run `npm test` and confirm the expected 60/60 baseline before making changes.
+3. Run `npm test` and confirm the expected 87/87 baseline before making changes. Also read `scripts/gate-prep/README.md` - every remaining external gate has a ready-to-run script there.
 
 Current classification: **NOT READY**.
 

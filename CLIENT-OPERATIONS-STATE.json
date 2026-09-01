@@ -1,10 +1,31 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-01T05:44:46-00:00",
+  "updated_at": "2026-09-01T16:14:17-00:00",
   "project": "E4LA Client Operations System",
   "status": "NOT READY",
-  "current_phase": "Phase D - Cloudflare Access gate and final handoff",
+  "current_phase": "Phase F - external-gate preparation complete; execution blocked on Cloudflare Access credential",
   "feature_scope_frozen": true,
+  "phase_f_external_gate_prep_summary": {
+    "scope": "Built the tooling and safety scaffolding for every remaining external gate (Cloudflare Access, preview D1 migrations, Stripe Sandbox, Resend Preview) so execution requires only a credential, never new engineering. Nothing was executed against a live external service - Cloudflare Access, Stripe, and Resend all remain exactly as blocked/unconfigured as before this pass. D1 migration status was read live (read-only) and confirmed still unapplied.",
+    "location": "scripts/gate-prep/",
+    "components": {
+      "shared": "scripts/gate-prep/lib/guardrails.mjs - fail-closed helpers (production-hostname/action guards, test-mode-key guard, livemode guard, database-identity guard, recipient-allowlist guard, secret redaction) every other script imports rather than reimplementing",
+      "cloudflare_access": "scripts/gate-prep/cloudflare-access-setup.mjs (idempotent create-or-update of the Admin/Client Access apps+policies+AUDs from config/access-config.mjs, DRY_RUN supported) + access-smoke-test.mjs (post-deployment unauthenticated-rejection + optional authenticated-pass checks against the live preview hostname)",
+      "d1_migrations": "scripts/gate-prep/d1-migrate.mjs - confirms database identity against the known preview name+id before touching anything, wraps `wrangler d1 migrations apply`, verifies resulting tables/immutable-triggers/publication_status columns, DRY_RUN supported",
+      "stripe_sandbox": "scripts/gate-prep/stripe-sandbox-provision.mjs (idempotent product/price/portal-configuration creation from config/stripe-plans-config.mjs, refuses any non sk_test_/rk_test_ key before any network call) + stripe-validation-suite.mjs (automated Sandbox scenarios runnable standalone vs. ones that need a live deployed preview, clearly separated)",
+      "resend_preview": "scripts/gate-prep/lib/resend-dispatch.mjs (the actual dispatch layer - environment-guarded, allowlist-enforced, idempotent via outbound_message_events, defaults to a suppressed no-network-call mode unless SEND_FOR_REAL=1) + resend-preview-dispatch.mjs (CLI runner exercising all six templates against a local in-memory D1)",
+      "orchestrator": "scripts/gate-prep/orchestrator.mjs - runs every gate script in order, stops at the first failure without advancing, and resumes from the last-passed gate on the next run (or an explicit --from=<gate>)"
+    },
+    "verified_this_pass": [
+      "Every script fails closed with a clear, non-stack-trace message when required credentials are absent (confirmed for all of: cloudflare-access-setup, d1-migrate, stripe-sandbox-provision, stripe-validation-suite, resend-preview-dispatch, orchestrator)",
+      "assertTestModeStripeKey genuinely rejects a live-shaped key before any Stripe API call is attempted (confirmed live, not just by code review)",
+      "d1-migrate.mjs's database-identity guard correctly rejects a mismatched database name",
+      "d1-migrate.mjs read (GET-only) the real preview D1's migration status: all four migrations (0001-0004) remain unapplied, confirming nothing changed",
+      "12 new unit tests (tests/phase-f-gate-prep.test.mjs) directly exercise every guardrails.mjs function - 87/87 total suite passing",
+      "A real bug was found and fixed in d1-migrate.mjs's own JSONC parser: a naive `//`-comment-stripping regex matched the `//` inside the `https://` URL in wrangler.preview.jsonc's PUBLIC_SITE_URL value and corrupted the JSON - replaced with a string-aware stripper"
+    ],
+    "not_done_deliberately": "No script in this directory was run in a mode that would create, modify, or delete anything on a real Cloudflare Access, Stripe, or Resend account. That is the next session's job, gated on the same Cloudflare API Token this whole engagement has been waiting on."
+  },
   "phase_d_local_hardening_summary": {
     "scope": "Local/mocked hardening only, no external Cloudflare/Stripe/Resend account access used or required",
     "new_tests_added": 38,
@@ -104,8 +125,8 @@
   },
   "tests": {
     "command": "npm test",
-    "passing": 60,
-    "total": 60,
+    "passing": 87,
+    "total": 87,
     "last_known_result": "pass"
   },
   "roles": [
@@ -175,12 +196,18 @@
     "migrations/0001_client_operations.sql",
     "migrations/0002_phase_c_preview.sql",
     "migrations/0003_payment_plans_immutable.sql",
+    "migrations/0004_project_progress.sql",
     "tests/phase-b.test.mjs",
     "tests/phase-c.test.mjs",
     "tests/phase-d-authz.test.mjs",
     "tests/phase-d-stripe.test.mjs",
     "tests/phase-d-email.test.mjs",
     "tests/phase-d-agreement.test.mjs",
+    "tests/phase-e-progress.test.mjs",
+    "tests/phase-f-gate-prep.test.mjs",
+    "scripts/gate-prep/README.md",
+    "scripts/gate-prep/orchestrator.mjs",
+    "scripts/gate-prep/lib/guardrails.mjs",
     "wrangler.preview.jsonc"
   ],
   "protected_files": [
@@ -210,30 +237,32 @@
     "STRIPE_PORTAL_CONFIGURATION_ID"
   ],
   "outstanding_external_configuration": {
+    "note": "Every step below now has a ready-to-run script under scripts/gate-prep/ - see scripts/gate-prep/README.md for exact commands, prerequisites, expected output, and rollback per gate. Nothing left here is unfinished engineering; every remaining item requires only a credential.",
     "cloudflare": [
       "DONE: Zero Trust/Access account state enabled (team domain snowy-forest-edc8.cloudflareaccess.com)",
       "Create a dashboard API Token scoped to Access: Apps and Policies (Edit) + Access: Organizations, Identity Providers, and Groups (Edit) - the Wrangler OAuth token cannot be used or self-elevated for this",
-      "Inspect/confirm identity provider (Cloudflare One-Time PIN is the expected default; configure only if actually missing)",
-      "Create separate Admin and Client Access applications/policies on preview hostname only",
-      "Retrieve AUD values and set ACCESS_TEAM_DOMAIN, ADMIN_ACCESS_AUD, CLIENT_ACCESS_AUD on preview",
-      "Apply migrations/0003_payment_plans_immutable.sql to the preview D1 (not yet applied)",
-      "Validate identities, roles, scope, session rotation/revocation/logout, and Admin Preview"
+      "Run: CLOUDFLARE_ACCOUNT_ID=... CLOUDFLARE_API_TOKEN=... ACCESS_ADMIN_EMAILS=... [...] node scripts/gate-prep/cloudflare-access-setup.mjs - creates/updates the IdP, both Access apps, all policies, retrieves AUDs, writes ACCESS_TEAM_DOMAIN/ADMIN_ACCESS_AUD/CLIENT_ACCESS_AUD into wrangler.preview.jsonc",
+      "Then: node scripts/gate-prep/access-smoke-test.mjs against the live deployed preview to confirm unauthenticated rejection and (with a manually-obtained test session cookie) authenticated pass-through"
+    ],
+    "d1_migrations": [
+      "Run: node scripts/gate-prep/d1-migrate.mjs - applies migrations/0003 and 0004 to the real preview D1 (currently unapplied, confirmed by a read-only check this pass) and verifies the resulting schema/triggers/publication fields live"
     ],
     "stripe": [
-      "After Access passes, confirm Sandbox API version in Workbench",
-      "Create test Prices and restricted Customer Portal configuration",
-      "Configure preview-only secret/webhook secret and endpoint",
-      "Run full payment/installment/failure/idempotency matrix"
+      "Run: STRIPE_SECRET_KEY=sk_test_... node scripts/gate-prep/stripe-sandbox-provision.mjs - creates the three Product/Price pairs and the restricted Customer Portal configuration, prints the values payment_plans.stripe_initial_price_id/stripe_remaining_price_id need and the exact webhook event list",
+      "Create the webhook endpoint in the Stripe Dashboard (needs a reachable URL, so not automatable) pointing at https://{preview hostname}/api/stripe/webhook with the event list stripe-sandbox-provision.mjs prints",
+      "Then: STRIPE_SECRET_KEY=sk_test_... node scripts/gate-prep/stripe-validation-suite.mjs - runs the standalone-capable scenarios for real against Stripe test mode; the webhook-timing/Billing-Portal-role scenarios need Cloudflare Access to have passed first"
     ],
     "resend": [
-      "After Access and Stripe pass, configure preview-only sender/key/test recipients",
-      "Connect inert templates and prove delivery idempotency"
+      "Run: ENVIRONMENT=preview RESEND_PREVIEW_API_KEY=... RESEND_PREVIEW_SENDER=... RESEND_PREVIEW_ALLOWLIST=... node scripts/gate-prep/resend-preview-dispatch.mjs - defaults to a suppressed no-network-call mode proving idempotency; only sends for real when SEND_FOR_REAL=1 is deliberately added"
     ],
     "legal": [
       "Approve agreement/payment/e-sign/privacy/retention/offboarding language and final archival artifact policy"
     ],
     "browser": [
-      "Use a permitted managed browser to complete screenshots, responsive, hydration, console/network, keyboard, zoom, contrast, reduced-motion, Chromium and Safari/WebKit QA"
+      "Use a permitted managed browser to complete screenshots, responsive, hydration, console/network, keyboard, zoom, contrast, reduced-motion, Chromium and Safari/WebKit QA against an authenticated (non-demo-mode) session"
+    ],
+    "orchestrator": [
+      "Or run all of the above in sequence with resume support: node scripts/gate-prep/orchestrator.mjs (stops at the first gate that doesn't pass, resumes there next time)"
     ]
   },
   "production": {

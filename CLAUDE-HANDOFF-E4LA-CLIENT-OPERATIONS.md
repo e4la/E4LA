@@ -608,6 +608,31 @@ Expect `no-store`, CSP, frame/MIME/referrer/permissions/noindex headers on prote
 
 Baseline before Client Operations handoff commit: branch `main`, latest prior commit `5f551e0` (`fix(seo): correct brand name...`). The working tree contained only the Client Operations implementation and three scoped infrastructure edits (`.gitignore`, `_headers`, `_redirects`); protected public page/source files were not modified. See the final handoff commit and `git status` for the durable post-handoff state.
 
+## AA. External-gate preparation tooling (Phase F)
+
+Every remaining external gate now has a ready-to-run script under
+`scripts/gate-prep/` - full prerequisites, exact commands, expected output,
+and rollback behavior per gate are documented in `scripts/gate-prep/README.md`;
+this section is a pointer, not a duplicate. In short: `cloudflare-access-setup.mjs`
++ `access-smoke-test.mjs` (Gate 1), `d1-migrate.mjs` (applies 0003/0004 to
+preview D1 - confirmed still unapplied as of this pass), `stripe-sandbox-provision.mjs`
++ `stripe-validation-suite.mjs` (Gate 2), `resend-preview-dispatch.mjs`
+(Gate 3, defaults to a suppressed no-send mode), and `orchestrator.mjs` to
+run all of them in sequence with resume support. Everything is DRY_RUN-safe,
+fails closed on missing/wrong-shaped credentials, and none of it has been
+run in a mode that touched a real external account this pass - `d1-migrate.mjs`
+was run read-only to confirm migration status, nothing else.
+
+`tests/phase-f-gate-prep.test.mjs` unit-tests the shared `scripts/gate-prep/lib/guardrails.mjs`
+safety checks directly (production-hostname guard, test-mode-key guard,
+livemode guard, database-identity guard, recipient-allowlist guard) - 87/87
+across the whole suite as of this pass.
+
 ## Z. Claude's immediate next action
 
-Do not add features. Read `CLAUDE-RESUME-PROMPT.md`, verify `npm test`, then resume **Gate 1 — Cloudflare Access** by retrying authenticated API capability/organization state before requesting the smallest genuine account-owner action.
+Do not add features. Read `CLAUDE-RESUME-PROMPT.md`, verify `npm test`, then
+work through `scripts/gate-prep/README.md` gate by gate as credentials
+become available - starting with **Gate 1 — Cloudflare Access**, which still
+needs a dashboard-created API Token (the Wrangler OAuth session cannot be
+used or self-elevated for this; re-verify live before assuming this note is
+still current).
