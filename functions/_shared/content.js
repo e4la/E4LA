@@ -158,6 +158,14 @@ export function clientVisibleStatusesForRole(role) {
   return [];
 }
 
+// content_plans client-visible statuses. A plan is an internal planning
+// artifact until E4LA deliberately shares it - 'draft' and 'internal_approved'
+// are purely internal cadence/shape decisions (mirrors the content_items band
+// above: idea..e4la_approved are never client-visible either). A client
+// session must never see a plan sitting at 'draft' or 'internal_approved',
+// whether via the list endpoint or by requesting it directly by id.
+export const CLIENT_VISIBLE_PLAN_STATUSES = ['sent_to_client', 'client_approved', 'active', 'archived'];
+
 // Explicit whitelist projection for a client-facing content_items response -
 // safer than blacklisting, since any future column added to the table is
 // hidden from clients by default rather than leaked by default. In

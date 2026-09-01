@@ -58,6 +58,16 @@ const CLIENT_ROLES = ['client_owner', 'authorized_signer', 'client_viewer'];
 
 function opaqueId(prefix) { return `${prefix}_${randomToken(18)}`; }
 function sanitizeDate(value) { const text = sanitizeText(value, 10); return /^\d{4}-\d{2}-\d{2}$/.test(text) ? text : null; }
+// A 3-letter ISO 4217 / Stripe-style currency code, lowercased. No CHECK constraint exists
+// on quotes.currency/invoices.currency at the schema level (see 0005/0006), so this is the
+// only place a malformed value (wrong length, non-alphabetic, empty) is ever rejected.
+function sanitizeCurrencyCode(value) { const text = sanitizeText(value, 10).toLowerCase(); return /^[a-z]{3}$/.test(text) ? text : null; }
+function resolveCurrency(rawValue) {
+  if (rawValue === undefined || rawValue === null || rawValue === '') return 'usd';
+  const currency = sanitizeCurrencyCode(rawValue);
+  if (!currency) throw new HttpError(422, 'currency_invalid', 'Enter a valid 3-letter currency code.');
+  return currency;
+}
 function parseJson(value, fallback) { try { return JSON.parse(value); } catch { return fallback; } }
 
 function auditStatementForAdmin(db, eventType, session, requestIdentifier, data) {
@@ -324,13 +334,14 @@ async function createQuote({ request, env }, clientId) {
   } else if (session.role === 'e4la_collaborator') {
     throw new HttpError(403, 'not_authorized', 'A collaborator must create quotes within a scoped project.');
   }
+  const currency = resolveCurrency(body.currency);
   const now = new Date().toISOString();
   const id = opaqueId('quo');
   await env.ENROLLMENT_DB.batch([
     env.ENROLLMENT_DB.prepare(`INSERT INTO quotes (
       id, client_id, project_id, currency, status, current_version_id, valid_until, notes, created_by_admin_id, created_at, updated_at
     ) VALUES (?, ?, ?, ?, 'draft', NULL, ?, ?, ?, ?, ?)`)
-      .bind(id, client.id, projectId, sanitizeText(body.currency, 10) || 'usd', sanitizeDate(body.valid_until), sanitizeText(body.notes, 2000) || null, session.actor_id, now, now),
+      .bind(id, client.id, projectId, currency, sanitizeDate(body.valid_until), sanitizeText(body.notes, 2000) || null, session.actor_id, now, now),
     auditStatementForAdmin(env.ENROLLMENT_DB, 'quote_created', session, requestId(request), { clientId: client.id, projectId, entityType: 'quote', entityId: id }),
   ]);
   return json({ id, clientId: client.id, projectId, status: 'draft' }, 201);
@@ -342,8 +353,12 @@ async function createQuoteVersion({ request, env }, quoteId) {
   await requireCsrf(request, session);
   const quote = await env.ENROLLMENT_DB.prepare('SELECT * FROM quotes WHERE id = ?').bind(sanitizeText(quoteId, 80)).first();
   if (!quote) throw new HttpError(404, 'quote_not_found', 'The selected quote is unavailable.');
-  if (!['draft', 'prepared', 'sent', 'viewed'].includes(quote.status)) {
-    throw new HttpError(409, 'quote_not_editable', 'This quote has already been approved, rejected, expired, or converted and cannot receive a new version.');
+  // Once a quote has been sent, its current_version_id is what the client was actually
+  // shown (and may have already approved/viewed) - a new version must never silently
+  // replace it. Only draft/prepared quotes (never sent) may receive a new version; a sent
+  // quote must go through an explicit revision workflow, not a same-endpoint swap.
+  if (!['draft', 'prepared'].includes(quote.status)) {
+    throw new HttpError(409, 'quote_not_editable', 'This quote has already been sent, approved, rejected, expired, or converted and cannot receive a new version.');
   }
   const body = await request.json();
   const items = await resolveLineItems(env, body.items);
@@ -412,6 +427,27 @@ async function transitionQuoteStatus({ request, env }, quoteId) {
   return json({ id: quote.id, status: nextStatus });
 }
 
+// Client-role sessions must never see internal-only quote fields - admin notes, or who
+// internally created the record. Whitelisting matches the same client-safe projection
+// pattern used for invoices above. Admin/collaborator sessions still receive the full raw
+// row. quote_items carries no internal fields at all, so it is never filtered.
+const CLIENT_SAFE_QUOTE_FIELDS = [
+  'id', 'client_id', 'project_id', 'currency', 'status', 'current_version_id', 'valid_until',
+  'sent_at', 'viewed_at', 'approved_at', 'rejected_at', 'created_at', 'updated_at',
+];
+const CLIENT_SAFE_QUOTE_VERSION_FIELDS = ['id', 'quote_id', 'version_number', 'scope', 'subtotal', 'discount_amount', 'tax_amount', 'total', 'created_at'];
+function toClientSafeQuote(quote) {
+  const safe = {};
+  CLIENT_SAFE_QUOTE_FIELDS.forEach((field) => { safe[field] = quote[field]; });
+  return safe;
+}
+function toClientSafeQuoteVersion(version) {
+  if (!version) return null;
+  const safe = {};
+  CLIENT_SAFE_QUOTE_VERSION_FIELDS.forEach((field) => { safe[field] = version[field]; });
+  return safe;
+}
+
 async function getQuote({ request, env }, quoteId) {
   const session = await authenticate(request, env, [...ADMIN_ROLES, ...CLIENT_ROLES]);
   const quote = await env.ENROLLMENT_DB.prepare('SELECT * FROM quotes WHERE id = ?').bind(sanitizeText(quoteId, 80)).first();
@@ -428,7 +464,12 @@ async function getQuote({ request, env }, quoteId) {
   const items = version
     ? (await env.ENROLLMENT_DB.prepare('SELECT * FROM quote_items WHERE quote_version_id = ? ORDER BY sort_order').bind(version.id).all()).results
     : [];
-  return json({ quote, version, items });
+  const isClient = CLIENT_ROLES.includes(session.role);
+  return json({
+    quote: isClient ? toClientSafeQuote(quote) : quote,
+    version: isClient ? toClientSafeQuoteVersion(version) : version,
+    items,
+  });
 }
 
 async function listClientQuotes({ request, env }, clientId) {
@@ -462,11 +503,19 @@ async function createPaymentOptions({ request, env }, quoteId) {
   await requireCsrf(request, session);
   const quote = await env.ENROLLMENT_DB.prepare('SELECT * FROM quotes WHERE id = ?').bind(sanitizeText(quoteId, 80)).first();
   if (!quote) throw new HttpError(404, 'quote_not_found', 'The selected quote is unavailable.');
+  if (!quote.current_version_id) throw new HttpError(409, 'quote_has_no_version', 'Create a priced quote version before adding payment options.');
+  // total_amount is never trusted on its own - a payment option's total must match the
+  // quote's actual current-version total, otherwise a $0.01 pay-in-full option could be
+  // created against a real, much larger quoted price.
+  const currentVersion = await env.ENROLLMENT_DB.prepare('SELECT total FROM quote_versions WHERE id = ?').bind(quote.current_version_id).first();
   const body = await request.json();
   const optionType = sanitizeText(body.option_type, 30);
   if (!PAYMENT_OPTION_COUNTS[optionType]) throw new HttpError(422, 'option_type_invalid', 'Select a supported payment option type.');
   const totalAmount = Number(body.total_amount);
   if (!Number.isSafeInteger(totalAmount) || totalAmount <= 0) throw new HttpError(422, 'total_amount_invalid', 'total_amount must be a positive integer number of cents.');
+  if (totalAmount !== currentVersion.total) {
+    throw new HttpError(422, 'total_amount_mismatch', `total_amount (${totalAmount}) must equal the quote's current version total (${currentVersion.total}).`);
+  }
   const installments = Array.isArray(body.installments) ? body.installments : [];
   if (installments.length === 0) throw new HttpError(422, 'installments_required', 'A payment option must include at least one installment.');
   const installmentCount = Number.isInteger(body.installment_count) ? body.installment_count : installments.length;
@@ -536,6 +585,21 @@ async function listPaymentOptions({ request, env }, quoteId) {
 // Invoices
 // -------------------------------------------------------------------------------------
 
+// Client-role sessions (client_owner/authorized_signer/client_viewer) must never receive
+// internal-only invoice fields - who created it internally, or live Stripe object IDs.
+// Whitelisting (rather than blacklisting) matches the same "client-safe projection"
+// pattern used by functions/_shared/content.js's toClientSafeContentItem. Admin/collaborator
+// sessions still receive the full raw row, unchanged.
+const CLIENT_SAFE_INVOICE_FIELDS = [
+  'id', 'client_id', 'project_id', 'quote_id', 'status', 'currency', 'subtotal', 'tax_amount',
+  'total', 'amount_paid', 'due_date', 'notes', 'sent_at', 'viewed_at', 'paid_at', 'created_at', 'updated_at',
+];
+function toClientSafeInvoice(invoice) {
+  const safe = {};
+  CLIENT_SAFE_INVOICE_FIELDS.forEach((field) => { safe[field] = invoice[field]; });
+  return safe;
+}
+
 async function createInvoice({ request, env }) {
   requireTrustedOrigin(request, env); requireJson(request);
   const session = await authenticate(request, env, ['e4la_admin']);
@@ -561,6 +625,7 @@ async function createInvoice({ request, env }) {
   const items = await resolveLineItems(env, body.items);
   const subtotal = sumItems(items);
   const { tax, total } = computeTotal(subtotal, 0, Number(body.tax_amount));
+  const currency = resolveCurrency(body.currency);
   const now = new Date().toISOString();
   const invoiceId = opaqueId('inv');
   const statements = [
@@ -568,7 +633,7 @@ async function createInvoice({ request, env }) {
       id, client_id, project_id, quote_id, status, currency, subtotal, tax_amount, total, amount_paid,
       due_date, notes, stripe_invoice_id, stripe_payment_intent_id, created_by_admin_id, created_at, updated_at
     ) VALUES (?, ?, ?, ?, 'draft', ?, ?, ?, ?, 0, ?, ?, NULL, NULL, ?, ?, ?)`)
-      .bind(invoiceId, client.id, projectId, quoteId, sanitizeText(body.currency, 10) || 'usd', subtotal, tax, total,
+      .bind(invoiceId, client.id, projectId, quoteId, currency, subtotal, tax, total,
         sanitizeDate(body.due_date), sanitizeText(body.notes, 2000) || null, session.actor_id, now, now),
   ];
   items.forEach((item) => {
@@ -617,7 +682,8 @@ async function getInvoice({ request, env }, invoiceId) {
     else throw new HttpError(403, 'not_authorized', 'You do not have permission to view this invoice.');
   }
   const items = await env.ENROLLMENT_DB.prepare('SELECT * FROM invoice_items WHERE invoice_id = ? ORDER BY sort_order').bind(invoice.id).all();
-  return json({ invoice, items: items.results });
+  const responseInvoice = CLIENT_ROLES.includes(session.role) ? toClientSafeInvoice(invoice) : invoice;
+  return json({ invoice: responseInvoice, items: items.results });
 }
 
 async function listClientInvoices({ request, env }, clientId) {
@@ -628,7 +694,8 @@ async function listClientInvoices({ request, env }, clientId) {
     await assertClientAccessForAdmin(env, session, clientId);
   }
   const rows = await env.ENROLLMENT_DB.prepare('SELECT * FROM invoices WHERE client_id = ? ORDER BY created_at DESC').bind(sanitizeText(clientId, 80)).all();
-  return json({ invoices: rows.results });
+  const invoices = CLIENT_ROLES.includes(session.role) ? rows.results.map(toClientSafeInvoice) : rows.results;
+  return json({ invoices });
 }
 
 // -------------------------------------------------------------------------------------
@@ -683,8 +750,15 @@ async function approveRecurringConsent({ request, env }) {
   if (clientId !== session.client_id) {
     throw new HttpError(403, 'not_authorized', 'You may only approve recurring billing for your own client account.');
   }
-  const service = await env.ENROLLMENT_DB.prepare('SELECT id FROM services WHERE id = ?').bind(sanitizeText(body.service_id, 80)).first();
+  const service = await env.ENROLLMENT_DB.prepare('SELECT id, billing_type FROM services WHERE id = ?').bind(sanitizeText(body.service_id, 80)).first();
   if (!service) throw new HttpError(404, 'service_not_found', 'The selected service is unavailable.');
+  // A recurring consent - and eventually a live recurring Stripe subscription - may only
+  // ever be created for a service whose own catalog definition is billed as recurring.
+  // Without this, a client could be asked to "consent" to recurring billing for a service
+  // that is structurally a one-time, fixed_scope engagement.
+  if (service.billing_type !== 'recurring_service') {
+    throw new HttpError(422, 'service_not_recurring', 'Recurring billing consent can only be created for a service billed as a recurring service.');
+  }
   const billingAmount = Number(body.billing_amount);
   if (!Number.isSafeInteger(billingAmount) || billingAmount <= 0) throw new HttpError(422, 'billing_amount_invalid', 'billing_amount must be a positive integer number of cents.');
   const billingFrequency = sanitizeText(body.billing_frequency, 20);
@@ -720,19 +794,50 @@ async function approveRecurringConsent({ request, env }) {
     userAgent: sanitizeText(request.headers.get('User-Agent') || '', 320),
     sessionId: session.id,
   });
-  await env.ENROLLMENT_DB.prepare(`INSERT INTO recurring_service_consents (
+  // Consent terms are immutable once approved (see 0007's trigger) - a changed price,
+  // frequency, or renewal term can only ever be represented as a brand-new consent row,
+  // never a rewrite of what was actually agreed to. That means THIS handler is the only
+  // place that can retire the prior term set, and it must do so: without it, two 'active'
+  // consent rows could coexist for the same client+service, which is genuinely ambiguous
+  // authorization for what should actually be billed. Scoped to client_id+service_id only
+  // (matching the recurring_service_consents indexes), and executed in the same batch as
+  // the new INSERT so the supersede and the new approval are atomic.
+  const priorActive = await env.ENROLLMENT_DB.prepare(
+    "SELECT id FROM recurring_service_consents WHERE client_id = ? AND service_id = ? AND status = 'active'",
+  ).bind(clientId, service.id).first();
+  const statements = [];
+  if (priorActive) {
+    statements.push(env.ENROLLMENT_DB.prepare(
+      "UPDATE recurring_service_consents SET status = 'superseded', updated_at = ? WHERE id = ?",
+    ).bind(now, priorActive.id));
+  }
+  statements.push(env.ENROLLMENT_DB.prepare(`INSERT INTO recurring_service_consents (
       id, client_id, project_id, quote_id, agreement_id, service_id, billing_amount, billing_frequency,
       start_date, renewal_behavior, cancellation_terms_version, consent_text_version, actor_type, actor_id,
       approved_at, consent_evidence, status, cancelled_at, stripe_subscription_id, created_at, updated_at
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NULL, NULL, ?, ?)`)
     .bind(id, clientId, projectId, quoteId, agreementId, service.id, billingAmount, billingFrequency, startDate,
-      renewalBehavior, cancellationTermsVersion, consentTextVersion, session.role, session.actor_id, now, evidence, now, now)
-    .run();
+      renewalBehavior, cancellationTermsVersion, consentTextVersion, session.role, session.actor_id, now, evidence, now, now));
+  await env.ENROLLMENT_DB.batch(statements);
   await audit(env.ENROLLMENT_DB, {
     type: 'recurring_consent_approved', actorType: 'client_user', actorId: session.actor_id, clientId, projectId,
     relatedType: 'recurring_service_consent', relatedId: id, requestId: requestId(request),
   });
   return json({ id, clientId, serviceId: service.id, billingAmount, billingFrequency, startDate, status: 'active' }, 201);
+}
+
+// Client-role sessions must never see the evidentiary/internal side of a consent record -
+// the actor's internal user id, the raw evidence blob (request id/user agent/session id),
+// or a live Stripe subscription id. Admin/collaborator sessions still receive the full row.
+const CLIENT_SAFE_CONSENT_FIELDS = [
+  'id', 'client_id', 'project_id', 'quote_id', 'agreement_id', 'service_id', 'billing_amount',
+  'billing_frequency', 'start_date', 'renewal_behavior', 'cancellation_terms_version',
+  'consent_text_version', 'actor_type', 'approved_at', 'status', 'cancelled_at', 'created_at', 'updated_at',
+];
+function toClientSafeConsent(consent) {
+  const safe = {};
+  CLIENT_SAFE_CONSENT_FIELDS.forEach((field) => { safe[field] = consent[field]; });
+  return safe;
 }
 
 async function listRecurringConsents({ request, env }, clientId) {
@@ -743,7 +848,8 @@ async function listRecurringConsents({ request, env }, clientId) {
     await assertClientAccessForAdmin(env, session, clientId);
   }
   const rows = await env.ENROLLMENT_DB.prepare('SELECT * FROM recurring_service_consents WHERE client_id = ? ORDER BY created_at DESC').bind(sanitizeText(clientId, 80)).all();
-  return json({ consents: rows.results });
+  const consents = CLIENT_ROLES.includes(session.role) ? rows.results.map(toClientSafeConsent) : rows.results;
+  return json({ consents });
 }
 
 async function cancelRecurringConsent({ request, env }, consentId) {

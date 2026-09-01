@@ -4,8 +4,8 @@ import {
 } from '../../_shared/ops-security.js';
 import {
   ALL_CONTENT_ITEM_STATUSES, CLIENT_ALLOWED_STATUS_TRANSITIONS, CLIENT_APPROVER_VISIBLE_STATUSES,
-  CONTENT_ITEM_TRANSITIONS, CONTENT_PLAN_TRANSITIONS, assertAutomationModeAllowed, clientVisibleStatusesForRole,
-  opaqueId, parseJson, requiresClientReview, sanitizeDate, toClientSafeContentItem,
+  CLIENT_VISIBLE_PLAN_STATUSES, CONTENT_ITEM_TRANSITIONS, CONTENT_PLAN_TRANSITIONS, assertAutomationModeAllowed,
+  clientVisibleStatusesForRole, opaqueId, parseJson, requiresClientReview, sanitizeDate, toClientSafeContentItem,
 } from '../../_shared/content.js';
 import { requestAdobeRender } from '../../_shared/adobe-adapter.js';
 import { publishToplatform } from '../../_shared/publishing-adapters.js';
@@ -70,32 +70,69 @@ async function loadClient(db, clientId) {
   return client;
 }
 
-// A client's "scoping project" for admin_project_access purposes - content
-// tables are client-scoped directly, not project-scoped, so collaborator
-// access is resolved through whatever project(s) the client has.
-async function assertAdminClientScope(db, session, clientId) {
+// Exact-project collaborator access, matching the commerce router's own
+// pattern for a resource that actually has a known project_id: a collaborator
+// must hold contributor/manager admin_project_access on THAT SPECIFIC
+// project. Having contributor/manager access to some OTHER project belonging
+// to the same client must never be enough - a client can have more than one
+// project, and a collaborator staffed on Project A must not thereby gain
+// access to Project B's content just because both share a client_id.
+async function collaboratorHasProjectAccess(db, adminUserId, projectId) {
+  const access = await db.prepare(`
+    SELECT 1 AS allowed FROM admin_project_access
+    WHERE admin_user_id = ? AND project_id = ? AND permission_level IN ('contributor','manager')
+  `).bind(adminUserId, projectId).first();
+  return Boolean(access);
+}
+
+// Client-wide fallback, used only for genuinely client-level actions where no
+// specific project is knowable for the resource (brand brain, sources, and
+// the "list everything this client has" endpoints) - mirrors the commerce
+// router's own client-level list-endpoint pattern, which is documented as
+// intentionally client-wide rather than a scoping bug.
+async function collaboratorHasClientAccess(db, adminUserId, clientId) {
+  const access = await db.prepare(`
+    SELECT 1 AS allowed FROM projects p
+    JOIN admin_project_access apa ON apa.project_id = p.id
+    WHERE p.client_id = ? AND apa.admin_user_id = ? AND apa.permission_level IN ('contributor','manager')
+    LIMIT 1
+  `).bind(clientId, adminUserId).first();
+  return Boolean(access);
+}
+
+// A client's "scoping project" for admin_project_access purposes. When the
+// caller can supply the SPECIFIC project a resource belongs to (e.g. an
+// existing content_plan's own project_id), that exact project is what gets
+// checked. Only when no specific project is knowable (or the resource is
+// genuinely client-wide, e.g. brand brain/sources, or this is a
+// list-everything endpoint) does this fall back to "any project under this
+// client."
+async function assertAdminClientScope(db, session, clientId, projectId = null) {
   const client = await loadClient(db, clientId);
   if (session.role === 'e4la_collaborator') {
-    const access = await db.prepare(`
-      SELECT 1 AS allowed FROM projects p
-      JOIN admin_project_access apa ON apa.project_id = p.id
-      WHERE p.client_id = ? AND apa.admin_user_id = ? AND apa.permission_level IN ('contributor','manager')
-      LIMIT 1
-    `).bind(client.id, session.actor_id).first();
-    if (!access) throw new HttpError(403, 'not_authorized', 'You do not have permission to manage content for this client.');
+    const allowed = projectId
+      ? await collaboratorHasProjectAccess(db, session.actor_id, projectId)
+      : await collaboratorHasClientAccess(db, session.actor_id, client.id);
+    if (!allowed) throw new HttpError(403, 'not_authorized', 'You do not have permission to manage content for this client.');
   }
   return client;
 }
 
 async function assertAdminItemScope(db, session, item) {
   if (session.role === 'e4la_collaborator') {
-    const access = await db.prepare(`
-      SELECT 1 AS allowed FROM projects p
-      JOIN admin_project_access apa ON apa.project_id = p.id
-      WHERE p.client_id = ? AND apa.admin_user_id = ? AND apa.permission_level IN ('contributor','manager')
-      LIMIT 1
-    `).bind(item.client_id, session.actor_id).first();
-    if (!access) throw new HttpError(403, 'not_authorized', 'You do not have permission to manage content for this client.');
+    // content_items has no project_id of its own - resolve it one hop
+    // through the item's content_plan, which does carry a project_id
+    // (nullable: a plan not tied to any specific project falls back to the
+    // client-wide check below, since there is nothing more specific to check).
+    let projectId = null;
+    if (item.content_plan_id) {
+      const plan = await db.prepare('SELECT project_id FROM content_plans WHERE id = ?').bind(item.content_plan_id).first();
+      projectId = plan ? plan.project_id : null;
+    }
+    const allowed = projectId
+      ? await collaboratorHasProjectAccess(db, session.actor_id, projectId)
+      : await collaboratorHasClientAccess(db, session.actor_id, item.client_id);
+    if (!allowed) throw new HttpError(403, 'not_authorized', 'You do not have permission to manage content for this client.');
   }
 }
 
@@ -103,10 +140,37 @@ async function latestBrandBrain(db, clientId) {
   return db.prepare('SELECT * FROM brand_brains WHERE client_id = ? ORDER BY version_number DESC LIMIT 1').bind(clientId).first();
 }
 
-async function hasUnresolvedRedClaim(db, contentItemId) {
+// The brand brain that actually governs an existing content item's approval
+// policy is the one snapshotted on its content_plan at plan-creation time
+// (content_plans.brand_brain_id), never whatever the "latest" brand brain
+// happens to be at the moment of a later status-transition call. Without
+// this, an admin could create a brand-new brand_brain version with a looser
+// automation_mode (e.g. 'manual') and that would retroactively strip the
+// client_review requirement off every already-in-flight item under an older,
+// stricter ('client_approval') policy - a real approval-integrity bypass.
+// Only when a plan has no snapshotted brand_brain_id (or the item has no
+// plan) do we fall back to the client's latest brand brain.
+async function effectiveBrandBrainForItem(db, item) {
+  if (item.content_plan_id) {
+    const plan = await db.prepare('SELECT brand_brain_id FROM content_plans WHERE id = ?').bind(item.content_plan_id).first();
+    if (plan && plan.brand_brain_id) {
+      const brain = await db.prepare('SELECT * FROM brand_brains WHERE id = ?').bind(plan.brand_brain_id).first();
+      if (brain) return brain;
+    }
+  }
+  return latestBrandBrain(db, item.client_id);
+}
+
+// "A URL alone does not satisfy evidence" extends to YELLOW, not just RED: any
+// claim carrying meaningful risk (yellow or red) that has not been explicitly
+// marked verification_status='verified' by an admin still blocks approval.
+// GREEN never blocks, and a yellow/red claim that HAS been explicitly
+// verified never blocks either - this is a risk-scoped gate, not a blanket
+// claims block.
+async function hasUnresolvedRiskyClaim(db, contentItemId) {
   const row = await db.prepare(`
     SELECT 1 AS found FROM content_claims
-    WHERE content_item_id = ? AND risk_level = 'red' AND verification_status IN ('unverified','insufficient_evidence','rejected')
+    WHERE content_item_id = ? AND risk_level IN ('red','yellow') AND verification_status IN ('unverified','insufficient_evidence','rejected')
     LIMIT 1
   `).bind(contentItemId).first();
   return Boolean(row);
@@ -226,7 +290,9 @@ async function listPlans({ request, env }, clientId) {
     return json({ plans: rows.results });
   }
   if (sanitizeText(clientId, 80) !== session.client_id) throw new HttpError(404, 'client_not_found', 'The client record is unavailable.');
-  const rows = await db.prepare('SELECT * FROM content_plans WHERE client_id = ? ORDER BY created_at DESC').bind(session.client_id).all();
+  const placeholders = CLIENT_VISIBLE_PLAN_STATUSES.map(() => '?').join(',');
+  const rows = await db.prepare(`SELECT * FROM content_plans WHERE client_id = ? AND status IN (${placeholders}) ORDER BY created_at DESC`)
+    .bind(session.client_id, ...CLIENT_VISIBLE_PLAN_STATUSES).all();
   return json({ plans: rows.results.map(planClientView) });
 }
 
@@ -236,10 +302,14 @@ async function getPlan({ request, env }, planId) {
   const plan = await db.prepare('SELECT * FROM content_plans WHERE id = ?').bind(sanitizeText(planId, 80)).first();
   if (!plan) throw new HttpError(404, 'plan_not_found', 'The selected content plan is unavailable.');
   if (ADMIN_ROLES.includes(session.role)) {
-    await assertAdminClientScope(db, session, plan.client_id);
+    await assertAdminClientScope(db, session, plan.client_id, plan.project_id);
     return json(plan);
   }
   if (plan.client_id !== session.client_id) throw new HttpError(404, 'plan_not_found', 'The selected content plan is unavailable.');
+  // A draft/internal_approved plan is an internal planning artifact - a client
+  // requesting it directly by id must get the same 404 as a genuinely missing
+  // plan (never a 403, which would confirm the plan's existence).
+  if (!CLIENT_VISIBLE_PLAN_STATUSES.includes(plan.status)) throw new HttpError(404, 'plan_not_found', 'The selected content plan is unavailable.');
   return json(planClientView(plan));
 }
 
@@ -250,7 +320,7 @@ async function patchPlan({ request, env }, planId) {
   const db = env.ENROLLMENT_DB;
   const plan = await db.prepare('SELECT * FROM content_plans WHERE id = ?').bind(sanitizeText(planId, 80)).first();
   if (!plan) throw new HttpError(404, 'plan_not_found', 'The selected content plan is unavailable.');
-  await assertAdminClientScope(db, session, plan.client_id);
+  await assertAdminClientScope(db, session, plan.client_id, plan.project_id);
   const body = await request.json();
   const now = new Date().toISOString();
   const fields = {};
@@ -285,7 +355,7 @@ async function createContentItem({ request, env }, planId) {
   const db = env.ENROLLMENT_DB;
   const plan = await db.prepare('SELECT * FROM content_plans WHERE id = ?').bind(sanitizeText(planId, 80)).first();
   if (!plan) throw new HttpError(404, 'plan_not_found', 'The selected content plan is unavailable.');
-  await assertAdminClientScope(db, session, plan.client_id);
+  await assertAdminClientScope(db, session, plan.client_id, plan.project_id);
   const body = await request.json();
   requireFields(body, ['topic']);
   const now = new Date().toISOString();
@@ -371,7 +441,7 @@ async function patchItemStatus({ request, env }, itemId) {
     }
   }
 
-  const brandBrain = await latestBrandBrain(db, item.client_id);
+  const brandBrain = await effectiveBrandBrainForItem(db, item);
   if (item.status === 'e4la_approved' && targetStatus === 'client_review' && !requiresClientReview(brandBrain)) {
     throw new HttpError(422, 'client_review_not_required', "This client's brand brain does not require a client-review step.");
   }
@@ -379,8 +449,8 @@ async function patchItemStatus({ request, env }, itemId) {
     throw new HttpError(422, 'client_review_required', 'This client requires a client-review step before approval.');
   }
 
-  if (targetStatus === 'approved' && await hasUnresolvedRedClaim(db, item.id)) {
-    throw new HttpError(422, 'unresolved_red_claim', 'This content item has an unresolved RED-risk claim and cannot be approved.');
+  if (targetStatus === 'approved' && await hasUnresolvedRiskyClaim(db, item.id)) {
+    throw new HttpError(422, 'unresolved_risky_claim', 'This content item has an unresolved RED- or YELLOW-risk claim and cannot be approved.');
   }
 
   const now = new Date().toISOString();
@@ -482,13 +552,27 @@ async function verifyClaim({ request, env }, claimId) {
   }
   const sourceId = body.source_id !== undefined ? (sanitizeText(body.source_id, 80) || null) : claim.source_id;
   // "A URL alone is not verification": a claim can only be set to 'verified'
-  // when it carries an actual source_id reference (either newly supplied or
-  // already on the row). insufficient_evidence/rejected/unverified never
-  // require one - those are honest "we could not verify this" outcomes.
+  // when it carries a source_id reference AND that source (a) belongs to the
+  // SAME client as the claim's own content item - a source can never lend
+  // evidence across a tenant boundary, no matter how well-verified it is for
+  // its own client - and (b) has itself already been through the explicit
+  // admin verify action (PATCH /sources/:id/verify) and come back
+  // verification_status='verified'. Merely pointing at a source row that
+  // happens to have a `url` field populated - unverified, or even rejected -
+  // must never be enough; that would make "a URL alone" satisfy evidence by
+  // the back door. insufficient_evidence/rejected/unverified never require a
+  // verified (or same-client) source - those are honest "we could not verify
+  // this" outcomes and must always remain reachable regardless of source state.
   if (status === 'verified') {
     if (!sourceId) throw new HttpError(422, 'source_required', 'A claim cannot be verified without a source_id reference.');
-    const source = await db.prepare('SELECT id FROM content_sources WHERE id = ?').bind(sourceId).first();
+    const source = await db.prepare('SELECT id, client_id, verification_status FROM content_sources WHERE id = ?').bind(sourceId).first();
     if (!source) throw new HttpError(422, 'source_required', 'The referenced source does not exist.');
+    if (source.client_id !== item.client_id) {
+      throw new HttpError(422, 'source_client_mismatch', "The referenced source does not belong to this claim's client and cannot be used as evidence.");
+    }
+    if (source.verification_status !== 'verified') {
+      throw new HttpError(422, 'source_not_verified', 'The referenced source must itself be marked verified (via PATCH /sources/:id/verify) before a claim can be verified against it.');
+    }
   }
   const now = new Date().toISOString();
   await db.prepare('UPDATE content_claims SET verification_status = ?, source_id = ?, verified_by_admin_id = ?, verified_at = ? WHERE id = ?')
@@ -513,12 +597,23 @@ async function createAsset({ request, env }, itemId) {
   if (!['adobe', 'manual_upload'].includes(provider)) throw new HttpError(422, 'provider_invalid', 'Select a supported asset provider.');
   const now = new Date().toISOString();
   const id = opaqueId('ast');
+  // manual_upload has no external dependency and no async render step - it is
+  // a real, complete, always-available path: when the admin already has the
+  // uploaded file's URL in hand, the asset is genuinely 'rendered' the moment
+  // this row is created, with no Adobe (or any other) credential involved.
+  // Without accepting asset_url here, manual_upload would be a structural dead
+  // end (no endpoint ever sets asset_url/render_status for a non-adobe asset).
+  // If no URL is supplied yet, it stays 'not_requested' until a follow-up
+  // POST supplies one.
+  const manualAssetUrl = provider === 'manual_upload' ? (sanitizeText(body.asset_url, 1000) || null) : null;
+  const renderStatus = manualAssetUrl ? 'rendered' : 'not_requested';
   await db.prepare(`INSERT INTO content_assets (
     id, client_id, content_item_id, provider, template_reference, render_status, asset_url,
     requested_by_admin_id, requested_at, rendered_at, created_at, updated_at
-  ) VALUES (?, ?, ?, ?, ?, 'not_requested', NULL, ?, NULL, NULL, ?, ?)`)
-    .bind(id, item.client_id, item.id, provider, sanitizeText(body.template_reference, 200) || null, session.actor_id, now, now).run();
-  return json({ id, contentItemId: item.id, provider, renderStatus: 'not_requested' }, 201);
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+    .bind(id, item.client_id, item.id, provider, sanitizeText(body.template_reference, 200) || null, renderStatus, manualAssetUrl,
+      session.actor_id, manualAssetUrl ? now : null, manualAssetUrl ? now : null, now, now).run();
+  return json({ id, contentItemId: item.id, provider, renderStatus, assetUrl: manualAssetUrl }, 201);
 }
 
 async function renderAsset({ request, env }, assetId) {
@@ -659,10 +754,24 @@ async function verifyJob({ request, env }, jobId) {
   if (job.status !== 'published') {
     throw new HttpError(409, 'job_not_published', "Only a job already in status 'published' can be moved to 'verified_live'.");
   }
+  const body = await request.json();
+  // "A successful request sent to a platform adapter must not automatically
+  // set status to verified_live" - this endpoint is the separate, explicit
+  // follow-up step, and it must never be a bare authenticated status flip. It
+  // requires genuine external evidence: the real post id/reference the admin
+  // observed live on the platform (or, for a manual_export job, the id/URL of
+  // the post the human actually made by hand after using the export package).
+  // No adapter call, credential, or claim of success from publishVariant ever
+  // satisfies this by itself - it must be supplied here, explicitly, per job.
+  const externalPostId = sanitizeText(body.external_post_id, 300);
+  if (!externalPostId) {
+    throw new HttpError(422, 'external_post_id_required', 'Verifying a publishing job as live requires the real external_post_id observed on the platform.');
+  }
   const now = new Date().toISOString();
-  await db.prepare("UPDATE publishing_jobs SET status = 'verified_live', verified_at = ?, updated_at = ? WHERE id = ?").bind(now, now, job.id).run();
-  await audit(db, { type: 'content_job_verified_live', actorType: 'admin_user', actorId: session.actor_id, clientId: item.client_id, requestId: requestId(request), data: { jobId: job.id } });
-  return json({ id: job.id, status: 'verified_live' });
+  await db.prepare("UPDATE publishing_jobs SET status = 'verified_live', external_post_id = ?, verified_at = ?, updated_at = ? WHERE id = ?")
+    .bind(externalPostId, now, now, job.id).run();
+  await audit(db, { type: 'content_job_verified_live', actorType: 'admin_user', actorId: session.actor_id, clientId: item.client_id, requestId: requestId(request), data: { jobId: job.id, externalPostId } });
+  return json({ id: job.id, status: 'verified_live', externalPostId });
 }
 
 async function recordMetrics({ request, env }, jobId) {
@@ -675,6 +784,16 @@ async function recordMetrics({ request, env }, jobId) {
   const variant = await db.prepare('SELECT * FROM content_platform_variants WHERE id = ?').bind(job.content_platform_variant_id).first();
   const item = await loadItem(db, variant.content_item_id);
   await assertAdminItemScope(db, session, item);
+  // Performance metrics describe something that actually happened on a real,
+  // confirmed-live post - recording them against a job that has only reached
+  // 'published' (adapter request sent / export package generated, but never
+  // independently confirmed live) would let unverified activity masquerade as
+  // real performance data. Metrics may only be attached once the job has
+  // reached 'verified_live' via the same evidenced PATCH /jobs/:id/verify step
+  // required everywhere else in this router.
+  if (job.status !== 'verified_live') {
+    throw new HttpError(422, 'job_not_verified_live', 'Metrics can only be recorded once this publishing job has been verified live.');
+  }
   const body = await request.json();
   const metrics = Array.isArray(body.metrics) ? body.metrics : [body];
   if (!metrics.length) throw new HttpError(422, 'metrics_required', 'Provide at least one metric to record.');

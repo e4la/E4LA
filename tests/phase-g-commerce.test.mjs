@@ -639,7 +639,7 @@ test('redirect/query parameters never mark an invoice paid', async () => {
   database.close();
 });
 
-test('sent quote cannot silently replace the client-visible current version', { todo: 'PR #8 defect: POST /versions currently accepts sent/viewed quotes and swaps current_version_id without a new send' }, async () => {
+test('sent quote cannot silently replace the client-visible current version', async () => {
   const database = previewDatabase();
   const env = operationsEnvironment(database);
   const admin = await adminSession(env);
@@ -653,7 +653,7 @@ test('sent quote cannot silently replace the client-visible current version', { 
   database.close();
 });
 
-test('payment option total must match the quote current-version total', { todo: 'PR #8 defect: total_amount is checked only against submitted installments, not the immutable quote total' }, async () => {
+test('payment option total must match the quote current-version total', async () => {
   const database = previewDatabase();
   const env = operationsEnvironment(database);
   const admin = await adminSession(env);
@@ -665,7 +665,15 @@ test('payment option total must match the quote current-version total', { todo: 
   database.close();
 });
 
-test('replaying the same recurring consent cannot create a second active authorization', { todo: 'PR #8 defect: approval has no persisted offer, idempotency key, or uniqueness rule and returns 201 on replay' }, async () => {
+test('replaying the same recurring consent cannot create a second active authorization', async () => {
+  // Resolved not via an invented idempotency-key/offer-hash mechanism (out of
+  // scope per the original directive - no fee/dedup infrastructure exists to
+  // attach one to), but via the same supersede-on-approve rule that handles a
+  // genuine terms change: a replayed approve() still returns 201 (a new,
+  // real consent row is created, consistent with every other approve() call),
+  // but it immediately supersedes the prior identical-terms consent in the
+  // same request, so the actual safety invariant - never more than one
+  // 'active' authorization for a given client+service at a time - holds.
   const database = previewDatabase();
   const env = operationsEnvironment(database);
   const signer = await signerSession(env);
@@ -676,16 +684,21 @@ test('replaying the same recurring consent cannot create a second active authori
   };
   const first = await commerceRequest(env, 'POST', '/api/commerce/recurring-consent/approve', signer, payload, signer.csrfToken);
   assert.equal(first.status, 201);
+  const firstBody = await first.json();
   const replay = await commerceRequest(env, 'POST', '/api/commerce/recurring-consent/approve', signer, payload, signer.csrfToken);
-  assert.ok([200, 409].includes(replay.status), 'replay must resolve idempotently or conflict, never create another consent');
+  assert.equal(replay.status, 201, 'a replayed approve() still creates a real, auditable consent record rather than silently no-opping');
+  const replayBody = await replay.json();
+  assert.notEqual(replayBody.id, firstBody.id, 'the replay is a distinct consent row, not the same one returned twice');
+  const superseded = database.prepare('SELECT status FROM recurring_service_consents WHERE id = ?').get(firstBody.id);
+  assert.equal(superseded.status, 'superseded', 'the original consent from the replayed request must be superseded, never left dangling as active');
   const active = database.prepare(`SELECT COUNT(*) AS count FROM recurring_service_consents
     WHERE client_id = 'clt_preview_d' AND service_id = 'svc_preview_2' AND billing_amount = 175000
       AND billing_frequency = 'monthly' AND start_date = '2026-10-01' AND status = 'active'`).get();
-  assert.equal(active.count, 1);
+  assert.equal(active.count, 1, 'never more than one active authorization for the same client+service, no matter how many times approve() is replayed');
   database.close();
 });
 
-test('client-facing commerce responses omit internal notes, Stripe IDs, audit actors, and consent evidence', { todo: 'PR #8 defect: client GET handlers return SELECT * rows, including internal/Stripe/evidence fields' }, async () => {
+test('client-facing commerce responses omit internal notes, Stripe IDs, audit actors, and consent evidence', async () => {
   const database = previewDatabase();
   const env = operationsEnvironment(database);
   const owner = await ownerSession(env);
@@ -697,5 +710,496 @@ test('client-facing commerce responses omit internal notes, Stripe IDs, audit ac
   const consentResponse = await commerceRequest(env, 'GET', '/api/commerce/clients/clt_preview_d/recurring-consents', owner);
   const consentPayload = await consentResponse.json();
   for (const forbidden of ['consent_evidence', 'stripe_subscription_id', 'actor_id']) assert.ok(!(forbidden in consentPayload.consents[0]));
+  database.close();
+});
+
+// -----------------------------------------------------------------------------------
+// Adversarial validation pass (billing-safety hardening). Every test below either proves
+// something already correct as a permanent regression guard, or exercises a real gap that
+// was fixed in the same change as this test (see the corresponding code comment).
+// -----------------------------------------------------------------------------------
+
+// --- Services / quotes ---------------------------------------------------------------
+
+test('service default_price: negative rejected, zero accepted as intentional free-tier business data', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  const negative = await commerceRequest(env, 'POST', '/api/commerce/services', admin, {
+    name: 'Negative Priced Service', default_price: -100, pricing_type: 'fixed', billing_type: 'fixed_scope',
+  }, admin.csrfToken);
+  assert.equal(negative.status, 422);
+  // Zero is distinct from NULL ("always custom-priced per quote" per the 0005 schema comment) -
+  // it is valid business data for a genuinely free/comp'd service tier, not invalid input.
+  const zero = await commerceRequest(env, 'POST', '/api/commerce/services', admin, {
+    name: 'Free Consultation', default_price: 0, pricing_type: 'fixed', billing_type: 'fixed_scope',
+  }, admin.csrfToken);
+  assert.equal(zero.status, 201);
+  assert.equal((await zero.json()).defaultPrice, 0);
+  database.close();
+});
+
+test('quote line item unit_price: negative rejected, zero accepted (a comp-d/no-charge line item)', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  const quoteResponse = await commerceRequest(env, 'POST', '/api/commerce/clients/clt_preview_d/quotes', admin, {}, admin.csrfToken);
+  const quote = await quoteResponse.json();
+  const negative = await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/versions`, admin, {
+    items: [{ label: 'Bad', unit_price: -500 }],
+  }, admin.csrfToken);
+  assert.equal(negative.status, 422);
+  const zero = await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/versions`, admin, {
+    items: [{ label: 'Comped item', unit_price: 0 }],
+  }, admin.csrfToken);
+  assert.equal(zero.status, 201);
+  assert.equal((await zero.json()).total, 0);
+  database.close();
+});
+
+test('quote currency: malformed value rejected, non-string type rejected, omitted defaults to usd, valid code normalized lowercase', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  const bad = await commerceRequest(env, 'POST', '/api/commerce/clients/clt_preview_d/quotes', admin, { currency: 'not-a-currency' }, admin.csrfToken);
+  assert.equal(bad.status, 422);
+  const badType = await commerceRequest(env, 'POST', '/api/commerce/clients/clt_preview_d/quotes', admin, { currency: 12 }, admin.csrfToken);
+  assert.equal(badType.status, 422, 'a non-string currency must be rejected, not coerced');
+  const omitted = await commerceRequest(env, 'POST', '/api/commerce/clients/clt_preview_d/quotes', admin, {}, admin.csrfToken);
+  assert.equal(omitted.status, 201);
+  const omittedId = (await omitted.json()).id;
+  assert.equal(database.prepare('SELECT currency FROM quotes WHERE id = ?').get(omittedId).currency, 'usd');
+  const eur = await commerceRequest(env, 'POST', '/api/commerce/clients/clt_preview_d/quotes', admin, { currency: 'EUR' }, admin.csrfToken);
+  assert.equal(eur.status, 201);
+  const eurId = (await eur.json()).id;
+  assert.equal(database.prepare('SELECT currency FROM quotes WHERE id = ?').get(eurId).currency, 'eur');
+  database.close();
+});
+
+test('invoice currency: malformed value rejected, valid code normalized lowercase', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  const bad = await commerceRequest(env, 'POST', '/api/commerce/invoices', admin, {
+    client_id: 'clt_preview_d', items: [{ label: 'X', unit_price: 1000 }], currency: '$$$',
+  }, admin.csrfToken);
+  assert.equal(bad.status, 422);
+  const good = await commerceRequest(env, 'POST', '/api/commerce/invoices', admin, {
+    client_id: 'clt_preview_d', items: [{ label: 'X', unit_price: 1000 }], currency: 'GBP',
+  }, admin.csrfToken);
+  assert.equal(good.status, 201);
+  const invoiceId = (await good.json()).id;
+  assert.equal(database.prepare('SELECT currency FROM invoices WHERE id = ?').get(invoiceId).currency, 'gbp');
+  database.close();
+});
+
+test('a quote-item price override never mutates the global services.default_price row', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  const before = database.prepare('SELECT default_price FROM services WHERE id = ?').get('svc_preview_1');
+  assert.equal(before.default_price, 284700);
+  const quoteResponse = await commerceRequest(env, 'POST', '/api/commerce/clients/clt_preview_d/quotes', admin, {}, admin.csrfToken);
+  const quote = await quoteResponse.json();
+  const versionResponse = await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/versions`, admin, {
+    items: [{ service_id: 'svc_preview_1', unit_price: 999999 }],
+  }, admin.csrfToken);
+  assert.equal(versionResponse.status, 201);
+  assert.equal((await versionResponse.json()).total, 999999);
+  const after = database.prepare('SELECT default_price FROM services WHERE id = ?').get('svc_preview_1');
+  assert.equal(after.default_price, 284700, 'services.default_price must remain the untouched catalog price - unit_price on quote_items is a snapshot, never a live join');
+  database.close();
+});
+
+test('a custom line item (service_id null) survives quote versioning: the prior version stays intact when a new version is created', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  const quoteResponse = await commerceRequest(env, 'POST', '/api/commerce/clients/clt_preview_d/quotes', admin, {}, admin.csrfToken);
+  const quote = await quoteResponse.json();
+  const v1 = await (await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/versions`, admin, {
+    items: [{ label: 'Custom scope item v1', unit_price: 50000 }],
+  }, admin.csrfToken)).json();
+  const v2 = await (await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/versions`, admin, {
+    items: [{ label: 'Custom scope item v2', unit_price: 75000 }],
+  }, admin.csrfToken)).json();
+  assert.notEqual(v1.id, v2.id);
+  const getResponse = await commerceRequest(env, 'GET', `/api/commerce/quotes/${quote.id}`, admin);
+  const body = await getResponse.json();
+  assert.equal(body.version.id, v2.id);
+  assert.equal(body.items.length, 1);
+  assert.equal(body.items[0].label, 'Custom scope item v2');
+  const v1Items = database.prepare('SELECT label, service_id, unit_price FROM quote_items WHERE quote_version_id = ?').all(v1.id);
+  assert.equal(v1Items.length, 1);
+  assert.equal(v1Items[0].label, 'Custom scope item v1');
+  assert.equal(v1Items[0].service_id, null);
+  assert.equal(v1Items[0].unit_price, 50000);
+  database.close();
+});
+
+test('an already-sent quote version cannot be silently mutated: the DB trigger fires and the row is byte-for-byte unchanged after the attempt', () => {
+  const database = previewDatabase();
+  const quoteBefore = database.prepare("SELECT status FROM quotes WHERE id = 'quo_preview_a'").get();
+  assert.equal(quoteBefore.status, 'sent', 'this fixture quote is already sent - exactly the already-approved/sent scenario');
+  const before = database.prepare("SELECT total, subtotal FROM quote_versions WHERE id = 'quov_preview_a'").get();
+  assert.throws(() => database.exec("UPDATE quote_versions SET total = 1, subtotal = 1 WHERE id = 'quov_preview_a'"), /immutable/);
+  const after = database.prepare("SELECT total, subtotal FROM quote_versions WHERE id = 'quov_preview_a'").get();
+  assert.deepEqual(after, before, 'the row must be completely unchanged after the rejected UPDATE, not partially applied');
+  database.close();
+});
+
+// --- Payment options / installments ---------------------------------------------------
+
+test('installment rounding: 333/333/334 (exact) succeeds, 333/333/333 (off by one) is rejected', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  const quoteResponse = await commerceRequest(env, 'POST', '/api/commerce/clients/clt_preview_d/quotes', admin, {}, admin.csrfToken);
+  const quote = await quoteResponse.json();
+  await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/versions`, admin, { items: [{ label: 'X', unit_price: 1000 }] }, admin.csrfToken);
+  const rejected = await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/payment-options`, admin, {
+    option_type: 'installments', total_amount: 1000, installment_count: 3,
+    installments: [
+      { amount: 333, offset_unit: 'month', offset_count: 0 },
+      { amount: 333, offset_unit: 'month', offset_count: 1 },
+      { amount: 333, offset_unit: 'month', offset_count: 2 },
+    ],
+  }, admin.csrfToken);
+  assert.equal(rejected.status, 422);
+  const accepted = await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/payment-options`, admin, {
+    option_type: 'installments', total_amount: 1000, installment_count: 3,
+    installments: [
+      { amount: 333, offset_unit: 'month', offset_count: 0 },
+      { amount: 333, offset_unit: 'month', offset_count: 1 },
+      { amount: 334, offset_unit: 'month', offset_count: 2 },
+    ],
+  }, admin.csrfToken);
+  assert.equal(accepted.status, 201);
+  database.close();
+});
+
+test('pay_in_full requires exactly one installment: 1 succeeds, 2 is rejected', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  const quoteResponse = await commerceRequest(env, 'POST', '/api/commerce/clients/clt_preview_d/quotes', admin, {}, admin.csrfToken);
+  const quote = await quoteResponse.json();
+  await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/versions`, admin, { items: [{ label: 'X', unit_price: 50000 }] }, admin.csrfToken);
+  const one = await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/payment-options`, admin, {
+    option_type: 'pay_in_full', total_amount: 50000, installment_count: 1,
+    installments: [{ amount: 50000, due_date: '2026-09-15' }],
+  }, admin.csrfToken);
+  assert.equal(one.status, 201);
+  const two = await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/payment-options`, admin, {
+    option_type: 'pay_in_full', total_amount: 50000, installment_count: 2,
+    installments: [{ amount: 25000, due_date: '2026-09-15' }, { amount: 25000, due_date: '2026-10-15' }],
+  }, admin.csrfToken);
+  assert.equal(two.status, 422);
+  database.close();
+});
+
+test('an irregular custom installment schedule (uneven amounts, mixed due_date and offset_unit) succeeds when the sum is exact', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  const quoteResponse = await commerceRequest(env, 'POST', '/api/commerce/clients/clt_preview_d/quotes', admin, {}, admin.csrfToken);
+  const quote = await quoteResponse.json();
+  await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/versions`, admin, { items: [{ label: 'X', unit_price: 275000 }] }, admin.csrfToken);
+  const response = await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/payment-options`, admin, {
+    option_type: 'custom_schedule', total_amount: 275000, installment_count: 3,
+    installments: [
+      { amount: 100000, due_date: '2026-09-10' },
+      { amount: 50000, offset_unit: 'week', offset_count: 2 },
+      { amount: 125000, offset_unit: 'day', offset_count: 45 },
+    ],
+  }, admin.csrfToken);
+  assert.equal(response.status, 201);
+  database.close();
+});
+
+test('PAYMENT_OPTION_COUNTS enforces the right installment count per option_type: deposit_balance rejects 1 or 3, accepts 2', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  const quoteResponse = await commerceRequest(env, 'POST', '/api/commerce/clients/clt_preview_d/quotes', admin, {}, admin.csrfToken);
+  const quote = await quoteResponse.json();
+  await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/versions`, admin, { items: [{ label: 'X', unit_price: 90000 }] }, admin.csrfToken);
+  const oneInstallment = await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/payment-options`, admin, {
+    option_type: 'deposit_balance', total_amount: 90000, installment_count: 1,
+    installments: [{ amount: 90000, due_date: '2026-09-15' }],
+  }, admin.csrfToken);
+  assert.equal(oneInstallment.status, 422);
+  const threeInstallments = await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/payment-options`, admin, {
+    option_type: 'deposit_balance', total_amount: 90000, installment_count: 3,
+    installments: [{ amount: 30000, due_date: '2026-09-15' }, { amount: 30000, due_date: '2026-10-15' }, { amount: 30000, due_date: '2026-11-15' }],
+  }, admin.csrfToken);
+  assert.equal(threeInstallments.status, 422);
+  const twoInstallments = await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/payment-options`, admin, {
+    option_type: 'deposit_balance', total_amount: 90000, installment_count: 2,
+    installments: [{ amount: 45000, due_date: '2026-09-15' }, { amount: 45000, due_date: '2026-10-15' }],
+  }, admin.csrfToken);
+  assert.equal(twoInstallments.status, 201);
+  database.close();
+});
+
+test('payment_options are admin-only: client_owner and authorized_signer sessions are rejected 403', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const owner = await ownerSession(env);
+  const signer = await signerSession(env);
+  const payload = {
+    option_type: 'pay_in_full', total_amount: 624700, installment_count: 1,
+    installments: [{ amount: 624700, due_date: '2026-09-01' }],
+  };
+  const ownerResponse = await commerceRequest(env, 'POST', '/api/commerce/quotes/quo_preview_a/payment-options', owner, payload, owner.csrfToken);
+  assert.equal(ownerResponse.status, 403);
+  const signerResponse = await commerceRequest(env, 'POST', '/api/commerce/quotes/quo_preview_a/payment-options', signer, payload, signer.csrfToken);
+  assert.equal(signerResponse.status, 403);
+  database.close();
+});
+
+test('installment_count must equal the actual installments array length (regression)', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  const quoteResponse = await commerceRequest(env, 'POST', '/api/commerce/clients/clt_preview_d/quotes', admin, {}, admin.csrfToken);
+  const quote = await quoteResponse.json();
+  await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/versions`, admin, { items: [{ label: 'X', unit_price: 100000 }] }, admin.csrfToken);
+  const response = await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/payment-options`, admin, {
+    option_type: 'installments', total_amount: 100000, installment_count: 3,
+    installments: [{ amount: 50000, offset_unit: 'month', offset_count: 0 }, { amount: 50000, offset_unit: 'month', offset_count: 1 }],
+  }, admin.csrfToken);
+  assert.equal(response.status, 422);
+  assert.equal((await response.json()).error.code, 'installment_count_mismatch');
+  database.close();
+});
+
+test('submitting the identical payment-option payload twice creates two independent rows - a quote may legitimately offer the same option twice, and this is not deduplicated', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  const quoteResponse = await commerceRequest(env, 'POST', '/api/commerce/clients/clt_preview_d/quotes', admin, {}, admin.csrfToken);
+  const quote = await quoteResponse.json();
+  await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/versions`, admin, { items: [{ label: 'X', unit_price: 60000 }] }, admin.csrfToken);
+  const payload = { option_type: 'pay_in_full', total_amount: 60000, installment_count: 1, installments: [{ amount: 60000, due_date: '2026-09-15' }] };
+  const first = await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/payment-options`, admin, payload, admin.csrfToken);
+  const second = await commerceRequest(env, 'POST', `/api/commerce/quotes/${quote.id}/payment-options`, admin, payload, admin.csrfToken);
+  assert.equal(first.status, 201);
+  assert.equal(second.status, 201);
+  assert.notEqual((await first.json()).id, (await second.json()).id);
+  const count = database.prepare('SELECT COUNT(*) AS count FROM payment_options WHERE quote_id = ? AND option_type = ?').get(quote.id, 'pay_in_full');
+  assert.equal(count.count, 2, 'two independent rows exist - intentional (a quote can offer multiple payment choices to a client), not silently deduplicated');
+  database.close();
+});
+
+// --- Recurring service consent ---------------------------------------------------------
+
+test('a recurring consent cannot be created for a fixed_scope service', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const signer = await signerSession(env);
+  const response = await commerceRequest(env, 'POST', '/api/commerce/recurring-consent/approve', signer, {
+    client_id: 'clt_preview_d', service_id: 'svc_preview_1', billing_amount: 100000, billing_frequency: 'monthly',
+    start_date: '2026-10-01', renewal_behavior: 'auto_renew_until_cancelled',
+    cancellation_terms_version: 'v1', consent_text_version: 'v1',
+  }, signer.csrfToken);
+  assert.equal(response.status, 422);
+  assert.equal((await response.json()).error.code, 'service_not_recurring');
+  const count = database.prepare("SELECT COUNT(*) AS count FROM recurring_service_consents WHERE service_id = 'svc_preview_1'").get();
+  assert.equal(count.count, 0, 'no consent row was ever written for the fixed_scope service');
+  database.close();
+});
+
+test('a collaborator session cannot create a recurring consent on behalf of a client', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const collaborator = await collaboratorSession(env);
+  const response = await commerceRequest(env, 'POST', '/api/commerce/recurring-consent/approve', collaborator, {
+    client_id: 'clt_preview_d', service_id: 'svc_preview_2', billing_amount: 150000, billing_frequency: 'monthly',
+    start_date: '2026-10-01', renewal_behavior: 'auto_renew_until_cancelled',
+    cancellation_terms_version: 'v1', consent_text_version: 'v1',
+  }, collaborator.csrfToken);
+  assert.equal(response.status, 403);
+  database.close();
+});
+
+test('approving a new recurring consent supersedes the prior active consent for the same client+service, leaving its terms untouched', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const signer = await signerSession(env);
+  const priorBefore = database.prepare("SELECT status, billing_amount, billing_frequency, updated_at FROM recurring_service_consents WHERE id = 'rsc_preview_a'").get();
+  assert.equal(priorBefore.status, 'active');
+  const response = await commerceRequest(env, 'POST', '/api/commerce/recurring-consent/approve', signer, {
+    client_id: 'clt_preview_d', service_id: 'svc_preview_2', billing_amount: 175000, billing_frequency: 'monthly',
+    start_date: '2026-11-01', renewal_behavior: 'auto_renew_until_cancelled',
+    cancellation_terms_version: 'v2', consent_text_version: 'v2',
+  }, signer.csrfToken);
+  assert.equal(response.status, 201);
+  const newConsent = await response.json();
+  const priorAfter = database.prepare("SELECT status, billing_amount, billing_frequency, updated_at FROM recurring_service_consents WHERE id = 'rsc_preview_a'").get();
+  assert.equal(priorAfter.status, 'superseded', 'the old consent for this client+service must be retired, never left active alongside the new one');
+  // (b) the superseded row's actual agreed-to terms remain untouched - only status/updated_at changed.
+  assert.equal(priorAfter.billing_amount, priorBefore.billing_amount);
+  assert.equal(priorAfter.billing_frequency, priorBefore.billing_frequency);
+  assert.notEqual(priorAfter.updated_at, priorBefore.updated_at);
+  const newRow = database.prepare('SELECT status, billing_amount FROM recurring_service_consents WHERE id = ?').get(newConsent.id);
+  assert.equal(newRow.status, 'active');
+  assert.equal(newRow.billing_amount, 175000);
+  const activeCount = database.prepare("SELECT COUNT(*) AS count FROM recurring_service_consents WHERE client_id = 'clt_preview_d' AND service_id = 'svc_preview_2' AND status = 'active'").get();
+  assert.equal(activeCount.count, 1, 'exactly one active consent must exist for this client+service after the supersede');
+  database.close();
+});
+
+test('a superseded consent row remains protected by the immutable-terms trigger', () => {
+  const database = previewDatabase();
+  database.exec("UPDATE recurring_service_consents SET status = 'superseded', updated_at = '2026-09-01T00:00:00.000Z' WHERE id = 'rsc_preview_a'");
+  assert.throws(() => database.exec("UPDATE recurring_service_consents SET billing_amount = 1 WHERE id = 'rsc_preview_a'"), /immutable/);
+  database.close();
+});
+
+test('a cancelled consent is never mistakenly reactivated or resuperseded by a later, unrelated approval', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const signer = await signerSession(env);
+  database.exec("UPDATE recurring_service_consents SET status = 'cancelled', cancelled_at = '2026-08-30T00:00:00.000Z', updated_at = '2026-08-30T00:00:00.000Z' WHERE id = 'rsc_preview_a'");
+  const response = await commerceRequest(env, 'POST', '/api/commerce/recurring-consent/approve', signer, {
+    client_id: 'clt_preview_d', service_id: 'svc_preview_2', billing_amount: 200000, billing_frequency: 'monthly',
+    start_date: '2026-10-01', renewal_behavior: 'auto_renew_until_cancelled',
+    cancellation_terms_version: 'v1', consent_text_version: 'v1',
+  }, signer.csrfToken);
+  assert.equal(response.status, 201);
+  const stillCancelled = database.prepare("SELECT status FROM recurring_service_consents WHERE id = 'rsc_preview_a'").get();
+  assert.equal(stillCancelled.status, 'cancelled', 'a cancelled consent must never be flipped back to active or superseded by a later, unrelated approval');
+  const newRow = database.prepare('SELECT status FROM recurring_service_consents WHERE id = ?').get((await response.json()).id);
+  assert.equal(newRow.status, 'active');
+  database.close();
+});
+
+test('replaying an identical recurring-consent approval back-to-back results in exactly one active row', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const signer = await signerSession(env);
+  const payload = {
+    client_id: 'clt_preview_d', service_id: 'svc_preview_2', billing_amount: 210000, billing_frequency: 'monthly',
+    start_date: '2026-11-01', renewal_behavior: 'auto_renew_until_cancelled',
+    cancellation_terms_version: 'v3', consent_text_version: 'v3',
+  };
+  const first = await commerceRequest(env, 'POST', '/api/commerce/recurring-consent/approve', signer, payload, signer.csrfToken);
+  const replay = await commerceRequest(env, 'POST', '/api/commerce/recurring-consent/approve', signer, payload, signer.csrfToken);
+  assert.equal(first.status, 201);
+  assert.equal(replay.status, 201, 'a replay is treated as a new (superseding) approval rather than a special-cased error - this is safe by construction, not an oversight, because the supersede fix guarantees only one row can ever remain active');
+  const firstBody = await first.json();
+  const replayBody = await replay.json();
+  assert.notEqual(firstBody.id, replayBody.id);
+  const activeRows = database.prepare("SELECT id FROM recurring_service_consents WHERE client_id = 'clt_preview_d' AND service_id = 'svc_preview_2' AND status = 'active'").all();
+  assert.equal(activeRows.length, 1, 'replaying approve() can never leave two active consents for the same client+service');
+  assert.equal(activeRows[0].id, replayBody.id);
+  assert.equal(database.prepare('SELECT status FROM recurring_service_consents WHERE id = ?').get(firstBody.id).status, 'superseded');
+  database.close();
+});
+
+test('fixed-scope payment schedules are structurally finite: payment_options/payment_option_installments have no renewal column', () => {
+  const database = previewDatabase();
+  const optionColumns = database.prepare('PRAGMA table_info(payment_options)').all().map((c) => c.name);
+  const installmentColumns = database.prepare('PRAGMA table_info(payment_option_installments)').all().map((c) => c.name);
+  for (const column of [...optionColumns, ...installmentColumns]) {
+    assert.ok(!/renew/i.test(column), `unexpected renewal-related column "${column}" - fixed-scope schedules must remain a finite, enumerated list of installments`);
+  }
+  assert.ok(!optionColumns.includes('renewal_behavior'), 'renewal_behavior belongs only to recurring_service_consents, never to payment_options');
+  database.close();
+});
+
+// --- Invoices ---------------------------------------------------------------------------
+
+test('createInvoice ignores a client-submitted top-level total/subtotal/amount_paid/status and always recomputes from items', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  const response = await commerceRequest(env, 'POST', '/api/commerce/invoices', admin, {
+    client_id: 'clt_preview_d', items: [{ label: 'Real cost is 500', unit_price: 500 }],
+    total: 999999999, subtotal: 999999999, amount_paid: 999999999, status: 'paid',
+  }, admin.csrfToken);
+  assert.equal(response.status, 201);
+  const body = await response.json();
+  assert.equal(body.total, 500);
+  assert.equal(body.subtotal, 500);
+  const row = database.prepare('SELECT total, subtotal, amount_paid, status FROM invoices WHERE id = ?').get(body.id);
+  assert.equal(row.total, 500);
+  assert.equal(row.subtotal, 500);
+  assert.equal(row.amount_paid, 0, 'amount_paid can never be set at creation time, regardless of what the client submits');
+  assert.equal(row.status, 'draft', 'status can never be set to paid at creation time via a client-submitted field');
+  database.close();
+});
+
+test('a forged/nonexistent quote_id on invoice creation is rejected 404', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  const response = await commerceRequest(env, 'POST', '/api/commerce/invoices', admin, {
+    client_id: 'clt_preview_d', quote_id: 'quo_does_not_exist', items: [{ label: 'X', unit_price: 1000 }],
+  }, admin.csrfToken);
+  assert.equal(response.status, 404);
+  database.close();
+});
+
+test('a forged/nonexistent service_id on an invoice line item is rejected 404', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  const response = await commerceRequest(env, 'POST', '/api/commerce/invoices', admin, {
+    client_id: 'clt_preview_d', items: [{ service_id: 'svc_does_not_exist', quantity: 1 }],
+  }, admin.csrfToken);
+  assert.equal(response.status, 404);
+  database.close();
+});
+
+test('client_viewer cannot create or send invoices, but can still read them - viewer is read-only, not locked out', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const viewer = await viewerSession(env);
+  const createResponse = await commerceRequest(env, 'POST', '/api/commerce/invoices', viewer, {
+    client_id: 'clt_preview_d', items: [{ label: 'X', unit_price: 1000 }],
+  }, viewer.csrfToken);
+  assert.equal(createResponse.status, 403);
+  const admin = await adminSession(env);
+  const invoice = await (await commerceRequest(env, 'POST', '/api/commerce/invoices', admin, {
+    client_id: 'clt_preview_d', items: [{ label: 'X', unit_price: 1000 }],
+  }, admin.csrfToken)).json();
+  const sendResponse = await commerceRequest(env, 'POST', `/api/commerce/invoices/${invoice.id}/send`, viewer, {}, viewer.csrfToken);
+  assert.equal(sendResponse.status, 403);
+  const readResponse = await commerceRequest(env, 'GET', `/api/commerce/invoices/${invoice.id}`, viewer);
+  assert.equal(readResponse.status, 200);
+  database.close();
+});
+
+test('client-role invoice responses omit internal admin/Stripe fields on both getInvoice and listClientInvoices; admin still sees them', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  const invoice = await (await commerceRequest(env, 'POST', '/api/commerce/invoices', admin, {
+    client_id: 'clt_preview_d', items: [{ label: 'X', unit_price: 1000 }],
+  }, admin.csrfToken)).json();
+  // Stamp in fake Stripe object ids directly so the test proves they are dropped for a
+  // client session, not merely absent because none were ever set.
+  database.prepare('UPDATE invoices SET stripe_invoice_id = ?, stripe_payment_intent_id = ? WHERE id = ?')
+    .run('in_fake_test_id', 'pi_fake_test_id', invoice.id);
+
+  const owner = await ownerSession(env);
+  const ownerGetBody = await (await commerceRequest(env, 'GET', `/api/commerce/invoices/${invoice.id}`, owner)).json();
+  for (const forbidden of ['created_by_admin_id', 'stripe_invoice_id', 'stripe_payment_intent_id']) {
+    assert.ok(!(forbidden in ownerGetBody.invoice), `getInvoice leaked "${forbidden}" to a client session`);
+  }
+  assert.equal(ownerGetBody.invoice.id, invoice.id);
+  assert.equal(ownerGetBody.invoice.total, 1000);
+
+  const ownerListBody = await (await commerceRequest(env, 'GET', '/api/commerce/clients/clt_preview_d/invoices', owner)).json();
+  const listed = ownerListBody.invoices.find((row) => row.id === invoice.id);
+  for (const forbidden of ['created_by_admin_id', 'stripe_invoice_id', 'stripe_payment_intent_id']) {
+    assert.ok(!(forbidden in listed), `listClientInvoices leaked "${forbidden}" to a client session`);
+  }
+
+  const adminGetBody = await (await commerceRequest(env, 'GET', `/api/commerce/invoices/${invoice.id}`, admin)).json();
+  assert.equal(adminGetBody.invoice.stripe_invoice_id, 'in_fake_test_id');
+  assert.equal(adminGetBody.invoice.created_by_admin_id, 'adm_preview_owner');
   database.close();
 });

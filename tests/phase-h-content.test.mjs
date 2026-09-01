@@ -240,22 +240,25 @@ test('RED cannot auto-approve, even via a direct status-transition call attempti
   response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_approved_e4la/status', owner, { status: 'approved' }, owner.csrfToken);
   assert.equal(response.status, 422);
   const errorBody = await response.json();
-  assert.equal(errorBody.error.code, 'unresolved_red_claim');
+  assert.equal(errorBody.error.code, 'unresolved_risky_claim');
 
   // Control case: an item with only a resolved GREEN claim (no red) must be able
   // to reach 'approved' - proving the rule is risk-scoped, not a blanket claim block.
+  // This item's plan (cip_preview_b) snapshots bb_preview_1 (automation_mode
+  // 'client_approval'), so the legitimate path is through client_review, exactly
+  // like ci_preview_approved_e4la above - NOT by creating a new brand_brain
+  // version to dodge that requirement (that retroactive-policy-change bypass is
+  // its own dedicated regression below).
   response = await contentRequest(env, 'POST', '/api/content/items/ci_preview_review/claims', admin, {
     claim_text: 'Fictional green claim with no risk.', risk_level: 'green',
   }, admin.csrfToken);
   assert.equal(response.status, 201);
 
-  // Move this brand brain to 'manual' automation (new version) so this item's own
-  // e4la_approved -> approved path does not require a client_review detour.
-  await contentRequest(env, 'POST', '/api/content/clients/clt_preview_d/brand-brain', admin, { automation_mode: 'manual' }, admin.csrfToken);
-
   response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_review/status', admin, { status: 'e4la_approved' }, admin.csrfToken);
   assert.equal(response.status, 200);
-  response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_review/status', admin, { status: 'approved' }, admin.csrfToken);
+  response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_review/status', admin, { status: 'client_review' }, admin.csrfToken);
+  assert.equal(response.status, 200);
+  response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_review/status', owner, { status: 'approved' }, owner.csrfToken);
   assert.equal(response.status, 200);
   database.close();
 });
@@ -291,11 +294,15 @@ test('Publishing failure != published: a real platform with no connected account
   const env = contentEnvironment(database);
   const admin = await adminSession(env);
 
-  // Move ci_preview_review to 'manual' automation and all the way to 'approved'.
-  await contentRequest(env, 'POST', '/api/content/clients/clt_preview_d/brand-brain', admin, { automation_mode: 'manual' }, admin.csrfToken);
+  // Move ci_preview_review all the way to 'approved' through the legitimate
+  // client_review path (its plan snapshots bb_preview_1, automation_mode
+  // 'client_approval' - see the approval-policy-snapshot regression below).
+  const owner = await ownerSessionD(env);
   let response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_review/status', admin, { status: 'e4la_approved' }, admin.csrfToken);
   assert.equal(response.status, 200);
-  response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_review/status', admin, { status: 'approved' }, admin.csrfToken);
+  response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_review/status', admin, { status: 'client_review' }, admin.csrfToken);
+  assert.equal(response.status, 200);
+  response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_review/status', owner, { status: 'approved' }, owner.csrfToken);
   assert.equal(response.status, 200);
 
   const variantResponse = await contentRequest(env, 'POST', '/api/content/items/ci_preview_review/platform-variants', admin, {
@@ -441,7 +448,7 @@ test('draft content cannot jump directly to scheduled', async () => {
   database.close();
 });
 
-test('YELLOW claim without verified evidence cannot approve', { todo: 'PR #8 defect: approval gate checks unresolved RED only' }, async () => {
+test('YELLOW claim without verified evidence cannot approve', async () => {
   const database = previewDatabase();
   const env = contentEnvironment(database);
   const admin = await adminSession(env);
@@ -460,7 +467,7 @@ test('YELLOW claim without verified evidence cannot approve', { todo: 'PR #8 def
   database.close();
 });
 
-test('URL-only or unverified source cannot verify a claim', { todo: 'PR #8 defect: verifyClaim checks only that source_id exists' }, async () => {
+test('URL-only or unverified source cannot verify a claim', async () => {
   const database = previewDatabase();
   const env = contentEnvironment(database);
   const admin = await adminSession(env);
@@ -477,10 +484,62 @@ test('URL-only or unverified source cannot verify a claim', { todo: 'PR #8 defec
     verification_status: 'verified', source_id: source.id,
   }, admin.csrfToken);
   assert.equal(verifyResponse.status, 422);
+  const verifyErrorBody = await verifyResponse.json();
+  assert.equal(verifyErrorBody.error.code, 'source_not_verified');
+  const claimRow = database.prepare('SELECT verification_status FROM content_claims WHERE id = ?').get(claim.id);
+  assert.equal(claimRow.verification_status, 'unverified');
+
+  // Once the same source is explicitly verified through its own admin verify
+  // action (not merely by having a url field), the identical claim-verify call
+  // succeeds - proving the block above is about the source's verification
+  // state, not about url_reference sources being unverifiable in principle.
+  const sourceVerifyResponse = await contentRequest(env, 'PATCH', `/api/content/sources/${source.id}/verify`, admin, {
+    verification_status: 'verified',
+  }, admin.csrfToken);
+  assert.equal(sourceVerifyResponse.status, 200);
+  const secondVerifyResponse = await contentRequest(env, 'PATCH', `/api/content/claims/${claim.id}/verify`, admin, {
+    verification_status: 'verified', source_id: source.id,
+  }, admin.csrfToken);
+  assert.equal(secondVerifyResponse.status, 200);
   database.close();
 });
 
-test('RED claim cannot auto-approve even after an admin marks the claim verified', { todo: 'PR #8 defect: auto policy allows verified RED claims and authorization is represented by forgeable request booleans' }, async () => {
+test('creating a source or claim never auto-sets verification_status - it always starts unverified regardless of a populated url field', async () => {
+  const database = previewDatabase();
+  const env = contentEnvironment(database);
+  const admin = await adminSession(env);
+
+  const sourceResponse = await contentRequest(env, 'POST', '/api/content/clients/clt_preview_d/sources', admin, {
+    source_type: 'url_reference', url: 'https://example.test/never-auto-verified',
+  }, admin.csrfToken);
+  assert.equal(sourceResponse.status, 201);
+  const source = await sourceResponse.json();
+  assert.equal(source.verificationStatus, 'unverified');
+  const sourceRow = database.prepare('SELECT verification_status FROM content_sources WHERE id = ?').get(source.id);
+  assert.equal(sourceRow.verification_status, 'unverified');
+
+  const claimResponse = await contentRequest(env, 'POST', '/api/content/items/ci_preview_review/claims', admin, {
+    claim_text: 'A claim with a source_id already attached at creation.', risk_level: 'yellow', source_id: source.id,
+  }, admin.csrfToken);
+  assert.equal(claimResponse.status, 201);
+  const claim = await claimResponse.json();
+  assert.equal(claim.verificationStatus, 'unverified');
+  const claimRow = database.prepare('SELECT verification_status FROM content_claims WHERE id = ?').get(claim.id);
+  assert.equal(claimRow.verification_status, 'unverified');
+
+  // And, per the risk-scoped approval gate, this still-unverified yellow claim
+  // blocks approval even though its source carries a real url.
+  let response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_review/status', admin, { status: 'e4la_approved' }, admin.csrfToken);
+  assert.equal(response.status, 200);
+  response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_review/status', admin, { status: 'client_review' }, admin.csrfToken);
+  assert.equal(response.status, 200);
+  const owner = await ownerSessionD(env);
+  response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_review/status', owner, { status: 'approved' }, owner.csrfToken);
+  assert.equal(response.status, 422);
+  database.close();
+});
+
+test('RED claim cannot auto-approve even after an admin marks the claim verified - approval policy is not retroactively loosened by a newer brand brain', async () => {
   const database = previewDatabase();
   const env = contentEnvironment(database);
   const admin = await adminSession(env);
@@ -495,12 +554,19 @@ test('RED claim cannot auto-approve even after an admin marks the claim verified
     e4la_policy_confirmed: true,
   }, admin.csrfToken);
   assert.equal(response.status, 201);
+  // ci_preview_approved_e4la's plan (cip_preview_b) still snapshots bb_preview_1
+  // (automation_mode 'client_approval'), so even though the CLIENT's latest brand
+  // brain now says auto_publish_approved_policy, this already-in-flight item must
+  // still require client_review before 'approved' - a new brand brain version must
+  // never retroactively loosen the policy an existing item was created under.
   response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_approved_e4la/status', admin, { status: 'approved' }, admin.csrfToken);
   assert.equal(response.status, 422);
+  const errorBody = await response.json();
+  assert.equal(errorBody.error.code, 'client_review_required');
   database.close();
 });
 
-test('existing item keeps the approval policy snapshotted by its plan', { todo: 'PR #8 defect: patchItemStatus reads the latest brand brain, so a new manual version bypasses client review retroactively' }, async () => {
+test('existing item keeps the approval policy snapshotted by its plan', async () => {
   const database = previewDatabase();
   const env = contentEnvironment(database);
   const admin = await adminSession(env);
@@ -511,29 +577,57 @@ test('existing item keeps the approval policy snapshotted by its plan', { todo: 
   assert.equal(response.status, 201);
   response = await contentRequest(env, 'PATCH', '/api/content/items/ci_preview_review/status', admin, { status: 'approved' }, admin.csrfToken);
   assert.equal(response.status, 422);
+  const errorBody = await response.json();
+  assert.equal(errorBody.error.code, 'client_review_required');
   database.close();
 });
 
-test('client plan list excludes draft/internal planning records', { todo: 'PR #8 defect: client plan handlers return every status, including draft and internal_approved' }, async () => {
+test('client plan list excludes draft/internal planning records', async () => {
   const database = previewDatabase();
   const env = contentEnvironment(database);
   const owner = await ownerSessionD(env);
   const response = await contentRequest(env, 'GET', '/api/content/clients/clt_preview_d/plans', owner);
   assert.equal(response.status, 200);
   const payload = await response.json();
+  assert.ok(payload.plans.length > 0, 'expected at least one client-visible plan (cip_preview_b/cip_preview_c)');
   assert.ok(payload.plans.every((plan) => !['draft', 'internal_approved'].includes(plan.status)));
+
+  // The same draft plan requested directly by id must 404, not merely be
+  // filtered from the list - matching the no-403-confirms-existence pattern.
+  const directResponse = await contentRequest(env, 'GET', '/api/content/plans/cip_preview_a', owner);
+  assert.equal(directResponse.status, 404);
   database.close();
 });
 
-test('verified_live requires external proof and manual export can never self-verify', { todo: 'PR #8 defect: verifyJob is an authenticated status flip with no platform evidence' }, async () => {
+test('verified_live requires external proof and manual export can never self-verify', async () => {
   const database = previewDatabase();
   const env = contentEnvironment(database);
   const admin = await adminSession(env);
   const response = await contentRequest(env, 'PATCH', '/api/content/jobs/pjb_preview_a/verify', admin, {}, admin.csrfToken);
   assert.equal(response.status, 422);
+  const errorBody = await response.json();
+  assert.equal(errorBody.error.code, 'external_post_id_required');
   const job = database.prepare("SELECT status, external_post_id, verified_at FROM publishing_jobs WHERE id = 'pjb_preview_a'").get();
   assert.equal(job.status, 'published');
   assert.equal(job.external_post_id, null);
   assert.equal(job.verified_at, null);
+  database.close();
+});
+
+test('verified_live succeeds once real external proof (external_post_id) is supplied, and it is persisted on the job', async () => {
+  const database = previewDatabase();
+  const env = contentEnvironment(database);
+  const admin = await adminSession(env);
+  const response = await contentRequest(env, 'PATCH', '/api/content/jobs/pjb_preview_a/verify', admin, {
+    external_post_id: 'ig_fictional_post_12345',
+  }, admin.csrfToken);
+  assert.equal(response.status, 200);
+  const body = await response.json();
+  assert.equal(body.status, 'verified_live');
+  assert.equal(body.externalPostId, 'ig_fictional_post_12345');
+  const job = database.prepare("SELECT status, external_post_id, verified_at FROM publishing_jobs WHERE id = 'pjb_preview_a'").get();
+  assert.equal(job.status, 'verified_live');
+  assert.equal(job.external_post_id, 'ig_fictional_post_12345');
+  assert.ok(job.verified_at);
   database.close();
 });
