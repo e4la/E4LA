@@ -1,10 +1,28 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-08-20T22:30:03-07:00",
+  "updated_at": "2026-09-01T05:44:46-00:00",
   "project": "E4LA Client Operations System",
   "status": "NOT READY",
   "current_phase": "Phase D - Cloudflare Access gate and final handoff",
   "feature_scope_frozen": true,
+  "phase_d_local_hardening_summary": {
+    "scope": "Local/mocked hardening only, no external Cloudflare/Stripe/Resend account access used or required",
+    "new_tests_added": 38,
+    "defects_found_and_fixed": [
+      "assets/js/client-portal.js: boot() was invoked before const portalTabs/portalSections were declared, throwing a ReferenceError on every preview/local load (client portal was completely broken on localhost and on the preview host with ?demo=1) - fixed by moving the boot() call after the declarations",
+      "functions/_shared/email-templates.js: clientName was sanitized but never interpolated into any template output - fixed",
+      "functions/_shared/email-templates.js: plain-text email bodies omitted the payment/next-step disclaimer note that HTML bodies included - fixed",
+      "functions/api/ops/[[path]].js createAgreementInvite: no gate prevented sending a real client invitation while the current agreement version's legalStatus was still 'phase_c_placeholder' - fixed with a 409 agreement_legal_unapproved rejection",
+      "migrations: payment_plans had no immutable trigger unlike agreement_versions/agreement_acceptances - fixed via new migrations/0003_payment_plans_immutable.sql"
+    ],
+    "defects_found_not_fixed": [],
+    "confirmed_already_correct": [
+      "Admin/Collaborator/Client Owner/Client Viewer role authorization and cross-client isolation",
+      "Invite/session replay resistance, session expiry/revocation, CSRF and Origin enforcement",
+      "Publication boundary and Admin Preview isolation",
+      "Stripe webhook idempotency, out-of-order event handling, failure-state mapping, schedule-creation-failure recovery, server-side price/plan enforcement, Billing Portal role gate"
+    ]
+  },
   "preview": {
     "stable_url": "https://e4la-client-operations-preview.pages.dev",
     "latest_known_deployment_id": "56f14ffe",
@@ -15,7 +33,7 @@
     "production_isolated": true
   },
   "blockers": [
-    "Cloudflare Access is not enabled/configured; current response is access.api.error.not_enabled and connected tokens lack Access write authority",
+    "Zero Trust is now enabled on the account (team domain snowy-forest-edc8.cloudflareaccess.com), but the Wrangler OAuth token carries zero Access/Zero Trust scopes and cannot self-elevate (no token-management permission); a dashboard-created API Token with Access: Apps/Policies + Organizations/Identity Providers edit permissions is required before any Access API call (org inspection, app/policy creation) can succeed",
     "Stripe Sandbox resources, secrets, and end-to-end test matrix are not configured",
     "Resend preview integration is deferred until Access and Stripe pass",
     "Final legal language and data-policy decisions are pending approval",
@@ -29,8 +47,14 @@
     "application_session_csrf_and_authorization_foundation",
     "stripe_test_safe_architecture_and_webhook_idempotency",
     "email_templates_and_outbound_idempotency_schema",
-    "automated_tests_22_of_22",
-    "public_source_isolation_check"
+    "automated_tests_60_of_60",
+    "public_source_isolation_check",
+    "phase_d_authorization_test_hardening",
+    "phase_d_stripe_adversarial_test_hardening",
+    "phase_d_email_and_agreement_immutability_hardening",
+    "payment_plans_immutability_migration_0003_written_not_yet_applied_to_preview_d1",
+    "agreement_invite_legal_placeholder_guard",
+    "client_portal_boot_order_defect_fixed"
   ],
   "pending_gates_in_order": [
     "cloudflare_access",
@@ -47,7 +71,8 @@
     "environment_marker": "preview",
     "migrations": [
       "migrations/0001_client_operations.sql",
-      "migrations/0002_phase_c_preview.sql"
+      "migrations/0002_phase_c_preview.sql",
+      "migrations/0003_payment_plans_immutable.sql"
     ],
     "fixture": "fixtures/client-operations.preview.sql",
     "counts": {
@@ -71,8 +96,8 @@
   },
   "tests": {
     "command": "npm test",
-    "passing": 22,
-    "total": 22,
+    "passing": 60,
+    "total": 60,
     "last_known_result": "pass"
   },
   "roles": [
@@ -141,8 +166,13 @@
     "functions/_shared/email-templates.js",
     "migrations/0001_client_operations.sql",
     "migrations/0002_phase_c_preview.sql",
+    "migrations/0003_payment_plans_immutable.sql",
     "tests/phase-b.test.mjs",
     "tests/phase-c.test.mjs",
+    "tests/phase-d-authz.test.mjs",
+    "tests/phase-d-stripe.test.mjs",
+    "tests/phase-d-email.test.mjs",
+    "tests/phase-d-agreement.test.mjs",
     "wrangler.preview.jsonc"
   ],
   "protected_files": [
@@ -173,11 +203,12 @@
   ],
   "outstanding_external_configuration": {
     "cloudflare": [
-      "Enable Zero Trust/Access account state",
-      "Create/confirm preview-safe team domain",
-      "Configure controlled email identity provider",
+      "DONE: Zero Trust/Access account state enabled (team domain snowy-forest-edc8.cloudflareaccess.com)",
+      "Create a dashboard API Token scoped to Access: Apps and Policies (Edit) + Access: Organizations, Identity Providers, and Groups (Edit) - the Wrangler OAuth token cannot be used or self-elevated for this",
+      "Inspect/confirm identity provider (Cloudflare One-Time PIN is the expected default; configure only if actually missing)",
       "Create separate Admin and Client Access applications/policies on preview hostname only",
       "Retrieve AUD values and set ACCESS_TEAM_DOMAIN, ADMIN_ACCESS_AUD, CLIENT_ACCESS_AUD on preview",
+      "Apply migrations/0003_payment_plans_immutable.sql to the preview D1 (not yet applied)",
       "Validate identities, roles, scope, session rotation/revocation/logout, and Admin Preview"
     ],
     "stripe": [

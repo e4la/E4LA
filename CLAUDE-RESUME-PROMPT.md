@@ -3,12 +3,12 @@
 Continue the E4LA Client Operations project from the repository, assuming no conversation history.
 
 1. Read `CLAUDE-HANDOFF-E4LA-CLIENT-OPERATIONS.md` completely first.
-2. Then inspect `CLIENT-OPERATIONS-STATE.json`, `CLIENT-OPERATIONS-PHASE-D.md`, `migrations/0001_client_operations.sql`, `migrations/0002_phase_c_preview.sql`, `functions/api/ops/[[path]].js`, `functions/api/stripe/webhook.js`, and both test files.
-3. Run `npm test` and confirm the expected 22/22 baseline before making changes.
+2. Then inspect `CLIENT-OPERATIONS-STATE.json`, `CLIENT-OPERATIONS-PHASE-D.md`, `migrations/0001_client_operations.sql` through `0003_payment_plans_immutable.sql`, `functions/api/ops/[[path]].js`, `functions/api/stripe/webhook.js`, and all five test files.
+3. Run `npm test` and confirm the expected 60/60 baseline before making changes.
 
 Current classification: **NOT READY**.
 
-Current blocker/next gate: **Cloudflare Access is not enabled/configured** (`access.api.error.not_enabled`). Exhaust authenticated Cloudflare API/Wrangler capabilities first. Do not configure Stripe until Access passes. The stable isolated preview is `https://e4la-client-operations-preview.pages.dev`; production is untouched.
+Current blocker/next gate: **Cloudflare Zero Trust/Access is now enabled** (team domain `snowy-forest-edc8.cloudflareaccess.com`), but the Wrangler OAuth token has zero Access scope and cannot self-elevate. A dashboard-created API Token (Access: Apps and Policies + Organizations/Identity Providers, both Edit) is required before any Access API call can succeed. Exhaust authenticated Cloudflare API/Wrangler capabilities first on every fresh attempt — re-verify live rather than trusting this note, since account state can change between sessions. Do not configure Stripe until Access passes. The stable isolated preview is `https://e4la-client-operations-preview.pages.dev`; production is untouched.
 
 You may autonomously perform read-only audits, preview-only Cloudflare/D1 configuration, tests, defect corrections demonstrated by validation, documentation updates, and safe preview redeployment. Do not add product features or redesign the architecture.
 
