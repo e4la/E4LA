@@ -71,6 +71,10 @@ function renderPortal(data) {
   renderDocuments('reports-all', data.reports || [], Infinity, true);
   renderAgreement(data.agreement);
   renderBilling(data.billing || {});
+  renderProgressOverview(data.progress || {});
+  renderRoadmap(data.roadmap || []);
+  renderWeeklyChart(data.weeklyProgress || []);
+  renderPerformanceMetrics(data.performanceMetrics || []);
   const requestedTab = location.hash.replace('#', '');
   if (portalSections.includes(requestedTab)) activateTab(requestedTab, false);
 }
@@ -145,6 +149,80 @@ function renderBilling(billing) {
   [['Program fee', formatMoney(billing.total || 0)], ['Payment schedule', billing.planName || 'See accepted agreement'], ['Payments completed', `${billing.completedPayments ?? '—'} of ${billing.installmentCount ?? '—'}`], ['Remaining balance', formatMoney(Math.max(0, (billing.total || 0) - (billing.paid || 0)))], ['Next payment', billing.nextPayment ? `${formatMoney(billing.nextAmount)} · ${billing.nextPayment}` : 'None scheduled']].forEach(([term, value]) => { const row = document.createElement('div'); row.append(textElement('dt', term), textElement('dd', value)); summary.append(row); });
 }
 
+const PROGRESS_RING_CIRCUMFERENCE = 2 * Math.PI * 52;
+
+function renderProgressOverview(progress) {
+  const hasPercent = typeof progress.percentComplete === 'number';
+  const percent = hasPercent ? Math.max(0, Math.min(100, progress.percentComplete)) : 0;
+  const ring = document.querySelector('#progress-ring-value');
+  ring.style.strokeDashoffset = String(PROGRESS_RING_CIRCUMFERENCE * (1 - (hasPercent ? percent / 100 : 0)));
+  ring.style.opacity = hasPercent ? '1' : '0.18';
+  setText('progress-percent-text', hasPercent ? `${percent}%` : '—');
+  setText('progress-qualitative-text', progress.qualitativeState || 'In progress');
+  setText('progress-current-phase', progress.currentPhaseName || 'To be confirmed');
+  setText('progress-phase-count', `${progress.completedPhaseCount ?? 0} of ${progress.totalPhaseCount ?? 0}`);
+  setText('progress-next-phase', progress.nextPhaseName || (progress.statusLabel === 'Completed' ? 'None — engagement complete' : 'To be confirmed'));
+  setText('progress-remaining-milestones', String(progress.remainingMilestoneCount ?? '—'));
+  const statusLabel = document.querySelector('#progress-status-label');
+  setText('progress-status-label', progress.statusLabel || 'On Track');
+  statusLabel.className = `ops-status ${progress.statusLabel === 'Needs Attention' ? 'ops-status--attention' : 'ops-status--complete'}`;
+}
+
+function renderRoadmap(phases) {
+  const list = document.querySelector('#portal-roadmap');
+  list.replaceChildren();
+  if (!phases.length) { list.append(emptyState('Roadmap coming soon', 'E4LA will publish the engagement roadmap here once phases are confirmed.')); return; }
+  phases.slice().sort((a, b) => a.sequence - b.sequence).forEach((phase, index) => {
+    const item = element('li', `portal-roadmap__phase portal-roadmap__phase--${phase.status.replace('_', '-')}`);
+    item.append(textElement('span', phase.status === 'completed' ? '✓' : String(index + 1), 'portal-roadmap__index'));
+    item.append(textElement('h3', phase.name, 'portal-roadmap__name'));
+    const dateRange = phase.targetStartDate || phase.targetEndDate
+      ? `${formatDate(phase.targetStartDate)} – ${formatDate(phase.targetEndDate)}` : 'Timing to be confirmed';
+    item.append(textElement('p', `${humanize(phase.status)} · ${phase.completedMilestoneCount}/${phase.milestoneCount} milestones`, 'portal-roadmap__meta'));
+    item.append(textElement('p', dateRange, 'portal-roadmap__meta'));
+    if (phase.clientActionRequired) item.append(textElement('span', phase.clientActionNote || 'Client action needed', 'portal-roadmap__action'));
+    list.append(item);
+  });
+}
+
+function renderWeeklyChart(weeks) {
+  const container = document.querySelector('#portal-weekly-chart');
+  container.replaceChildren();
+  if (!weeks.length) { container.append(textElement('p', 'Not enough progress history yet. E4LA will publish weekly progress once a few weeks of work are complete.', 'portal-chart__empty')); return; }
+  const chart = element('div', 'portal-chart');
+  const sorted = weeks.slice().sort((a, b) => a.weekNumber - b.weekNumber);
+  sorted.forEach((week, index) => {
+    const pct = typeof week.percentComplete === 'number' ? Math.max(0, Math.min(100, week.percentComplete)) : 0;
+    const col = element('div', `portal-chart__col${index === sorted.length - 1 ? ' portal-chart__col--latest' : ''}`);
+    col.append(textElement('span', `${pct}%`, 'portal-chart__pct'));
+    const track = element('div', 'portal-chart__bar-track');
+    const bar = element('div', 'portal-chart__bar'); bar.style.height = `${Math.max(pct, 2)}%`;
+    bar.setAttribute('role', 'img'); bar.setAttribute('aria-label', `Week ${week.weekNumber}: ${pct}% complete`);
+    track.append(bar); col.append(track);
+    col.append(textElement('span', `Wk ${week.weekNumber}`, 'portal-chart__label'));
+    chart.append(col);
+  });
+  container.append(chart);
+}
+
+function renderPerformanceMetrics(metrics) {
+  const container = document.querySelector('#portal-performance-metrics');
+  container.replaceChildren();
+  if (!metrics.length) { container.append(textElement('p', 'Performance metrics will appear here once E4LA publishes results for this engagement.', 'portal-metrics__empty')); return; }
+  const trendGlyph = { up: '↑', down: '↓', flat: '→' };
+  metrics.forEach((metric) => {
+    const tile = element('div', 'portal-metric');
+    tile.append(textElement('p', metric.label, 'portal-metric__label'));
+    const row = element('div', 'portal-metric__value-row');
+    row.append(textElement('span', metric.currentValue, 'portal-metric__value'));
+    if (metric.trend) row.append(textElement('span', `${trendGlyph[metric.trend] || ''} ${humanize(metric.trend)}`, `portal-metric__trend portal-metric__trend--${metric.trend}`));
+    tile.append(row);
+    if (metric.baselineValue) tile.append(textElement('p', `vs. ${metric.baselineValue}`, 'portal-metric__baseline'));
+    if (metric.interpretation) tile.append(textElement('p', metric.interpretation, 'portal-metric__interpretation'));
+    container.append(tile);
+  });
+}
+
 const portalTabs = [...document.querySelectorAll('[data-portal-tab]')];
 const portalSections = ['overview','project','deliverables','reports','agreements','billing'];
 portalTabs.forEach((tab) => {
@@ -186,7 +264,16 @@ async function logout() {
 function applyDemoState(data, state) {
   if (state === 'empty') { data.project = null; return; }
   if (state === 'no-deliverables') { data.deliverables = []; data.reports = []; data.action.required = false; }
-  if (state === 'completed') { data.project.status = 'completed'; data.project.currentPhase = 'Engagement complete'; data.action.required = false; data.currentWork = []; data.milestones.forEach((item) => { item.status = 'completed'; }); data.billing.paid = data.billing.total; data.billing.completedPayments = data.billing.installmentCount; data.billing.nextPayment = null; }
+  if (state === 'completed') {
+    data.project.status = 'completed'; data.project.currentPhase = 'Engagement complete'; data.action.required = false;
+    data.currentWork = []; data.milestones.forEach((item) => { item.status = 'completed'; });
+    data.billing.paid = data.billing.total; data.billing.completedPayments = data.billing.installmentCount; data.billing.nextPayment = null;
+    data.roadmap.forEach((phase) => { phase.status = 'completed'; phase.completedMilestoneCount = phase.milestoneCount; phase.clientActionRequired = false; });
+    data.progress = { ...data.progress, percentComplete: 100, qualitativeState: 'Complete', currentPhaseName: null, completedPhaseCount: data.progress.totalPhaseCount, nextPhaseName: null, remainingMilestoneCount: 0, statusLabel: 'Completed' };
+  }
+  if (state === 'no-progress-history') data.weeklyProgress = [];
+  if (state === 'no-metrics') data.performanceMetrics = [];
+  if (state === 'no-roadmap') { data.roadmap = []; data.progress = { ...data.progress, percentComplete: null, currentPhaseName: null, completedPhaseCount: 0, totalPhaseCount: 0, nextPhaseName: null, qualitativeState: 'In progress' }; }
 }
 
 function showAdminPreview() {
@@ -207,6 +294,10 @@ function normalizePortal(data) {
     deliverables: data.deliverables.filter((item) => item.deliverable_type !== 'report').map(normalizeDocument), reports: reports.map(normalizeDocument),
     agreement: firstAgreement ? { name: firstAgreement.program_name, version: firstAgreement.version_number, acceptedAt: formatDate(firstAgreement.accepted_at), plan: data.enrollment?.payment_plan_name || 'See accepted agreement', status: humanize(firstAgreement.status), documentUrl: data.documents.find((item) => item.document_type === 'agreement')?.external_url || null } : null,
     billing: { status: data.enrollment?.status, paid: Number(data.enrollment?.paid_amount || 0), total: Number(data.enrollment?.total_contract_value || 0), completedPayments: Number(data.enrollment?.completed_payments || 0), installmentCount: installmentAmounts.length || null, planName: data.enrollment?.payment_plan_name, nextPayment: data.enrollment?.next_payment_due_at ? formatDate(data.enrollment.next_payment_due_at) : null, nextAmount: Number(data.enrollment?.next_amount || 0) },
+    progress: data.progress || { percentComplete: null, qualitativeState: 'In progress', currentPhaseName: null, completedPhaseCount: 0, totalPhaseCount: 0, nextPhaseName: null, remainingMilestoneCount: 0, statusLabel: 'On Track' },
+    roadmap: data.roadmap || [],
+    weeklyProgress: data.weeklyProgress || [],
+    performanceMetrics: data.performanceMetrics || [],
   };
 }
 

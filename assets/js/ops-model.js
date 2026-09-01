@@ -58,6 +58,29 @@ export const samplePortal = Object.freeze({
   reports: [{ title: 'Visibility baseline', type: 'SEO + GEO report', date: 'August 16, 2026', status: 'Published', version: 'v1.0', description: 'Search, GEO, analytics, and experience baseline.', externalUrl: '#sample-report' }],
   agreement: { name: '90-Day Growth Program Agreement', version: 1, acceptedAt: 'August 12, 2026', plan: 'Three Monthly Installments', status: 'Accepted', documentUrl: null },
   billing: { status: 'current', paid: 120000, total: 360000, completedPayments: 1, installmentCount: 3, planName: 'Three Monthly Installments', nextPayment: 'September 12, 2026', nextAmount: 120000 },
+  progress: {
+    percentComplete: 38, qualitativeState: 'Underway', currentPhaseName: 'Visibility foundation',
+    completedPhaseCount: 1, totalPhaseCount: 5, nextPhaseName: 'Content and experience rollout',
+    remainingMilestoneCount: 3, statusLabel: 'On Track',
+  },
+  roadmap: [
+    { id: 'phase_demo_1', name: 'Discovery & measurement baseline', sequence: 1, status: 'completed', milestoneCount: 2, completedMilestoneCount: 2, targetStartDate: '2026-08-01', targetEndDate: '2026-08-16', clientActionRequired: false, clientActionNote: null },
+    { id: 'phase_demo_2', name: 'Visibility foundation', sequence: 2, status: 'current', milestoneCount: 3, completedMilestoneCount: 1, targetStartDate: '2026-08-17', targetEndDate: '2026-08-30', clientActionRequired: true, clientActionNote: 'Approve the homepage messaging proof.' },
+    { id: 'phase_demo_3', name: 'Content and experience rollout', sequence: 3, status: 'upcoming', milestoneCount: 2, completedMilestoneCount: 0, targetStartDate: '2026-09-01', targetEndDate: '2026-09-20', clientActionRequired: false, clientActionNote: null },
+    { id: 'phase_demo_4', name: 'Optimization', sequence: 4, status: 'upcoming', milestoneCount: 2, completedMilestoneCount: 0, targetStartDate: '2026-09-21', targetEndDate: '2026-10-15', clientActionRequired: false, clientActionNote: null },
+    { id: 'phase_demo_5', name: 'Final reporting', sequence: 5, status: 'upcoming', milestoneCount: 1, completedMilestoneCount: 0, targetStartDate: '2026-10-16', targetEndDate: '2026-11-10', clientActionRequired: false, clientActionNote: null },
+  ],
+  weeklyProgress: [
+    { weekNumber: 1, snapshotDate: '2026-08-09', completedMilestones: 1, totalMilestones: 10, percentComplete: 10 },
+    { weekNumber: 2, snapshotDate: '2026-08-16', completedMilestones: 2, totalMilestones: 10, percentComplete: 20 },
+    { weekNumber: 3, snapshotDate: '2026-08-23', completedMilestones: 3, totalMilestones: 10, percentComplete: 30 },
+    { weekNumber: 4, snapshotDate: '2026-08-30', completedMilestones: 4, totalMilestones: 10, percentComplete: 38 },
+  ],
+  performanceMetrics: [
+    { metricKey: 'local_visibility', label: 'Local visibility', category: 'visibility', currentValue: '+18%', baselineValue: 'Aug 1 baseline', trend: 'up', interpretation: 'Local pack appearances trending up since the visibility phase began.' },
+    { metricKey: 'indexed_pages', label: 'Indexed pages', category: 'visibility', currentValue: '142', baselineValue: '96 at kickoff', trend: 'up', interpretation: null },
+    { metricKey: 'technical_issues_resolved', label: 'Technical issues resolved', category: 'website_ux', currentValue: '9 of 12', baselineValue: null, trend: 'up', interpretation: null },
+  ],
 });
 
 export const sampleAdmin = Object.freeze({
@@ -118,7 +141,7 @@ export function analyticsEvent(name, properties = {}) {
 
 export function demoStateFromUrl() {
   const state = new URLSearchParams(location.search).get('state');
-  const allowed = new Set(['active','invalid','expired','reused','accepted','pending','returned','processing','failed','attention','confirmed','activation-pending','portal','validation','payment','empty','no-deliverables','completed','multiple','single','zero']);
+  const allowed = new Set(['active','invalid','expired','reused','accepted','pending','returned','processing','failed','attention','confirmed','activation-pending','portal','validation','payment','empty','no-deliverables','completed','multiple','single','zero','no-progress-history','no-metrics','no-roadmap']);
   return allowed.has(state) ? state : 'active';
 }
 

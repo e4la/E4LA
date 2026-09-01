@@ -28,11 +28,50 @@
       </nav>
       <section id="portal-overview" role="tabpanel" aria-labelledby="tab-overview">
         <section class="ops-card dashboard-feature dashboard-section" aria-labelledby="project-title"><div class="dashboard-feature__top"><div><p class="ops-eyebrow">Engagement summary</p><h2 id="project-title">—</h2><p id="project-summary">—</p></div><span class="ops-status ops-status--active" id="project-status">Active</span></div><dl class="dashboard-feature__meta"><div><dt>Current phase</dt><dd id="project-phase">—</dd></div><div><dt>Start date</dt><dd id="project-start">—</dd></div><div><dt>Expected timeline</dt><dd id="project-target">—</dd></div><div><dt>Next milestone</dt><dd id="project-next">—</dd></div></dl></section>
-        <section class="ops-alert ops-alert--info dashboard-section portal-action" id="client-action" aria-labelledby="client-action-title"><span class="portal-action__mark" aria-hidden="true">→</span><div><p class="ops-eyebrow">Action required</p><h2 id="client-action-title">Client action required</h2><p id="client-action-copy">—</p></div><span class="ops-status ops-status--attention">Your action</span></section>
-        <section class="ops-alert ops-alert--success dashboard-section" id="client-clear" hidden><span aria-hidden="true">✓</span><div><h2>You’re all caught up.</h2><p>E4LA will let you know here when an approval, asset, or decision is needed.</p></div></section>
+
+        <section class="ops-card portal-progress dashboard-section" id="portal-progress-overview" aria-labelledby="progress-overview-title">
+          <div class="dashboard-card-title"><div><p class="ops-eyebrow">Engagement health</p><h2 id="progress-overview-title">Overall project progress</h2></div><span class="ops-status" id="progress-status-label">—</span></div>
+          <div class="portal-progress__body">
+            <div class="portal-progress__ring" id="portal-progress-ring" role="img" aria-label="Progress">
+              <svg viewBox="0 0 120 120" width="120" height="120" aria-hidden="true">
+                <defs><linearGradient id="portal-progress-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F97316"></stop><stop offset="52%" stop-color="#DB2777"></stop><stop offset="100%" stop-color="#7C3AED"></stop></linearGradient></defs>
+                <circle class="portal-progress__track" cx="60" cy="60" r="52"></circle>
+                <circle class="portal-progress__value" id="progress-ring-value" cx="60" cy="60" r="52"></circle>
+              </svg>
+              <div class="portal-progress__ring-copy"><strong id="progress-percent-text">—</strong><span id="progress-qualitative-text">—</span></div>
+            </div>
+            <dl class="portal-progress__stats">
+              <div><dt>Current phase</dt><dd id="progress-current-phase">—</dd></div>
+              <div><dt>Phases complete</dt><dd id="progress-phase-count">—</dd></div>
+              <div><dt>Next phase</dt><dd id="progress-next-phase">—</dd></div>
+              <div><dt>Remaining milestones</dt><dd id="progress-remaining-milestones">—</dd></div>
+            </dl>
+          </div>
+        </section>
+
         <div class="ops-grid ops-grid--2 dashboard-section"><section class="ops-card ops-card__body" aria-labelledby="current-work-title"><div class="dashboard-card-title"><div><p class="ops-eyebrow">Now</p><h2 id="current-work-title">Current work</h2></div><span class="ops-status ops-status--active">In progress</span></div><div class="dashboard-work" id="current-work"></div></section><section class="ops-card ops-card__body" aria-labelledby="timeline-title"><div class="dashboard-card-title"><div><p class="ops-eyebrow">Next</p><h2 id="timeline-title">Project timeline</h2></div><button class="ops-link-button" type="button" data-open-tab="project">Full project</button></div><ol class="ops-timeline" id="portal-timeline"></ol></section></div>
+
+        <section class="dashboard-section" aria-labelledby="roadmap-title" id="portal-roadmap-section">
+          <div class="dashboard-section__head"><div><p class="ops-eyebrow">Engagement plan</p><h2 id="roadmap-title">Project roadmap</h2></div></div>
+          <ol class="portal-roadmap" id="portal-roadmap"></ol>
+        </section>
+
+        <div class="ops-grid ops-grid--2 dashboard-section" id="portal-progress-performance-grid">
+          <section class="ops-card ops-card__body" aria-labelledby="weekly-progress-title">
+            <div class="dashboard-card-title"><div><p class="ops-eyebrow">Momentum</p><h2 id="weekly-progress-title">Weekly progress</h2></div></div>
+            <div id="portal-weekly-chart"></div>
+          </section>
+          <section class="ops-card ops-card__body" aria-labelledby="performance-overview-title">
+            <div class="dashboard-card-title"><div><p class="ops-eyebrow">Results</p><h2 id="performance-overview-title">Performance overview</h2></div></div>
+            <div class="portal-metrics" id="portal-performance-metrics"></div>
+          </section>
+        </div>
+
         <section class="dashboard-section" aria-labelledby="completed-title"><div class="dashboard-section__head"><div><p class="ops-eyebrow">Ready for you</p><h2 id="completed-title">Recently published</h2></div><button class="ops-link-button" type="button" data-open-tab="deliverables">View library</button></div><div class="ops-grid ops-grid--3" id="completed-work"></div></section>
         <div class="ops-grid ops-grid--2 dashboard-section"><section class="ops-card ops-card__body" aria-labelledby="agreement-card-title"><div class="dashboard-card-title"><h2 id="agreement-card-title">Agreement</h2><span class="ops-status ops-status--complete" id="agreement-status">Accepted</span></div><p class="ops-list__title" id="portal-agreement-name">—</p><p class="ops-list__meta" id="portal-agreement-meta">—</p><button class="ops-button ops-button--secondary ops-mt-18" type="button" data-open-tab="agreements">View agreement record</button></section><section class="ops-card ops-card__body" aria-labelledby="billing-card-title"><div class="dashboard-card-title"><h2 id="billing-card-title">Billing</h2><span class="ops-status ops-status--complete" id="billing-status">Current</span></div><progress class="billing-bar" id="billing-progress" max="100" value="0" aria-label="Payment progress"></progress><div class="billing-numbers"><span id="billing-paid">—</span><span id="billing-total">—</span></div><p class="ops-list__meta ops-mt-18" id="billing-next">—</p><button class="ops-button ops-button--secondary ops-mt-18" type="button" data-open-tab="billing">View billing</button></section></div>
+
+        <section class="ops-alert ops-alert--info dashboard-section portal-action" id="client-action" aria-labelledby="client-action-title"><span class="portal-action__mark" aria-hidden="true">→</span><div><p class="ops-eyebrow">Action required</p><h2 id="client-action-title">Client action required</h2><p id="client-action-copy">—</p></div><span class="ops-status ops-status--attention">Your action</span></section>
+        <section class="ops-alert ops-alert--success dashboard-section" id="client-clear" hidden><span aria-hidden="true">✓</span><div><h2>You’re all caught up.</h2><p>E4LA will let you know here when an approval, asset, or decision is needed.</p></div></section>
       </section>
       <section id="portal-project" class="dashboard-section" role="tabpanel" aria-labelledby="tab-project" hidden><div class="portal-section-intro"><div><p class="ops-eyebrow">Project</p><h2>What E4LA is working through</h2><p>Published milestones and client-facing updates only. Internal operating notes remain private.</p></div></div><div class="ops-grid ops-grid--2"><section class="ops-card ops-card__body"><div class="dashboard-card-title"><h3>Milestone timeline</h3><span class="ops-status">Published</span></div><ol class="ops-timeline" id="project-timeline-full"></ol></section><section class="ops-card ops-card__body"><div class="dashboard-card-title"><h3>Project updates</h3><span class="ops-status">Client-facing</span></div><div class="dashboard-work" id="project-updates"></div></section></div></section>
       <section id="portal-deliverables" class="dashboard-section" role="tabpanel" aria-labelledby="tab-deliverables" hidden><div class="portal-section-intro"><div><p class="ops-eyebrow">Library</p><h2>Deliverables</h2><p>Approved work published by E4LA for your team.</p></div></div><div class="ops-grid ops-grid--3" id="deliverables-all"></div></section>
