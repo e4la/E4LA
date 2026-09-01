@@ -960,11 +960,22 @@ ul,ol{list-style:none}
   .impact-card p:not(.impact-card__org):not(.impact-card__note):not(.project-kicker){flex-basis:auto;width:100%}
   .tag-list{max-width:none}
   .impact-card .text-link,.impact-card .project-status{margin-top:4px}
-  /* Keep number+title side by side in the headline row even once the
-     rest of the card stacks — the generic .impact-card__identity{width:
-     100%} above would otherwise fight .impact-card__top for the same
-     row and wrap awkwardly. ID-scoped so it wins regardless of order. */
-  #professional-journey .impact-card__identity{width:auto;flex:1 1 auto}
+  /* Real mobile regression, fixed: keeping number+category+title in one
+     row (the previous approach here) left too little width once the
+     category label was more than a couple of words — .impact-card__top
+     refused to shrink (flex-shrink:0, inherited from the desktop rule)
+     and pushed .impact-card__identity's title past the right edge of
+     the viewport, invisible, clipped by .card's own overflow:hidden
+     rather than triggering a page-level scrollbar (which is why it
+     didn't show up in a document.scrollWidth check). Stacking the
+     headline itself removes the competition for width entirely: number
+     + category get their own full-width row, the title gets the next
+     one, wrapping normally like any other block. */
+  #professional-journey .impact-card__headline{flex-direction:column;align-items:stretch;gap:8px}
+  #professional-journey .impact-card__top{flex-shrink:1;min-width:0}
+  #professional-journey .impact-card__relationship{min-width:0}
+  #professional-journey .impact-card__identity{width:100%;flex:none;min-width:0}
+  #professional-journey .impact-card__identity h3{width:100%}
   /* The desktop-only widened top column for Impact Stories' larger
      titles is also ID-scoped, so it would otherwise keep beating this
      block's generic flex-basis:auto reset. Revert it explicitly here. */
@@ -1034,6 +1045,13 @@ ul,ol{list-style:none}
   .paint__stat{right:auto;left:50%;bottom:-8px;transform:translateX(-50%)}
   .final-cta{padding:24px}
   .documentary__art{padding:22px}
+  /* At 2 columns, narrow ~170px cards forced this section's two longest
+     chip labels ("Local Search & Google Business Profile", "Responsive
+     & Accessible Builds") to wrap 3 lines deep, losing the pill shape
+     and shrinking the effective touch target. One column below 560px
+     only — tablet keeps the existing 2-column layout from the 980px
+     rule, desktop is untouched. */
+  .capabilities-grid{grid-template-columns:1fr}
 }
 @media(max-width:480px){
   .organization-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 16px}
