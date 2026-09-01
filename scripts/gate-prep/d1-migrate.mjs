@@ -36,6 +36,11 @@ const EXPECTED_DATABASE_NAME = 'e4la-client-operations-preview';
 const EXPECTED_DATABASE_ID = '2d6a0170-f8b9-496d-acd4-50adf3cf9e58';
 const WRANGLER_CONFIG = 'wrangler.preview.jsonc';
 
+const MIGRATION_FILES = [
+  '0001_client_operations.sql', '0002_phase_c_preview.sql',
+  '0003_payment_plans_immutable.sql', '0004_project_progress.sql',
+];
+
 const EXPECTED_NEW_TABLES = ['project_phases', 'project_progress_snapshots', 'project_performance_metrics'];
 const EXPECTED_IMMUTABLE_TRIGGERS = [
   'agreement_versions_immutable_update', 'agreement_versions_immutable_delete',
@@ -129,8 +134,83 @@ function runQuery(configured, sql) {
     safeLog(`[${SCRIPT_NAME}] DRY RUN`, `would run query: ${sql}`);
     return null;
   }
+  return runQueryAlways(configured, sql);
+}
+
+// Unlike runQuery, this always executes - used for read-only reconciliation
+// checks that must run even under DRY_RUN, since detecting drift is itself
+// side-effect-free and DRY_RUN should report the real classification, not
+// skip straight to "would apply" without knowing whether that's even safe.
+function runQueryAlways(configured, sql) {
   const output = runWrangler(['d1', 'execute', configured.name, '--config', WRANGLER_CONFIG, '--remote', '--json', '--command', sql]);
   try { return JSON.parse(output); } catch { return output; }
+}
+
+export function parseMigrationObjectsFromSource(source) {
+  const tables = [...source.matchAll(/CREATE TABLE\s+(\w+)/gi)].map((match) => match[1]);
+  const triggers = [...source.matchAll(/CREATE TRIGGER\s+(\w+)/gi)].map((match) => match[1]);
+  return { tables, triggers, all: [...tables, ...triggers] };
+}
+
+function parseMigrationObjects(migrationFile) {
+  return parseMigrationObjectsFromSource(readFileSync(path.join(repoRoot, 'migrations', migrationFile), 'utf8'));
+}
+
+// Pure classification logic, deliberately separated from any wrangler/network
+// call so it can be unit-tested with synthetic inputs (see
+// tests/phase-f-gate-prep.test.mjs) without mocking child_process. Given
+// what actually exists live and what bookkeeping actually claims, classifies
+// each migration as one of:
+//   NOT_PRESENT               - none of its tables/triggers exist, not recorded - safe to apply
+//   FULLY_APPLIED             - all of its tables/triggers exist, and it IS recorded - safe (wrangler will skip)
+//   SCHEMA_PRESENT_JOURNAL_MISSING - all of its tables/triggers exist, but NOT recorded - UNSAFE to blind-apply
+//   PARTIALLY_PRESENT         - some but not all of its tables/triggers exist - UNSAFE regardless of bookkeeping
+//   UNKNOWN                   - recorded as applied but none of its objects exist - anomalous, UNSAFE
+export function classifyMigrationDrift(liveObjectNames, recordedMigrationNames, migrationObjectsByFile) {
+  const liveObjects = new Set(liveObjectNames);
+  const recordedMigrations = new Set(recordedMigrationNames);
+  const classification = {};
+  for (const [file, objects] of Object.entries(migrationObjectsByFile)) {
+    const existingCount = objects.filter((name) => liveObjects.has(name)).length;
+    const recorded = recordedMigrations.has(file);
+    let state;
+    if (existingCount === 0 && !recorded) state = 'NOT_PRESENT';
+    else if (existingCount === objects.length && recorded) state = 'FULLY_APPLIED';
+    else if (existingCount === objects.length && !recorded) state = 'SCHEMA_PRESENT_JOURNAL_MISSING';
+    else if (existingCount > 0 && existingCount < objects.length) state = 'PARTIALLY_PRESENT';
+    else state = 'UNKNOWN'; // existingCount === 0 && recorded - claimed applied but nothing there
+    classification[file] = { state, existingCount, totalObjects: objects.length, recorded };
+  }
+  const unsafe = Object.entries(classification).filter(([, info]) => !['NOT_PRESENT', 'FULLY_APPLIED'].includes(info.state));
+  return { classification, safe: unsafe.length === 0, unsafe };
+}
+
+// Reconciles the ACTUAL live schema against what migration bookkeeping
+// (d1_migrations) claims, per migration file - not just wrangler's own
+// `migrations list`, which only reads that same bookkeeping table and will
+// confidently report a migration as "pending" even when its tables already
+// exist live (exactly the state this function exists to catch: someone ran
+// `wrangler d1 execute --file=...` directly at some point, which applies the
+// SQL but never records it in d1_migrations).
+//
+// Throws GuardrailError (refusing to proceed to `wrangler d1 migrations
+// apply` at all) unless every migration classifies as NOT_PRESENT or
+// FULLY_APPLIED - anything else means a human needs to look at this
+// database before any further automated action is safe.
+function detectSchemaJournalDrift(configured) {
+  const objectRows = runQueryAlways(configured, "SELECT name, type FROM sqlite_master WHERE type IN ('table','trigger')");
+  const liveObjectNames = (objectRows?.[0]?.results || []).map((row) => row.name);
+
+  let recordedMigrationNames = [];
+  const migrationsTableExists = liveObjectNames.includes('d1_migrations');
+  if (migrationsTableExists) {
+    const recordedRows = runQueryAlways(configured, 'SELECT name FROM d1_migrations');
+    recordedMigrationNames = (recordedRows?.[0]?.results || []).map((row) => row.name);
+  }
+
+  const migrationObjectsByFile = Object.fromEntries(MIGRATION_FILES.map((file) => [file, parseMigrationObjects(file).all]));
+  const result = classifyMigrationDrift(liveObjectNames, recordedMigrationNames, migrationObjectsByFile);
+  return { ...result, migrationsTableExists };
 }
 
 function verifySchema(configured) {
@@ -170,24 +250,48 @@ async function main() {
   printModeBanner(SCRIPT_NAME);
   const configured = confirmIdentity();
   const status = listMigrationStatus(configured);
-  if (status.raw) safeLog(`[${SCRIPT_NAME}] migration status`, status.raw.trim().split('\n').slice(0, 10).join(' | '));
+  if (status.raw) safeLog(`[${SCRIPT_NAME}] migration status (wrangler's bookkeeping only - see reconciliation below for the real check)`, status.raw.trim().split('\n').slice(0, 10).join(' | '));
+
+  const drift = detectSchemaJournalDrift(configured);
+  console.log('\n=== schema/journal reconciliation (live schema vs. d1_migrations bookkeeping, not just `wrangler d1 migrations list`) ===');
+  for (const [file, info] of Object.entries(drift.classification)) {
+    console.log(`  ${file}: ${info.state} (${info.existingCount}/${info.totalObjects} objects present live, recorded=${info.recorded})`);
+  }
+  if (!drift.migrationsTableExists) console.log('  Note: d1_migrations bookkeeping table does not exist at all yet.');
+
+  if (!drift.safe) {
+    const details = drift.unsafe.map(([file, info]) => `${file}: ${info.state}`).join('; ');
+    throw new GuardrailError(
+      `Refusing to run \`wrangler d1 migrations apply\` - live schema does not cleanly match migration bookkeeping for: ${details}. `
+      + 'Blindly applying here risks duplicate/conflicting DDL against tables or triggers that may already exist. '
+      + 'This requires manual reconciliation, not an automated fix: inspect the exact drift above, confirm whether each already-present migration was genuinely applied correctly (compare column-by-column against the migration file), '
+      + 'and if so, record it explicitly with `INSERT INTO d1_migrations (name, applied_at) VALUES (\'<file>\', CURRENT_TIMESTAMP)` via `wrangler d1 execute` yourself before re-running this script. Nothing has been changed by this run.',
+    );
+  }
+  safeLog(`[${SCRIPT_NAME}] reconciliation`, 'clean - every migration is either fully absent or fully applied-and-recorded; safe to proceed');
 
   const applyResult = applyMigrations(configured);
   const schema = verifySchema(configured);
 
   console.log('\n=== d1-migrate summary ===');
   console.log('CONFIGURED:', `target ${configured.name} (${configured.id}), migrations 0001-0004`);
-  console.log('TESTED:', applyResult.dryRun ? 'DRY RUN - nothing applied, nothing verified' : 'wrangler d1 migrations apply, then live schema/trigger/publication-field checks');
+  console.log('TESTED:', applyResult.dryRun ? 'DRY RUN - nothing applied, nothing verified' : 'schema/journal reconciliation, then wrangler d1 migrations apply, then live schema/trigger/publication-field checks');
   console.log('EVIDENCE:', JSON.stringify(schema, null, 2));
   console.log('REGRESSION CHECK:', applyResult.dryRun ? 'n/a (dry run)' : 'existing tables/triggers from 0001-0003 unaffected - migrations are additive only, verified no DROP/ALTER of pre-existing columns in any migration file');
 }
 
-main().catch((error) => {
-  if (error instanceof GuardrailError) {
-    console.error(`\n[${SCRIPT_NAME}] BLOCKED: ${error.message}`);
-    process.exitCode = 1;
-  } else {
-    console.error(`\n[${SCRIPT_NAME}] FAILED: ${error.message}`);
-    process.exitCode = 1;
-  }
-});
+// Only run when executed directly (`node d1-migrate.mjs`), never as a side
+// effect of another module importing its exported pure functions (tests
+// import classifyMigrationDrift/parseMigrationObjectsFromSource from this
+// file - that must never trigger a real wrangler invocation).
+if (process.argv[1] && import.meta.url === `file://${path.resolve(process.argv[1])}`) {
+  main().catch((error) => {
+    if (error instanceof GuardrailError) {
+      console.error(`\n[${SCRIPT_NAME}] BLOCKED: ${error.message}`);
+      process.exitCode = 1;
+    } else {
+      console.error(`\n[${SCRIPT_NAME}] FAILED: ${error.message}`);
+      process.exitCode = 1;
+    }
+  });
+}
