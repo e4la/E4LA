@@ -167,6 +167,31 @@ ul,ol{list-style:none}
 .section-head p{margin-top:14px;max-width:650px;color:var(--muted);font-family:var(--font-primary);font-size:var(--text-body);line-height:var(--line-height-body);font-weight:var(--fw-body)}
 .section-head--split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.85fr);gap:clamp(20px,3vw,48px);align-items:end}
 .section-head--split p{margin-top:0}
+/* Section mascot header — a decorative visual identifier reused across
+   Impact Stories, Digital Work, Professional Journey and Media (each
+   pointing at the matching assets/our-work/hero/*.webp already shown for
+   that section in the hero rail) with that same panel's glow/scrim
+   treatment, scaled up into a real section identifier rather than a
+   small icon. No title/meta text baked in: purely an image, aria-hidden. */
+.section-head--mascot{grid-template-columns:auto minmax(0,1fr) minmax(0,.8fr);align-items:center;gap:clamp(24px,3.4vw,52px)}
+/* Square frame (was circular) — refined sharp-corner treatment, not a
+   rounded pill. --mascot-rgb carries the per-section accent (set below,
+   one per body section) with the original blue as a harmless fallback;
+   only the colour changes per section, frame size/border-width/glow
+   intensity/mascot treatment all stay identical across the four. */
+.section-head__mascot{position:relative;width:clamp(150px,12.6vw,204px);aspect-ratio:1;border-radius:14px;overflow:hidden;border:1px solid rgba(var(--mascot-rgb,79,125,255),.42);background:radial-gradient(circle at 50% 22%,rgba(var(--mascot-rgb,79,125,255),.34),rgba(5,7,18,.94) 72%);box-shadow:0 0 0 1px rgba(var(--mascot-rgb,79,125,255),.2),0 20px 46px rgba(0,0,0,.42)}
+.section-head__mascot-media{position:absolute;inset:0}
+.section-head__mascot-media img{width:100%;height:100%;object-fit:cover;object-position:50% 26%;mix-blend-mode:screen;opacity:.92}
+.section-head__mascot-scrim{position:absolute;inset:0;background:radial-gradient(circle at 50% 105%,rgba(3,4,12,.55),transparent 62%)}
+/* Four-section identity sequence, purple -> pink -> orange -> yellow,
+   replacing the single shared blue every section used previously. Values
+   reuse existing on-palette tones already used elsewhere on this page
+   (--purple/--pink/--orange on various impact-card accents; gold is the
+   page's established warm-yellow). No new colours introduced. */
+#impact-stories .section-head__mascot{--mascot-rgb:168,85,247}
+#digital-work .section-head__mascot{--mascot-rgb:233,75,185}
+#professional-journey .section-head__mascot{--mascot-rgb:255,138,76}
+#media-production .section-head__mascot{--mascot-rgb:200,168,75}
 
 /* ── FROSTED GLASS CARD MATERIAL (mirrors about.css) ─────── */
 .card{
@@ -523,32 +548,180 @@ ul,ol{list-style:none}
 .trademark-note{margin-top:26px;max-width:900px;color:rgba(236,242,255,.6);font-size:12px;line-height:1.6}
 .empty-message{grid-column:1/-1;padding:34px;text-align:center;color:var(--muted);font-size:14px}
 
-/* ── IMPACT STORIES ───────────────────────────────────────── */
-.impact-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.impact-card{padding:24px;display:flex;flex-direction:column;gap:14px}
+/* ── IMPACT STORIES / PROFESSIONAL JOURNEY (shared row system) ──────
+   Both sections use .impact-grid / .impact-card — four full-width
+   horizontal rows instead of a 2x2 grid, so the two sections read as
+   one deliberately related editorial system rather than two designs. */
+.impact-grid{display:flex;flex-direction:column;gap:14px}
+.impact-card{padding:clamp(20px,2.2vw,28px) clamp(22px,2.8vw,34px);display:flex;align-items:center;gap:clamp(20px,2.8vw,36px)}
+/* Selected Impact Stories sequence: purple -> pink -> orange -> yellow/
+   gold. Professional Journey: row 1 (enrich) approved as-is (violet);
+   rows 2-4 corrected to pink -> orange -> gold. --accent-rgb drives the
+   number ring/solar glow/border everywhere already, so retuning these
+   eight values is the entire fix — no other rule needs to change. */
 .impact-card--enrich{--accent-rgb:124,60,255;--card-line:rgba(124,60,255,.34)}
-/* No longer the odd one out with a full-bleed image split — flattened to
-   the same plain flex-column layout as every other impact card so the
-   four read as one consistent set. Keep the accent tint. */
-.impact-card--mortgage{--accent-rgb:79,125,255;--card-line:rgba(79,125,255,.34)}
-.impact-card--paint{--accent-rgb:200,168,75;--card-line:rgba(200,168,75,.34)}
-.impact-card--radio{--accent-rgb:255,138,76;--card-line:rgba(255,138,76,.34)}
-.impact-card__top{position:relative;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.impact-card__number{width:34px;height:34px;flex:0 0 auto;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(var(--accent-rgb,124,60,255),.6);color:#fff;font-size:12px;font-weight:800;box-shadow:0 0 20px rgba(var(--accent-rgb,124,60,255),.2) inset}
-.impact-card__relationship{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.impact-card--mortgage{--accent-rgb:168,85,247;--card-line:rgba(168,85,247,.34)}
+.impact-card--paint{--accent-rgb:255,138,76;--card-line:rgba(255,138,76,.34)}
+.impact-card--radio{--accent-rgb:233,75,185;--card-line:rgba(233,75,185,.34)}
+.impact-card--weho{--accent-rgb:233,75,185;--card-line:rgba(233,75,185,.34)}
+.impact-card--e4la{--accent-rgb:200,168,75;--card-line:rgba(200,168,75,.34)}
+.impact-card--jeffreys{--accent-rgb:255,138,76;--card-line:rgba(255,138,76,.34)}
+.impact-card--saffron{--accent-rgb:200,168,75;--card-line:rgba(200,168,75,.34)}
+/* Column 1 — number, relationship label, dates. Fixed-ish width so every
+   row's identity column lines up regardless of label length. */
+.impact-card__top{position:relative;flex:0 0 clamp(108px,10vw,148px);display:flex;flex-direction:column;align-items:flex-start;gap:9px}
+.impact-card__relationship{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;line-height:1.35}
+/* Selected Impact Stories only — these four labels (Website & Digital
+   Engagement, etc.) are the row's real title, not a small eyebrow, so
+   they get roughly double the base size. The column widens to match
+   (108-148px -> 230-320px) so two-word phrases wrap across two lines
+   instead of one-word-per-line; identity/description keep their own
+   widths since the description column can flex-shrink to absorb it.
+   Professional Journey keeps the original compact label — not part of
+   this section's affected-titles list. */
+#impact-stories .impact-card__top{flex-basis:clamp(230px,22vw,320px)}
+#impact-stories .impact-card__relationship{font-size:clamp(15px,1.6vw,20px);line-height:1.22}
+.project-dates{color:var(--muted);font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+/* Column 2 — org + headline. Fixed-ish width so a short row (Professional
+   Journey) doesn't collapse narrower than a longer one above it. */
+.impact-card__identity{flex:0 0 clamp(190px,19vw,250px)}
 .impact-card__org{position:relative;margin-bottom:6px;color:#b785ff;font-size:13px;font-weight:800;letter-spacing:.02em}
-.impact-card h3{position:relative;color:#fff;font-size:clamp(18px,1.5vw,23px);line-height:1.24;font-weight:800}
-/* :not() exclusions matter here — .impact-card__org / .project-kicker
-   are <p> elements too, and a bare ".impact-card p" (one class + one
-   type) outranks a single-class label rule, which silently reset the
-   labels to body colour and size. */
-.impact-card p:not(.impact-card__org):not(.impact-card__note):not(.project-kicker){position:relative;color:var(--soft);font-size:14px;line-height:1.62}
+.impact-card h3{position:relative;color:#fff;font-size:clamp(17px,1.3vw,20px);line-height:1.28;font-weight:800}
+/* Column 3 — description, takes the remaining row width. :not() exclusions
+   matter here — .impact-card__org / .project-kicker are <p> elements too,
+   and a bare ".impact-card p" (one class + one type) outranks a
+   single-class label rule, which silently reset the labels to body
+   colour and size. */
+.impact-card p:not(.impact-card__org):not(.impact-card__note):not(.project-kicker){position:relative;flex:1 1 320px;min-width:0;color:var(--soft);font-size:13.5px;line-height:1.6}
 /* De-emphasised at Nasim's request — see the HTML comment on
    .impact-card--enrich. Weight only, not size: dropping size too would
-   misalign its baseline against the other three impact-card h3s. */
+   misalign its baseline against the other impact-card h3s. */
 .impact-card--enrich h3{font-weight:600}
-.tag-list{position:relative;display:flex;flex-wrap:wrap;gap:7px;margin-top:auto;padding-top:6px}
+/* Column 4 — tags, a CTA link, or the Professional Journey status badge:
+   whichever a given row has, it sits at the row's trailing end. */
+.tag-list{position:relative;flex:0 0 auto;display:flex;flex-wrap:wrap;gap:7px;max-width:260px}
 .tag-list li{border:1px solid rgba(124,60,255,.34);border-radius:6px;padding:6px 9px;background:rgba(124,60,255,.1);color:#d7c4ff;font-size:10px;font-weight:800;line-height:1}
+.impact-card .text-link,.impact-card .project-status{flex:0 0 auto;align-self:center;margin-top:0}
+/* Professional Journey only — three stacked zones per row (headline,
+   description, tags) instead of Impact Stories' single horizontal row.
+   .impact-card__top/__identity keep their own shared rules unchanged
+   (still used as-is by Impact Stories); here they're just laid out
+   side by side inside a new .impact-card__headline wrapper instead of
+   beside the description. align-items:stretch (overriding the shared
+   row's :center) is what lets the description and tag-list fill the
+   full card width below it. */
+#professional-journey .impact-card{flex-direction:column;align-items:stretch;gap:12px}
+#professional-journey .impact-card__headline{display:flex;align-items:center;gap:16px}
+#professional-journey .impact-card__identity{flex:1 1 auto}
+#professional-journey .impact-card p:not(.impact-card__org):not(.impact-card__note):not(.project-kicker){flex:none;width:100%}
+#professional-journey .tag-list{max-width:none;width:100%}
+#professional-journey .impact-card .project-status{align-self:flex-start}
+/* ── IMPACT/JOURNEY NUMBER — enlarged, glowing, a small sun orbiting the
+   ring. Two synchronised pseudo-elements, same keyframe/duration so they
+   always sit at the same angle: ::after is the sun itself, sitting right
+   on the ring's edge with three stacked radial-gradients (bright
+   warm-white core, amber mid-glow, soft outer halo) so light reads as
+   bloom rather than a hard-edged dot, extending a little outside the
+   ring; ::before is a softer echo just inside the ring, screen-blended so
+   it can only brighten (never sit as an opaque patch over the digit),
+   giving the "light spills toward the number" half of the effect without
+   ever obscuring it. Slow rotation (9s) is deliberate: faster read as a
+   loading spinner in review. */
+.impact-card__number{
+  position:relative;
+  width:clamp(50px,4.8vw,62px);height:clamp(50px,4.8vw,62px);
+  flex:0 0 auto;display:grid;place-items:center;
+  border-radius:50%;
+  border:1px solid rgba(var(--accent-rgb,124,60,255),.65);
+  background:radial-gradient(circle at 50% 28%,rgba(var(--accent-rgb,124,60,255),.32),rgba(5,7,18,.94) 74%);
+  color:#fff;font-size:clamp(17px,1.6vw,21px);font-weight:800;font-variant-numeric:tabular-nums;
+  box-shadow:0 0 0 1px rgba(var(--accent-rgb,124,60,255),.28),0 0 24px rgba(var(--accent-rgb,124,60,255),.5),inset 0 0 18px rgba(var(--accent-rgb,124,60,255),.28);
+}
+.impact-card__number::before{
+  content:"";position:absolute;inset:7px;border-radius:50%;pointer-events:none;
+  mix-blend-mode:screen;
+  background:radial-gradient(circle 5px at 50% 5px,rgba(255,241,214,.6) 0%,rgba(255,201,120,.26) 55%,rgba(255,201,120,0) 82%);
+  animation:number-orbit 9s linear infinite;
+}
+.impact-card__number::after{
+  content:"";position:absolute;inset:-15px;border-radius:50%;pointer-events:none;
+  background:
+    radial-gradient(circle 3.5px at 50% 15px,#fffdf6 0%,#fff1cf 55%,rgba(255,241,207,0) 100%),
+    radial-gradient(circle 9px at 50% 15px,rgba(255,203,126,.65) 0%,rgba(255,166,74,.34) 48%,rgba(255,166,74,0) 80%),
+    radial-gradient(circle 17px at 50% 15px,rgba(255,178,88,.22) 0%,rgba(255,150,60,0) 78%);
+  animation:number-orbit 9s linear infinite;
+}
+@keyframes number-orbit{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){
+  /* Both halves settle at their unrotated position — a still, warm
+     highlight and its inward echo at the top of the ring, not a
+     mid-spin freeze. */
+  .impact-card__number::before,.impact-card__number::after{animation:none}
+}
+
+/* ── CAPABILITIES ─────────────────────────────────────────── */
+.capabilities-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.capability-group{--accent-rgb:200,168,75;--card-line:rgba(200,168,75,.3);padding:20px;position:relative;isolation:isolate;transition:transform 280ms var(--ease-out),border-color var(--dur) ease,box-shadow 280ms var(--ease-out),background var(--dur) ease}
+/* Tactile hover/focus — lift, a touch of scale, and a stronger shadow +
+   a thin accent-tinted edge on top of .card's own generic hover state.
+   Kept small and slow on purpose (per Nasim's explicit "no dramatic zoom
+   / no springy bounce" direction) — this should read as a premium
+   interface responding to the cursor, not a game UI. */
+.capability-group:hover,.capability-group:focus-within{
+  transform:translateY(-6px) scale(1.02);
+  box-shadow:var(--glass-depth-hover),0 0 0 1px rgba(var(--accent-rgb,200,168,75),.25),0 26px 48px rgba(0,0,0,.4);
+}
+@media(prefers-reduced-motion:reduce){
+  .capability-group:hover,.capability-group:focus-within{transform:none}
+}
+.capability-group h3{position:relative;color:#fff;font-size:15px;font-weight:800;line-height:1.25}
+.capability-group .capability-chips{position:relative;margin-top:16px}
+/* Replaces an earlier rotating gradient-border treatment that read as too
+   busy. A translucent E4LA-gradient fill now rises slowly from the card's
+   own bottom edge, recedes back down, and repeats — like a very slow,
+   quiet tide rather than a moving border. Pure `transform:scaleY`
+   (compositor-only, no layout/paint cost per frame) rather than animating
+   height directly. mask-image feathers the rising edge instead of a hard
+   line, and stands in for a blur filter at a fraction of the paint cost.
+   Sits behind the real content (plain DOM/paint order, same as .card's
+   own ::before wash elsewhere on the page) — h3/.capability-chips already
+   carry position:relative so they stay on top. */
+.capability-group::before{
+  content:"";position:absolute;inset:auto 0 0 0;height:100%;border-radius:inherit;
+  pointer-events:none;z-index:0;
+  background:linear-gradient(0deg,
+    rgba(124,60,255,.26) 0%,
+    rgba(219,39,119,.22) 40%,
+    rgba(249,115,22,.18) 66%,
+    rgba(200,168,75,.13) 86%,
+    rgba(200,168,75,0) 100%);
+  mask-image:linear-gradient(to top,#000 0%,#000 52%,transparent 100%);
+  -webkit-mask-image:linear-gradient(to top,#000 0%,#000 52%,transparent 100%);
+  transform-origin:50% 100%;
+  transform:scaleY(.14);
+  animation:capability-fill 12s ease-in-out infinite;
+}
+@keyframes capability-fill{
+  0%,100%{transform:scaleY(.14)}
+  50%{transform:scaleY(.78)}
+}
+/* Small per-card offsets so the five cards breathe as one calm system
+   rather than pulsing in lockstep. */
+.capability-group:nth-child(1)::before{animation-delay:0s}
+.capability-group:nth-child(2)::before{animation-delay:1.6s}
+.capability-group:nth-child(3)::before{animation-delay:3.2s}
+.capability-group:nth-child(4)::before{animation-delay:4.8s}
+.capability-group:nth-child(5)::before{animation-delay:6.4s}
+@media(prefers-reduced-motion:reduce){
+  .capability-group::before{animation:none;transform:scaleY(.4)}
+}
+/* Section-title-level typography for the capability labels themselves —
+   same family/weight as headings like "Strategy & Growth", just smaller,
+   so the individual skills read with heading authority rather than as a
+   generic tag list. Scoped here only: .capability-chips is shared with
+   the Paint Events section, which is unaffected. */
+.capability-group .capability-chips li{font-family:var(--font-primary);font-size:12.5px;font-weight:800;padding:8px 12px}
+
 /* ── PAINT EVENTS / TEAM BUILDING ─────────────────────────── */
 .paint__layout{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1fr);gap:clamp(26px,3.4vw,56px);align-items:center}
 /* width:100% is load-bearing. With only max-width + justify-self:center
@@ -571,7 +744,11 @@ ul,ol{list-style:none}
    circle here would be the only opaque logo surface left on the page.
    The concentric rings still carry the composition. */
 .paint__logo-wrap{position:relative;width:64%;aspect-ratio:1;display:grid;place-items:center;border-radius:50%;background:none}
-.paint__logo-wrap img{width:74%;height:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:.88}
+/* Original-color mark here deliberately — this is Paint Events' own brand
+   identity as a business, not a wall entry, so no monochrome/invert
+   treatment (unlike the organization wall's silhouette version of the
+   same logo, which stays untouched). */
+.paint__logo-wrap img{width:74%;height:auto;object-fit:contain;opacity:1}
 /* ── PAINT EVENT-PHOTO FRAMES ─────────────────────────────
    Eight frames sit stacked dead centre at --paint-open:0 and fan out onto
    a ring of radius --paint-r as it reaches 1. Each frame rotates to its
@@ -622,22 +799,53 @@ ul,ol{list-style:none}
 .capability-chips li{border:1px solid rgba(255,138,76,.3);border-radius:6px;padding:7px 10px;background:rgba(255,138,76,.09);color:#ffd9bf;font-size:10.5px;font-weight:800;line-height:1}
 
 /* ── DIGITAL / UX / AI ────────────────────────────────────── */
-.project-feature{--accent-rgb:79,125,255;--card-line:rgba(79,125,255,.32);display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1fr);gap:0;align-items:stretch;margin-bottom:16px}
-.project-feature__visual{position:relative;min-height:300px;overflow:hidden}
-.project-feature__visual img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.project-feature{--accent-rgb:79,125,255;--card-line:rgba(79,125,255,.32);display:flex;flex-direction:column;margin-bottom:10px}
+.project-feature__top{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
+.project-feature__mark{position:relative;flex:0 0 auto;width:52px;height:52px;display:grid;place-items:center;border-radius:9px;background:rgba(255,255,255,.03);overflow:hidden}
+.project-feature__mark img{width:100%;height:100%;object-fit:contain}
 /* This slot's default (cover, cropped to fill) suits a wide website
    screenshot, not a portrait branded logo — cover would crop into the
    "Est. 1985" line. contain shows the whole mark instead. No fill here:
    the logo PNG is transparent, so the card's own shared glass background
    (.card's --glass-fill) shows through instead of a separate solid box. */
-.project-feature__visual--logo img{object-fit:contain;object-position:center}
-.project-feature__content{position:relative;padding:26px;display:flex;flex-direction:column;gap:14px}
+.project-feature__mark--mortgage{width:64px;height:64px}
+.project-feature__mark--innoghte{width:40px;height:40px}
+.project-feature__identity{min-width:0;flex:1 1 auto;display:flex;flex-wrap:wrap;align-items:baseline;column-gap:12px;row-gap:1px}
+.project-feature__identity .project-kicker{flex:1 1 100%}
+.project-feature__identity h3{color:#fff;font-size:clamp(16px,1.2vw,19px);line-height:1.25;font-weight:800}
+.project-feature__identity .project-dates{margin-left:auto}
+/* Optical, not uniform, sizing — carried over from the previous
+   panel-based layout. These five source PNGs have very different amounts
+   of built-in canvas padding around the actual mark (checked via each
+   file's real alpha-channel content box), so an identical box would
+   produce very different visible mark sizes. Mortgage Bankers' own mark
+   fills only ~54% of its canvas height (real padding baked in); the
+   other four fill 93-100% of theirs. Innoghte stays smallest of the five
+   to match its reduced-priority position in this list (sized above,
+   with .project-feature__mark--mortgage/--innoghte). */
+/* Innoghte/Hosein Aura only — kept in the same component (so none of its
+   verified detail is lost) but visibly one tier down from the four
+   flagship projects above it: tighter spacing throughout. */
+.project-feature--minor{margin-top:2px}
+.project-feature--minor .project-feature__top{padding:11px 16px}
+.project-feature--minor .project-feature__body{padding:14px 16px 16px}
+.project-feature--minor .project-feature__identity h3{font-size:clamp(15px,1.1vw,17px)}
+.project-feature--minor .status-grid{gap:8px}
+.project-feature--minor .status{padding:11px}
+.project-feature__body{position:relative;padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px}
 .project-kicker{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
-.project-feature__content h3{color:#fff;font-size:clamp(20px,1.7vw,27px);line-height:1.2;font-weight:800}
-.project-feature__content p:not(.project-kicker){color:var(--soft);font-size:14px;line-height:1.62}
-.status-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:2px}
+.project-feature__body p:not(.project-kicker){color:var(--soft);font-size:13px;line-height:1.5}
+/* Paint Events / Innoghte tags — .tag-list's shared max-width:260px
+   exists for the narrow trailing column it sits in on Impact Stories
+   rows; inherited here it forced 8-9 tags to wrap 4-5 lines deep for no
+   reason, since the full-width card body has plenty of room. Removing
+   the cap first (rather than shrinking font-size) is enough on its own
+   at desktop widths; flex-wrap stays on as the tablet/mobile fallback. */
+.project-feature__body .tag-list{max-width:none;gap:6px}
+.project-feature__body .tag-list li{padding:5px 8px}
+.status-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:0}
 .status-grid--2col{grid-template-columns:repeat(2,minmax(0,1fr))}
-.status{padding:14px;border-radius:9px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.055);box-shadow:var(--glass-depth-inner)}
+.status{padding:12px;border-radius:9px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.055);box-shadow:var(--glass-depth-inner)}
 .status h4{margin-bottom:9px;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
 .status--complete h4{color:#7ee0b0}
 .status--progress h4{color:#ffd166}
@@ -655,7 +863,7 @@ ul,ol{list-style:none}
 .status--neutral h4{color:var(--gold-lt)}
 .status--neutral li::before{background:var(--gold-lt)}
 .coming-soon{align-self:flex-start;margin-top:auto;padding:8px 13px;border-radius:999px;border:1px dashed rgba(200,168,75,.5);color:var(--gold-lt);font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
-.project-feature__content>.text-link{margin-top:auto}
+.project-feature__body>.text-link{margin-top:auto}
 .project-feature__quote{padding-left:14px;border-left:2px solid var(--gold-lt);color:rgba(255,255,255,.86);font-size:13.5px;font-style:italic;line-height:1.6}
 
 .project-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
@@ -723,14 +931,14 @@ ul,ol{list-style:none}
 /* ── RESPONSIVE ───────────────────────────────────────────── */
 @media(max-width:1280px){
   .organization-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .capabilities-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media(max-width:1100px){
   .hero-grid{grid-template-columns:1fr;gap:30px}
   .hero-copy{max-width:760px}
   .hero-rail{height:clamp(280px,42vw,380px)}
   .section-head--split{grid-template-columns:1fr;align-items:start;gap:14px}
-  .impact-grid{grid-template-columns:1fr}
-  .project-feature{grid-template-columns:1fr}
+  .section-head__mascot{width:130px;border-radius:11px;margin-bottom:4px}
   .media-grid{grid-template-columns:1fr}
   .paint__layout{grid-template-columns:1fr}
   /* Ring radius and frame size step down with the circle — see the note on
@@ -741,8 +949,37 @@ ul,ol{list-style:none}
   .metrics__grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .organization-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
   .project-grid{grid-template-columns:1fr}
+  .capabilities-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .documentary{grid-template-columns:1fr}
   .status-grid{grid-template-columns:1fr}
+  /* Rows switch from a horizontal layout to a stacked one below tablet
+     width, where four fixed-width columns no longer fit comfortably. */
+  .impact-card{flex-direction:column;align-items:flex-start;gap:14px}
+  .impact-card__top{flex-direction:row;align-items:center;flex-basis:auto;width:auto}
+  .impact-card__identity{flex-basis:auto;width:100%}
+  .impact-card p:not(.impact-card__org):not(.impact-card__note):not(.project-kicker){flex-basis:auto;width:100%}
+  .tag-list{max-width:none}
+  .impact-card .text-link,.impact-card .project-status{margin-top:4px}
+  /* Real mobile regression, fixed: keeping number+category+title in one
+     row (the previous approach here) left too little width once the
+     category label was more than a couple of words — .impact-card__top
+     refused to shrink (flex-shrink:0, inherited from the desktop rule)
+     and pushed .impact-card__identity's title past the right edge of
+     the viewport, invisible, clipped by .card's own overflow:hidden
+     rather than triggering a page-level scrollbar (which is why it
+     didn't show up in a document.scrollWidth check). Stacking the
+     headline itself removes the competition for width entirely: number
+     + category get their own full-width row, the title gets the next
+     one, wrapping normally like any other block. */
+  #professional-journey .impact-card__headline{flex-direction:column;align-items:stretch;gap:8px}
+  #professional-journey .impact-card__top{flex-shrink:1;min-width:0}
+  #professional-journey .impact-card__relationship{min-width:0}
+  #professional-journey .impact-card__identity{width:100%;flex:none;min-width:0}
+  #professional-journey .impact-card__identity h3{width:100%}
+  /* The desktop-only widened top column for Impact Stories' larger
+     titles is also ID-scoped, so it would otherwise keep beating this
+     block's generic flex-basis:auto reset. Revert it explicitly here. */
+  #impact-stories .impact-card__top{flex-basis:auto}
 }
 /* Below 900px the accordion turns its axis instead of turning into a list.
    Same behaviour — one panel open, the rest collapsed, closed panels dark
@@ -797,8 +1034,10 @@ ul,ol{list-style:none}
      rows and pushing the wall below the fold. */
   .filters{flex-wrap:nowrap;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x proximity;scrollbar-width:thin}
   .filter{flex:0 0 auto;scroll-snap-align:start}
-  .impact-card,.project-feature__content,.documentary__copy,.project-card__body{padding:18px}
-  .project-feature__visual{min-height:200px}
+  .impact-card,.project-feature__body,.documentary__copy,.project-card__body{padding:18px}
+  .project-feature__top{flex-wrap:wrap;padding:12px 16px}
+  .project-feature__identity .project-dates{margin-left:0;flex-basis:100%}
+  .section-head__mascot{width:96px;border-radius:9px}
 }
 @media(max-width:560px){
   .metrics__grid{grid-template-columns:1fr}
@@ -806,6 +1045,13 @@ ul,ol{list-style:none}
   .paint__stat{right:auto;left:50%;bottom:-8px;transform:translateX(-50%)}
   .final-cta{padding:24px}
   .documentary__art{padding:22px}
+  /* At 2 columns, narrow ~170px cards forced this section's two longest
+     chip labels ("Local Search & Google Business Profile", "Responsive
+     & Accessible Builds") to wrap 3 lines deep, losing the pill shape
+     and shrinking the effective touch target. One column below 560px
+     only — tablet keeps the existing 2-column layout from the 980px
+     rule, desktop is untouched. */
+  .capabilities-grid{grid-template-columns:1fr}
 }
 @media(max-width:480px){
   .organization-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 16px}
