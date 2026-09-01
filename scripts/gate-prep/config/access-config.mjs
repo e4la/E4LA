@@ -17,11 +17,13 @@ export const PREVIEW_HOSTNAME = 'e4la-client-operations-preview.pages.dev';
 export const SESSION_DURATION = '8h';
 
 export const IDENTITY_PROVIDER = {
-  // Cloudflare's built-in One-Time PIN provider. No third-party IdP
-  // configuration is required - every admin and every fictional/controlled
-  // client test identity authenticates by email OTP.
-  type: 'onetimepin',
-  name: 'E4LA Preview One-Time PIN',
+  // Reuse the account's configured identity provider. Prefer Cloudflare
+  // account identity when present, then an existing One-Time PIN provider.
+  // Only create OTP as a last-resort fallback when the organization has no
+  // usable provider at all.
+  preferredTypes: ['cloudflare', 'onetimepin'],
+  fallbackType: 'onetimepin',
+  fallbackName: 'E4LA Preview One-Time PIN',
 };
 
 export const APPLICATIONS = [

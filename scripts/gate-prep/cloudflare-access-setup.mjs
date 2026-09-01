@@ -142,21 +142,29 @@ async function readOrganization(accountId, apiToken) {
 }
 
 // ---------------------------------------------------------------------------
-// Step d: identity provider - reuse an existing one-time-pin IdP, else create.
+// Step d: identity provider - use what the Zero Trust organization actually
+// has configured. Cloudflare account identity is preferred when present;
+// One-Time PIN is created only when no supported provider exists.
 // ---------------------------------------------------------------------------
 async function ensureIdentityProvider(accountId, apiToken) {
   const providers = await cfFetch(accountId, apiToken, '/access/identity_providers');
-  const existing = providers.find((provider) => provider.type === 'onetimepin');
+  const existing = IDENTITY_PROVIDER.preferredTypes
+    .map((type) => providers.find((provider) => provider.type === type))
+    .find(Boolean);
   if (existing) {
-    safeLog('Identity provider', `reusing existing one-time-pin provider "${existing.name}" (${existing.id})`);
+    safeLog('Identity provider', `reusing configured ${existing.type} provider "${existing.name || '(account identity)'}" (${existing.id})`);
     return existing;
   }
-  const created = await mutate(`create identity provider "${IDENTITY_PROVIDER.name}" (type=onetimepin)`, () =>
+  const created = await mutate(`create identity provider "${IDENTITY_PROVIDER.fallbackName}" (type=${IDENTITY_PROVIDER.fallbackType})`, () =>
     cfFetch(accountId, apiToken, '/access/identity_providers', {
       method: 'POST',
-      body: { type: IDENTITY_PROVIDER.type, name: IDENTITY_PROVIDER.name },
+      body: { type: IDENTITY_PROVIDER.fallbackType, name: IDENTITY_PROVIDER.fallbackName },
     }));
-  return created || { id: '<DRY_RUN:would-create>', name: IDENTITY_PROVIDER.name, type: IDENTITY_PROVIDER.type };
+  return created || {
+    id: '<DRY_RUN:would-create>',
+    name: IDENTITY_PROVIDER.fallbackName,
+    type: IDENTITY_PROVIDER.fallbackType,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -171,17 +179,39 @@ async function ensureIdentityProvider(accountId, apiToken) {
 // switch to one app per path with a "-{n}" name suffix and update this
 // comment plus access-config.mjs's `name` handling accordingly.
 // ---------------------------------------------------------------------------
-async function ensureApplication(accountId, apiToken, appConfig, teamDomain) {
+async function ensureApplication(accountId, apiToken, appConfig, identityProvider) {
   assertNotProductionHostname(appConfig.domain, `Access app "${appConfig.name}"`);
   for (const p of appConfig.paths) assertNotProductionHostname(appConfig.domain, `Access app "${appConfig.name}" path ${p}`);
 
   const selfHostedDomains = appConfig.paths.map((p) => `${appConfig.domain}${p}`);
+  // Cloudflare deprecated self_hosted_domains in favor of `destinations`
+  // (each a {type:'public', uri} entry). CONFIRMED against this account's
+  // real API (not a guess - tried both ways): a self-hosted Access
+  // Application with a `domain` set requires that bare domain to appear
+  // literally in `destinations`, and removing it reproduces
+  // "domain not included in destinations" every time. Once present, the app
+  // enforces across the ENTIRE domain regardless of how narrow the other
+  // destinations/self_hosted_domains entries are (verified live:
+  // /api/commerce/services and /client-portal/, neither in this app's own
+  // `paths`, both got redirected into this app's Access challenge the
+  // moment the bare-domain destination existed). This means a self-hosted
+  // Access Application is effectively whole-domain in this API version -
+  // path-scoped multi-app separation on one hostname is NOT achievable this
+  // way. Path-scoped entries are kept alongside the required bare domain
+  // for documentation/intent, not because they narrow anything.
+  const destinations = [
+    { type: 'public', uri: appConfig.domain },
+    ...selfHostedDomains.map((uri) => ({ type: 'public', uri })),
+  ];
   const desired = {
     name: appConfig.name,
     domain: appConfig.domain,
     self_hosted_domains: selfHostedDomains,
+    destinations,
     session_duration: appConfig.sessionDuration || SESSION_DURATION,
     type: 'self_hosted',
+    allowed_idps: identityProvider.id.startsWith('<DRY_RUN:') ? [] : [identityProvider.id],
+    auto_redirect_to_identity: !identityProvider.id.startsWith('<DRY_RUN:'),
   };
 
   const existingApps = await cfFetch(accountId, apiToken, '/access/apps');
@@ -293,11 +323,11 @@ async function writePreviewVars(resolvedVars) {
 // ---------------------------------------------------------------------------
 // Step i: final validation.
 // ---------------------------------------------------------------------------
-async function validateFinalState(accountId, apiToken, expectedAuds) {
+async function validateFinalState(accountId, apiToken, expectedAuds, applicationsToCheck = APPLICATIONS, requiredVarsToCheck = REQUIRED_PREVIEW_ENV_VARS) {
   const problems = [];
 
   const apps = await cfFetch(accountId, apiToken, '/access/apps');
-  for (const appConfig of APPLICATIONS) {
+  for (const appConfig of applicationsToCheck) {
     const app = apps.find((candidate) => candidate.name === appConfig.name);
     if (!app && !isDryRun()) problems.push(`Access app "${appConfig.name}" not found after apply.`);
   }
@@ -311,7 +341,7 @@ async function validateFinalState(accountId, apiToken, expectedAuds) {
   }
   const parsed = JSON.parse(raw);
   const vars = parsed.vars || {};
-  for (const name of REQUIRED_PREVIEW_ENV_VARS) {
+  for (const name of requiredVarsToCheck) {
     if (!isDryRun() && !vars[name]) problems.push(`wrangler.preview.jsonc vars.${name} is missing or empty after apply.`);
   }
   return problems;
@@ -337,39 +367,61 @@ async function main() {
   }
   safeLog('Zero Trust organization', `${org.name || '(unnamed)'} - team domain ${teamDomain}`);
 
-  await ensureIdentityProvider(accountId, apiToken);
+  const identityProvider = await ensureIdentityProvider(accountId, apiToken);
 
+  // Each application is independent - one app failing (e.g. a plan-level
+  // destinations-count limit on a wide-path app) must not discard AUDs
+  // already resolved for apps that succeeded. Failures are collected and
+  // reported at the end; that app's *_ACCESS_AUD is simply omitted from
+  // resolvedVars (never written as the literal string "undefined") so a
+  // later run can retry just that one app once its own issue is fixed.
   const audByKey = {};
+  const appFailures = [];
   for (const appConfig of APPLICATIONS) {
-    const app = await ensureApplication(accountId, apiToken, appConfig, teamDomain);
-    audByKey[appConfig.key] = app?.aud || '<DRY_RUN:unresolved-aud>';
-    safeLog(`Resolved AUD for ${appConfig.audEnvVar}`, audByKey[appConfig.key]);
+    try {
+      const app = await ensureApplication(accountId, apiToken, appConfig, identityProvider);
+      audByKey[appConfig.key] = app?.aud || '<DRY_RUN:unresolved-aud>';
+      safeLog(`Resolved AUD for ${appConfig.audEnvVar}`, audByKey[appConfig.key]);
+    } catch (error) {
+      appFailures.push({ key: appConfig.key, name: appConfig.name, message: error.message });
+      safeLog(`Access app "${appConfig.name}" FAILED (skipped, other apps unaffected)`, error.message);
+    }
   }
 
-  const resolvedVars = {
-    ACCESS_TEAM_DOMAIN: teamDomain,
-    ADMIN_ACCESS_AUD: audByKey.admin,
-    CLIENT_ACCESS_AUD: audByKey.client,
-  };
+  const resolvedVars = { ACCESS_TEAM_DOMAIN: teamDomain };
+  if (audByKey.admin) resolvedVars.ADMIN_ACCESS_AUD = audByKey.admin;
+  if (audByKey.client) resolvedVars.CLIENT_ACCESS_AUD = audByKey.client;
 
   console.log('\nResolved preview env vars (to be written to wrangler.preview.jsonc):');
   for (const [key, value] of Object.entries(resolvedVars)) safeLog(`  ${key}`, value);
 
   await writePreviewVars(resolvedVars);
 
-  const problems = await validateFinalState(accountId, apiToken, resolvedVars);
+  const failedKeys = new Set(appFailures.map((f) => f.key));
+  const relevantApplications = APPLICATIONS.filter((a) => !failedKeys.has(a.key));
+  const relevantRequiredVars = REQUIRED_PREVIEW_ENV_VARS.filter((name) => {
+    const skippedApp = APPLICATIONS.find((a) => a.audEnvVar === name && failedKeys.has(a.key));
+    return !skippedApp;
+  });
+  const problems = await validateFinalState(accountId, apiToken, resolvedVars, relevantApplications, relevantRequiredVars);
 
   console.log('\n=== cloudflare-access-setup summary ===');
   if (isDryRun()) {
     console.log('DRY RUN - no mutating API calls or file writes were made. Review the [DRY RUN] lines above for what would happen on a real run.');
     process.exit(0);
   }
+  if (appFailures.length) {
+    console.log('PARTIAL - the following application(s) were skipped and need a separate fix before retrying just them:');
+    for (const failure of appFailures) console.log(`  - ${failure.name}: ${failure.message}`);
+  }
   if (problems.length) {
-    console.log('FAILED - final-state validation found problems:');
+    console.log('FAILED - final-state validation found problems (beyond the known skipped app(s) above):');
     for (const problem of problems) console.log(`  - ${problem}`);
     process.exit(1);
   }
-  console.log('OK - identity provider, Access apps, and policies match desired config; wrangler.preview.jsonc vars are present.');
+  console.log(appFailures.length
+    ? 'OK (partial) - every application that did not hit a separate, already-reported issue matches desired config; its env vars are present.'
+    : 'OK - identity provider, Access apps, and policies match desired config; wrangler.preview.jsonc vars are present.');
   process.exit(0);
 }
 

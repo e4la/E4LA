@@ -5,7 +5,9 @@
   "compatibility_date": "2026-08-20",
   "vars": {
     "ENVIRONMENT": "preview",
-    "PUBLIC_SITE_URL": "https://e4la-client-operations-preview.pages.dev"
+    "PUBLIC_SITE_URL": "https://e4la-client-operations-preview.pages.dev",
+    "ACCESS_TEAM_DOMAIN": "https://snowy-forest-edc8.cloudflareaccess.com",
+    "ADMIN_ACCESS_AUD": "17190ddb6e60a4fd62dee239704fd8f178cd2bd728a68c2545a9f4040fe6e6fc"
   },
   "d1_databases": [
     {
