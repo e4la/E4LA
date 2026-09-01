@@ -39,6 +39,9 @@ const WRANGLER_CONFIG = 'wrangler.preview.jsonc';
 const MIGRATION_FILES = [
   '0001_client_operations.sql', '0002_phase_c_preview.sql',
   '0003_payment_plans_immutable.sql', '0004_project_progress.sql',
+  '0005_service_catalog_and_quoting.sql', '0006_flexible_payments_and_invoicing.sql',
+  '0007_recurring_service_consent.sql', '0008_content_intelligence.sql',
+  '0009_publishing_and_metrics.sql',
 ];
 
 const EXPECTED_NEW_TABLES = ['project_phases', 'project_progress_snapshots', 'project_performance_metrics'];
@@ -52,6 +55,25 @@ const EXPECTED_IMMUTABLE_TRIGGERS = [
 const EXPECTED_PUBLICATION_TABLES = [
   'project_milestones', 'project_updates', 'deliverables', 'portal_documents',
   'project_phases', 'project_progress_snapshots', 'project_performance_metrics',
+];
+
+// Tables/triggers introduced by 0005-0009 (the commercial + content intelligence
+// layer). Checked separately from the 0001-0004 set above so a failure here
+// reports precisely which of the two migration batches has a problem.
+const EXPECTED_COMMERCE_CONTENT_TABLES = [
+  'service_categories', 'services', 'quotes', 'quote_versions', 'quote_items',
+  'payment_options', 'payment_option_installments', 'invoices', 'invoice_items',
+  'recurring_service_consents',
+  'brand_brains', 'content_plans', 'content_sources', 'content_items', 'content_claims',
+  'content_assets', 'content_platform_variants', 'content_approvals',
+  'publishing_accounts', 'publishing_jobs', 'content_metrics',
+];
+const EXPECTED_COMMERCE_CONTENT_TRIGGERS = [
+  'quote_versions_immutable_update', 'quote_versions_immutable_delete',
+  'quote_items_immutable_update', 'quote_items_immutable_delete',
+  'invoice_items_immutable_once_sent', 'invoice_items_no_delete_once_sent',
+  'recurring_consents_immutable_terms', 'recurring_consents_no_delete',
+  'content_approvals_append_only_update', 'content_approvals_append_only_delete',
 ];
 
 function runWrangler(args, { allowFailure = false } = {}) {
@@ -114,8 +136,7 @@ function listMigrationStatus(configured) {
     safeLog(`[${SCRIPT_NAME}] could not list migration status`, output.stderr.split('\n')[0]);
     return { raw: null, pendingKnown: null };
   }
-  const migrationFiles = ['0001_client_operations.sql', '0002_phase_c_preview.sql', '0003_payment_plans_immutable.sql', '0004_project_progress.sql'];
-  const pending = migrationFiles.filter((file) => !output.includes(file.replace('.sql', '')) || /pending|not applied/i.test(output));
+  const pending = MIGRATION_FILES.filter((file) => !output.includes(file.replace('.sql', '')) || /pending|not applied/i.test(output));
   return { raw: output, pendingKnown: pending };
 }
 
@@ -221,10 +242,12 @@ function verifySchema(configured) {
   const tableRows = runQuery(configured, "SELECT name FROM sqlite_master WHERE type='table'");
   const tableNames = new Set((tableRows?.[0]?.results || []).map((row) => row.name));
   const missingTables = EXPECTED_NEW_TABLES.filter((name) => !tableNames.has(name));
+  const missingCommerceContentTables = EXPECTED_COMMERCE_CONTENT_TABLES.filter((name) => !tableNames.has(name));
 
   const triggerRows = runQuery(configured, "SELECT name FROM sqlite_master WHERE type='trigger'");
   const triggerNames = new Set((triggerRows?.[0]?.results || []).map((row) => row.name));
   const missingTriggers = EXPECTED_IMMUTABLE_TRIGGERS.filter((name) => !triggerNames.has(name));
+  const missingCommerceContentTriggers = EXPECTED_COMMERCE_CONTENT_TRIGGERS.filter((name) => !triggerNames.has(name));
 
   const publicationIssues = [];
   for (const table of EXPECTED_PUBLICATION_TABLES) {
@@ -234,16 +257,21 @@ function verifySchema(configured) {
   }
 
   const smokeResults = {};
-  for (const table of EXPECTED_NEW_TABLES) {
+  for (const table of [...EXPECTED_NEW_TABLES, ...EXPECTED_COMMERCE_CONTENT_TABLES]) {
     const countRows = runQuery(configured, `SELECT COUNT(*) AS count FROM ${table}`);
     smokeResults[table] = countRows?.[0]?.results?.[0]?.count ?? 'query failed';
   }
 
   if (missingTables.length) throw new GuardrailError(`Schema verification failed: missing tables after migration: ${missingTables.join(', ')}`);
   if (missingTriggers.length) throw new GuardrailError(`Schema verification failed: missing immutable triggers after migration: ${missingTriggers.join(', ')}`);
+  if (missingCommerceContentTables.length) throw new GuardrailError(`Schema verification failed: missing commerce/content tables after migration: ${missingCommerceContentTables.join(', ')}`);
+  if (missingCommerceContentTriggers.length) throw new GuardrailError(`Schema verification failed: missing commerce/content triggers after migration: ${missingCommerceContentTriggers.join(', ')}`);
   if (publicationIssues.length) throw new GuardrailError(`Schema verification failed: tables missing publication_status column: ${publicationIssues.join(', ')}`);
 
-  return { tables: 'all present', triggers: 'all present', publicationFields: 'all present', smoke: smokeResults };
+  return {
+    tables: 'all present', triggers: 'all present', publicationFields: 'all present',
+    commerceContentTables: 'all present', commerceContentTriggers: 'all present', smoke: smokeResults,
+  };
 }
 
 async function main() {
@@ -274,7 +302,7 @@ async function main() {
   const schema = verifySchema(configured);
 
   console.log('\n=== d1-migrate summary ===');
-  console.log('CONFIGURED:', `target ${configured.name} (${configured.id}), migrations 0001-0004`);
+  console.log('CONFIGURED:', `target ${configured.name} (${configured.id}), migrations 0001-0009`);
   console.log('TESTED:', applyResult.dryRun ? 'DRY RUN - nothing applied, nothing verified' : 'schema/journal reconciliation, then wrangler d1 migrations apply, then live schema/trigger/publication-field checks');
   console.log('EVIDENCE:', JSON.stringify(schema, null, 2));
   console.log('REGRESSION CHECK:', applyResult.dryRun ? 'n/a (dry run)' : 'existing tables/triggers from 0001-0003 unaffected - migrations are additive only, verified no DROP/ALTER of pre-existing columns in any migration file');
