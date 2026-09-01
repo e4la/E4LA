@@ -6,6 +6,7 @@ import {
   assertTestModeStripeKey, assertNoLivemodeObject, assertPreviewDatabaseIdentity,
   assertAllowlistedRecipient,
 } from '../scripts/gate-prep/lib/guardrails.mjs';
+import { classifyMigrationDrift, parseMigrationObjectsFromSource } from '../scripts/gate-prep/d1-migrate.mjs';
 
 // Phase F: unit coverage for the shared safety guardrails every external-gate
 // preparation script (Cloudflare Access, D1 migrations, Stripe Sandbox,
@@ -126,4 +127,114 @@ test('assertAllowlistedRecipient is case-insensitive but exact, and refuses ever
   assert.throws(() => assertAllowlistedRecipient('owner@example.test.evil.example', allowlist), GuardrailError, 'a superstring of an allowlisted address must not match');
   assert.throws(() => assertAllowlistedRecipient('', allowlist), GuardrailError);
   assert.throws(() => assertAllowlistedRecipient('owner@example.test', []), GuardrailError, 'an empty allowlist must refuse everyone, not fail open');
+});
+
+// Regression coverage for a real incident found while reconciling the live
+// preview D1: `wrangler d1 migrations list` reported all four migrations as
+// pending (empty d1_migrations bookkeeping table), but migrations 0001 and
+// 0002's tables/triggers already existed live - almost certainly applied at
+// some point via `wrangler d1 execute --file=...` directly, which never
+// records bookkeeping. Blindly running `wrangler d1 migrations apply` in
+// that state would have attempted to re-create already-existing tables.
+// classifyMigrationDrift is the pure logic that catches this before any
+// apply call is made - see scripts/gate-prep/d1-migrate.mjs.
+
+test('classifyMigrationDrift: NOT_PRESENT when nothing exists and nothing is recorded', () => {
+  const result = classifyMigrationDrift([], [], { '0004_project_progress.sql': ['project_phases', 'project_progress_snapshots'] });
+  assert.equal(result.classification['0004_project_progress.sql'].state, 'NOT_PRESENT');
+  assert.equal(result.safe, true);
+});
+
+test('classifyMigrationDrift: FULLY_APPLIED when everything exists and is recorded - safe, wrangler would just skip it', () => {
+  const result = classifyMigrationDrift(
+    ['project_phases', 'project_progress_snapshots'],
+    ['0004_project_progress.sql'],
+    { '0004_project_progress.sql': ['project_phases', 'project_progress_snapshots'] },
+  );
+  assert.equal(result.classification['0004_project_progress.sql'].state, 'FULLY_APPLIED');
+  assert.equal(result.safe, true);
+});
+
+test('classifyMigrationDrift: SCHEMA_PRESENT_JOURNAL_MISSING when everything exists but bookkeeping never recorded it - unsafe to blind-apply', () => {
+  const result = classifyMigrationDrift(
+    ['project_phases', 'project_progress_snapshots'],
+    [], // d1_migrations has no row for this file
+    { '0004_project_progress.sql': ['project_phases', 'project_progress_snapshots'] },
+  );
+  assert.equal(result.classification['0004_project_progress.sql'].state, 'SCHEMA_PRESENT_JOURNAL_MISSING');
+  assert.equal(result.safe, false);
+  assert.deepEqual(result.unsafe.map(([file]) => file), ['0004_project_progress.sql']);
+});
+
+test('classifyMigrationDrift: PARTIALLY_PRESENT when only some of a migration\'s objects exist - unsafe regardless of bookkeeping', () => {
+  const half = classifyMigrationDrift(
+    ['project_phases'], // project_progress_snapshots missing
+    [],
+    { '0004_project_progress.sql': ['project_phases', 'project_progress_snapshots'] },
+  );
+  assert.equal(half.classification['0004_project_progress.sql'].state, 'PARTIALLY_PRESENT');
+  assert.equal(half.safe, false);
+
+  const halfButRecorded = classifyMigrationDrift(
+    ['project_phases'],
+    ['0004_project_progress.sql'], // recorded as applied anyway - must still be unsafe
+    { '0004_project_progress.sql': ['project_phases', 'project_progress_snapshots'] },
+  );
+  assert.equal(halfButRecorded.classification['0004_project_progress.sql'].state, 'PARTIALLY_PRESENT');
+  assert.equal(halfButRecorded.safe, false);
+});
+
+test('classifyMigrationDrift: UNKNOWN when bookkeeping claims applied but nothing exists live - anomalous, unsafe', () => {
+  const result = classifyMigrationDrift([], ['0004_project_progress.sql'], { '0004_project_progress.sql': ['project_phases', 'project_progress_snapshots'] });
+  assert.equal(result.classification['0004_project_progress.sql'].state, 'UNKNOWN');
+  assert.equal(result.safe, false);
+});
+
+test('classifyMigrationDrift: reproduces the exact real-world incident (0001/0002 present-unrecorded, 0003/0004 absent) and correctly flags only the present-unrecorded ones as unsafe', () => {
+  const migrationObjectsByFile = {
+    '0001_client_operations.sql': ['clients', 'projects', 'agreement_versions_immutable_update'],
+    '0002_phase_c_preview.sql': ['environment_settings', 'identity_links', 'outbound_message_events'],
+    '0003_payment_plans_immutable.sql': ['payment_plans_immutable_update', 'payment_plans_immutable_delete'],
+    '0004_project_progress.sql': ['project_phases', 'project_progress_snapshots', 'project_performance_metrics'],
+  };
+  // Live schema has every 0001/0002 object present; nothing from 0003/0004. d1_migrations is empty (no recorded rows at all).
+  const liveObjects = [...migrationObjectsByFile['0001_client_operations.sql'], ...migrationObjectsByFile['0002_phase_c_preview.sql']];
+  const result = classifyMigrationDrift(liveObjects, [], migrationObjectsByFile);
+
+  assert.equal(result.classification['0001_client_operations.sql'].state, 'SCHEMA_PRESENT_JOURNAL_MISSING');
+  assert.equal(result.classification['0002_phase_c_preview.sql'].state, 'SCHEMA_PRESENT_JOURNAL_MISSING');
+  assert.equal(result.classification['0003_payment_plans_immutable.sql'].state, 'NOT_PRESENT');
+  assert.equal(result.classification['0004_project_progress.sql'].state, 'NOT_PRESENT');
+  assert.equal(result.safe, false, 'the whole batch must be refused even though only 2 of 4 migrations are problematic - partial safety is not safety');
+  assert.deepEqual(result.unsafe.map(([file]) => file).sort(), ['0001_client_operations.sql', '0002_phase_c_preview.sql']);
+});
+
+test('parseMigrationObjectsFromSource extracts CREATE TABLE and CREATE TRIGGER names, case-insensitively, ignoring everything else', () => {
+  const source = `
+    CREATE TABLE widgets (id TEXT PRIMARY KEY);
+    create table gadgets (id TEXT PRIMARY KEY);
+    CREATE INDEX idx_widgets ON widgets(id);
+    CREATE TRIGGER widgets_immutable BEFORE UPDATE ON widgets BEGIN SELECT RAISE(ABORT, 'no'); END;
+  `;
+  const objects = parseMigrationObjectsFromSource(source);
+  assert.deepEqual(objects.tables.sort(), ['gadgets', 'widgets']);
+  assert.deepEqual(objects.triggers, ['widgets_immutable']);
+  assert.deepEqual(objects.all.sort(), ['gadgets', 'widgets', 'widgets_immutable'].sort());
+});
+
+test('parseMigrationObjectsFromSource finds the known real objects in every actual migration file on disk', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const expectations = {
+    '0001_client_operations.sql': { table: 'clients', trigger: 'agreement_versions_immutable_update' },
+    '0002_phase_c_preview.sql': { table: 'environment_settings', trigger: 'identity_links_subject_immutable' },
+    '0003_payment_plans_immutable.sql': { trigger: 'payment_plans_immutable_update' },
+    '0004_project_progress.sql': { table: 'project_phases', trigger: 'project_progress_snapshots_no_delete' },
+  };
+  for (const [file, expected] of Object.entries(expectations)) {
+    const source = await readFile(new URL(`../migrations/${file}`, import.meta.url), 'utf8');
+    const objects = parseMigrationObjectsFromSource(source);
+    if (expected.table) assert.ok(objects.tables.includes(expected.table), `${file}: expected to find table "${expected.table}"`);
+    if (expected.trigger) assert.ok(objects.triggers.includes(expected.trigger), `${file}: expected to find trigger "${expected.trigger}"`);
+    assert.ok(objects.all.length > 0, `${file}: parser must find at least one object`);
+  }
 });
