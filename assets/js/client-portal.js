@@ -224,7 +224,7 @@ function renderPerformanceMetrics(metrics) {
 }
 
 const portalTabs = [...document.querySelectorAll('[data-portal-tab]')];
-const portalSections = ['overview','project','deliverables','reports','agreements','billing'];
+const portalSections = ['overview','project','deliverables','reports','agreements','billing','content'];
 portalTabs.forEach((tab) => {
   tab.tabIndex = tab.dataset.portalTab === 'overview' ? 0 : -1;
   tab.addEventListener('click', () => activateTab(tab.dataset.portalTab));

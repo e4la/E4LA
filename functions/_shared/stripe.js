@@ -108,6 +108,20 @@ export async function createRemainingInstallmentSchedule(env, enrollment, plan, 
   }, `schedule:${enrollment.id}`);
 }
 
+// Phase G stub: recurring Stripe subscription creation for an approved
+// recurring_service_consents row. The assertion-first structure is deliberate and is what
+// is actually tested - a real prior incident (see migrations/0007) means "no active,
+// matching consent -> no Stripe subscription call, ever" must be enforced in code, not
+// just policy. This does not attempt a live Stripe call: no credential exists in this
+// environment, and full subscription creation against dynamic per-consent pricing is left
+// for a future pass once Stripe Sandbox (Gate 2) is available.
+export async function createRecurringStripeSubscription(consent, env) {
+  if (!consent || consent.status !== 'active') {
+    throw new HttpError(409, 'recurring_consent_inactive', 'Recurring Stripe billing requires an active, matching client consent record.');
+  }
+  throw new HttpError(501, 'recurring_subscription_not_implemented', 'Recurring Stripe subscription creation is not implemented in this environment.');
+}
+
 export async function createBillingPortalSession(env, customerId, returnPath) {
   if (!env.STRIPE_PORTAL_CONFIGURATION_ID) {
     throw new HttpError(503, 'billing_portal_not_configured', 'Billing access is not configured yet.');

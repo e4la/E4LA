@@ -187,6 +187,111 @@ document.querySelector('#metric-update-form').addEventListener('submit', async (
   try { await api(`/api/ops/admin/performance-metrics/${encodeURIComponent(metricId)}`, { method: 'PATCH', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify(payload) }); setStatus(status, 'Metric updated.'); } catch (error) { setStatus(status, error.message, true); }
 });
 
+// --- Services / Quotes / Invoices (functions/api/commerce) ---
+
+document.querySelector('#service-category-form')?.addEventListener('submit', async (event) => {
+  event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
+  const name = new FormData(form).get('name'); const status = document.querySelector('#service-category-status');
+  if (isPreview) return setStatus(status, `Fictional preview: category "${name}" saved.`);
+  try { await api('/api/commerce/service-categories', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify({ name }) }); setStatus(status, 'Category saved.'); form.reset(); await loadServices(); } catch (error) { setStatus(status, error.message, true); }
+});
+document.querySelector('#service-create-form')?.addEventListener('submit', async (event) => {
+  event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
+  const data = new FormData(form); const status = document.querySelector('#service-create-status');
+  const payload = { name: data.get('name'), description: data.get('description') || undefined, category_id: data.get('category_id') || undefined, pricing_type: data.get('pricing_type'), billing_type: data.get('billing_type'), default_price: data.get('default_price') ? Math.round(Number(data.get('default_price')) * 100) : undefined };
+  if (isPreview) return setStatus(status, `Fictional preview: service "${payload.name}" saved.`);
+  try { const result = await api('/api/commerce/services', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify(payload) }); setStatus(status, `Service saved (ID ${result.id}).`); form.reset(); await loadServices(); } catch (error) { setStatus(status, error.message, true); }
+});
+async function loadServices() {
+  const table = document.querySelector('#admin-service-table'); const select = document.querySelector('#service-category-select'); const countStatus = document.querySelector('#service-count-status');
+  if (!table) return;
+  if (isPreview) { setText('service-count-status', 'Fictional preview data'); return; }
+  try {
+    const [services, categories] = await Promise.all([api('/api/commerce/services'), api('/api/commerce/service-categories')]);
+    if (select) { select.replaceChildren(textElement('option', 'No category', '')); (categories.categories || categories || []).forEach((c) => { const opt = textElement('option', c.name); opt.value = c.id; select.append(opt); }); }
+    const rows = services.services || services || [];
+    table.replaceChildren();
+    rows.forEach((s) => { const row = document.createElement('tr'); [s.name, s.category_name || s.category_id || '—', s.default_price != null ? formatMoney(s.default_price) : 'Custom', humanize(s.pricing_type), s.active ? 'Active' : 'Inactive'].forEach((v) => row.append(textElement('td', v))); const actionCell = document.createElement('td'); const toggle = textElement('button', s.active ? 'Deactivate' : 'Activate', 'ops-link-button'); toggle.type = 'button'; toggle.addEventListener('click', async () => { try { await api(`/api/commerce/services/${encodeURIComponent(s.id)}`, { method: 'PATCH', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify({ active: s.active ? 0 : 1 }) }); await loadServices(); } catch (error) { setStatus(countStatus, error.message, true); } }); actionCell.append(toggle); row.append(actionCell); table.append(row); });
+    if (countStatus) setText('service-count-status', `${rows.length} services`);
+  } catch (error) { if (countStatus) setStatus(countStatus, error.message, true); }
+}
+document.querySelector('#quote-create-form')?.addEventListener('submit', async (event) => {
+  event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
+  const data = new FormData(form); const clientId = data.get('clientId'); const status = document.querySelector('#quote-create-status');
+  if (isPreview) return setStatus(status, `Fictional preview: draft quote created for ${clientId}.`);
+  try { const result = await api(`/api/commerce/clients/${encodeURIComponent(clientId)}/quotes`, { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify({ projectId: data.get('projectId') || undefined }) }); setStatus(status, `Draft quote created (ID ${result.id}).`); form.reset(); } catch (error) { setStatus(status, error.message, true); }
+});
+document.querySelector('#quote-version-form')?.addEventListener('submit', async (event) => {
+  event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
+  const data = new FormData(form); const quoteId = data.get('quoteId'); const status = document.querySelector('#quote-version-status');
+  const items = [{ serviceId: data.get('item1_serviceId') || undefined, label: data.get('item1_label'), quantity: Number(data.get('item1_quantity')) || 1, unitPrice: Math.round(Number(data.get('item1_unitPrice')) * 100) }];
+  const payload = { items, scope: data.get('scope') || undefined, discountAmount: data.get('discount') ? Math.round(Number(data.get('discount')) * 100) : 0, taxAmount: data.get('tax') ? Math.round(Number(data.get('tax')) * 100) : 0 };
+  if (isPreview) return setStatus(status, `Fictional preview: priced version saved for ${quoteId}.`);
+  try { const result = await api(`/api/commerce/quotes/${encodeURIComponent(quoteId)}/versions`, { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify(payload) }); setStatus(status, `Version saved. Total: ${formatMoney(result.total)}.`); } catch (error) { setStatus(status, error.message, true); }
+});
+document.querySelector('#quote-send-form')?.addEventListener('submit', async (event) => {
+  event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
+  const quoteId = new FormData(form).get('quoteId'); const status = document.querySelector('#quote-send-status');
+  if (isPreview) return setStatus(status, `Fictional preview: quote ${quoteId} sent.`);
+  try { await api(`/api/commerce/quotes/${encodeURIComponent(quoteId)}/send`, { method: 'POST', headers: { 'X-CSRF-Token': csrfToken } }); setStatus(status, 'Quote sent.'); } catch (error) { setStatus(status, error.message, true); }
+});
+document.querySelector('#quote-status-form')?.addEventListener('submit', async (event) => {
+  event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
+  const data = new FormData(form); const quoteId = data.get('quoteId'); const status = document.querySelector('#quote-status-status');
+  if (isPreview) return setStatus(status, `Fictional preview: quote ${quoteId} moved to ${data.get('status')}.`);
+  try { await api(`/api/commerce/quotes/${encodeURIComponent(quoteId)}/status`, { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify({ status: data.get('status') }) }); setStatus(status, `Quote updated to ${humanize(data.get('status'))}.`); } catch (error) { setStatus(status, error.message, true); }
+});
+document.querySelector('#invoice-create-form')?.addEventListener('submit', async (event) => {
+  event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
+  const data = new FormData(form); const status = document.querySelector('#invoice-create-status');
+  const payload = { clientId: data.get('clientId'), quoteId: data.get('quoteId') || undefined, projectId: data.get('projectId') || undefined, dueDate: data.get('dueDate') || undefined, items: [{ serviceId: data.get('serviceId') || undefined, label: data.get('label'), quantity: Number(data.get('quantity')) || 1, unitPrice: Math.round(Number(data.get('unitPrice')) * 100) }] };
+  if (isPreview) return setStatus(status, `Fictional preview: invoice saved for ${payload.clientId}.`);
+  try { const result = await api('/api/commerce/invoices', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify(payload) }); setStatus(status, `Invoice saved (ID ${result.id}).`); form.reset(); } catch (error) { setStatus(status, error.message, true); }
+});
+document.querySelector('#invoice-send-form')?.addEventListener('submit', async (event) => {
+  event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
+  const invoiceId = new FormData(form).get('invoiceId'); const status = document.querySelector('#invoice-send-status');
+  if (isPreview) return setStatus(status, `Fictional preview: invoice ${invoiceId} sent.`);
+  try { await api(`/api/commerce/invoices/${encodeURIComponent(invoiceId)}/send`, { method: 'POST', headers: { 'X-CSRF-Token': csrfToken } }); setStatus(status, 'Invoice sent.'); } catch (error) { setStatus(status, error.message, true); }
+});
+
+// --- Content Intelligence (functions/api/content) ---
+
+document.querySelector('#content-item-create-form')?.addEventListener('submit', async (event) => {
+  event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
+  const data = new FormData(form); const planId = data.get('planId'); const status = document.querySelector('#content-item-create-status');
+  if (isPreview) return setStatus(status, `Fictional preview: content item "${data.get('topic')}" saved.`);
+  try { const result = await api(`/api/content/plans/${encodeURIComponent(planId)}/items`, { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify({ topic: data.get('topic'), pillar: data.get('pillar') || undefined }) }); setStatus(status, `Item saved (ID ${result.id}).`); form.reset(); } catch (error) { setStatus(status, error.message, true); }
+});
+document.querySelector('#content-item-status-form')?.addEventListener('submit', async (event) => {
+  event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
+  const data = new FormData(form); const itemId = data.get('itemId'); const status = document.querySelector('#content-item-status-status');
+  if (isPreview) return setStatus(status, `Fictional preview: item ${itemId} moved to ${data.get('status')}.`);
+  try { await api(`/api/content/items/${encodeURIComponent(itemId)}/status`, { method: 'PATCH', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify({ status: data.get('status') }) }); setStatus(status, `Item updated to ${humanize(data.get('status'))}.`); } catch (error) { setStatus(status, error.message, true); }
+});
+document.querySelector('#content-approval-form')?.addEventListener('submit', async (event) => {
+  event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
+  const data = new FormData(form); const itemId = data.get('itemId'); const status = document.querySelector('#content-approval-status');
+  const payload = { approvalType: data.get('approvalType'), decision: data.get('decision'), comment: data.get('comment') || undefined };
+  if (isPreview) return setStatus(status, `Fictional preview: decision "${payload.decision}" recorded for ${itemId}.`);
+  try { await api(`/api/content/items/${encodeURIComponent(itemId)}/approvals`, { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify(payload) }); setStatus(status, 'Decision recorded.'); form.reset(); } catch (error) { setStatus(status, error.message, true); }
+});
+document.querySelector('#platform-variant-form')?.addEventListener('submit', async (event) => {
+  event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
+  const data = new FormData(form); const itemId = data.get('itemId'); const status = document.querySelector('#platform-variant-status');
+  const payload = { platform: data.get('platform'), caption: data.get('caption') || undefined };
+  if (isPreview) return setStatus(status, `Fictional preview: ${payload.platform} variant saved for ${itemId}.`);
+  try { const result = await api(`/api/content/items/${encodeURIComponent(itemId)}/platform-variants`, { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify(payload) }); setStatus(status, `Variant saved (ID ${result.id}).`); form.reset(); } catch (error) { setStatus(status, error.message, true); }
+});
+document.querySelector('#publish-variant-form')?.addEventListener('submit', async (event) => {
+  event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
+  const variantId = new FormData(form).get('variantId'); const status = document.querySelector('#publish-variant-status');
+  if (isPreview) return setStatus(status, `Fictional preview: variant ${variantId} publish attempted (no real platform call in preview).`);
+  try { const result = await api(`/api/content/variants/${encodeURIComponent(variantId)}/publish`, { method: 'POST', headers: { 'X-CSRF-Token': csrfToken } }); setStatus(status, `Publishing job ${result.status || 'submitted'}.`); } catch (error) { setStatus(status, error.message, true); }
+});
+
+loadServices();
+
 function showInvite(url) { const output = document.querySelector('#invite-output'); output.hidden = false; output.querySelector('textarea').value = url; }
 function activateView(name, focus = true) { if (!document.querySelector(`#admin-${name}`)) name = 'dashboard'; document.querySelectorAll('[data-admin-panel]').forEach((panel) => { panel.hidden = panel.id !== `admin-${name}`; }); document.querySelectorAll('[data-admin-view]').forEach((link) => link.toggleAttribute('aria-current', link.dataset.adminView === name)); history.replaceState(null, '', `#${name}`); if (focus) { const heading = document.querySelector(`#admin-${name} h1`); if (heading) { heading.tabIndex = -1; heading.focus(); } } }
 function applyDemoState(data, state) { if (state === 'zero') { data.clients = []; data.milestones = []; data.activity = []; data.counts = { activeClients: 0, awaitingSignature: 0, awaitingPayment: 0, actionsRequired: 0 }; } else if (state === 'single') { data.clients = data.clients.slice(0, 1); data.milestones = data.milestones.slice(0, 1); data.counts = { activeClients: 1, awaitingSignature: 0, awaitingPayment: 0, actionsRequired: 1 }; } }
