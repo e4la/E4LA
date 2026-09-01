@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-01T16:14:17-00:00",
+  "updated_at": "2026-09-01T16:38:40-00:00",
   "project": "E4LA Client Operations System",
   "status": "NOT READY",
   "current_phase": "Phase F - external-gate preparation complete; execution blocked on Cloudflare Access credential",
   "feature_scope_frozen": true,
   "phase_f_external_gate_prep_summary": {
-    "scope": "Built the tooling and safety scaffolding for every remaining external gate (Cloudflare Access, preview D1 migrations, Stripe Sandbox, Resend Preview) so execution requires only a credential, never new engineering. Nothing was executed against a live external service - Cloudflare Access, Stripe, and Resend all remain exactly as blocked/unconfigured as before this pass. D1 migration status was read live (read-only) and confirmed still unapplied.",
+    "scope": "Built the tooling and safety scaffolding for every remaining external gate (Cloudflare Access, preview D1 migrations, Stripe Sandbox, Resend Preview) so execution requires only a credential, never new engineering. Nothing was executed against a live external service - Cloudflare Access, Stripe, and Resend all remain exactly as blocked/unconfigured as before this pass. D1 schema state was read live (read-only, correction from an earlier draft of this note that trusted `wrangler d1 migrations list` alone: 0001/0002 are actually already fully applied schema-wise, just not recorded in bookkeeping - see the d1_migrations entry under outstanding_external_configuration for the exact discovered state and required reconciliation step).",
     "location": "scripts/gate-prep/",
     "components": {
       "shared": "scripts/gate-prep/lib/guardrails.mjs - fail-closed helpers (production-hostname/action guards, test-mode-key guard, livemode guard, database-identity guard, recipient-allowlist guard, secret redaction) every other script imports rather than reimplementing",
@@ -20,9 +20,10 @@
       "Every script fails closed with a clear, non-stack-trace message when required credentials are absent (confirmed for all of: cloudflare-access-setup, d1-migrate, stripe-sandbox-provision, stripe-validation-suite, resend-preview-dispatch, orchestrator)",
       "assertTestModeStripeKey genuinely rejects a live-shaped key before any Stripe API call is attempted (confirmed live, not just by code review)",
       "d1-migrate.mjs's database-identity guard correctly rejects a mismatched database name",
-      "d1-migrate.mjs read (GET-only) the real preview D1's migration status: all four migrations (0001-0004) remain unapplied, confirming nothing changed",
-      "12 new unit tests (tests/phase-f-gate-prep.test.mjs) directly exercise every guardrails.mjs function - 87/87 total suite passing",
-      "A real bug was found and fixed in d1-migrate.mjs's own JSONC parser: a naive `//`-comment-stripping regex matched the `//` inside the `https://` URL in wrangler.preview.jsonc's PUBLIC_SITE_URL value and corrupted the JSON - replaced with a string-aware stripper"
+      "CORRECTED in a follow-up read-only pass: d1-migrate.mjs's initial claim that all four migrations were unapplied was based only on `wrangler d1 migrations list`, which reads an empty bookkeeping table and cannot see that 0001/0002's actual schema is already fully present live. Direct schema inspection (sqlite_master, PRAGMA table_info, row counts matching the known fixture) confirmed 0001 and 0002 are genuinely already applied; only 0003/0004 are truly absent. d1-migrate.mjs was hardened with classifyMigrationDrift() to catch this class of drift before ever calling `wrangler d1 migrations apply` again - 8 new regression tests lock in the exact scenario discovered here",
+      "20 unit tests total in tests/phase-f-gate-prep.test.mjs (12 covering every guardrails.mjs function, 8 covering classifyMigrationDrift's five states plus the exact real-world scenario) - 95/95 total suite passing",
+      "A real bug was found and fixed in d1-migrate.mjs's own JSONC parser: a naive `//`-comment-stripping regex matched the `//` inside the `https://` URL in wrangler.preview.jsonc's PUBLIC_SITE_URL value and corrupted the JSON - replaced with a string-aware stripper",
+      "Confirmed directly (live HTTP probes, not inference): the deployed preview's auth entry points (POST /api/ops/auth/admin, POST /api/ops/auth/client) both return 503 identity_provider_not_configured - Cloudflare Access configuration, not database state, is what blocks every authenticated route today. Non-session-creating endpoints (GET /api/ops/session, GET /api/ops/portal) return 401 with no cookie, never reaching the Access check. No one has been able to create a real authenticated session against the live preview - only local/demo-mode rendering (isSafeProductPreview()) has ever functioned there, exactly as documented all along"
     ],
     "not_done_deliberately": "No script in this directory was run in a mode that would create, modify, or delete anything on a real Cloudflare Access, Stripe, or Resend account. That is the next session's job, gated on the same Cloudflare API Token this whole engagement has been waiting on."
   },
@@ -125,8 +126,8 @@
   },
   "tests": {
     "command": "npm test",
-    "passing": 87,
-    "total": 87,
+    "passing": 95,
+    "total": 95,
     "last_known_result": "pass"
   },
   "roles": [
@@ -245,7 +246,9 @@
       "Then: node scripts/gate-prep/access-smoke-test.mjs against the live deployed preview to confirm unauthenticated rejection and (with a manually-obtained test session cookie) authenticated pass-through"
     ],
     "d1_migrations": [
-      "Run: node scripts/gate-prep/d1-migrate.mjs - applies migrations/0003 and 0004 to the real preview D1 (currently unapplied, confirmed by a read-only check this pass) and verifies the resulting schema/triggers/publication fields live"
+      "DISCOVERED: d1_migrations bookkeeping table is empty, but 0001+0002's tables/triggers/columns are all fully present live (verified column-by-column, not just table names) - almost certainly applied via `wrangler d1 execute --file=...` directly at some point rather than `wrangler d1 migrations apply`, which never records bookkeeping. `wrangler d1 migrations list` cannot see this and reports all 4 as pending. 0003/0004 are genuinely, cleanly absent (0 of their objects exist).",
+      "First: record 0001/0002 as applied - npx wrangler d1 execute e4la-client-operations-preview --config wrangler.preview.jsonc --remote --command \"INSERT INTO d1_migrations (name, applied_at) VALUES ('0001_client_operations.sql', CURRENT_TIMESTAMP), ('0002_phase_c_preview.sql', CURRENT_TIMESTAMP)\"",
+      "Then: node scripts/gate-prep/d1-migrate.mjs - now safe to run (reconciles live schema vs. bookkeeping before ever calling apply; refuses and explains rather than blind-applying while the above mismatch exists) - applies only 0003/0004 and verifies the resulting schema/triggers/publication fields live"
     ],
     "stripe": [
       "Run: STRIPE_SECRET_KEY=sk_test_... node scripts/gate-prep/stripe-sandbox-provision.mjs - creates the three Product/Price pairs and the restricted Customer Portal configuration, prints the values payment_plans.stripe_initial_price_id/stripe_remaining_price_id need and the exact webhook event list",

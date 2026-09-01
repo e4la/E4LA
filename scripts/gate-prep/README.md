@@ -73,16 +73,47 @@ blocked by Access (not the app's own 401 JSON - Access's own redirect/403).
 **Prerequisite:** none beyond what already exists - the Wrangler OAuth
 session already used throughout this project already has D1 write access.
 
+**Known current state (verified by direct read-only inspection, not just
+`wrangler d1 migrations list`):** the preview database's `d1_migrations`
+bookkeeping table exists but is **empty** - yet migrations 0001 and 0002's
+tables/triggers/columns are all fully present and correct. Almost certainly
+someone ran `wrangler d1 execute --file=migrations/000N_*.sql --remote`
+directly at some point (which applies the SQL but never records it in
+`d1_migrations`), rather than `wrangler d1 migrations apply`. `wrangler d1
+migrations list` cannot see this - it only reads the same empty bookkeeping
+table, so it reports **all four** migrations as pending even though half of
+them are already live. Migrations 0003 and 0004 are genuinely, cleanly
+absent (zero of their tables/triggers exist).
+
+`d1-migrate.mjs` now reconciles live schema against bookkeeping *before*
+ever calling `wrangler d1 migrations apply`, and refuses to proceed while
+this mismatch exists:
+
 ```bash
-node scripts/gate-prep/d1-migrate.mjs            # apply + verify
-DRY_RUN=1 node scripts/gate-prep/d1-migrate.mjs   # list pending only
+node scripts/gate-prep/d1-migrate.mjs            # will currently BLOCK - see below
+DRY_RUN=1 node scripts/gate-prep/d1-migrate.mjs   # reports the same reconciliation, applies nothing either way
 ```
 
-**Expected output:** confirms the target database is
+**To actually clear this gate, reconciliation comes first, not `apply`:**
+after independently confirming 0001 and 0002's live schema is correct
+(column-by-column against the migration files - already done once, see
+above), record that fact explicitly:
+
+```bash
+npx wrangler d1 execute e4la-client-operations-preview --config wrangler.preview.jsonc --remote \
+  --command "INSERT INTO d1_migrations (name, applied_at) VALUES ('0001_client_operations.sql', CURRENT_TIMESTAMP), ('0002_phase_c_preview.sql', CURRENT_TIMESTAMP)"
+```
+
+Only after that should `node scripts/gate-prep/d1-migrate.mjs` be run - at
+that point reconciliation will classify 0001/0002 as `FULLY_APPLIED` and
+0003/0004 as `NOT_PRESENT` (both safe states), and it will proceed to apply
+only the two genuinely-missing migrations, then verify the resulting schema.
+
+**Expected output once safe to proceed:** confirms the target database is
 `e4la-client-operations-preview` (`2d6a0170-f8b9-496d-acd4-50adf3cf9e58`) -
-refuses to proceed against any other name/id -, runs
-`wrangler d1 migrations apply` (idempotent - already-applied migrations are
-skipped by wrangler itself), then verifies live: `project_phases` /
+refuses to proceed against any other name/id -, reconciles live schema vs.
+bookkeeping per migration, runs `wrangler d1 migrations apply` only once
+every migration classifies as safe, then verifies live: `project_phases` /
 `project_progress_snapshots` / `project_performance_metrics` all exist,
 every expected immutable trigger exists, every publication-boundary table
 has a `publication_status` column, and a smoke `SELECT COUNT(*)` succeeds
@@ -93,9 +124,11 @@ against each new table.
 schema-damage sense. If a migration must be reverted, write a new additive
 migration that undoes it; never edit an already-applied migration file.
 
-**Evidence this gate passed:** the script's own EVIDENCE block reports
-`tables: all present`, `triggers: all present`, `publicationFields: all
-present`.
+**Evidence this gate passed:** the script's reconciliation block reports
+every migration as `NOT_PRESENT` or `FULLY_APPLIED` (never
+`SCHEMA_PRESENT_JOURNAL_MISSING`/`PARTIALLY_PRESENT`/`UNKNOWN`), and the
+EVIDENCE block reports `tables: all present`, `triggers: all present`,
+`publicationFields: all present`.
 
 ## Gate 3 - Stripe Sandbox
 

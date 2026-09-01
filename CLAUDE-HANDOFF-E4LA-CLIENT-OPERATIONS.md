@@ -614,8 +614,14 @@ Every remaining external gate now has a ready-to-run script under
 `scripts/gate-prep/` - full prerequisites, exact commands, expected output,
 and rollback behavior per gate are documented in `scripts/gate-prep/README.md`;
 this section is a pointer, not a duplicate. In short: `cloudflare-access-setup.mjs`
-+ `access-smoke-test.mjs` (Gate 1), `d1-migrate.mjs` (applies 0003/0004 to
-preview D1 - confirmed still unapplied as of this pass), `stripe-sandbox-provision.mjs`
++ `access-smoke-test.mjs` (Gate 1), `d1-migrate.mjs` (reconciles live schema
+against migration bookkeeping before ever applying anything - a follow-up
+read-only pass found 0001/0002 already fully applied live but never recorded
+in `d1_migrations`, so `wrangler d1 migrations list` alone had wrongly
+suggested all four were pending; the runner now detects and refuses to
+blind-apply in that state - see `scripts/gate-prep/README.md`'s Gate 2
+section for the exact one-time reconciliation command needed before 0003/0004
+can be applied), `stripe-sandbox-provision.mjs`
 + `stripe-validation-suite.mjs` (Gate 2), `resend-preview-dispatch.mjs`
 (Gate 3, defaults to a suppressed no-send mode), and `orchestrator.mjs` to
 run all of them in sequence with resume support. Everything is DRY_RUN-safe,
