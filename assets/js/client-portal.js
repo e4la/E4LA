@@ -4,6 +4,8 @@ const isPreview = isSafeProductPreview();
 const previewParameters = new URLSearchParams(location.search);
 let csrfToken = '';
 let portal = null;
+let portalClientId = '';
+let portalRole = '';
 
 async function boot() {
   try {
@@ -12,16 +14,23 @@ async function boot() {
       document.querySelector('#portal-access-state').textContent = 'Product preview';
       portal = structuredClone(samplePortal);
       applyDemoState(portal, demoStateFromUrl());
+      portalRole = 'client_owner';
       if (previewParameters.get('preview') === 'admin') showAdminPreview();
     } else if (previewParameters.get('preview') === 'admin' && previewParameters.get('client')) {
       const session = await ensureSession('admin');
       csrfToken = session.csrfToken;
+      portalClientId = previewParameters.get('client');
+      portalRole = session.role;
       portal = normalizePortal((await api(`/api/ops/admin/preview/${encodeURIComponent(previewParameters.get('client'))}`)).portal);
+      await attachCommerceAndContent(portal, portalClientId);
       showAdminPreview();
     } else {
       const session = await ensureSession('client');
       csrfToken = session.csrfToken;
+      portalClientId = session.clientId || '';
+      portalRole = session.role;
       portal = normalizePortal(await api('/api/ops/portal'));
+      await attachCommerceAndContent(portal, portalClientId);
       document.querySelector('#portal-signout').hidden = false;
     }
     renderPortal(portal);
@@ -29,6 +38,21 @@ async function boot() {
   } catch (error) {
     renderFatal(error.message || 'Sign in through your E4LA access link to view this portal.');
   }
+}
+
+// Invoices and content are served by their own independent Pages Functions
+// routers (commerce/content) rather than the combined /api/ops/portal
+// payload, so they're fetched separately and merged in. Each fetch fails
+// soft - if one endpoint is unavailable, the rest of the portal still
+// renders rather than the whole page failing.
+async function attachCommerceAndContent(data, clientId) {
+  if (!clientId) return;
+  const [invoices, items] = await Promise.all([
+    api(`/api/commerce/clients/${encodeURIComponent(clientId)}/invoices`).then((result) => result.invoices).catch(() => []),
+    api(`/api/content/clients/${encodeURIComponent(clientId)}/items`).then((result) => result.items).catch(() => []),
+  ]);
+  data.invoices = invoices;
+  data.content = items;
 }
 
 async function ensureSession(surface) {
@@ -71,10 +95,12 @@ function renderPortal(data) {
   renderDocuments('reports-all', data.reports || [], Infinity, true);
   renderAgreement(data.agreement);
   renderBilling(data.billing || {});
+  renderInvoices(data.invoices || []);
   renderProgressOverview(data.progress || {});
   renderRoadmap(data.roadmap || []);
   renderWeeklyChart(data.weeklyProgress || []);
   renderPerformanceMetrics(data.performanceMetrics || []);
+  renderContent(data.content || []);
   const requestedTab = location.hash.replace('#', '');
   if (portalSections.includes(requestedTab)) activateTab(requestedTab, false);
 }
@@ -147,6 +173,27 @@ function renderBilling(billing) {
   ['billing-status','billing-full-status'].forEach((id) => { setText(id, label); document.getElementById(id).className = `ops-status ${['Needs attention','Payment failed'].includes(label) ? 'ops-status--attention' : 'ops-status--complete'}`; });
   const summary = document.querySelector('#billing-summary'); summary.replaceChildren();
   [['Program fee', formatMoney(billing.total || 0)], ['Payment schedule', billing.planName || 'See accepted agreement'], ['Payments completed', `${billing.completedPayments ?? '—'} of ${billing.installmentCount ?? '—'}`], ['Remaining balance', formatMoney(Math.max(0, (billing.total || 0) - (billing.paid || 0)))], ['Next payment', billing.nextPayment ? `${formatMoney(billing.nextAmount)} · ${billing.nextPayment}` : 'None scheduled']].forEach(([term, value]) => { const row = document.createElement('div'); row.append(textElement('dt', term), textElement('dd', value)); summary.append(row); });
+}
+
+const INVOICE_STATUS_LABEL = { draft: 'Preparing', sent: 'Sent', viewed: 'Viewed', paid: 'Paid', overdue: 'Overdue', void: 'Voided' };
+
+function renderInvoices(invoices) {
+  const list = document.querySelector('#portal-invoices-list');
+  if (!list) return;
+  list.replaceChildren();
+  if (!invoices.length) { list.append(emptyState('No invoices yet', 'Invoices will appear here as soon as E4LA sends one.')); return; }
+  invoices.forEach((invoice) => {
+    const li = element('li', 'ops-list__item');
+    const copy = document.createElement('div');
+    copy.append(
+      textElement('p', `Invoice · ${formatMoney(invoice.total || 0)}`, 'ops-list__title'),
+      textElement('p', `Due ${formatDate(invoice.due_date)}${invoice.amount_paid ? ` · ${formatMoney(invoice.amount_paid)} paid` : ''}`, 'ops-list__meta'),
+    );
+    const label = INVOICE_STATUS_LABEL[invoice.status] || humanize(invoice.status || 'Draft');
+    const side = element('div', 'ops-list__actions');
+    side.append(textElement('span', label, `ops-status ${['paid'].includes(invoice.status) ? 'ops-status--complete' : ['overdue', 'void'].includes(invoice.status) ? 'ops-status--attention' : 'ops-status--active'}`));
+    li.append(copy, side); list.append(li);
+  });
 }
 
 const PROGRESS_RING_CIRCUMFERENCE = 2 * Math.PI * 52;
@@ -223,8 +270,70 @@ function renderPerformanceMetrics(metrics) {
   });
 }
 
+const CONTENT_STATUS_LABEL = { client_review: 'Awaiting your review', approved: 'Approved', scheduled: 'Scheduled', publishing: 'Publishing', published: 'Published', verified_live: 'Live' };
+const CONTENT_PUBLISHED_STATUSES = ['published', 'verified_live'];
+const CONTENT_APPROVER_ROLES = ['client_owner', 'authorized_signer'];
+
+function renderContent(items) {
+  const reviewList = document.querySelector('#portal-content-review');
+  const publishedList = document.querySelector('#portal-content-published');
+  if (!reviewList || !publishedList) return;
+  reviewList.replaceChildren(); publishedList.replaceChildren();
+  const upcoming = items.filter((item) => !CONTENT_PUBLISHED_STATUSES.includes(item.status));
+  const published = items.filter((item) => CONTENT_PUBLISHED_STATUSES.includes(item.status));
+
+  if (!upcoming.length) { reviewList.append(emptyState('Nothing awaiting review', 'Content ready for your review or already scheduled will appear here.')); }
+  upcoming.forEach((item) => {
+    const card = element('article', 'ops-card ops-card__body');
+    card.append(textElement('span', CONTENT_STATUS_LABEL[item.status] || humanize(item.status), 'ops-status ops-status--active'));
+    card.append(textElement('h3', item.topic));
+    if (item.pillar) card.append(textElement('p', item.pillar, 'ops-list__meta'));
+    if (item.masterCopy) card.append(textElement('p', item.masterCopy));
+    if (item.scheduledDate) card.append(textElement('p', `Scheduled ${formatDate(item.scheduledDate)}`, 'ops-list__meta'));
+    if (item.status === 'client_review' && CONTENT_APPROVER_ROLES.includes(portalRole) && !isPreview) {
+      const actions = element('div', 'ops-form-actions');
+      const approve = textElement('button', 'Approve', 'ops-button'); approve.type = 'button';
+      const revise = textElement('button', 'Request changes', 'ops-button ops-button--secondary'); revise.type = 'button';
+      approve.addEventListener('click', () => decideContentItem(item.id, 'approved', card));
+      revise.addEventListener('click', () => decideContentItem(item.id, 'revision_requested', card));
+      actions.append(approve, revise); card.append(actions);
+    } else if (item.status === 'client_review' && isPreview) {
+      const actions = element('div', 'ops-form-actions');
+      const approve = textElement('button', 'Approve', 'ops-button'); approve.type = 'button';
+      approve.addEventListener('click', () => showToast('Fictional preview: approval is not connected to a live content item.'));
+      actions.append(approve); card.append(actions);
+    }
+    reviewList.append(card);
+  });
+
+  if (!published.length) { publishedList.append(emptyState('Nothing published yet', 'Published content will appear here once it goes live.')); }
+  published.forEach((item) => {
+    const li = element('li', 'ops-list__item');
+    const copy = document.createElement('div');
+    copy.append(textElement('p', item.topic, 'ops-list__title'), textElement('p', item.scheduledDate ? formatDate(item.scheduledDate) : '', 'ops-list__meta'));
+    const side = element('div', 'ops-list__actions');
+    side.append(textElement('span', CONTENT_STATUS_LABEL[item.status] || humanize(item.status), 'ops-status ops-status--complete'));
+    li.append(copy, side); publishedList.append(li);
+  });
+}
+
+async function decideContentItem(itemId, status, card) {
+  const buttons = card.querySelectorAll('button'); buttons.forEach((button) => { button.disabled = true; });
+  try {
+    await api(`/api/content/items/${encodeURIComponent(itemId)}/status`, {
+      method: 'PATCH', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify({ status }),
+    });
+    showToast(status === 'approved' ? 'Content approved.' : 'Revision requested.');
+    portal.content = (await api(`/api/content/clients/${encodeURIComponent(portalClientId)}/items`)).items;
+    renderContent(portal.content);
+  } catch (error) {
+    showToast(error.message);
+    buttons.forEach((button) => { button.disabled = false; });
+  }
+}
+
 const portalTabs = [...document.querySelectorAll('[data-portal-tab]')];
-const portalSections = ['overview','project','deliverables','reports','agreements','billing'];
+const portalSections = ['overview','project','deliverables','reports','agreements','billing','content'];
 portalTabs.forEach((tab) => {
   tab.tabIndex = tab.dataset.portalTab === 'overview' ? 0 : -1;
   tab.addEventListener('click', () => activateTab(tab.dataset.portalTab));

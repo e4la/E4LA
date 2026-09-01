@@ -81,6 +81,16 @@ export const samplePortal = Object.freeze({
     { metricKey: 'indexed_pages', label: 'Indexed pages', category: 'visibility', currentValue: '142', baselineValue: '96 at kickoff', trend: 'up', interpretation: null },
     { metricKey: 'technical_issues_resolved', label: 'Technical issues resolved', category: 'website_ux', currentValue: '9 of 12', baselineValue: null, trend: 'up', interpretation: null },
   ],
+  invoices: [
+    { id: 'inv_demo_1', status: 'paid', currency: 'usd', total: 120000, amount_paid: 120000, due_date: '2026-08-12' },
+    { id: 'inv_demo_2', status: 'sent', currency: 'usd', total: 120000, amount_paid: 0, due_date: '2026-09-12' },
+    { id: 'inv_demo_3', status: 'draft', currency: 'usd', total: 120000, amount_paid: 0, due_date: '2026-10-12' },
+  ],
+  content: [
+    { id: 'ci_demo_1', topic: 'Homepage messaging refresh — client review', pillar: 'Brand', masterCopy: 'Proposed hero copy for the visibility-phase homepage update.', scheduledDate: '2026-09-05', status: 'client_review' },
+    { id: 'ci_demo_2', topic: '5 questions LA hosts ask before their first event', pillar: 'Educational', masterCopy: null, scheduledDate: '2026-09-10', status: 'scheduled' },
+    { id: 'ci_demo_3', topic: 'August visibility recap', pillar: 'Proof of work', masterCopy: null, scheduledDate: '2026-08-28', status: 'published' },
+  ],
 });
 
 export const sampleAdmin = Object.freeze({

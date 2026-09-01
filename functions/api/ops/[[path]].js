@@ -160,7 +160,7 @@ async function refreshSession({ request, env }) {
   const next = await rotateSession(env.ENROLLMENT_DB, current);
   return json({
     csrfToken: next.csrfToken, expiresAt: next.expiresAt, role: current.role,
-    actorType: current.actor_type,
+    actorType: current.actor_type, clientId: current.client_id || null,
   }, 200, { 'Set-Cookie': sessionCookie(next.token, next.ttlSeconds) });
 }
 
