@@ -31,6 +31,21 @@
   --ops-surface-violet: rgba(26, 16, 40, 0.55);
   --ops-glow-current: radial-gradient(circle at 25% 15%, rgba(124, 58, 237, 0.22), transparent 65%);
   --ops-glow-progress: radial-gradient(circle at 85% 0%, rgba(249, 115, 22, 0.16), transparent 60%);
+
+  /* Editable-field surfaces: the one deliberately light island inside an otherwise
+     dark shell (inputs/selects/textareas only - never panels, cards, or the page
+     background). Warm off-white with a faint purple undertone so it still reads as
+     part of this palette rather than a generic form control; text is a deep
+     navy-plum rather than flat black for the same reason. Focus keeps using the
+     existing --ops-pink/--ops-purple accent below, unchanged. */
+  --ops-field-bg: #f7f5fb;
+  --ops-field-bg-focus: #ffffff;
+  --ops-field-bg-readonly: #e4d9f2;
+  --ops-field-bg-disabled: #e2e0e2;
+  --ops-field-text: #171225;
+  --ops-field-text-disabled: #8c8593;
+  --ops-field-placeholder: #6b6478;
+  --ops-field-border: #cfc7de;
   font-family: 'Manrope', system-ui, sans-serif;
 }
 
@@ -218,20 +233,38 @@ img { max-width: 100%; }
 .ops-input, .ops-select, .ops-textarea {
   width: 100%;
   min-height: 52px;
-  border: 1px solid rgba(255,255,255,.17);
+  border: 1px solid var(--ops-field-border);
   border-radius: var(--ops-radius-sm);
   outline: 0;
-  background: rgba(4, 3, 9, .58);
+  background: var(--ops-field-bg);
   padding: 12px 14px;
-  color: #fff;
+  color: var(--ops-field-text);
+  color-scheme: light;
   transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
 }
-.ops-input::placeholder, .ops-textarea::placeholder { color: rgba(255,255,255,.27); }
-.ops-input:hover, .ops-select:hover, .ops-textarea:hover { border-color: rgba(255,255,255,.28); }
+.ops-input::placeholder, .ops-textarea::placeholder { color: var(--ops-field-placeholder); }
+.ops-input:hover, .ops-select:hover, .ops-textarea:hover { border-color: #b9aed1; }
 .ops-input:focus, .ops-select:focus, .ops-textarea:focus {
   border-color: rgba(219,39,119,.85);
   box-shadow: 0 0 0 3px rgba(219,39,119,.16), 0 0 24px rgba(124,58,237,.1);
-  background: rgba(7, 5, 12, .88);
+  background: var(--ops-field-bg-focus);
+}
+/* Readonly: a system-derived value the field still honestly displays (not a value
+   the person is meant to type into) - a slightly deeper light-neutral tone than an
+   editable field, but with the same full-contrast text, so it never reads as
+   "broken" or "disabled". Scoped to the actual [readonly] attribute, not styled
+   inputs generally. */
+.ops-input[readonly], .ops-textarea[readonly] {
+  background: var(--ops-field-bg-readonly);
+  cursor: default;
+}
+/* Disabled: unmistakably inert - muted surface, lower-contrast text, no hover/focus
+   affordance implied. */
+.ops-input:disabled, .ops-select:disabled, .ops-textarea:disabled {
+  background: var(--ops-field-bg-disabled);
+  color: var(--ops-field-text-disabled);
+  border-color: var(--ops-field-border);
+  cursor: not-allowed;
 }
 .ops-input[aria-invalid='true'], .ops-select[aria-invalid='true'] { border-color: var(--ops-red); }
 .ops-textarea { min-height: 120px; resize: vertical; }
