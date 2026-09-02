@@ -481,6 +481,16 @@ img { max-width: 100%; }
 .portal-progress__stats dt { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--ops-muted); }
 .portal-progress__stats dd { margin: 6px 0 0; font-size: 16px; font-weight: 700; }
 
+/* Engagement Health is the one primary-information card in this pair (Engagement
+   Summary above it already gets real weight from its own two-part layout) - id-scoped
+   so this doesn't also inflate the unrelated, intentionally compact "Phase completion"
+   chart card that happens to share the bare .portal-progress background class. Ring and
+   stat values are untouched (still the exact same renderProgressRing() output/data);
+   only the surrounding padding/spacing/min-height changes. */
+#portal-progress-overview { padding: clamp(28px, 3.6vw, 40px); min-height: 300px; display: flex; flex-direction: column; justify-content: center; }
+#portal-progress-overview .portal-progress__body { gap: 44px; margin-top: 30px; }
+#portal-progress-overview .portal-progress__stats { gap: 26px 40px; }
+
 .portal-roadmap { display: flex; gap: 16px; margin: 22px 0 0; padding: 4px 4px 12px; list-style: none; overflow-x: auto; scroll-snap-type: x proximity; }
 .portal-roadmap__phase { scroll-snap-align: start; flex: 0 0 220px; padding: 18px; border-radius: var(--ops-radius); border: 1px solid var(--ops-line); background: var(--ops-surface-charcoal); position: relative; }
 .portal-roadmap__phase::after { content: ''; position: absolute; top: 34px; left: 100%; width: 16px; height: 1px; background: var(--ops-line-strong); }
@@ -522,4 +532,10 @@ img { max-width: 100%; }
   .portal-progress__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; }
   .portal-roadmap__phase { flex-basis: 190px; }
   .portal-chart { height: 120px; }
+  /* Let Engagement Health size to its own content on mobile instead of carrying the
+     desktop min-height (which would otherwise leave a block of empty space once the
+     ring/stats have wrapped to a narrower, taller stack). */
+  #portal-progress-overview { min-height: 0; padding: 24px; }
+  #portal-progress-overview .portal-progress__body { gap: 24px; margin-top: 22px; }
+  #portal-progress-overview .portal-progress__stats { gap: 16px 18px; }
 }
