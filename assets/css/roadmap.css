@@ -1,0 +1,139 @@
+/* ==========================================================================
+   Roadmap / Client Journey component
+   Renders the output of assets/js/roadmap.js (renderRoadmap / buildRoadmap).
+   Shared by the Admin dashboard and the Client Portal.
+
+   Load this AFTER assets/css/operations.css - every color below is one of
+   the --ops-* tokens defined in that file's :root block, or a plain white
+   opacity overlay (rgba(255,255,255,alpha)) in the same style already used
+   throughout operations.css for one-off tints. No new hues are introduced
+   and no :root design tokens were added. The one non-token custom property
+   used here (--e4la-roadmap-progress) is not a palette value - it's a
+   per-instance number (0-100%) that assets/js/roadmap.js sets inline via
+   style.setProperty() so the same JS-computed fill can drive either the
+   horizontal connector's width (desktop) or its height (mobile) across the
+   breakpoint below, with no resize/orientation listener required.
+
+   Mobile breakpoint: 720px, matching the existing convention already used
+   for mobile-specific rules in operations.css, operations-dashboard.css and
+   client-agreement.css (their @media (max-width: 720px) blocks) - not a
+   newly invented breakpoint.
+   ========================================================================== */
+
+.e4la-roadmap { position: relative; }
+
+.e4la-roadmap__empty {
+  border: 1px dashed var(--ops-line);
+  border-radius: var(--ops-radius);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 32px 20px;
+  text-align: center;
+}
+.e4la-roadmap__empty-title { margin: 0; font-size: 15px; font-weight: 750; color: var(--ops-text); }
+.e4la-roadmap__empty-copy { margin: 6px 0 0; font-size: 13px; color: var(--ops-muted); }
+
+.e4la-roadmap__stages { position: relative; display: flex; align-items: stretch; gap: 20px; margin: 0; padding: 4px 0 0; }
+
+.e4la-roadmap__connector { position: absolute; top: 17px; left: 0; right: 0; height: 2px; z-index: 0; }
+.e4la-roadmap__connector-track { position: relative; width: 100%; height: 100%; border-radius: 999px; background: var(--ops-line); overflow: hidden; }
+.e4la-roadmap__connector-fill { position: absolute; inset: 0; width: var(--e4la-roadmap-progress, 0%); border-radius: 999px; background: var(--ops-gradient); transition: width .6s ease; }
+
+.e4la-roadmap__stage { position: relative; z-index: 1; display: flex; flex: 1 1 0; min-width: 0; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+
+.e4la-roadmap__marker {
+  display: grid;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 2px solid var(--ops-line-strong);
+  border-radius: 50%;
+  background: var(--ops-bg-raised);
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+  font-weight: 800;
+}
+.e4la-roadmap__stage--completed .e4la-roadmap__marker { border-color: rgba(74, 222, 128, 0.5); background: rgba(74, 222, 128, 0.16); color: var(--ops-green); }
+.e4la-roadmap__stage--current .e4la-roadmap__marker { border-color: transparent; background: var(--ops-gradient); color: #fff; box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.16), 0 0 18px rgba(219, 39, 119, 0.45); }
+.e4la-roadmap__stage--blocked .e4la-roadmap__marker { border-color: rgba(251, 113, 133, 0.55); background: rgba(251, 113, 133, 0.12); color: var(--ops-red); }
+.e4la-roadmap__stage--on-hold .e4la-roadmap__marker { border-color: var(--ops-line); background: rgba(255, 255, 255, 0.04); color: var(--ops-subtle); }
+.e4la-roadmap__stage--not-started .e4la-roadmap__marker { background: transparent; color: var(--ops-subtle); }
+
+.e4la-roadmap__card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+  border: 1px solid var(--ops-line);
+  border-radius: var(--ops-radius);
+  background: var(--ops-surface-charcoal);
+  padding: 18px;
+}
+.e4la-roadmap__stage--current .e4la-roadmap__card { background: var(--ops-surface-plum); background-image: var(--ops-glow-current); border-color: rgba(124, 58, 237, 0.4); box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.16); }
+.e4la-roadmap__stage--completed .e4la-roadmap__card { opacity: .7; }
+.e4la-roadmap__stage--blocked .e4la-roadmap__card { border-color: rgba(251, 113, 133, 0.4); }
+.e4la-roadmap__stage--on-hold .e4la-roadmap__card { opacity: .62; filter: saturate(.65); }
+.e4la-roadmap__stage--awaiting-client .e4la-roadmap__card { box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.35); }
+
+.e4la-roadmap__card-head { display: flex; flex-wrap: wrap; gap: 6px; }
+.e4la-roadmap__badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 9px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.e4la-roadmap__badge--completed { border-color: rgba(74, 222, 128, 0.35); background: rgba(74, 222, 128, 0.1); color: var(--ops-green); }
+.e4la-roadmap__badge--current { border-color: transparent; background: var(--ops-gradient); color: #fff; }
+.e4la-roadmap__badge--blocked { border-color: rgba(251, 113, 133, 0.4); background: rgba(251, 113, 133, 0.1); color: var(--ops-red); }
+.e4la-roadmap__badge--on-hold { color: var(--ops-subtle); }
+.e4la-roadmap__badge--not-started { color: var(--ops-subtle); }
+.e4la-roadmap__badge--awaiting-client { border-color: rgba(251, 191, 36, 0.4); background: rgba(251, 191, 36, 0.1); color: var(--ops-amber); }
+.e4la-roadmap__badge--internal { color: var(--ops-subtle); font-style: italic; }
+
+.e4la-roadmap__name { margin: 0; font-size: 15px; font-weight: 750; color: var(--ops-text); }
+.e4la-roadmap__dates { margin: 0; font-size: 12px; color: var(--ops-muted); }
+
+.e4la-roadmap__progress { display: grid; gap: 6px; }
+.e4la-roadmap__progress-track { width: 100%; height: 5px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.e4la-roadmap__progress-fill { height: 100%; border-radius: 999px; background: var(--ops-gradient); }
+.e4la-roadmap__progress-label { font-size: 11px; font-weight: 700; color: var(--ops-muted); }
+
+.e4la-roadmap__milestones { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.e4la-roadmap__milestone { display: grid; grid-template-columns: 8px minmax(0, 1fr); align-items: baseline; gap: 8px; font-size: 12px; color: rgba(255, 255, 255, 0.78); }
+.e4la-roadmap__milestone-dot { width: 6px; height: 6px; margin-top: 4px; border-radius: 50%; background: rgba(255, 255, 255, 0.28); }
+.e4la-roadmap__milestone--completed .e4la-roadmap__milestone-dot { background: var(--ops-green); }
+.e4la-roadmap__milestone--in-progress .e4la-roadmap__milestone-dot { background: var(--ops-pink); }
+.e4la-roadmap__milestone--blocked .e4la-roadmap__milestone-dot { background: var(--ops-red); }
+.e4la-roadmap__milestone--cancelled { opacity: .55; text-decoration: line-through; }
+.e4la-roadmap__milestone-copy { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; }
+.e4la-roadmap__milestone-title { font-weight: 650; }
+.e4la-roadmap__milestone-status { font-size: 10px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--ops-subtle); }
+.e4la-roadmap__milestones-more { margin: 0; font-size: 11px; color: var(--ops-subtle); }
+
+.e4la-roadmap__deliverables { display: grid; gap: 4px; border-top: 1px solid var(--ops-line); padding-top: 6px; }
+.e4la-roadmap__deliverables-label { font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--ops-muted); }
+.e4la-roadmap__deliverables-list { margin: 0; padding: 0 0 0 16px; color: rgba(255, 255, 255, 0.78); font-size: 12px; }
+
+.e4la-roadmap__action { margin: 0; border-top: 1px solid var(--ops-line); padding-top: 6px; color: var(--ops-text); font-size: 12px; }
+.e4la-roadmap__action strong { color: var(--ops-amber); }
+
+@media (max-width: 720px) {
+  .e4la-roadmap__stages { flex-direction: column; gap: 24px; }
+  .e4la-roadmap__connector { top: 0; bottom: 0; left: 17px; right: auto; width: 2px; height: auto; }
+  .e4la-roadmap__connector-fill { width: 100%; height: var(--e4la-roadmap-progress, 0%); }
+  .e4la-roadmap__stage { flex-direction: row; align-items: flex-start; text-align: left; gap: 14px; }
+  .e4la-roadmap__card { flex: 1 1 auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .e4la-roadmap__connector-fill, .e4la-roadmap__progress-fill { transition: none; }
+}

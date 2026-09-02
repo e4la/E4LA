@@ -1,0 +1,71 @@
+/* ==========================================================================
+   Reporting / visualization component library — pairs with
+   assets/js/reporting-charts.js. Kept in its own file rather than appended
+   to operations.css because operations.css is the always-loaded base
+   token/layout sheet for both the Admin dashboard and Client Portal; this
+   sheet is feature-scoped (only needed on pages that actually render one of
+   these charts) and mirrors the existing operations-dashboard.css pattern of
+   a page/feature stylesheet layered on top of operations.css tokens. Load it
+   after operations.css on any page that uses reporting-charts.js.
+
+   Every rule below reads an existing --ops-* custom property from
+   operations.css's :root block. No new custom properties are introduced by
+   this file. Class names are prefixed `rpt-` (distinct from the existing
+   `ops-`/`portal-`/`admin-`/`dashboard-` prefixes already in use) so it is
+   unambiguous which rules belong to this library; a handful of components
+   (financial status badges, the chart empty state) deliberately reuse
+   existing `ops-status`/`ops-card`/`ops-empty`/`ops-list` classes verbatim
+   instead of duplicating them — see reporting-charts.js for which.
+   ========================================================================== */
+
+.rpt-chart { display: grid; gap: 14px; }
+.rpt-chart__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.rpt-chart__title { margin: 0; font-size: 13px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--ops-muted); }
+.rpt-chart__subtitle { margin: 4px 0 0; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--ops-subtle); }
+.rpt-chart__note { margin: 0; font-size: 12px; color: var(--ops-subtle); line-height: 1.5; }
+
+/* Proportional stacked bar shared by phase/milestone/deliverables/content-lifecycle/
+   publishing-status charts. */
+.rpt-bar { display: flex; width: 100%; height: 14px; overflow: hidden; border-radius: 999px; background: rgba(255, 255, 255, 0.06); }
+.rpt-bar__segment { display: block; height: 100%; min-width: 2px; transition: width .5s ease; }
+
+.rpt-legend { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px 18px; margin: 0; }
+.rpt-legend__item { display: flex; align-items: center; gap: 8px; }
+.rpt-legend__swatch { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+.rpt-legend__label { margin: 0; font-size: 12px; color: var(--ops-muted); }
+.rpt-legend__count { margin: 0 0 0 auto; font-size: 12px; font-weight: 800; color: var(--ops-text); }
+
+.rpt-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* Progress ring — generalized from client-portal.js's existing portal-progress__ring. */
+.rpt-ring { position: relative; flex: 0 0 auto; }
+.rpt-ring svg { transform: rotate(-90deg); display: block; }
+.rpt-ring__track { fill: none; stroke: rgba(255, 255, 255, 0.1); }
+.rpt-ring__value { fill: none; stroke-linecap: round; }
+.rpt-ring__copy { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 2px; }
+.rpt-ring__copy strong { font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
+.rpt-ring__copy span { font-size: 10px; color: var(--ops-muted); max-width: 84px; line-height: 1.3; }
+
+/* Financial status: single two-stop paid-vs-total fill (not a categorical chart, so it
+   uses --ops-gradient directly, matching the existing .billing-bar convention). */
+.rpt-money { display: grid; gap: 8px; }
+.rpt-money-bar { width: 100%; height: 8px; overflow: hidden; border-radius: 999px; background: rgba(255, 255, 255, 0.08); }
+.rpt-money-bar__fill { display: block; height: 100%; border-radius: 999px; background: var(--ops-gradient); transition: width .5s ease; }
+.rpt-money-row { display: flex; justify-content: space-between; gap: 18px; color: var(--ops-muted); font-size: 11px; }
+
+/* Publishing / activity sparkline. */
+.rpt-sparkline-wrap { display: grid; gap: 6px; }
+.rpt-sparkline { display: block; width: 100%; height: 64px; }
+.rpt-sparkline__line { fill: none; stroke: var(--ops-purple); stroke-width: 2; }
+.rpt-sparkline__area { stroke: none; }
+.rpt-sparkline__dot { fill: var(--ops-orange); }
+.rpt-sparkline__axis { display: flex; justify-content: space-between; font-size: 10px; color: var(--ops-subtle); }
+
+/* Chart-specific empty state: reuses ops-card/ops-empty verbatim (see
+   renderChartEmptyState in reporting-charts.js) but is sized to sit inside a
+   chart-sized slot rather than a full page section. */
+.rpt-empty { min-height: 160px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+@media (max-width: 720px) {
+  .rpt-legend { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+}
