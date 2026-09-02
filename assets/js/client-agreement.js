@@ -67,6 +67,12 @@ function renderAgreement(data) {
   stateView.hidden = true;
   app.hidden = false;
   const { agreement, client, paymentPlans } = data;
+  const clientName = client?.dba || client?.legalBusinessName || '';
+  document.querySelector('#agreement-title').replaceChildren(
+    document.createTextNode('E4LA '), Object.assign(document.createElement('span'), { className: 'ops-gradient-text', textContent: agreement.programName || 'Growth Program' }), document.createTextNode(' Agreement'),
+  );
+  setText('agreement-eyebrow', clientName ? `A committed partnership with ${clientName}` : 'A committed partnership');
+  setText('agreement-lede', agreement.summary?.scopeSummary || agreement.summary?.description || 'Strategic growth. Measurable progress. A committed partnership.');
   setText('summary-program', agreement.programName);
   setText('summary-term', agreement.summary.initialTerm || '90 Days');
   setText('summary-total', formatMoney(agreement.summary.totalInvestment || paymentPlans[0]?.total || 0));

@@ -1,4 +1,11 @@
-.agreement-hero { position: relative; padding-block: clamp(42px, 7vw, 88px) 18px; }
+.agreement-hero {
+  position: relative;
+  padding-block: clamp(42px, 7vw, 88px) 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(20px, 4vw, 48px);
+}
 .agreement-hero::after {
   position: absolute;
   z-index: -1;
@@ -10,6 +17,45 @@
   background: radial-gradient(circle, rgba(124,58,237,.15), rgba(219,39,119,.06) 46%, transparent 70%);
   filter: blur(8px);
   content: '';
+}
+.agreement-hero__copy { flex: 1 1 420px; min-width: 0; }
+.agreement-summary { flex-basis: 100%; }
+
+/* Reuses the exact production robot asset and glow treatment already
+   established on the public sign-in/sign-up pages (assets/auth-robot-alpha.webm,
+   see auth.css .auth-media) - same hue family as this system's own
+   --ops-orange/--ops-purple, just expressed via this ops-themed surface
+   instead of duplicating a second unrelated mascot. */
+.agreement-hero__media {
+  position: relative;
+  flex: 0 1 320px;
+  width: min(100%, 320px);
+  aspect-ratio: 1 / 1;
+  order: -1;
+}
+.agreement-hero__media::before {
+  content: '';
+  position: absolute;
+  inset: 6%;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(124, 58, 237, .34), transparent 62%),
+    radial-gradient(circle at 62% 62%, rgba(249, 115, 22, .22), transparent 58%);
+  filter: blur(28px);
+  opacity: .85;
+  z-index: 0;
+}
+.agreement-hero__video {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 26px 60px rgba(0, 0, 0, .45));
+}
+@media (max-width: 760px) {
+  .agreement-hero { flex-direction: column; align-items: stretch; text-align: left; }
+  .agreement-hero__media { width: min(64vw, 260px); margin-inline: auto; order: -1; }
 }
 .agreement-progress { display: flex; gap: 8px; margin-top: 34px; }
 .agreement-progress span { width: 42px; height: 3px; border-radius: 99px; background: rgba(255,255,255,.14); }
