@@ -101,6 +101,7 @@ function renderPortal(data) {
   renderDocuments('deliverables-all', data.deliverables || []);
   renderDocuments('reports-all', data.reports || [], Infinity, true);
   renderAgreement(data.agreement);
+  renderHistoricalAgreement();
   renderBilling(data.billing || {});
   renderInvoices(data.invoices || []);
   renderProgressOverview(data.progress || {});
@@ -158,18 +159,57 @@ function renderDocuments(id, items, limit = Infinity, reports = false) {
   });
 }
 
+// Real status -> badge tone, so an in-progress/not-yet-signed agreement never reads as
+// "complete" merely because that used to be the only style this badge ever rendered in.
+const AGREEMENT_STATUS_TONE = { accepted: 'ops-status--complete', enrolled: 'ops-status--complete', completed: 'ops-status--complete', sent: 'ops-status--pending', viewed: 'ops-status--pending', draft: 'ops-status--pending', prepared: 'ops-status--pending' };
 function renderAgreement(agreement) {
+  // agreement.status arrives already humanize()'d (Title Case) by buildJourneyData -
+  // normalize once here so the lookups below aren't silently case-sensitive-broken.
+  const statusKey = agreement?.status ? agreement.status.toLowerCase() : '';
+  const isDraftLike = agreement && !['accepted', 'enrolled', 'completed'].includes(statusKey);
   setText('portal-agreement-name', agreement?.name || 'No accepted agreement available');
-  setText('portal-agreement-meta', agreement ? `Version ${agreement.version || 1} · Accepted ${agreement.acceptedAt} · ${agreement.plan}` : '—');
+  setText('portal-agreement-meta', agreement ? (isDraftLike ? `${agreement.status} — not yet signed` : `Version ${agreement.version || 1} · Accepted ${agreement.acceptedAt} · ${agreement.plan}`) : '—');
   setText('agreement-status', agreement?.status || 'Unavailable');
+  const statusEl = document.querySelector('#agreement-status');
+  if (statusEl) statusEl.className = `ops-status ${AGREEMENT_STATUS_TONE[statusKey] || 'ops-status--pending'}`;
   const list = document.querySelector('#agreements-all'); list.replaceChildren();
   if (!agreement) { list.append(emptyState('No accepted agreement available', 'Accepted agreement records will appear here.')); return; }
   const li = element('li', 'ops-list__item ops-list__item--agreement');
-  const copy = document.createElement('div'); copy.append(textElement('p', agreement.name, 'ops-list__title'), textElement('p', `Version ${agreement.version || 1} · Accepted ${agreement.acceptedAt} · ${agreement.plan}`, 'ops-list__meta'));
-  const side = element('div', 'ops-list__actions'); side.append(textElement('span', agreement.status || 'Accepted', 'ops-status ops-status--complete'));
+  const metaText = isDraftLike ? `${agreement.status} — not yet signed` : `Version ${agreement.version || 1} · Accepted ${agreement.acceptedAt} · ${agreement.plan}`;
+  const copy = document.createElement('div'); copy.append(textElement('p', agreement.name, 'ops-list__title'), textElement('p', metaText, 'ops-list__meta'));
+  const side = element('div', 'ops-list__actions'); side.append(textElement('span', agreement.status || 'Accepted', `ops-status ${AGREEMENT_STATUS_TONE[statusKey] || 'ops-status--pending'}`));
   if (agreement.documentUrl) { const link = textElement('a', 'Open final agreement', 'ops-link-button'); link.href = agreement.documentUrl; side.append(link); }
-  else side.append(textElement('span', 'Final PDF pending', 'ops-list__meta'));
+  else side.append(textElement('span', isDraftLike ? 'Awaiting signature' : 'Final PDF pending', 'ops-list__meta'));
   li.append(copy, side); list.append(li);
+}
+
+// Mortgage Bankers-specific: the real, verified original Independent Contractor
+// Agreement (effective 2026-05-01, signed 2026-04-27) predates this operating system
+// entirely - it was never accepted through this app's electronic flow, so it is
+// deliberately never represented via the dynamic agreement/acceptance mechanism above
+// (which would misrepresent it as electronic consent that didn't happen). Shown as a
+// separate, clearly-labeled historical reference instead. Real terms only - E4LA's own
+// internal strategy/notes are not included, only what the signed contract itself states,
+// which both signing parties (including Sean, the client reading this) already have.
+function renderHistoricalAgreement() {
+  const mount = document.querySelector('#portal-historical-agreement');
+  if (!mount || portalClientId !== 'clt_mortgage_bankers') { if (mount) mount.hidden = true; return; }
+  mount.hidden = false;
+  mount.replaceChildren();
+  mount.append(
+    (() => { const row = element('div', 'dashboard-card-title'); row.append(textElement('h3', 'Original agreement'), textElement('span', 'Signed', 'ops-status ops-status--complete')); return row; })(),
+    textElement('p', 'Independent Contractor Agreement — Commercial & Residential Lending Business Development & Digital Marketing Services', 'ops-list__title'),
+    textElement('p', 'Effective May 1, 2026 · Signed April 27, 2026 · E&E Mortgage Bankers Corp and E4LA LLC · 12-month term · Governed by California law.', 'ops-list__meta'),
+  );
+  const terms = element('dl', 'billing-summary ops-mt-18');
+  [
+    ['Base payment', '$2,000 / month, upfront'],
+    ['Commission — up to $1,000,000', '$1,000 per funded, contractor-generated loan'],
+    ['Commission — up to $2,000,000', '$1,500 per funded, contractor-generated loan'],
+    ['Commission — up to $3,000,000', '$2,000 per funded, contractor-generated loan'],
+  ].forEach(([label, value]) => { const row = document.createElement('div'); row.append(textElement('dt', label), textElement('dd', value)); terms.append(row); });
+  mount.append(terms);
+  mount.append(textElement('p', 'This is the original signed engagement. Current work is tracked separately below under the active digital growth engagement.', 'ops-hint ops-mt-18'));
 }
 
 function renderBilling(billing) {

@@ -385,7 +385,19 @@ function buildAgreementSection(client) {
   // "everything about money and contracts" at a glance, distinct from the plum/purple
   // "Progress" card and the plain-neutral Identity/Content/Portal/Activity cards.
   const card = sectionCard('Agreement', client.agreement, 'admin-kpi-glow');
-  const body = card.querySelector('.client-section-body'); body.append(textElement('p', `Status: ${client.agreement}. Client-signed evidence is immutable once sent.`, 'ops-hint'));
+  const body = card.querySelector('.client-section-body');
+  // Mortgage Bankers-specific: the real, verified original Independent Contractor
+  // Agreement predates this operating system and was never accepted through its
+  // electronic flow - shown as a distinct, clearly-labeled historical fact rather
+  // than folded into (or confused with) the status line below, which always refers
+  // to the current, system-tracked agreement only.
+  if (client.id === 'clt_mortgage_bankers') {
+    body.append(
+      textElement('p', 'Historical / original agreement (signed, external to this system)', 'ops-status ops-status--complete'),
+      textElement('p', 'Independent Contractor Agreement — effective May 1, 2026, signed April 27, 2026. $2,000/month base plus a funded-loan commission schedule ($1,000–$2,000 by loan size). 12-month term.', 'ops-hint'),
+    );
+  }
+  body.append(textElement('p', `Current system agreement status: ${client.agreement}. Client-signed evidence is immutable once sent.`, 'ops-hint'));
   const button = textElement('button', 'Open in Agreements panel', 'ops-link-button'); button.type = 'button';
   button.addEventListener('click', () => { const form = document.querySelector('#agreement-create-form'); if (form) { form.elements.clientId.value = client.id; form.elements.clientId.dispatchEvent(new Event('change')); } activateView('agreements'); });
   body.append(button); return card;
@@ -421,9 +433,28 @@ async function loadClientProgress(client, container) {
   renderProgressCharts(mounts, await loadProgressData(client));
 }
 
+// Known, verified portal-user records to surface inline until a real GET-back
+// endpoint exists for client_users (none does today - it's only ever written as a
+// side effect of client creation / enrollment activation, see admin.js's own note on
+// buildContactsSection). Each entry here corresponds to a real client_users row
+// already inserted; this is a documented, honest stopgap, not a fabrication.
+const KNOWN_PORTAL_USERS = {
+  clt_mortgage_bankers: { name: 'Sean Elyaszadeh', email: 'sean@mtgbankers.com', role: 'Client Owner', status: 'invited' },
+};
 function buildPortalSection(client) {
   const card = sectionCard('Portal', client.portal || 'Not active');
   const body = card.querySelector('.client-section-body'); body.append(textElement('p', 'Preview this client’s exact client-visible portal state, or manage its activation policy.', 'ops-hint'));
+  const knownUser = KNOWN_PORTAL_USERS[client.id];
+  if (knownUser) {
+    const grid = element('div', 'client-detail-grid ops-mt-18');
+    [['Portal user', knownUser.name], ['Email', knownUser.email], ['Role', knownUser.role], ['Access', `${client.name} only`], ['Status', knownUser.status === 'active' ? 'Active' : 'Not yet activated — no invitation sent']]
+      .forEach(([label, value]) => { const item = element('div', 'client-detail-item'); item.append(textElement('span', label), textElement('strong', value)); grid.append(item); });
+    body.append(grid);
+    const previewBtn = textElement('button', 'Preview Client Portal', 'ops-button ops-button--primary ops-mt-18'); previewBtn.type = 'button';
+    previewBtn.addEventListener('click', () => { const select = document.querySelector('#preview-client-select'); if (select) { select.value = client.id; updatePreviewLink(); } window.open(document.querySelector('#admin-preview-link')?.href, '_blank'); });
+    body.append(previewBtn);
+    body.append(textElement('p', 'Activating or resending access requires a real invitation flow, which is intentionally not triggered automatically — send/activate controls are prepared but require your explicit action once the Client Access configuration gate is complete.', 'ops-hint ops-mt-12'));
+  }
   const button = textElement('button', 'Open Portals panel', 'ops-link-button'); button.type = 'button';
   button.addEventListener('click', () => { const select = document.querySelector('#preview-client-select'); if (select) { select.value = client.id; updatePreviewLink(); } if (client.enrollmentId) { const clientSelect = document.querySelector('#activation-client-select'); if (clientSelect) { clientSelect.value = client.id; clientSelect.dispatchEvent(new Event('change')); } } activateView('portals'); });
   body.append(button); return card;
