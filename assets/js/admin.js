@@ -10,6 +10,24 @@ let adminData = null;
 let csrfToken = '';
 let currentAgreementId = '';
 let allContentItems = [];
+let servicesCache = [];
+let quotePickersWired = false;
+
+// Fictional preview-only service catalog and per-client quotes, used only when
+// isSafeProductPreview() is true - mirrors DEMO_PROGRESS_BY_PROJECT below: no live
+// database to read services/quotes from on that host, so the Quotes panel's new
+// Service/Quote pickers still have something real to show while exercising this file's
+// own code (loadServices()/loadClientQuotes() below fetch these real endpoints in every
+// other environment).
+const DEMO_SERVICES = [
+  { id: 'svc_demo_seo', name: 'Technical SEO Audit', default_price: 120000, pricing_type: 'fixed' },
+  { id: 'svc_demo_content', name: 'Content & Local SEO Buildout', default_price: 180000, pricing_type: 'fixed' },
+  { id: 'svc_demo_gbp', name: 'Google Business Profile Optimization', default_price: 60000, pricing_type: 'fixed' },
+];
+const DEMO_QUOTES_BY_CLIENT = {
+  client_demo_a: [{ id: 'quo_demo_a1', status: 'prepared', created_at: '2026-08-10T00:00:00Z' }],
+  client_demo_b: [{ id: 'quo_demo_b1', status: 'draft', created_at: '2026-08-20T00:00:00Z' }],
+};
 
 // -------------------------------------------------------------------------------------
 // Fictional preview-only roadmap data for the Progress panel and the Unified Client
@@ -87,6 +105,7 @@ function render(data) {
   renderClientRows('admin-recent-clients', data.clients); renderClientRows('admin-client-table', data.clients, true);
   renderLifecycleTable('admin-agreement-table', data.clients, 'agreement'); renderLifecycleTable('admin-project-table', data.clients, 'project');
   renderPayments(data.clients); renderActivity(data.activity || []); renderPreviewClients(data.clients); renderProgressClientSelect(data.clients);
+  renderQuoteClientPickers(data.clients);
   if (!data.clients.length) {
     document.querySelector('#admin-recent-clients').closest('.ops-card').replaceChildren(emptyState('No clients yet', 'Create the first fictional preview client to validate the operational workflow.'));
   }
@@ -341,7 +360,7 @@ function renderQuotesCard(card, quotes, client) {
     body.append(list);
   }
   const button = textElement('button', 'Create / price a quote for this client', 'ops-link-button'); button.type = 'button';
-  button.addEventListener('click', () => { const form = document.querySelector('#quote-create-form'); if (form?.elements.clientId) form.elements.clientId.value = client.id; activateView('quotes'); });
+  button.addEventListener('click', () => { const form = document.querySelector('#quote-create-form'); if (form?.elements.clientId) { form.elements.clientId.value = client.id; form.elements.clientId.dispatchEvent(new Event('change')); } activateView('quotes'); });
   body.append(button);
 }
 
@@ -517,16 +536,137 @@ document.querySelector('#service-create-form')?.addEventListener('submit', async
 });
 async function loadServices() {
   const table = document.querySelector('#admin-service-table'); const select = document.querySelector('#service-category-select'); const countStatus = document.querySelector('#service-count-status');
+  if (isPreview) {
+    servicesCache = DEMO_SERVICES; populateServiceSelects();
+    if (table) setText('service-count-status', 'Fictional preview data');
+    return;
+  }
   if (!table) return;
-  if (isPreview) { setText('service-count-status', 'Fictional preview data'); return; }
   try {
     const [services, categories] = await Promise.all([api('/api/commerce/services'), api('/api/commerce/service-categories')]);
     if (select) { select.replaceChildren(textElement('option', 'No category', '')); (categories.categories || categories || []).forEach((c) => { const opt = textElement('option', c.name); opt.value = c.id; select.append(opt); }); }
     const rows = services.services || services || [];
+    servicesCache = rows.filter((s) => s.active); populateServiceSelects();
     table.replaceChildren();
     rows.forEach((s) => { const row = document.createElement('tr'); [s.name, s.category_name || s.category_id || '—', s.default_price != null ? formatMoney(s.default_price) : 'Custom', humanize(s.pricing_type), s.active ? 'Active' : 'Inactive'].forEach((v) => row.append(textElement('td', v))); const actionCell = document.createElement('td'); const toggle = textElement('button', s.active ? 'Deactivate' : 'Activate', 'ops-link-button'); toggle.type = 'button'; toggle.addEventListener('click', async () => { try { await api(`/api/commerce/services/${encodeURIComponent(s.id)}`, { method: 'PATCH', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify({ active: s.active ? 0 : 1 }) }); await loadServices(); } catch (error) { setStatus(countStatus, error.message, true); } }); actionCell.append(toggle); row.append(actionCell); table.append(row); });
     if (countStatus) setText('service-count-status', `${rows.length} services`);
   } catch (error) { if (countStatus) setStatus(countStatus, error.message, true); }
+}
+
+// Fills every "Service" picker on the Quotes panel (the template row plus any rows
+// cloned from it) from servicesCache, keeping the option value the real service id -
+// the Quotes UX fix this pass is about: Nasim picks a service by name, the id travels
+// invisibly in the option value exactly like it always did as a hidden form field.
+function populateServiceSelects() {
+  document.querySelectorAll('.quote-service-select').forEach((select) => {
+    const previous = select.value;
+    const customOption = textElement('option', 'Custom item (type a label below)'); customOption.value = '';
+    select.replaceChildren(customOption);
+    servicesCache.forEach((service) => {
+      const opt = textElement('option', service.default_price != null ? `${service.name} — ${formatMoney(service.default_price)}` : service.name);
+      opt.value = service.id; select.append(opt);
+    });
+    if (servicesCache.some((service) => service.id === previous)) select.value = previous;
+  });
+}
+
+// -------------------------------------------------------------------------------------
+// Quotes UX: Client/Project/Quote/Service are now always picked by name, never typed as
+// a raw database id - the ids still travel as the real <select>/hidden <input> values the
+// existing submit handlers below already read (data.get('clientId')/('projectId')/
+// ('quoteId')/('qi_serviceId')), so none of that commercial/API logic changes at all.
+// -------------------------------------------------------------------------------------
+
+function renderQuoteClientPickers(clients) {
+  const createSelect = document.querySelector('#quote-create-client');
+  if (createSelect) {
+    const previous = createSelect.value;
+    const placeholder = textElement('option', 'Select a client…'); placeholder.value = '';
+    createSelect.replaceChildren(placeholder);
+    clients.forEach((client) => { const opt = textElement('option', client.name); opt.value = client.id; createSelect.append(opt); });
+    if (clients.some((client) => client.id === previous)) createSelect.value = previous;
+  }
+  document.querySelectorAll('.quote-picker-client').forEach((select) => {
+    if (select === createSelect) return;
+    const previous = select.value;
+    const placeholder = textElement('option', 'Select a client…'); placeholder.value = '';
+    select.replaceChildren(placeholder);
+    clients.forEach((client) => { const opt = textElement('option', client.name); opt.value = client.id; select.append(opt); });
+    if (clients.some((client) => client.id === previous)) select.value = previous;
+  });
+  updateQuoteCreateProjectDisplay();
+  if (quotePickersWired) return;
+  quotePickersWired = true;
+
+  createSelect?.addEventListener('change', updateQuoteCreateProjectDisplay);
+  wireSearchableSelect(document.querySelector('[data-filter-for="quote-create-client"]'), createSelect);
+
+  wireQuotePicker('quote-version-client', 'quote-version-quote');
+  wireQuotePicker('quote-send-client', 'quote-send-quote');
+  wireQuotePicker('quote-status-client', 'quote-status-quote');
+  wireQuotePicker('payment-options-client', 'payment-options-quote');
+  document.querySelector('#payment-options-quote')?.addEventListener('change', fetchQuoteTotal);
+}
+
+// A plain text input filters a companion <select>'s options as the user types - a
+// dependency-free "searchable select" (native <select> stays the source of truth for
+// the actual value, so there is no free-text-to-id matching to get wrong).
+function wireSearchableSelect(filterInput, select) {
+  if (!filterInput || !select || filterInput.dataset.wired) return;
+  filterInput.dataset.wired = 'true';
+  const allOptionsHtml = () => Array.from(select.options).map((option) => ({ value: option.value, label: option.textContent }));
+  let baseOptions = allOptionsHtml();
+  const refreshBase = () => { baseOptions = allOptionsHtml(); };
+  select.addEventListener('focus', refreshBase);
+  filterInput.addEventListener('input', () => {
+    if (!filterInput.value.trim()) refreshBase();
+    const query = filterInput.value.trim().toLowerCase();
+    const previous = select.value;
+    const matches = baseOptions.filter((option) => !option.value || option.label.toLowerCase().includes(query));
+    select.replaceChildren();
+    matches.forEach((option) => { const opt = textElement('option', option.label); opt.value = option.value; select.append(opt); });
+    if (matches.some((option) => option.value === previous)) select.value = previous;
+  });
+}
+
+function updateQuoteCreateProjectDisplay() {
+  const clientId = document.querySelector('#quote-create-client')?.value;
+  const display = document.querySelector('#quote-create-project-display');
+  const hiddenProjectId = document.querySelector('#quote-create-project-id');
+  if (!display || !hiddenProjectId) return;
+  const client = (adminData?.clients || []).find((item) => item.id === clientId);
+  if (!client) { display.textContent = 'Select a client to see their project'; display.dataset.filled = 'false'; hiddenProjectId.value = ''; return; }
+  display.textContent = client.project || 'No project on file yet'; display.dataset.filled = 'true'; hiddenProjectId.value = client.projectId || '';
+}
+
+// One reusable client -> quote cascade, used by every quote-action form (price/send/
+// status/payment structure): pick the client, then pick from that client's real quotes -
+// never type a Quote ID. Options are labeled by status + date since quotes have no name.
+function wireQuotePicker(clientSelectId, quoteSelectId) {
+  const clientSelect = document.querySelector(`#${clientSelectId}`); const quoteSelect = document.querySelector(`#${quoteSelectId}`);
+  if (!clientSelect || !quoteSelect) return;
+  clientSelect.addEventListener('change', () => refreshQuoteOptions(clientSelect.value, quoteSelect));
+}
+async function refreshQuoteOptions(clientId, quoteSelect) {
+  quoteSelect.replaceChildren(emptyOption(clientId ? 'Loading quotes…' : 'Select a client first…'));
+  if (!clientId) return;
+  const quotes = await loadClientQuotes(clientId);
+  quoteSelect.replaceChildren(emptyOption(quotes.length ? 'Select a quote…' : 'This client has no quotes yet'));
+  quotes.forEach((quote) => { const opt = textElement('option', quoteOptionLabel(quote)); opt.value = quote.id; quoteSelect.append(opt); });
+  quoteSelect.dispatchEvent(new Event('change'));
+}
+// textElement('option', label) leaves a browser-default value equal to the label text
+// (an <option> with no explicit value attribute reports its text as .value) - every
+// placeholder/"no selection" option in the Quotes picker chain must be a real empty
+// string instead, or a required <select> would treat that placeholder text as a valid
+// selection and a submit could send the placeholder's label as if it were a real id.
+function emptyOption(label) { const opt = textElement('option', label); opt.value = ''; return opt; }
+function quoteOptionLabel(quote) {
+  return `${humanize(quote.status)} · ${formatDate(quote.created_at)}`;
+}
+async function loadClientQuotes(clientId) {
+  if (isPreview) return DEMO_QUOTES_BY_CLIENT[clientId] || [];
+  try { const result = await api(`/api/commerce/clients/${encodeURIComponent(clientId)}/quotes`); return result.quotes || []; } catch { return []; }
 }
 document.querySelector('#quote-create-form')?.addEventListener('submit', async (event) => {
   event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
@@ -536,13 +676,19 @@ document.querySelector('#quote-create-form')?.addEventListener('submit', async (
 });
 document.querySelector('#quote-add-line-item')?.addEventListener('click', () => {
   const rows = document.querySelector('#quote-items-rows'); const first = rows.querySelector('.quote-item-row');
-  const clone = first.cloneNode(true); clone.querySelectorAll('input').forEach((input) => { input.value = input.name === 'qi_quantity' ? '1' : ''; }); rows.append(clone);
+  const clone = first.cloneNode(true);
+  clone.querySelectorAll('input').forEach((input) => { input.value = input.name === 'qi_quantity' ? '1' : ''; });
+  clone.querySelectorAll('select').forEach((select) => { select.value = ''; });
+  rows.append(clone);
 });
 document.querySelector('#quote-items-rows')?.addEventListener('click', (event) => {
   if (!event.target.classList.contains('quote-item-remove')) return;
   const rows = document.querySelector('#quote-items-rows'); const row = event.target.closest('.quote-item-row');
   if (rows.querySelectorAll('.quote-item-row').length > 1) row.remove();
-  else row.querySelectorAll('input').forEach((input) => { input.value = input.name === 'qi_quantity' ? '1' : ''; });
+  else {
+    row.querySelectorAll('input').forEach((input) => { input.value = input.name === 'qi_quantity' ? '1' : ''; });
+    row.querySelectorAll('select').forEach((select) => { select.value = ''; });
+  }
 });
 document.querySelector('#quote-version-form')?.addEventListener('submit', async (event) => {
   event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
@@ -601,12 +747,13 @@ document.querySelector('#payment-installment-rows')?.addEventListener('click', (
   if (rows.querySelectorAll('.payment-installment-row').length > 1) row.remove();
   else row.querySelectorAll('input, select').forEach((el) => { el.value = ''; });
 });
-document.querySelector('#payment-fetch-total')?.addEventListener('click', async () => {
+document.querySelector('#payment-fetch-total')?.addEventListener('click', fetchQuoteTotal);
+async function fetchQuoteTotal() {
   const form = document.querySelector('#payment-options-form'); const quoteId = form.elements.quoteId.value.trim(); const status = document.querySelector('#payment-fetch-total-status');
-  if (!quoteId) return setStatus(status, 'Enter a Quote ID first.', true);
+  if (!quoteId) { form.elements.totalAmount.value = ''; return setStatus(status, 'Select a quote first.', true); }
   if (isPreview) { form.elements.totalAmount.value = '3600.00'; return setStatus(status, 'Fictional preview: total filled from a sample quote.'); }
-  try { const result = await api(`/api/commerce/quotes/${encodeURIComponent(quoteId)}`); if (!result.version) return setStatus(status, 'This quote has no priced version yet.', true); form.elements.totalAmount.value = (result.version.total / 100).toFixed(2); setStatus(status, `Total filled from version ${result.version.version_number} (${formatMoney(result.version.total)}).`); } catch (error) { setStatus(status, error.message, true); }
-});
+  try { const result = await api(`/api/commerce/quotes/${encodeURIComponent(quoteId)}`); if (!result.version) { form.elements.totalAmount.value = ''; return setStatus(status, 'This quote has no priced version yet.', true); } form.elements.totalAmount.value = (result.version.total / 100).toFixed(2); setStatus(status, `Total filled from version ${result.version.version_number} (${formatMoney(result.version.total)}).`); } catch (error) { setStatus(status, error.message, true); }
+}
 document.querySelector('#payment-options-form')?.addEventListener('submit', async (event) => {
   event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
   const data = new FormData(form); const quoteId = data.get('quoteId'); const status = document.querySelector('#payment-options-status');

@@ -335,14 +335,14 @@ function renderContent(items) {
     if (item.scheduledDate) card.append(textElement('p', `Scheduled ${formatDate(item.scheduledDate)}`, 'ops-list__meta'));
     if (item.status === 'client_review' && CONTENT_APPROVER_ROLES.includes(portalRole) && !isPreview) {
       const actions = element('div', 'ops-form-actions');
-      const approve = textElement('button', 'Approve', 'ops-button'); approve.type = 'button';
+      const approve = textElement('button', 'Approve', 'ops-button ops-button--primary'); approve.type = 'button';
       const revise = textElement('button', 'Request changes', 'ops-button ops-button--secondary'); revise.type = 'button';
       approve.addEventListener('click', () => decideContentItem(item.id, 'approved', card));
       revise.addEventListener('click', () => decideContentItem(item.id, 'revision_requested', card));
       actions.append(approve, revise); card.append(actions);
     } else if (item.status === 'client_review' && isPreview) {
       const actions = element('div', 'ops-form-actions');
-      const approve = textElement('button', 'Approve', 'ops-button'); approve.type = 'button';
+      const approve = textElement('button', 'Approve', 'ops-button ops-button--primary'); approve.type = 'button';
       approve.addEventListener('click', () => showToast('Fictional preview: approval is not connected to a live content item.'));
       actions.append(approve); card.append(actions);
     }

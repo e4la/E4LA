@@ -83,7 +83,7 @@
           <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="service-category-form">
             <div class="dashboard-card-title"><h2>Add service category</h2></div>
             <label class="ops-field"><span class="ops-legend">Category name</span><input class="ops-input" name="name" required maxlength="80" placeholder="e.g. AI &amp; Innovation"></label>
-            <button class="ops-button ops-button--secondary" type="submit">Save category</button><p class="ops-form-status" id="service-category-status" role="status"></p>
+            <div class="ops-form-actions"><button class="ops-button ops-button--secondary" type="submit">Save category</button><p class="ops-form-status" id="service-category-status" role="status"></p></div>
           </form>
           <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="service-create-form">
             <div class="dashboard-card-title"><h2>Add service</h2></div>
@@ -95,7 +95,7 @@
               <label class="ops-field"><span class="ops-legend">Pricing type</span><select class="ops-input" name="pricing_type"><option value="fixed">Fixed</option><option value="hourly">Hourly</option><option value="monthly_retainer">Monthly retainer</option><option value="custom">Custom</option></select></label>
               <label class="ops-field"><span class="ops-legend">Billing type</span><select class="ops-input" name="billing_type"><option value="fixed_scope">Fixed scope</option><option value="recurring_service">Recurring service</option></select></label>
             </div>
-            <button class="ops-button ops-button--primary" type="submit">Save service</button><p class="ops-form-status" id="service-create-status" role="status"></p>
+            <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Save service</button><p class="ops-form-status" id="service-create-status" role="status"></p></div>
           </form>
         </div>
         <section class="ops-card admin-surface-raised dashboard-section"><div class="ops-card__body dashboard-card-title"><h2>Catalog</h2><span class="ops-status" id="service-count-status">—</span></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Service</th><th>Category</th><th>Default price</th><th>Type</th><th>Status</th><th></th></tr></thead><tbody id="admin-service-table"></tbody></table></div></section>
@@ -105,64 +105,78 @@
             <label class="ops-field"><span class="ops-legend">Service ID</span><input class="ops-input" name="serviceId" required></label>
             <label class="ops-field"><span class="ops-legend">New default price (USD, blank = always custom)</span><input class="ops-input" name="defaultPrice" type="number" step="0.01" min="0"></label>
           </div>
-          <button class="ops-button ops-button--secondary" type="submit">Update default price</button><p class="ops-form-status" id="service-price-status" role="status"></p>
+          <div class="ops-form-actions"><button class="ops-button ops-button--secondary" type="submit">Update default price</button><p class="ops-form-status" id="service-price-status" role="status"></p></div>
         </form>
       </section>
 
       <section id="admin-quotes" data-admin-panel hidden>
-        <div class="dashboard-hero"><div><p class="ops-eyebrow">Client-specific pricing</p><h1>Quotes</h1><p>Every quote is priced from scratch — catalog services, overridden prices, or fully custom line items.</p></div></div>
+        <div class="dashboard-hero"><div><p class="ops-eyebrow">Client-specific pricing</p><h1>Quotes</h1><p>Every quote is priced from scratch — catalog services, overridden prices, or fully custom line items. Work through the steps below in order.</p></div></div>
         <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="quote-create-form">
-          <div class="dashboard-card-title"><h2>Start a quote</h2><span class="ops-status">Starts as draft</span></div>
+          <div class="dashboard-card-title"><div><p class="ops-eyebrow">Step 1</p><h2>Select client</h2></div><span class="ops-status">Starts as draft</span></div>
           <div class="ops-grid ops-grid--2">
-            <label class="ops-field"><span class="ops-legend">Client ID</span><input class="ops-input" name="clientId" required></label>
-            <label class="ops-field"><span class="ops-legend">Project ID (optional)</span><input class="ops-input" name="projectId"></label>
+            <div class="ops-field ops-searchable-select">
+              <span class="ops-legend">Client</span>
+              <input class="ops-input ops-searchable-select__filter" type="text" placeholder="Search clients by name…" autocomplete="off" data-filter-for="quote-create-client">
+              <select class="ops-input" name="clientId" id="quote-create-client" required><option value="">Select a client…</option></select>
+            </div>
+            <div class="ops-field">
+              <span class="ops-legend">Project</span>
+              <p class="ops-static-value" id="quote-create-project-display">Select a client to see their project</p>
+              <input type="hidden" name="projectId" id="quote-create-project-id">
+            </div>
           </div>
-          <button class="ops-button ops-button--primary" type="submit">Create draft quote</button><p class="ops-form-status" id="quote-create-status" role="status"></p>
+          <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Create draft quote</button><p class="ops-form-status" id="quote-create-status" role="status"></p></div>
         </form>
         <form class="ops-card ops-card__body ops-admin-form admin-form-card dashboard-section" id="quote-version-form">
-          <div class="dashboard-card-title"><h2>Price a quote</h2><span class="ops-status">Creates a new version</span></div>
-          <p class="ops-hint">Add one line per row: either a Service ID (quantity/price optional — falls back to the service's default price) or leave Service ID blank and type a label and price for a fully custom item (e.g. "Custom consulting" — $3,400). Add as many rows as this quote needs.</p>
-          <label class="ops-field"><span class="ops-legend">Quote ID</span><input class="ops-input" name="quoteId" required></label>
+          <div class="dashboard-card-title"><div><p class="ops-eyebrow">Step 2</p><h2>Add services / custom items</h2></div><span class="ops-status">Creates a new priced version</span></div>
+          <p class="ops-hint">Pick a service to use its catalog price, or leave "Service" set to "Custom item" and type your own label and price.</p>
+          <div class="ops-grid ops-grid--2">
+            <label class="ops-field"><span class="ops-legend">Client</span><select class="ops-input quote-picker-client" id="quote-version-client" required><option value="">Select a client…</option></select></label>
+            <label class="ops-field"><span class="ops-legend">Quote</span><select class="ops-input" name="quoteId" id="quote-version-quote" required><option value="">Select a client first…</option></select></label>
+          </div>
           <div id="quote-items-rows">
             <div class="ops-grid ops-grid--2 quote-item-row">
-              <label class="ops-field"><span class="ops-legend">Service ID (optional)</span><input class="ops-input" name="qi_serviceId"></label>
-              <label class="ops-field"><span class="ops-legend">Label</span><input class="ops-input" name="qi_label"></label>
+              <label class="ops-field"><span class="ops-legend">Service</span><select class="ops-input quote-service-select" name="qi_serviceId"><option value="">Custom item (type a label below)</option></select></label>
+              <label class="ops-field"><span class="ops-legend">Label</span><input class="ops-input" name="qi_label" placeholder="e.g. Custom consulting"></label>
               <label class="ops-field"><span class="ops-legend">Quantity</span><input class="ops-input" name="qi_quantity" type="number" min="1" value="1"></label>
-              <label class="ops-field"><span class="ops-legend">Unit price (USD, optional if using default)</span><input class="ops-input" name="qi_unitPrice" type="number" step="0.01" min="0"></label>
+              <label class="ops-field"><span class="ops-legend">Unit price (USD)</span><input class="ops-input" name="qi_unitPrice" type="number" step="0.01" min="0" placeholder="Uses catalog price if blank"></label>
               <button class="ops-link-button quote-item-remove" type="button">Remove this line item</button>
             </div>
           </div>
-          <div class="ops-form-actions"><button class="ops-button ops-button--secondary" type="button" id="quote-add-line-item">+ Add another line item</button></div>
+          <div class="ops-form-actions ops-form-actions--start"><button class="ops-button ops-button--secondary" type="button" id="quote-add-line-item">+ Custom line item</button></div>
           <div class="ops-grid ops-grid--2">
             <label class="ops-field"><span class="ops-legend">Discount (USD, optional)</span><input class="ops-input" name="discount" type="number" step="0.01" min="0"></label>
             <label class="ops-field"><span class="ops-legend">Tax (USD, optional)</span><input class="ops-input" name="tax" type="number" step="0.01" min="0"></label>
           </div>
-          <label class="ops-field"><span class="ops-legend">Scope notes</span><textarea class="ops-input" name="scope" rows="2"></textarea></label>
-          <button class="ops-button ops-button--primary" type="submit">Save priced version</button><p class="ops-form-status" id="quote-version-status" role="status"></p>
+          <label class="ops-field"><span class="ops-legend">Scope notes (optional)</span><textarea class="ops-input" name="scope" rows="2" placeholder="What this quote covers, for your own reference"></textarea></label>
+          <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Prepare quote</button><p class="ops-form-status" id="quote-version-status" role="status"></p></div>
         </form>
         <div class="ops-grid ops-grid--2 dashboard-section">
           <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="quote-send-form">
-            <div class="dashboard-card-title"><h2>Send quote</h2></div>
-            <label class="ops-field"><span class="ops-legend">Quote ID</span><input class="ops-input" name="quoteId" required></label>
-            <button class="ops-button ops-button--secondary" type="submit">Send to client</button><p class="ops-form-status" id="quote-send-status" role="status"></p>
+            <div class="dashboard-card-title"><div><p class="ops-eyebrow">Step 3</p><h2>Send quote</h2></div></div>
+            <label class="ops-field"><span class="ops-legend">Client</span><select class="ops-input quote-picker-client" id="quote-send-client" required><option value="">Select a client…</option></select></label>
+            <label class="ops-field"><span class="ops-legend">Quote</span><select class="ops-input" name="quoteId" id="quote-send-quote" required><option value="">Select a client first…</option></select></label>
+            <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Send to client</button><p class="ops-form-status" id="quote-send-status" role="status"></p></div>
           </form>
           <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="quote-status-form">
-            <div class="dashboard-card-title"><h2>Update quote status</h2></div>
-            <label class="ops-field"><span class="ops-legend">Quote ID</span><input class="ops-input" name="quoteId" required></label>
+            <div class="dashboard-card-title"><h2>Update quote status</h2><span class="ops-status">After the client has seen it</span></div>
+            <label class="ops-field"><span class="ops-legend">Client</span><select class="ops-input quote-picker-client" id="quote-status-client" required><option value="">Select a client…</option></select></label>
+            <label class="ops-field"><span class="ops-legend">Quote</span><select class="ops-input" name="quoteId" id="quote-status-quote" required><option value="">Select a client first…</option></select></label>
             <label class="ops-field"><span class="ops-legend">New status</span><select class="ops-input" name="status"><option value="viewed">Viewed</option><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="expired">Expired</option><option value="converted">Converted</option></select></label>
-            <button class="ops-button ops-button--secondary" type="submit">Update status</button><p class="ops-form-status" id="quote-status-status" role="status"></p>
+            <div class="ops-form-actions"><button class="ops-button ops-button--secondary" type="submit">Update status</button><p class="ops-form-status" id="quote-status-status" role="status"></p></div>
           </form>
         </div>
         <form class="ops-card ops-card__body ops-admin-form admin-form-card dashboard-section" id="payment-options-form">
-          <div class="dashboard-card-title"><h2>Build a custom installment schedule</h2><span class="ops-status">Installments must sum to the total</span></div>
-          <p class="ops-hint">Give each installment either a due date OR an offset (e.g. 2 weeks after start) — not both. Installment amounts must add up exactly to the total amount, and the total amount must exactly match the quote's current priced version — use "Fetch total from quote" rather than typing it by hand.</p>
+          <div class="dashboard-card-title"><div><p class="ops-eyebrow">Step 4</p><h2>Payment structure</h2></div><span class="ops-status">Installments must sum to the total</span></div>
+          <p class="ops-hint">Give each installment either a due date OR an offset (e.g. 2 weeks after start) — not both. Installment amounts must add up exactly to the total, matched from the quote automatically below.</p>
           <div class="ops-grid ops-grid--2">
-            <label class="ops-field"><span class="ops-legend">Quote ID</span><input class="ops-input" name="quoteId" required></label>
-            <label class="ops-field"><span class="ops-legend">Option type</span><select class="ops-input" name="optionType"><option value="pay_in_full">Pay in full (1 installment)</option><option value="deposit_balance">Deposit + balance (2 installments)</option><option value="installments">Installments (1+)</option><option value="custom_schedule">Custom schedule (1+)</option></select></label>
-            <label class="ops-field"><span class="ops-legend">Total amount (USD)</span><input class="ops-input" name="totalAmount" type="number" step="0.01" min="0.01" required></label>
-            <label class="ops-field"><span class="ops-legend">Label (optional)</span><input class="ops-input" name="label" maxlength="180"></label>
+            <label class="ops-field"><span class="ops-legend">Client</span><select class="ops-input quote-picker-client" id="payment-options-client" required><option value="">Select a client…</option></select></label>
+            <label class="ops-field"><span class="ops-legend">Quote</span><select class="ops-input" name="quoteId" id="payment-options-quote" required><option value="">Select a client first…</option></select></label>
+            <label class="ops-field"><span class="ops-legend">Payment plan</span><select class="ops-input" name="optionType"><option value="pay_in_full">Pay in full (1 installment)</option><option value="deposit_balance">Deposit + balance (2 installments)</option><option value="installments">Installments (1+)</option><option value="custom_schedule">Custom schedule (1+)</option></select></label>
+            <label class="ops-field"><span class="ops-legend">Label (optional)</span><input class="ops-input" name="label" maxlength="180" placeholder="e.g. Three Monthly Installments"></label>
           </div>
-          <div class="ops-form-actions"><button class="ops-button ops-button--secondary" type="button" id="payment-fetch-total">Fetch total from quote</button><p class="ops-form-status" id="payment-fetch-total-status" role="status"></p></div>
+          <div class="ops-form-actions ops-form-actions--start"><button class="ops-button ops-button--secondary" type="button" id="payment-fetch-total">Fetch total from quote</button><p class="ops-form-status" id="payment-fetch-total-status" role="status"></p></div>
+          <label class="ops-field"><span class="ops-legend">Total amount (USD)</span><input class="ops-input" name="totalAmount" type="number" step="0.01" min="0.01" required readonly></label>
           <div id="payment-installment-rows">
             <div class="ops-grid ops-grid--2 payment-installment-row">
               <label class="ops-field"><span class="ops-legend">Installment amount (USD)</span><input class="ops-input" name="pi_amount" type="number" step="0.01" min="0.01"></label>
@@ -172,7 +186,7 @@
               <button class="ops-link-button payment-installment-remove" type="button">Remove this installment</button>
             </div>
           </div>
-          <div class="ops-form-actions"><button class="ops-button ops-button--secondary" type="button" id="payment-add-installment">+ Add another installment</button></div>
+          <div class="ops-form-actions ops-form-actions--start"><button class="ops-button ops-button--secondary" type="button" id="payment-add-installment">+ Add another installment</button></div>
           <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Save payment schedule</button><p class="ops-form-status" id="payment-options-status" role="status"></p></div>
         </form>
       </section>
@@ -209,7 +223,7 @@
       <section id="admin-projects" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Client visibility layer</p><h1>Projects</h1><p>Notion remains the internal operating system. Only reviewed, approved, and published information reaches the portal.</p></div></div>
         <section class="ops-card dashboard-section"><div class="ops-card__body dashboard-card-title"><div><p class="ops-eyebrow">Client-facing layer</p><h2>Active projects</h2></div><span class="ops-status">Notion stays internal</span></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Client</th><th>Project</th><th>Lifecycle</th><th>Portal</th><th>Next action</th></tr></thead><tbody id="admin-project-table"></tbody></table></div></section>
-        <div class="ops-grid ops-grid--2"><section class="ops-card ops-card__body"><div class="dashboard-card-title"><h2>Publication boundary</h2><span class="ops-status">Human controlled</span></div><ol class="ops-timeline"><li class="ops-timeline__item ops-timeline__item--done"><span class="ops-timeline__dot"></span><div><h3>Internal work</h3><p>Private E4LA operations and research.</p></div></li><li class="ops-timeline__item ops-timeline__item--done"><span class="ops-timeline__dot"></span><div><h3>Reviewed</h3><p>Checked for accuracy, sensitivity, and client relevance.</p></div></li><li class="ops-timeline__item ops-timeline__item--active"><span class="ops-timeline__dot"></span><div><h3>Approved for client</h3><p>Explicit human approval before publication.</p></div></li><li class="ops-timeline__item"><span class="ops-timeline__dot"></span><div><h3>Published to portal</h3><p>Visible to authorized client users only.</p></div></li></ol></section><form class="ops-card ops-card__body ops-admin-form" id="project-item-form"><div class="dashboard-card-title"><h2>Create client-facing item</h2><span class="ops-status">Starts internal</span></div><label class="ops-field"><span class="ops-legend">Project ID</span><input class="ops-input" name="projectId" required></label><label class="ops-field"><span class="ops-legend">Item type</span><select class="ops-input" name="entityType"><option value="update">Project update</option><option value="milestone">Milestone</option><option value="deliverable">Deliverable</option></select></label><label class="ops-field"><span class="ops-legend">Title</span><input class="ops-input" name="title" required maxlength="180"></label><label class="ops-field"><span class="ops-legend">Client-facing description</span><textarea class="ops-input" name="body" required maxlength="2000" rows="4"></textarea></label><label class="ops-field"><span class="ops-legend">Target / completion date</span><input class="ops-input" name="date" type="date"></label><button class="ops-button ops-button--primary" type="submit">Save as internal</button><p class="ops-form-status" id="project-item-status" role="status"></p></form></div><form class="ops-card ops-card__body ops-admin-form" id="publication-form"><div class="dashboard-card-title"><h2>Review &amp; publish item</h2><span class="ops-status ops-status--attention">Explicit action</span></div><div class="ops-grid ops-grid--2"><label class="ops-field"><span class="ops-legend">Project ID</span><input class="ops-input" name="projectId" required></label><label class="ops-field"><span class="ops-legend">Item type</span><select class="ops-input" name="entityType"><option value="update">Project update</option><option value="milestone">Milestone</option><option value="deliverable">Deliverable</option><option value="document">Portal document</option><option value="phase">Roadmap phase</option><option value="progress_snapshot">Weekly progress snapshot</option><option value="performance_metric">Performance metric</option></select></label><label class="ops-field"><span class="ops-legend">Item ID</span><input class="ops-input" name="entityId" required></label><label class="ops-field"><span class="ops-legend">Publication state</span><select class="ops-input" name="status"><option value="reviewed">Reviewed</option><option value="approved">Approved for client</option><option value="published">Published</option><option value="withdrawn">Withdrawn</option></select></label></div><button class="ops-button ops-button--primary" type="submit">Update publication state</button><p class="ops-form-status" id="publication-status" role="status"></p></form>
+        <div class="ops-grid ops-grid--2"><section class="ops-card ops-card__body"><div class="dashboard-card-title"><h2>Publication boundary</h2><span class="ops-status">Human controlled</span></div><ol class="ops-timeline"><li class="ops-timeline__item ops-timeline__item--done"><span class="ops-timeline__dot"></span><div><h3>Internal work</h3><p>Private E4LA operations and research.</p></div></li><li class="ops-timeline__item ops-timeline__item--done"><span class="ops-timeline__dot"></span><div><h3>Reviewed</h3><p>Checked for accuracy, sensitivity, and client relevance.</p></div></li><li class="ops-timeline__item ops-timeline__item--active"><span class="ops-timeline__dot"></span><div><h3>Approved for client</h3><p>Explicit human approval before publication.</p></div></li><li class="ops-timeline__item"><span class="ops-timeline__dot"></span><div><h3>Published to portal</h3><p>Visible to authorized client users only.</p></div></li></ol></section><form class="ops-card ops-card__body ops-admin-form" id="project-item-form"><div class="dashboard-card-title"><h2>Create client-facing item</h2><span class="ops-status">Starts internal</span></div><label class="ops-field"><span class="ops-legend">Project ID</span><input class="ops-input" name="projectId" required></label><label class="ops-field"><span class="ops-legend">Item type</span><select class="ops-input" name="entityType"><option value="update">Project update</option><option value="milestone">Milestone</option><option value="deliverable">Deliverable</option></select></label><label class="ops-field"><span class="ops-legend">Title</span><input class="ops-input" name="title" required maxlength="180"></label><label class="ops-field"><span class="ops-legend">Client-facing description</span><textarea class="ops-input" name="body" required maxlength="2000" rows="4"></textarea></label><label class="ops-field"><span class="ops-legend">Target / completion date</span><input class="ops-input" name="date" type="date"></label><div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Save as internal</button><p class="ops-form-status" id="project-item-status" role="status"></p></div></form></div><form class="ops-card ops-card__body ops-admin-form" id="publication-form"><div class="dashboard-card-title"><h2>Review &amp; publish item</h2><span class="ops-status ops-status--attention">Explicit action</span></div><div class="ops-grid ops-grid--2"><label class="ops-field"><span class="ops-legend">Project ID</span><input class="ops-input" name="projectId" required></label><label class="ops-field"><span class="ops-legend">Item type</span><select class="ops-input" name="entityType"><option value="update">Project update</option><option value="milestone">Milestone</option><option value="deliverable">Deliverable</option><option value="document">Portal document</option><option value="phase">Roadmap phase</option><option value="progress_snapshot">Weekly progress snapshot</option><option value="performance_metric">Performance metric</option></select></label><label class="ops-field"><span class="ops-legend">Item ID</span><input class="ops-input" name="entityId" required></label><label class="ops-field"><span class="ops-legend">Publication state</span><select class="ops-input" name="status"><option value="reviewed">Reviewed</option><option value="approved">Approved for client</option><option value="published">Published</option><option value="withdrawn">Withdrawn</option></select></label></div><div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Update publication state</button><p class="ops-form-status" id="publication-status" role="status"></p></div></form>
       </section>
 
       <section id="admin-progress" data-admin-panel hidden>
@@ -236,7 +250,7 @@
             </div>
             <label class="ops-check"><input type="checkbox" name="client_action_required"><span>Client action required</span></label>
             <label class="ops-field"><span class="ops-legend">Client action note</span><input class="ops-input" name="client_action_note" maxlength="500"></label>
-            <button class="ops-button ops-button--primary" type="submit">Save phase</button><p class="ops-form-status" id="phase-create-status" role="status"></p>
+            <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Save phase</button><p class="ops-form-status" id="phase-create-status" role="status"></p></div>
           </form>
           <form class="ops-card ops-card__body ops-admin-form" id="snapshot-create-form">
             <div class="dashboard-card-title"><h2>Record weekly progress snapshot</h2><span class="ops-status">Permanent once saved</span></div>
@@ -248,7 +262,7 @@
               <label class="ops-field"><span class="ops-legend">Completed milestones</span><input class="ops-input" name="completed_milestones_count" type="number" min="0" required></label>
               <label class="ops-field"><span class="ops-legend">Total milestones</span><input class="ops-input" name="total_milestones_count" type="number" min="0" required></label>
             </div>
-            <button class="ops-button ops-button--primary" type="submit">Save snapshot</button><p class="ops-form-status" id="snapshot-create-status" role="status"></p>
+            <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Save snapshot</button><p class="ops-form-status" id="snapshot-create-status" role="status"></p></div>
           </form>
         </div>
         <div class="ops-grid ops-grid--2 dashboard-section">
@@ -264,7 +278,7 @@
               <label class="ops-field"><span class="ops-legend">Baseline value</span><input class="ops-input" name="baseline_value" maxlength="120"></label>
             </div>
             <label class="ops-field"><span class="ops-legend">Interpretation (optional)</span><textarea class="ops-input" name="interpretation" maxlength="500" rows="2"></textarea></label>
-            <button class="ops-button ops-button--primary" type="submit">Save metric</button><p class="ops-form-status" id="metric-create-status" role="status"></p>
+            <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Save metric</button><p class="ops-form-status" id="metric-create-status" role="status"></p></div>
           </form>
           <form class="ops-card ops-card__body ops-admin-form" id="metric-update-form">
             <div class="dashboard-card-title"><h2>Update an existing metric</h2><span class="ops-status">Value changes over time</span></div>
@@ -275,14 +289,14 @@
               <label class="ops-field"><span class="ops-legend">Trend</span><select class="ops-input" name="trend"><option value="">No change</option><option value="up">Up</option><option value="down">Down</option><option value="flat">Flat</option></select></label>
             </div>
             <label class="ops-field"><span class="ops-legend">Interpretation</span><textarea class="ops-input" name="interpretation" maxlength="500" rows="2"></textarea></label>
-            <button class="ops-button ops-button--primary" type="submit">Update metric</button><p class="ops-form-status" id="metric-update-status" role="status"></p>
+            <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Update metric</button><p class="ops-form-status" id="metric-update-status" role="status"></p></div>
           </form>
         </div>
       </section>
 
       <section id="admin-portals" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Portal oversight</p><h1>Client portals</h1><p>Preview the exact client-visible state without silently impersonating a client.</p></div></div>
-        <div class="ops-grid ops-grid--2"><section class="ops-card ops-card__body"><div class="dashboard-card-title"><div><h2>Client-visible portal dataset</h2><p class="ops-subtitle">Preview uses admin authorization and never creates a client identity.</p></div><span class="ops-status ops-status--active">Admin Preview</span></div><label class="ops-field"><span class="ops-legend">Client</span><select class="ops-input" id="preview-client-select"></select></label><a class="ops-button ops-button--primary ops-mt-18" id="admin-preview-link" href="/client-portal/?preview=admin">Open Admin Preview — Client View</a></section><form class="ops-card ops-card__body ops-admin-form" id="activation-form"><div class="dashboard-card-title"><h2>Portal activation</h2><span class="ops-status">Policy driven</span></div><label class="ops-field"><span class="ops-legend">Enrollment ID</span><input class="ops-input" name="enrollmentId" required></label><label class="ops-field"><span class="ops-legend">Activation policy</span><select class="ops-input" name="activationMode"><option value="manual">Manual</option><option value="automatic">Automatic when eligible</option><option value="scheduled">Scheduled</option></select></label><label class="ops-check"><input type="checkbox" name="onboardingReady"><span>Onboarding is ready</span></label><label class="ops-check"><input type="checkbox" name="activateNow"><span>Activate now if all eligibility requirements are satisfied</span></label><label class="ops-field"><span class="ops-legend">Scheduled activation (if applicable)</span><input class="ops-input" name="activationScheduledAt" type="datetime-local"></label><button class="ops-button ops-button--primary" type="submit">Save activation policy</button><p class="ops-form-status" id="activation-status" role="status"></p></form></div>
+        <div class="ops-grid ops-grid--2"><section class="ops-card ops-card__body"><div class="dashboard-card-title"><div><h2>Client-visible portal dataset</h2><p class="ops-subtitle">Preview uses admin authorization and never creates a client identity.</p></div><span class="ops-status ops-status--active">Admin Preview</span></div><label class="ops-field"><span class="ops-legend">Client</span><select class="ops-input" id="preview-client-select"></select></label><a class="ops-button ops-button--primary ops-mt-18" id="admin-preview-link" href="/client-portal/?preview=admin">Open Admin Preview — Client View</a></section><form class="ops-card ops-card__body ops-admin-form" id="activation-form"><div class="dashboard-card-title"><h2>Portal activation</h2><span class="ops-status">Policy driven</span></div><label class="ops-field"><span class="ops-legend">Enrollment ID</span><input class="ops-input" name="enrollmentId" required></label><label class="ops-field"><span class="ops-legend">Activation policy</span><select class="ops-input" name="activationMode"><option value="manual">Manual</option><option value="automatic">Automatic when eligible</option><option value="scheduled">Scheduled</option></select></label><label class="ops-check"><input type="checkbox" name="onboardingReady"><span>Onboarding is ready</span></label><label class="ops-check"><input type="checkbox" name="activateNow"><span>Activate now if all eligibility requirements are satisfied</span></label><label class="ops-field"><span class="ops-legend">Scheduled activation (if applicable)</span><input class="ops-input" name="activationScheduledAt" type="datetime-local"></label><div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Save activation policy</button><p class="ops-form-status" id="activation-status" role="status"></p></div></form></div>
       </section>
 
       <section id="admin-invoices" data-admin-panel hidden>
@@ -301,12 +315,12 @@
             <label class="ops-field"><span class="ops-legend">Quantity</span><input class="ops-input" name="quantity" type="number" min="1" value="1"></label>
             <label class="ops-field"><span class="ops-legend">Unit price (USD)</span><input class="ops-input" name="unitPrice" type="number" step="0.01" min="0" required></label>
           </div>
-          <button class="ops-button ops-button--primary" type="submit">Save invoice</button><p class="ops-form-status" id="invoice-create-status" role="status"></p>
+          <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Save invoice</button><p class="ops-form-status" id="invoice-create-status" role="status"></p></div>
         </form>
         <form class="ops-card ops-card__body ops-admin-form admin-form-card dashboard-section" id="invoice-send-form">
           <div class="dashboard-card-title"><h2>Send invoice</h2></div>
           <label class="ops-field"><span class="ops-legend">Invoice ID</span><input class="ops-input" name="invoiceId" required></label>
-          <button class="ops-button ops-button--secondary" type="submit">Send payment request</button><p class="ops-form-status" id="invoice-send-status" role="status"></p>
+          <div class="ops-form-actions"><button class="ops-button ops-button--secondary" type="submit">Send payment request</button><p class="ops-form-status" id="invoice-send-status" role="status"></p></div>
         </form>
       </section>
 
@@ -321,7 +335,7 @@
             <label class="ops-field"><span class="ops-legend">Start date</span><input class="ops-input" name="startDate" type="date" required></label>
             <label class="ops-field"><span class="ops-legend">Renewal behavior</span><select class="ops-input" name="renewalBehavior"><option value="auto_renew_until_cancelled">Auto-renew until cancelled</option><option value="fixed_term_then_stop">Fixed term, then stop</option></select></label>
           </div>
-          <button class="ops-button ops-button--primary" type="submit">Preview offer</button><p class="ops-form-status" id="recurring-offer-status" role="status"></p>
+          <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Preview offer</button><p class="ops-form-status" id="recurring-offer-status" role="status"></p></div>
           <pre class="ops-hint" id="recurring-offer-result" hidden></pre>
         </form>
       </section>
@@ -339,14 +353,14 @@
               <label class="ops-field"><span class="ops-legend">Period start</span><input class="ops-input" name="periodStart" type="date"></label>
               <label class="ops-field"><span class="ops-legend">Period end</span><input class="ops-input" name="periodEnd" type="date"></label>
             </div>
-            <button class="ops-button ops-button--primary" type="submit">Save plan</button><p class="ops-form-status" id="content-plan-create-status" role="status"></p>
+            <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Save plan</button><p class="ops-form-status" id="content-plan-create-status" role="status"></p></div>
           </form>
           <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="content-plan-status-form">
             <div class="dashboard-card-title"><h2>Move plan status</h2><span class="ops-status">Never cascades to items</span></div>
             <p class="ops-hint">draft → internal_approved → sent_to_client → client_approved → active → archived. Approving a plan never auto-approves the individual posts under it.</p>
             <label class="ops-field"><span class="ops-legend">Plan ID</span><input class="ops-input" name="planId" required></label>
             <label class="ops-field"><span class="ops-legend">New status</span><select class="ops-input" name="status"><option value="internal_approved">Internal approved</option><option value="sent_to_client">Sent to client</option><option value="client_approved">Client approved</option><option value="active">Active</option><option value="archived">Archived</option></select></label>
-            <button class="ops-button ops-button--secondary" type="submit">Update plan status</button><p class="ops-form-status" id="content-plan-status-status" role="status"></p>
+            <div class="ops-form-actions"><button class="ops-button ops-button--secondary" type="submit">Update plan status</button><p class="ops-form-status" id="content-plan-status-status" role="status"></p></div>
           </form>
         </div>
         <div class="ops-grid ops-grid--2 dashboard-section">
@@ -355,13 +369,13 @@
             <label class="ops-field"><span class="ops-legend">Plan ID</span><input class="ops-input" name="planId" required></label>
             <label class="ops-field"><span class="ops-legend">Topic</span><input class="ops-input" name="topic" required maxlength="180"></label>
             <label class="ops-field"><span class="ops-legend">Pillar</span><input class="ops-input" name="pillar" maxlength="80"></label>
-            <button class="ops-button ops-button--primary" type="submit">Save item</button><p class="ops-form-status" id="content-item-create-status" role="status"></p>
+            <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Save item</button><p class="ops-form-status" id="content-item-create-status" role="status"></p></div>
           </form>
           <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="content-item-status-form">
             <div class="dashboard-card-title"><h2>Move item status</h2></div>
             <label class="ops-field"><span class="ops-legend">Item ID</span><input class="ops-input" name="itemId" required></label>
             <label class="ops-field"><span class="ops-legend">New status</span><select class="ops-input" name="status"><option value="researched">Researched</option><option value="verified">Verified</option><option value="drafting">Drafting</option><option value="design_ready">Design ready</option><option value="e4la_review">E4LA review</option><option value="e4la_approved">E4LA approved</option><option value="client_review">Client review</option><option value="approved">Approved</option><option value="scheduled">Scheduled</option><option value="publishing">Publishing</option><option value="published">Published</option><option value="verified_live">Verified live</option><option value="rejected">Rejected</option><option value="revision_requested">Revision requested</option><option value="blocked">Blocked</option><option value="publishing_failed">Publishing failed</option><option value="withdrawn">Withdrawn</option><option value="archived">Archived</option></select></label>
-            <button class="ops-button ops-button--secondary" type="submit">Update status</button><p class="ops-form-status" id="content-item-status-status" role="status"></p>
+            <div class="ops-form-actions"><button class="ops-button ops-button--secondary" type="submit">Update status</button><p class="ops-form-status" id="content-item-status-status" role="status"></p></div>
           </form>
         </div>
         <div class="ops-grid ops-grid--2 dashboard-section">
@@ -374,7 +388,7 @@
               <label class="ops-field"><span class="ops-legend">URL (optional)</span><input class="ops-input" name="url" type="url" maxlength="1000"></label>
             </div>
             <label class="ops-field"><span class="ops-legend">Insight / note</span><textarea class="ops-input" name="insight" rows="2" maxlength="4000"></textarea></label>
-            <button class="ops-button ops-button--secondary" type="submit">Save source</button><p class="ops-form-status" id="content-source-create-status" role="status"></p>
+            <div class="ops-form-actions"><button class="ops-button ops-button--secondary" type="submit">Save source</button><p class="ops-form-status" id="content-source-create-status" role="status"></p></div>
           </form>
           <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="content-claim-create-form">
             <div class="dashboard-card-title"><h2>Log a claim</h2><span class="ops-status">Starts unverified</span></div>
@@ -384,14 +398,14 @@
               <label class="ops-field"><span class="ops-legend">Risk level</span><select class="ops-input" name="riskLevel"><option value="green">Green</option><option value="yellow" selected>Yellow</option><option value="red">Red</option></select></label>
               <label class="ops-field"><span class="ops-legend">Source ID (optional)</span><input class="ops-input" name="sourceId"></label>
             </div>
-            <button class="ops-button ops-button--secondary" type="submit">Save claim</button><p class="ops-form-status" id="content-claim-create-status" role="status"></p>
+            <div class="ops-form-actions"><button class="ops-button ops-button--secondary" type="submit">Save claim</button><p class="ops-form-status" id="content-claim-create-status" role="status"></p></div>
           </form>
           <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="content-source-verify-form">
             <div class="dashboard-card-title"><h2>Verify a source</h2><span class="ops-status ops-status--attention">Required before a claim can cite it</span></div>
             <p class="ops-hint">A claim can only be marked Verified against a source that (a) belongs to the same client and (b) has itself already been marked Verified here.</p>
             <label class="ops-field"><span class="ops-legend">Source ID</span><input class="ops-input" name="sourceId" required></label>
             <label class="ops-field"><span class="ops-legend">Verification status</span><select class="ops-input" name="verificationStatus"><option value="verified">Verified</option><option value="unverified">Unverified</option><option value="rejected">Rejected</option></select></label>
-            <button class="ops-button ops-button--secondary" type="submit">Save source verification</button><p class="ops-form-status" id="content-source-verify-status" role="status"></p>
+            <div class="ops-form-actions"><button class="ops-button ops-button--secondary" type="submit">Save source verification</button><p class="ops-form-status" id="content-source-verify-status" role="status"></p></div>
           </form>
         </div>
         <div class="ops-grid ops-grid--2 dashboard-section">
@@ -403,7 +417,7 @@
               <label class="ops-field"><span class="ops-legend">Verification status</span><select class="ops-input" name="verificationStatus"><option value="verified">Verified</option><option value="unverified">Unverified</option><option value="insufficient_evidence">Insufficient evidence</option><option value="rejected">Rejected</option></select></label>
               <label class="ops-field"><span class="ops-legend">Source ID (must already be Verified)</span><input class="ops-input" name="sourceId"></label>
             </div>
-            <button class="ops-button ops-button--primary" type="submit">Save verification</button><p class="ops-form-status" id="content-claim-verify-status" role="status"></p>
+            <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Save verification</button><p class="ops-form-status" id="content-claim-verify-status" role="status"></p></div>
           </form>
           <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="content-asset-request-form">
             <div class="dashboard-card-title"><h2>Request creative</h2><span class="ops-status">Adobe or manual upload</span></div>
@@ -413,14 +427,14 @@
               <label class="ops-field"><span class="ops-legend">Template reference (optional)</span><input class="ops-input" name="templateReference" maxlength="200"></label>
             </div>
             <label class="ops-field"><span class="ops-legend">Asset URL (manual upload only — marks it rendered immediately)</span><input class="ops-input" name="assetUrl" type="url" maxlength="1000"></label>
-            <button class="ops-button ops-button--secondary" type="submit">Save asset request</button><p class="ops-form-status" id="content-asset-request-status" role="status"></p>
+            <div class="ops-form-actions"><button class="ops-button ops-button--secondary" type="submit">Save asset request</button><p class="ops-form-status" id="content-asset-request-status" role="status"></p></div>
           </form>
         </div>
         <form class="ops-card ops-card__body ops-admin-form admin-form-card dashboard-section" id="content-asset-render-form">
           <div class="dashboard-card-title"><h2>Render requested asset</h2><span class="ops-status">Adobe-provider assets only</span></div>
           <label class="ops-field"><span class="ops-legend">Asset ID</span><input class="ops-input" name="assetId" required></label>
           <label class="ops-field"><span class="ops-legend">Template fields (optional JSON)</span><textarea class="ops-input" name="fields" rows="2" placeholder="{&quot;headline&quot;: &quot;...&quot;}"></textarea></label>
-          <button class="ops-button ops-button--primary" type="submit">Request render</button><p class="ops-form-status" id="content-asset-render-status" role="status"></p>
+          <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Request render</button><p class="ops-form-status" id="content-asset-render-status" role="status"></p></div>
         </form>
       </section>
 
@@ -440,7 +454,7 @@
             <label class="ops-field"><span class="ops-legend">Decision</span><select class="ops-input" name="decision"><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="revision_requested">Revision requested</option></select></label>
           </div>
           <label class="ops-field"><span class="ops-legend">Comment</span><textarea class="ops-input" name="comment" rows="2"></textarea></label>
-          <button class="ops-button ops-button--primary" type="submit">Save decision</button><p class="ops-form-status" id="content-approval-status" role="status"></p>
+          <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Save decision</button><p class="ops-form-status" id="content-approval-status" role="status"></p></div>
         </form>
       </section>
 
@@ -453,12 +467,12 @@
             <label class="ops-field"><span class="ops-legend">Platform</span><select class="ops-input" name="platform"><option value="instagram">Instagram</option><option value="facebook">Facebook</option><option value="google_business_profile">Google Business Profile</option><option value="tiktok">TikTok</option><option value="manual_export">Manual export</option></select></label>
           </div>
           <label class="ops-field"><span class="ops-legend">Caption</span><textarea class="ops-input" name="caption" rows="2"></textarea></label>
-          <button class="ops-button ops-button--secondary" type="submit">Save variant</button><p class="ops-form-status" id="platform-variant-status" role="status"></p>
+          <div class="ops-form-actions"><button class="ops-button ops-button--secondary" type="submit">Save variant</button><p class="ops-form-status" id="platform-variant-status" role="status"></p></div>
         </form>
         <form class="ops-card ops-card__body ops-admin-form admin-form-card dashboard-section" id="publish-variant-form">
           <div class="dashboard-card-title"><h2>Publish</h2><span class="ops-status ops-status--attention">Requires approved/scheduled status</span></div>
           <label class="ops-field"><span class="ops-legend">Variant ID</span><input class="ops-input" name="variantId" required></label>
-          <button class="ops-button ops-button--primary" type="submit">Publish</button><p class="ops-form-status" id="publish-variant-status" role="status"></p>
+          <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Publish</button><p class="ops-form-status" id="publish-variant-status" role="status"></p></div>
           <pre class="ops-hint" id="publish-variant-result" hidden></pre>
         </form>
         <form class="ops-card ops-card__body ops-admin-form admin-form-card dashboard-section" id="verify-job-form">
@@ -468,7 +482,7 @@
             <label class="ops-field"><span class="ops-legend">Job ID</span><input class="ops-input" name="jobId" required></label>
             <label class="ops-field"><span class="ops-legend">External post ID / reference</span><input class="ops-input" name="externalPostId" required maxlength="300"></label>
           </div>
-          <button class="ops-button ops-button--secondary" type="submit">Mark verified live</button><p class="ops-form-status" id="verify-job-status" role="status"></p>
+          <div class="ops-form-actions"><button class="ops-button ops-button--secondary" type="submit">Mark verified live</button><p class="ops-form-status" id="verify-job-status" role="status"></p></div>
         </form>
         <section class="ops-card admin-surface-raised dashboard-section"><div class="ops-card__body dashboard-card-title"><h2>Recent publishing jobs</h2></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Item</th><th>Platform</th><th>Status</th><th>Failure</th></tr></thead><tbody id="admin-publishing-jobs-table"></tbody></table></div></section>
       </section>

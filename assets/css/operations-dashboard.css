@@ -98,7 +98,7 @@
 /* Depth hierarchy for the newer Admin panels (Services/Quotes/Invoices/Content
    Intelligence/Calendar/Approvals/Publishing/Content Analytics), plus the new
    Roadmap + reporting-chart mounts added to the Progress panel and the Unified
-   Client Record. Extends the existing --ops-surface-*/--ops-glow-* vocabulary
+   Client Record. Extends the existing --ops-surface- and --ops-glow- vocabulary
    already used by assets/css/roadmap.css and the Client Portal's Engagement
    Health cards (operations.css's .portal-progress/.portal-roadmap__phase) into
    these panels, so summary/status views read as elevated relative to the flat

@@ -275,9 +275,62 @@ img { max-width: 100%; }
 }
 .ops-button--primary:hover { filter: brightness(1.08); translate: 0 -1px; }
 .ops-button--secondary { border: 1px solid var(--ops-line); background: rgba(255,255,255,.04); color: #fff; }
-.ops-button:disabled { cursor: not-allowed; filter: grayscale(.35); opacity: .58; translate: none; }
+.ops-button--secondary:hover { border-color: var(--ops-line-strong); background: rgba(255,255,255,.065); }
+/* Destructive: visually distinct from every other button family and never the
+   E4LA gradient - a solid, unmistakable red so a delete/reject/revoke action
+   never gets confused with the primary forward action in the same group. */
+.ops-button--destructive { border: 1px solid rgba(251,113,133,.4); background: rgba(251,113,133,.12); color: var(--ops-red); }
+.ops-button--destructive:hover { border-color: rgba(251,113,133,.65); background: rgba(251,113,133,.18); }
+/* Disabled must read as unmistakably inert regardless of which family it's
+   layered on - flatten to a single muted tone rather than just dimming the
+   family's own color, so a disabled primary can never be mistaken for an
+   active one at a glance. */
+.ops-button:disabled, .ops-button:disabled:hover {
+  cursor: not-allowed; filter: none; translate: none; pointer-events: none;
+  background: rgba(255,255,255,.05); color: rgba(255,255,255,.32); box-shadow: none; border-color: var(--ops-line);
+}
 .ops-button--full { width: 100%; }
 .ops-button:focus-visible, .ops-icon-button:focus-visible, .ops-link-button:focus-visible { outline-offset: 4px; }
+
+/* Consistent CTA placement: the row an action lives in, used for every form
+   footer and modal/dialog footer. Primary action reads last (end-aligned) on
+   desktop - the natural place a user's eye lands after moving through a form
+   top to bottom / left to right - with any secondary/tertiary actions
+   preceding it in the same row. Never lets more than one dominant gradient
+   button render side by side (enforced by usage, not by this rule alone). */
+.ops-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 4px;
+}
+.ops-form-actions--start { justify-content: flex-start; }
+.ops-form-actions .ops-form-status { margin-right: auto; }
+
+/* Searchable select: a plain type-to-filter text input paired with a native
+   <select> right below it (assets/js/admin.js wires the filtering) - keeps
+   the real value a true <select> option (no free-text mis-match risk) while
+   giving a fast way to narrow a long client list, with zero new dependency. */
+.ops-searchable-select { display: grid; gap: 8px; }
+.ops-searchable-select__filter { margin-bottom: 0; }
+
+/* A read-only, human-facing display standing in for a value the system
+   derives automatically (e.g. the one project tied to a selected client) -
+   never an editable-looking input, so it doesn't invite typing an ID. */
+.ops-static-value {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  border: 1px dashed var(--ops-line);
+  border-radius: var(--ops-radius-sm);
+  background: rgba(255,255,255,.02);
+  padding: 12px 14px;
+  color: var(--ops-muted);
+  font-size: 14px;
+}
+.ops-static-value[data-filled='true'] { border-style: solid; color: #fff; }
 
 .ops-alert {
   display: grid;
@@ -368,6 +421,12 @@ img { max-width: 100%; }
   .ops-preview-notice { align-items: flex-start; flex-direction: column; gap: 1px; padding-inline: 18px; }
   .ops-header__actions .ops-status { display: none; }
   .ops-loading { align-items: flex-start; flex-direction: column; justify-content: center; }
+  /* Mobile CTAs: stack full-width (easy thumb targets), primary action last
+     so the visual order still matches the desktop end-alignment convention.
+     Never a horizontal row of squeezed buttons here. */
+  .ops-form-actions { flex-direction: column-reverse; align-items: stretch; }
+  .ops-form-actions .ops-button, .ops-form-actions .ops-link-button { width: 100%; }
+  .ops-form-actions .ops-form-status { margin-right: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
