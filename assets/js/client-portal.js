@@ -1,4 +1,11 @@
 import { analyticsEvent, demoStateFromUrl, formatMoney, isSafeProductPreview, samplePortal } from './ops-model.js';
+// NAMING COLLISION NOTE: this module used to define its own local renderRoadmap(phases) -
+// a simpler phase-list renderer built in an earlier phase. That function has been removed
+// entirely and every call site now uses the shared, schema-accurate component from
+// roadmap.js instead, imported here under an alias so it can never be confused with (or
+// silently shadow) anything in this file.
+import { renderRoadmap as renderJourneyRoadmap } from './roadmap.js';
+import { renderProgressRing, renderPhaseCompletion, renderMilestoneCompletion } from './reporting-charts.js';
 
 const isPreview = isSafeProductPreview();
 const previewParameters = new URLSearchParams(location.search);
@@ -97,10 +104,12 @@ function renderPortal(data) {
   renderBilling(data.billing || {});
   renderInvoices(data.invoices || []);
   renderProgressOverview(data.progress || {});
-  renderRoadmap(data.roadmap || []);
+  renderPortalRoadmap(data);
+  renderEngagementCharts(data);
   renderWeeklyChart(data.weeklyProgress || []);
   renderPerformanceMetrics(data.performanceMetrics || []);
   renderContent(data.content || []);
+  renderContentAwaiting(data.content || []);
   const requestedTab = location.hash.replace('#', '');
   if (portalSections.includes(requestedTab)) activateTab(requestedTab, false);
 }
@@ -196,16 +205,14 @@ function renderInvoices(invoices) {
   });
 }
 
-const PROGRESS_RING_CIRCUMFERENCE = 2 * Math.PI * 52;
-
 function renderProgressOverview(progress) {
-  const hasPercent = typeof progress.percentComplete === 'number';
-  const percent = hasPercent ? Math.max(0, Math.min(100, progress.percentComplete)) : 0;
-  const ring = document.querySelector('#progress-ring-value');
-  ring.style.strokeDashoffset = String(PROGRESS_RING_CIRCUMFERENCE * (1 - (hasPercent ? percent / 100 : 0)));
-  ring.style.opacity = hasPercent ? '1' : '0.18';
-  setText('progress-percent-text', hasPercent ? `${percent}%` : '—');
-  setText('progress-qualitative-text', progress.qualitativeState || 'In progress');
+  // Shared component: circle math (radius 52 / strokeWidth 10) matches the previous
+  // hand-rolled PROGRESS_RING_CIRCUMFERENCE exactly, so a default-sized ring here is
+  // visually identical to the one this replaces. `size: 120` is passed explicitly to
+  // match the fixed 120x120 box the existing .portal-progress__ring CSS still expects.
+  renderProgressRing(document.querySelector('#portal-progress-ring'), {
+    percentComplete: progress.percentComplete, label: progress.qualitativeState || 'In progress',
+  }, { radius: 52, strokeWidth: 10, size: 120 });
   setText('progress-current-phase', progress.currentPhaseName || 'To be confirmed');
   setText('progress-phase-count', `${progress.completedPhaseCount ?? 0} of ${progress.totalPhaseCount ?? 0}`);
   setText('progress-next-phase', progress.nextPhaseName || (progress.statusLabel === 'Completed' ? 'None — engagement complete' : 'To be confirmed'));
@@ -215,21 +222,51 @@ function renderProgressOverview(progress) {
   statusLabel.className = `ops-status ${progress.statusLabel === 'Needs Attention' ? 'ops-status--attention' : 'ops-status--complete'}`;
 }
 
-function renderRoadmap(phases) {
-  const list = document.querySelector('#portal-roadmap');
-  list.replaceChildren();
-  if (!phases.length) { list.append(emptyState('Roadmap coming soon', 'E4LA will publish the engagement roadmap here once phases are confirmed.')); return; }
-  phases.slice().sort((a, b) => a.sequence - b.sequence).forEach((phase, index) => {
-    const item = element('li', `portal-roadmap__phase portal-roadmap__phase--${phase.status.replace('_', '-')}`);
-    item.append(textElement('span', phase.status === 'completed' ? '✓' : String(index + 1), 'portal-roadmap__index'));
-    item.append(textElement('h3', phase.name, 'portal-roadmap__name'));
-    const dateRange = phase.targetStartDate || phase.targetEndDate
-      ? `${formatDate(phase.targetStartDate)} – ${formatDate(phase.targetEndDate)}` : 'Timing to be confirmed';
-    item.append(textElement('p', `${humanize(phase.status)} · ${phase.completedMilestoneCount}/${phase.milestoneCount} milestones`, 'portal-roadmap__meta'));
-    item.append(textElement('p', dateRange, 'portal-roadmap__meta'));
-    if (phase.clientActionRequired) item.append(textElement('span', phase.clientActionNote || 'Client action needed', 'portal-roadmap__action'));
-    list.append(item);
-  });
+// Adapts this portal's already-fetched, already-published-only project_phases/
+// project_milestones data (data.roadmap is the same server-computed phase array the old
+// local renderRoadmap consumed; data.roadmapMilestones is the raw project_milestones rows
+// normalizePortal() preserves alongside its display-shaped `milestones`) into the exact
+// {phases, milestones, deliverables} shape roadmap.js's renderRoadmap/buildRoadmap expects.
+// No new endpoint, no invented fields - deliverables are intentionally omitted (see
+// roadmap.js's own comment: deliverables have no phase_id in the real schema, and this
+// portal has no reliable way to associate one, so it never guesses).
+function buildJourneyData(data) {
+  const phases = (data.roadmap || []).map((phase) => ({
+    id: phase.id, name: phase.name, sequence: phase.sequence, status: phase.status,
+    target_start_date: phase.targetStartDate, target_end_date: phase.targetEndDate,
+    client_action_required: phase.clientActionRequired, client_action_note: phase.clientActionNote,
+    publication_status: 'published', // this array is already server-filtered to published-only
+  }));
+  return { phases, milestones: data.roadmapMilestones || [], deliverables: [] };
+}
+
+function renderPortalRoadmap(data) {
+  renderJourneyRoadmap(document.querySelector('#portal-roadmap'), buildJourneyData(data), { audience: 'client' });
+}
+
+// Phase/milestone completion charts: real project_phases.status / project_milestones.status
+// counts only (see buildJourneyData above for where phases/roadmapMilestones come from).
+// Deliverables status was deliberately NOT added here: the client-facing deliverables
+// endpoint only ever returns publication_status = 'published' rows (see loadPortalData in
+// functions/api/ops/[[path]].js), so a status-breakdown chart would always render a single
+// 100%-published segment - real, but not clarifying for a client. Financial/content-
+// lifecycle/publishing-trend charts were left out of this pass for the same reason: no
+// schema-matching data source is fetched by this portal for them.
+function renderEngagementCharts(data) {
+  renderPhaseCompletion(document.querySelector('#portal-chart-phase-completion'), data.roadmap || [], { title: null });
+  renderMilestoneCompletion(document.querySelector('#portal-chart-milestone-completion'), data.roadmapMilestones || [], { title: null });
+}
+
+function renderContentAwaiting(items) {
+  const section = document.querySelector('#portal-content-awaiting');
+  if (!section) return;
+  const awaiting = items.filter((item) => item.status === 'client_review');
+  section.hidden = !awaiting.length;
+  if (!awaiting.length) return;
+  setText('portal-content-awaiting-count', `${awaiting.length} item${awaiting.length === 1 ? '' : 's'}`);
+  setText('portal-content-awaiting-copy', awaiting.length === 1
+    ? `"${awaiting[0].topic}" is ready for your review.`
+    : `${awaiting.length} pieces of content are ready for your review.`);
 }
 
 function renderWeeklyChart(weeks) {
@@ -285,7 +322,13 @@ function renderContent(items) {
   if (!upcoming.length) { reviewList.append(emptyState('Nothing awaiting review', 'Content ready for your review or already scheduled will appear here.')); }
   upcoming.forEach((item) => {
     const card = element('article', 'ops-card ops-card__body');
-    card.append(textElement('span', CONTENT_STATUS_LABEL[item.status] || humanize(item.status), 'ops-status ops-status--active'));
+    // 'client_review' genuinely needs a decision from the client, so it reads as an
+    // amber "attention" badge rather than the green "active" tone used for everything
+    // else in this list (scheduled/approved/publishing, which are already in motion and
+    // need nothing from the client) - matches the same semantic convention used
+    // elsewhere in this file (ops-status--attention for "needs your action").
+    const statusTone = item.status === 'client_review' ? 'ops-status--attention' : 'ops-status--active';
+    card.append(textElement('span', CONTENT_STATUS_LABEL[item.status] || humanize(item.status), `ops-status ${statusTone}`));
     card.append(textElement('h3', item.topic));
     if (item.pillar) card.append(textElement('p', item.pillar, 'ops-list__meta'));
     if (item.masterCopy) card.append(textElement('p', item.masterCopy));
@@ -405,6 +448,11 @@ function normalizePortal(data) {
     billing: { status: data.enrollment?.status, paid: Number(data.enrollment?.paid_amount || 0), total: Number(data.enrollment?.total_contract_value || 0), completedPayments: Number(data.enrollment?.completed_payments || 0), installmentCount: installmentAmounts.length || null, planName: data.enrollment?.payment_plan_name, nextPayment: data.enrollment?.next_payment_due_at ? formatDate(data.enrollment.next_payment_due_at) : null, nextAmount: Number(data.enrollment?.next_amount || 0) },
     progress: data.progress || { percentComplete: null, qualitativeState: 'In progress', currentPhaseName: null, completedPhaseCount: 0, totalPhaseCount: 0, nextPhaseName: null, remainingMilestoneCount: 0, statusLabel: 'On Track' },
     roadmap: data.roadmap || [],
+    // Raw project_milestones rows (id/status/target_date/completed_at/phase_id), preserved
+    // unmapped alongside the display-shaped `milestones` above - this is what the shared
+    // roadmap.js component and the milestone-completion chart need to read real per-phase
+    // status/linkage from (see buildJourneyData/renderEngagementCharts in this file).
+    roadmapMilestones: data.milestones || [],
     weeklyProgress: data.weeklyProgress || [],
     performanceMetrics: data.performanceMetrics || [],
   };

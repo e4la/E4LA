@@ -1,10 +1,56 @@
 import { demoStateFromUrl, formatMoney, isSafeProductPreview, sampleAdmin } from './ops-model.js';
+import { renderRoadmap } from './roadmap.js';
+import {
+  renderChartEmptyState, renderProgressRing, renderPhaseCompletion, renderMilestoneCompletion,
+  renderFinancialStatus, renderContentLifecycle,
+} from './reporting-charts.js';
 
 const isPreview = isSafeProductPreview();
 let adminData = null;
 let csrfToken = '';
 let currentAgreementId = '';
 let allContentItems = [];
+
+// -------------------------------------------------------------------------------------
+// Fictional preview-only roadmap data for the Progress panel and the Unified Client
+// Record's Progress sub-section, used only when isSafeProductPreview() is true (there is
+// no live database to read project_phases/project_milestones/deliverables from on that
+// host). Kept local to admin.js rather than added to the shared assets/js/ops-model.js
+// fixture - ops-model.js also backs client-portal.js, which a separate concurrent pass
+// owns, and this data exists only to demonstrate this file's own Roadmap/reporting-chart
+// integration in isolation. Field names match the real project_phases/project_milestones
+// columns documented in assets/js/roadmap.js's own usage comment, not an invented shape.
+// Two of the four sampleAdmin clients (client_demo_b, client_demo_d) intentionally have no
+// entry here, so the Roadmap/chart empty states are also exercised in preview mode rather
+// than only ever showing populated data.
+// -------------------------------------------------------------------------------------
+const DEMO_PROGRESS_BY_PROJECT = {
+  prj_demo_a: {
+    phases: [
+      { id: 'phase_demo_a1', project_id: 'prj_demo_a', name: 'Foundation & Visibility', sequence: 1, status: 'completed', target_start_date: '2026-07-01', target_end_date: '2026-07-28', client_action_required: 0, client_action_note: null, publication_status: 'published' },
+      { id: 'phase_demo_a2', project_id: 'prj_demo_a', name: 'Content & Local SEO Buildout', sequence: 2, status: 'current', target_start_date: '2026-07-29', target_end_date: '2026-08-25', client_action_required: 1, client_action_note: 'Approve the homepage messaging proof.', publication_status: 'published' },
+      { id: 'phase_demo_a3', project_id: 'prj_demo_a', name: 'Reporting & Handoff', sequence: 3, status: 'upcoming', target_start_date: null, target_end_date: null, client_action_required: 0, client_action_note: null, publication_status: 'published' },
+    ],
+    milestones: [
+      { id: 'ms_demo_a1', title: 'Technical SEO audit delivered', description: '', status: 'completed', target_date: '2026-07-20', completed_at: '2026-07-19', phase_id: 'phase_demo_a1' },
+      { id: 'ms_demo_a2', title: 'Google Business Profile optimization', description: '', status: 'completed', target_date: '2026-07-26', completed_at: '2026-07-25', phase_id: 'phase_demo_a1' },
+      { id: 'ms_demo_a3', title: 'Homepage messaging proof', description: '', status: 'in_progress', target_date: '2026-08-10', completed_at: null, phase_id: 'phase_demo_a2' },
+      { id: 'ms_demo_a4', title: 'Local landing pages published', description: '', status: 'planned', target_date: '2026-08-20', completed_at: null, phase_id: 'phase_demo_a2' },
+    ],
+    deliverables: [
+      { id: 'del_demo_a1', title: 'Technical SEO Audit Report', phase_id: 'phase_demo_a1' },
+    ],
+  },
+  prj_demo_c: {
+    phases: [
+      { id: 'phase_demo_c1', project_id: 'prj_demo_c', name: 'Kickoff & Discovery', sequence: 1, status: 'blocked', target_start_date: '2026-08-01', target_end_date: '2026-08-15', client_action_required: 0, client_action_note: null, publication_status: 'published' },
+    ],
+    milestones: [
+      { id: 'ms_demo_c1', title: 'Payment reconciliation', description: '', status: 'blocked', target_date: '2026-08-05', completed_at: null, phase_id: 'phase_demo_c1' },
+    ],
+    deliverables: [],
+  },
+};
 
 boot();
 
@@ -40,7 +86,7 @@ function render(data) {
   renderKpis(data.counts); renderActions(data.clients); renderMilestones(data.milestones || []);
   renderClientRows('admin-recent-clients', data.clients); renderClientRows('admin-client-table', data.clients, true);
   renderLifecycleTable('admin-agreement-table', data.clients, 'agreement'); renderLifecycleTable('admin-project-table', data.clients, 'project');
-  renderPayments(data.clients); renderActivity(data.activity || []); renderPreviewClients(data.clients);
+  renderPayments(data.clients); renderActivity(data.activity || []); renderPreviewClients(data.clients); renderProgressClientSelect(data.clients);
   if (!data.clients.length) {
     document.querySelector('#admin-recent-clients').closest('.ops-card').replaceChildren(emptyState('No clients yet', 'Create the first fictional preview client to validate the operational workflow.'));
   }
@@ -103,6 +149,91 @@ function renderPreviewClients(clients) {
   updatePreviewLink(); select.addEventListener('change', updatePreviewLink);
 }
 
+// -------------------------------------------------------------------------------------
+// Progress panel + Unified Client Record: Roadmap (assets/js/roadmap.js) and the
+// progress-ring/phase-completion/milestone-completion charts (assets/js/reporting-
+// charts.js), fed from GET /api/ops/admin/preview/:clientId - an existing, already-
+// authenticated admin/collaborator endpoint (see functions/api/ops/[[path]].js's
+// adminPreview handler) that today is only ever called by client-portal.js's own
+// admin-preview-as-client mode. It returns the same loadPortalData() payload the client
+// portal itself receives - real, already-published-only phases/milestones/deliverables -
+// so reusing it here needs no new backend route.
+//
+// One real gap: that payload's `roadmap` field is a pre-aggregated per-phase summary
+// (camelCase: targetStartDate, clientActionRequired, milestoneCount...), not the raw
+// project_phases rows renderRoadmap()'s documented contract expects (snake_case:
+// target_start_date, client_action_required, publication_status...). There is no admin
+// endpoint that returns raw phase rows. mapPortalToProgressData() below renames those
+// fields 1:1 from the real aggregated values (nothing invented) to satisfy the contract;
+// `publication_status: 'published'` is likewise a real fact, not a guess - loadPortalData's
+// own phases query only ever selects rows already filtered to publication_status =
+// 'published'. Deliverables come back the same way (no phase_id, no publication_status
+// column selected) - since none can be linked to a phase, roadmap.js correctly renders
+// them under no phase at all, exactly as its own contract comment describes.
+// -------------------------------------------------------------------------------------
+
+async function loadProgressData(client) {
+  if (!client) return null;
+  if (isPreview) {
+    const demo = DEMO_PROGRESS_BY_PROJECT[client.projectId];
+    if (!demo) return null;
+    return { phases: demo.phases, milestones: demo.milestones, deliverables: demo.deliverables, percentComplete: demoPercentComplete(demo.milestones) };
+  }
+  try {
+    const result = await api(`/api/ops/admin/preview/${encodeURIComponent(client.id)}`);
+    return mapPortalToProgressData(result.portal);
+  } catch { return null; }
+}
+
+function demoPercentComplete(milestones) {
+  if (!milestones.length) return null;
+  return Math.round((milestones.filter((item) => item.status === 'completed').length / milestones.length) * 100);
+}
+
+function mapPortalToProgressData(portal) {
+  if (!portal?.project) return null;
+  const projectId = portal.project.id;
+  const phases = (portal.roadmap || []).map((phase) => ({
+    id: phase.id, project_id: projectId, name: phase.name, sequence: phase.sequence, status: phase.status,
+    target_start_date: phase.targetStartDate, target_end_date: phase.targetEndDate,
+    client_action_required: phase.clientActionRequired ? 1 : 0, client_action_note: phase.clientActionNote,
+    publication_status: 'published',
+  }));
+  return { phases, milestones: portal.milestones || [], deliverables: portal.deliverables || [], percentComplete: portal.progress?.percentComplete ?? null };
+}
+
+// Renders into whichever of the four mount points are present (the global Progress panel
+// has all four; the Unified Client Record's compact Progress card omits the roadmap mount
+// by choice in some layouts, so `mounts.roadmap` etc. are checked rather than assumed).
+// Every renderX() call below already renders its own honest empty state when its data is
+// absent/empty, so `data` being null just means every mount is handed an empty array.
+function renderProgressCharts(mounts, data) {
+  if (mounts.ring) renderProgressRing(mounts.ring, data ? { percentComplete: data.percentComplete, label: 'Overall progress' } : null, { emptyCopy: 'E4LA has not published progress data for this client yet.' });
+  if (mounts.phase) renderPhaseCompletion(mounts.phase, data?.phases || []);
+  if (mounts.milestone) renderMilestoneCompletion(mounts.milestone, data?.milestones || []);
+  if (mounts.roadmap) renderRoadmap(mounts.roadmap, { phases: data?.phases || [], milestones: data?.milestones || [], deliverables: data?.deliverables || [] }, { audience: 'admin' });
+}
+
+function renderProgressClientSelect(clients) {
+  const select = document.querySelector('#progress-client-select'); if (!select) return;
+  const previous = select.value;
+  select.replaceChildren();
+  clients.forEach((client) => { const option = document.createElement('option'); option.value = client.id; option.textContent = client.name; select.append(option); });
+  if (clients.some((client) => client.id === previous)) select.value = previous;
+  loadGlobalProgress(clients.find((client) => client.id === select.value) || clients[0]);
+}
+document.querySelector('#progress-client-select')?.addEventListener('change', (event) => {
+  loadGlobalProgress((adminData?.clients || []).find((client) => client.id === event.target.value));
+});
+async function loadGlobalProgress(client) {
+  const mounts = {
+    ring: document.querySelector('#progress-ring-chart'), phase: document.querySelector('#progress-phase-chart'),
+    milestone: document.querySelector('#progress-milestone-chart'), roadmap: document.querySelector('#progress-roadmap-container'),
+  };
+  if (!mounts.roadmap) return;
+  renderProgressCharts(mounts, await loadProgressData(client));
+}
+
 function updatePreviewLink() {
   const clientId = document.querySelector('#preview-client-select').value; const link = document.querySelector('#admin-preview-link');
   link.href = isPreview ? `/client-portal/?demo=1&preview=admin&client=${encodeURIComponent(clientId)}` : `/client-portal/?preview=admin&client=${encodeURIComponent(clientId)}`;
@@ -124,8 +255,8 @@ function openClientDetail(client) {
 // data (Activity), or fetches the client-scoped commerce/content list endpoints directly.
 // -------------------------------------------------------------------------------------
 
-function sectionCard(title, note) {
-  const card = element('section', 'ops-card ops-card__body'); const head = element('div', 'dashboard-card-title'); head.append(textElement('h3', title));
+function sectionCard(title, note, surfaceClass) {
+  const card = element('section', ['ops-card', 'ops-card__body', surfaceClass].filter(Boolean).join(' ')); const head = element('div', 'dashboard-card-title'); head.append(textElement('h3', title));
   if (note) head.append(textElement('span', note, 'ops-status'));
   const body = element('div', 'client-section-body'); card.append(head, body); return card;
 }
@@ -159,11 +290,24 @@ function buildProjectsSection(client) {
 }
 
 function buildProgressSection(client) {
-  const card = sectionCard('Progress');
+  const card = sectionCard('Progress', null, 'admin-surface-accent');
   const body = card.querySelector('.client-section-body'); body.append(textElement('p', 'Roadmap phases, weekly snapshots, and performance metrics for this client’s project.', 'ops-hint'));
+  const chartsRow = element('div', 'ops-grid ops-grid--3 client-progress-charts');
+  const ringMount = element('div', 'client-progress-ring'); const phaseMount = element('div', 'client-progress-phases'); const milestoneMount = element('div', 'client-progress-milestones');
+  chartsRow.append(ringMount, phaseMount, milestoneMount); body.append(chartsRow);
+  body.append(element('div', 'client-progress-roadmap ops-mt-18'));
   const button = textElement('button', 'Open Progress panel', 'ops-link-button'); button.type = 'button';
   button.addEventListener('click', () => { if (client.projectId) { ['#phase-create-form', '#snapshot-create-form', '#metric-create-form'].forEach((selector) => { const form = document.querySelector(selector); if (form?.elements.projectId) form.elements.projectId.value = client.projectId; }); } activateView('progress'); });
   body.append(button); return card;
+}
+
+async function loadClientProgress(client, container) {
+  const mounts = {
+    ring: container.querySelector('.client-progress-ring'), phase: container.querySelector('.client-progress-phases'),
+    milestone: container.querySelector('.client-progress-milestones'), roadmap: container.querySelector('.client-progress-roadmap'),
+  };
+  if (!mounts.roadmap) return;
+  renderProgressCharts(mounts, await loadProgressData(client));
 }
 
 function buildPortalSection(client) {
@@ -252,20 +396,26 @@ async function loadClientDetailSections(client) {
   container.replaceChildren(buildContactsSection(), buildServicesSection(), buildAgreementSection(client), buildProjectsSection(client), buildProgressSection(client), buildPortalSection(client));
   const quotesCard = buildLoadingCard('Quotes', 'Client-specific pricing');
   const invoicesCard = buildLoadingCard('Invoices', 'Billing');
+  const financialCard = sectionCard('Financial summary', 'Quotes + invoices', 'admin-surface-raised');
+  const financialMount = element('div'); financialCard.querySelector('.client-section-body').append(financialMount);
   const paymentsCard = buildLoadingCard('Recurring billing', 'Payments');
   const contentCard = buildLoadingCard('Content', 'Content Intelligence');
-  container.append(quotesCard, invoicesCard, paymentsCard, contentCard, buildActivitySection(client));
+  container.append(quotesCard, invoicesCard, financialCard, paymentsCard, contentCard, buildActivitySection(client));
+  loadClientProgress(client, container);
 
   if (isPreview) {
     [quotesCard, invoicesCard, paymentsCard, contentCard].forEach((card) => {
       card.querySelector('.client-section-body').replaceChildren(emptyState('Not available in fictional preview', 'This section loads from the live API and has no fictional preview fixture.'));
     });
+    renderChartEmptyState(financialMount, { title: 'Not available in fictional preview', copy: 'This section loads from the live API and has no fictional preview fixture.' });
     return;
   }
-  try { const result = await api(`/api/commerce/clients/${encodeURIComponent(client.id)}/quotes`); renderQuotesCard(quotesCard, result.quotes || [], client); }
+  let quotesResult = []; let invoicesResult = [];
+  try { const result = await api(`/api/commerce/clients/${encodeURIComponent(client.id)}/quotes`); quotesResult = result.quotes || []; renderQuotesCard(quotesCard, quotesResult, client); }
   catch (error) { quotesCard.querySelector('.client-section-body').replaceChildren(emptyState('Could not load quotes', error.message)); }
-  try { const result = await api(`/api/commerce/clients/${encodeURIComponent(client.id)}/invoices`); renderInvoicesCard(invoicesCard, result.invoices || [], client); }
+  try { const result = await api(`/api/commerce/clients/${encodeURIComponent(client.id)}/invoices`); invoicesResult = result.invoices || []; renderInvoicesCard(invoicesCard, invoicesResult, client); }
   catch (error) { invoicesCard.querySelector('.client-section-body').replaceChildren(emptyState('Could not load invoices', error.message)); }
+  renderFinancialStatus(financialMount, { quotes: quotesResult, invoices: invoicesResult }, { title: null });
   try { const result = await api(`/api/commerce/clients/${encodeURIComponent(client.id)}/recurring-consents`); renderPaymentsCard(paymentsCard, result.consents || [], client); }
   catch (error) { paymentsCard.querySelector('.client-section-body').replaceChildren(emptyState('Could not load recurring billing', error.message)); }
   try {
@@ -601,11 +751,11 @@ function clientNameById(clientId) { const client = (adminData?.clients || []).fi
 function renderContentQueueCounts(items) {
   const container = document.querySelector('#content-queue-counts'); if (!container) return; container.replaceChildren();
   [
-    ['Awaiting E4LA review', items.filter((item) => item.status === 'e4la_review').length],
-    ['Awaiting client review', items.filter((item) => item.status === 'client_review').length],
-    ['Scheduled', items.filter((item) => ['scheduled', 'publishing'].includes(item.status)).length],
-    ['Published', items.filter((item) => ['published', 'verified_live'].includes(item.status)).length],
-  ].forEach(([label, value]) => { const card = element('div', 'ops-card ops-kpi'); card.append(textElement('span', label, 'ops-kpi__label'), textElement('strong', String(value), 'ops-kpi__value')); container.append(card); });
+    ['Awaiting E4LA review', items.filter((item) => item.status === 'e4la_review').length, true],
+    ['Awaiting client review', items.filter((item) => item.status === 'client_review').length, true],
+    ['Scheduled', items.filter((item) => ['scheduled', 'publishing'].includes(item.status)).length, false],
+    ['Published', items.filter((item) => ['published', 'verified_live'].includes(item.status)).length, false],
+  ].forEach(([label, value, needsAttention]) => { const card = element('div', ['ops-card', 'ops-kpi', needsAttention && value > 0 ? 'admin-kpi-glow' : ''].filter(Boolean).join(' ')); card.append(textElement('span', label, 'ops-kpi__label'), textElement('strong', String(value), 'ops-kpi__value')); container.append(card); });
 }
 
 function renderContentQueue(items) {
@@ -642,9 +792,20 @@ function renderPublishingJobsPlaceholder() {
 }
 
 function renderAnalyticsPlaceholder() {
-  ['metrics-direct-list', 'metrics-assisted-list', 'metrics-engagement-list'].forEach((id) => {
-    const list = document.querySelector(`#${id}`); if (!list) return; list.replaceChildren();
-    list.append(emptyState('Not available yet', 'Metrics are recorded via a publishing job, but no endpoint currently reads them back.'));
+  // No endpoint currently exposes content_metrics (only POST/PATCH publishing routes
+  // write it - see the comment above loadContentIntelligence). These three categories
+  // therefore always render reporting-charts.js's own honest empty state rather than the
+  // ad hoc emptyState() used elsewhere in this file, so this genuinely-unavailable data
+  // reads as part of the same chart system as the lifecycle chart beside it, not as a
+  // separate kind of "nothing here."
+  const copy = {
+    'metrics-direct-list': 'Direct metrics (clicks, forms, calls, bookings, attributable conversions) are recorded via a publishing job, but no endpoint currently reads them back for display.',
+    'metrics-assisted-list': 'Assisted metrics (profile visits, branded search, service-page visits) are recorded via a publishing job, but no endpoint currently reads them back for display.',
+    'metrics-engagement-list': 'Engagement metrics (reach, impressions, saves, shares, comments) are recorded via a publishing job, but no endpoint currently reads them back for display.',
+  };
+  Object.entries(copy).forEach(([id, message]) => {
+    const container = document.querySelector(`#${id}`); if (!container) return;
+    renderChartEmptyState(container, { copy: message });
   });
 }
 
@@ -655,6 +816,8 @@ async function loadContentIntelligence() {
     const tbody = document.querySelector('#admin-content-queue-table');
     if (tbody) { tbody.replaceChildren(); const row = document.createElement('tr'); const cell = textElement('td', 'Content items are only available against a real client from the API.', 'admin-table__empty'); cell.colSpan = 6; row.append(cell); tbody.append(row); }
     document.querySelector('#admin-calendar-list')?.replaceChildren(emptyState('Fictional preview only', 'The content calendar loads from the live API.'));
+    setText('content-lifecycle-status', 'Fictional preview data');
+    renderContentLifecycle(document.querySelector('#content-lifecycle-chart'), []);
     return;
   }
   const clients = adminData?.clients || []; if (!clients.length) return;
@@ -665,6 +828,11 @@ async function loadContentIntelligence() {
   renderContentQueueCounts(allContentItems);
   renderContentQueue(allContentItems);
   renderCalendar(allContentItems, document.querySelector('#calendar-client-filter')?.value || '');
+  // Real data, aggregated the same way renderContentQueue/renderContentQueueCounts
+  // already aggregate allContentItems across every client (there is no single
+  // "all clients" content_items endpoint - see the note above this section).
+  setText('content-lifecycle-status', `${allContentItems.length} item${allContentItems.length === 1 ? '' : 's'} across all clients`);
+  renderContentLifecycle(document.querySelector('#content-lifecycle-chart'), allContentItems);
 }
 
 loadServices();

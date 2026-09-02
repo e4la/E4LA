@@ -95,6 +95,49 @@
 .admin-preview-banner__copy { font-weight: 600; letter-spacing: 0; text-transform: none; opacity: .8; }
 .admin-preview-banner a { border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: 5px 12px; text-decoration: none; }
 
+/* Depth hierarchy for the newer Admin panels (Services/Quotes/Invoices/Content
+   Intelligence/Calendar/Approvals/Publishing/Content Analytics), plus the new
+   Roadmap + reporting-chart mounts added to the Progress panel and the Unified
+   Client Record. Extends the existing --ops-surface-*/--ops-glow-* vocabulary
+   already used by assets/css/roadmap.css and the Client Portal's Engagement
+   Health cards (operations.css's .portal-progress/.portal-roadmap__phase) into
+   these panels, so summary/status views read as elevated relative to the flat
+   --ops-card baseline still used by ordinary create/update form cards. No new
+   colors are introduced - every value below is an existing --ops-* custom
+   property already defined in operations.css's :root block. */
+.admin-surface-raised {
+  background: var(--ops-surface-charcoal);
+  border-color: var(--ops-line-strong);
+}
+.admin-surface-accent {
+  background: var(--ops-surface-plum);
+  background-image: var(--ops-glow-current);
+  border-color: rgba(124, 58, 237, .38);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 0 0 1px rgba(124, 58, 237, .16), var(--ops-shadow);
+}
+.admin-kpi-glow {
+  background: var(--ops-surface-violet);
+  background-image: var(--ops-glow-progress);
+  border-color: rgba(249, 115, 22, .3);
+}
+
+/* Tightened form-card treatment for the same panels: same --ops-card baseline and
+   fields, denser spacing/type so the high-volume create/update forms feel more
+   premium next to the newly-elevated summary cards above. */
+.admin-form-card { padding: clamp(18px, 2.4vw, 26px); }
+.admin-form-card .dashboard-card-title { margin-bottom: 14px; }
+.admin-form-card .dashboard-card-title h2 { font-size: 15px; letter-spacing: -.015em; }
+.admin-form-card .ops-hint { font-size: 11.5px; line-height: 1.5; }
+.admin-form-card .ops-grid { gap: 16px; }
+
+/* Progress panel roadmap mount + Unified Client Record progress/financial mounts. */
+#progress-charts-row .rpt-chart,
+#progress-charts-row .rpt-ring,
+#progress-charts-row .ops-empty { height: 100%; }
+.client-progress-charts { margin-top: 14px; }
+.client-progress-roadmap:empty,
+#progress-roadmap-container:empty { display: none; }
+
 @media (max-width: 980px) {
   .dashboard-feature__meta { grid-template-columns: repeat(2, 1fr); }
   .dashboard-feature__meta div:nth-child(2) { border-right: 0; }

@@ -10,6 +10,8 @@
   <link rel="icon" href="/assets/e4la-logo-palm2.png">
   <link rel="stylesheet" href="/assets/css/operations.css">
   <link rel="stylesheet" href="/assets/css/operations-dashboard.css">
+  <link rel="stylesheet" href="/assets/css/roadmap.css">
+  <link rel="stylesheet" href="/assets/css/reporting-charts.css">
 </head>
 <body data-ops-surface="admin">
   <a class="ops-skip" href="#admin-main">Skip to operations dashboard</a>
@@ -78,12 +80,12 @@
       <section id="admin-services" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Extensible catalog</p><h1>Services</h1><p>Create, price, and retire services without a deployment. Any quote can still override a price or add a fully custom line item.</p></div></div>
         <div class="ops-grid ops-grid--2">
-          <form class="ops-card ops-card__body ops-admin-form" id="service-category-form">
+          <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="service-category-form">
             <div class="dashboard-card-title"><h2>Add service category</h2></div>
             <label class="ops-field"><span class="ops-legend">Category name</span><input class="ops-input" name="name" required maxlength="80" placeholder="e.g. AI &amp; Innovation"></label>
             <button class="ops-button ops-button--secondary" type="submit">Save category</button><p class="ops-form-status" id="service-category-status" role="status"></p>
           </form>
-          <form class="ops-card ops-card__body ops-admin-form" id="service-create-form">
+          <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="service-create-form">
             <div class="dashboard-card-title"><h2>Add service</h2></div>
             <label class="ops-field"><span class="ops-legend">Category</span><select class="ops-input" name="category_id" id="service-category-select"></select></label>
             <label class="ops-field"><span class="ops-legend">Service name</span><input class="ops-input" name="name" required maxlength="120"></label>
@@ -96,8 +98,8 @@
             <button class="ops-button ops-button--primary" type="submit">Save service</button><p class="ops-form-status" id="service-create-status" role="status"></p>
           </form>
         </div>
-        <section class="ops-card dashboard-section"><div class="ops-card__body dashboard-card-title"><h2>Catalog</h2><span class="ops-status" id="service-count-status">—</span></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Service</th><th>Category</th><th>Default price</th><th>Type</th><th>Status</th><th></th></tr></thead><tbody id="admin-service-table"></tbody></table></div></section>
-        <form class="ops-card ops-card__body ops-admin-form dashboard-section" id="service-price-form">
+        <section class="ops-card admin-surface-raised dashboard-section"><div class="ops-card__body dashboard-card-title"><h2>Catalog</h2><span class="ops-status" id="service-count-status">—</span></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Service</th><th>Category</th><th>Default price</th><th>Type</th><th>Status</th><th></th></tr></thead><tbody id="admin-service-table"></tbody></table></div></section>
+        <form class="ops-card ops-card__body ops-admin-form admin-form-card dashboard-section" id="service-price-form">
           <div class="dashboard-card-title"><h2>Change a service's default price</h2><span class="ops-status">Does not touch existing quotes</span></div>
           <div class="ops-grid ops-grid--2">
             <label class="ops-field"><span class="ops-legend">Service ID</span><input class="ops-input" name="serviceId" required></label>
@@ -109,7 +111,7 @@
 
       <section id="admin-quotes" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Client-specific pricing</p><h1>Quotes</h1><p>Every quote is priced from scratch — catalog services, overridden prices, or fully custom line items.</p></div></div>
-        <form class="ops-card ops-card__body ops-admin-form" id="quote-create-form">
+        <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="quote-create-form">
           <div class="dashboard-card-title"><h2>Start a quote</h2><span class="ops-status">Starts as draft</span></div>
           <div class="ops-grid ops-grid--2">
             <label class="ops-field"><span class="ops-legend">Client ID</span><input class="ops-input" name="clientId" required></label>
@@ -117,7 +119,7 @@
           </div>
           <button class="ops-button ops-button--primary" type="submit">Create draft quote</button><p class="ops-form-status" id="quote-create-status" role="status"></p>
         </form>
-        <form class="ops-card ops-card__body ops-admin-form dashboard-section" id="quote-version-form">
+        <form class="ops-card ops-card__body ops-admin-form admin-form-card dashboard-section" id="quote-version-form">
           <div class="dashboard-card-title"><h2>Price a quote</h2><span class="ops-status">Creates a new version</span></div>
           <p class="ops-hint">Add one line per row: either a Service ID (quantity/price optional — falls back to the service's default price) or leave Service ID blank and type a label and price for a fully custom item (e.g. "Custom consulting" — $3,400). Add as many rows as this quote needs.</p>
           <label class="ops-field"><span class="ops-legend">Quote ID</span><input class="ops-input" name="quoteId" required></label>
@@ -139,19 +141,19 @@
           <button class="ops-button ops-button--primary" type="submit">Save priced version</button><p class="ops-form-status" id="quote-version-status" role="status"></p>
         </form>
         <div class="ops-grid ops-grid--2 dashboard-section">
-          <form class="ops-card ops-card__body ops-admin-form" id="quote-send-form">
+          <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="quote-send-form">
             <div class="dashboard-card-title"><h2>Send quote</h2></div>
             <label class="ops-field"><span class="ops-legend">Quote ID</span><input class="ops-input" name="quoteId" required></label>
             <button class="ops-button ops-button--secondary" type="submit">Send to client</button><p class="ops-form-status" id="quote-send-status" role="status"></p>
           </form>
-          <form class="ops-card ops-card__body ops-admin-form" id="quote-status-form">
+          <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="quote-status-form">
             <div class="dashboard-card-title"><h2>Update quote status</h2></div>
             <label class="ops-field"><span class="ops-legend">Quote ID</span><input class="ops-input" name="quoteId" required></label>
             <label class="ops-field"><span class="ops-legend">New status</span><select class="ops-input" name="status"><option value="viewed">Viewed</option><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="expired">Expired</option><option value="converted">Converted</option></select></label>
             <button class="ops-button ops-button--secondary" type="submit">Update status</button><p class="ops-form-status" id="quote-status-status" role="status"></p>
           </form>
         </div>
-        <form class="ops-card ops-card__body ops-admin-form dashboard-section" id="payment-options-form">
+        <form class="ops-card ops-card__body ops-admin-form admin-form-card dashboard-section" id="payment-options-form">
           <div class="dashboard-card-title"><h2>Build a custom installment schedule</h2><span class="ops-status">Installments must sum to the total</span></div>
           <p class="ops-hint">Give each installment either a due date OR an offset (e.g. 2 weeks after start) — not both. Installment amounts must add up exactly to the total amount, and the total amount must exactly match the quote's current priced version — use "Fetch total from quote" rather than typing it by hand.</p>
           <div class="ops-grid ops-grid--2">
@@ -212,7 +214,16 @@
 
       <section id="admin-progress" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Client visibility layer</p><h1>Progress</h1><p>Roadmap phases, weekly progress snapshots, and performance metrics. All start Internal and follow the same publish/withdraw flow as every other client-facing item — use the publication form on the Projects panel.</p></div></div>
-        <div class="ops-grid ops-grid--2">
+        <section class="ops-card admin-surface-accent ops-card__body" aria-labelledby="progress-roadmap-title">
+          <div class="dashboard-card-title"><div><p class="ops-eyebrow">Client journey</p><h2 id="progress-roadmap-title">Roadmap</h2></div><label class="ops-field admin-search"><span class="ops-legend">Client</span><select class="ops-input" id="progress-client-select"></select></label></div>
+          <div class="ops-grid ops-grid--3" id="progress-charts-row">
+            <div id="progress-ring-chart"></div>
+            <div id="progress-phase-chart"></div>
+            <div id="progress-milestone-chart"></div>
+          </div>
+          <div class="ops-mt-22" id="progress-roadmap-container"></div>
+        </section>
+        <div class="ops-grid ops-grid--2 dashboard-section">
           <form class="ops-card ops-card__body ops-admin-form" id="phase-create-form">
             <div class="dashboard-card-title"><h2>Create roadmap phase</h2><span class="ops-status">Starts internal</span></div>
             <label class="ops-field"><span class="ops-legend">Project ID</span><input class="ops-input" name="projectId" required></label>
@@ -276,7 +287,7 @@
 
       <section id="admin-invoices" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Billing</p><h1>Invoices</h1><p>Create from an approved quote or stand alone. Line items lock once an invoice is sent.</p></div></div>
-        <form class="ops-card ops-card__body ops-admin-form" id="invoice-create-form">
+        <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="invoice-create-form">
           <div class="dashboard-card-title"><h2>Create invoice</h2><span class="ops-status">Starts as draft</span></div>
           <div class="ops-grid ops-grid--2">
             <label class="ops-field"><span class="ops-legend">Client ID</span><input class="ops-input" name="clientId" required></label>
@@ -292,7 +303,7 @@
           </div>
           <button class="ops-button ops-button--primary" type="submit">Save invoice</button><p class="ops-form-status" id="invoice-create-status" role="status"></p>
         </form>
-        <form class="ops-card ops-card__body ops-admin-form dashboard-section" id="invoice-send-form">
+        <form class="ops-card ops-card__body ops-admin-form admin-form-card dashboard-section" id="invoice-send-form">
           <div class="dashboard-card-title"><h2>Send invoice</h2></div>
           <label class="ops-field"><span class="ops-legend">Invoice ID</span><input class="ops-input" name="invoiceId" required></label>
           <button class="ops-button ops-button--secondary" type="submit">Send payment request</button><p class="ops-form-status" id="invoice-send-status" role="status"></p>
@@ -317,9 +328,9 @@
       <section id="admin-content" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Content Intelligence</p><h1>What needs review.</h1><p>Every asset moves through E4LA review, and client review where the client's automation policy requires it, before it can ever be scheduled.</p></div></div>
         <div class="ops-grid ops-grid--4" id="content-queue-counts"></div>
-        <section class="ops-card dashboard-section"><div class="ops-card__body dashboard-card-title"><h2>Review queue</h2><span class="ops-status" id="content-queue-status">—</span></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Client</th><th>Topic</th><th>Platform(s)</th><th>Status</th><th>Risk</th><th></th></tr></thead><tbody id="admin-content-queue-table"></tbody></table></div></section>
+        <section class="ops-card admin-surface-raised dashboard-section"><div class="ops-card__body dashboard-card-title"><h2>Review queue</h2><span class="ops-status" id="content-queue-status">—</span></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Client</th><th>Topic</th><th>Platform(s)</th><th>Status</th><th>Risk</th><th></th></tr></thead><tbody id="admin-content-queue-table"></tbody></table></div></section>
         <div class="ops-grid ops-grid--2 dashboard-section">
-          <form class="ops-card ops-card__body ops-admin-form" id="content-plan-create-form">
+          <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="content-plan-create-form">
             <div class="dashboard-card-title"><h2>Create content plan</h2><span class="ops-status">Starts as draft</span></div>
             <label class="ops-field"><span class="ops-legend">Client ID</span><input class="ops-input" name="clientId" required></label>
             <label class="ops-field"><span class="ops-legend">Plan name</span><input class="ops-input" name="name" required maxlength="180"></label>
@@ -330,7 +341,7 @@
             </div>
             <button class="ops-button ops-button--primary" type="submit">Save plan</button><p class="ops-form-status" id="content-plan-create-status" role="status"></p>
           </form>
-          <form class="ops-card ops-card__body ops-admin-form" id="content-plan-status-form">
+          <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="content-plan-status-form">
             <div class="dashboard-card-title"><h2>Move plan status</h2><span class="ops-status">Never cascades to items</span></div>
             <p class="ops-hint">draft → internal_approved → sent_to_client → client_approved → active → archived. Approving a plan never auto-approves the individual posts under it.</p>
             <label class="ops-field"><span class="ops-legend">Plan ID</span><input class="ops-input" name="planId" required></label>
@@ -339,14 +350,14 @@
           </form>
         </div>
         <div class="ops-grid ops-grid--2 dashboard-section">
-          <form class="ops-card ops-card__body ops-admin-form" id="content-item-create-form">
+          <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="content-item-create-form">
             <div class="dashboard-card-title"><h2>Add content item</h2><span class="ops-status">Starts as idea</span></div>
             <label class="ops-field"><span class="ops-legend">Plan ID</span><input class="ops-input" name="planId" required></label>
             <label class="ops-field"><span class="ops-legend">Topic</span><input class="ops-input" name="topic" required maxlength="180"></label>
             <label class="ops-field"><span class="ops-legend">Pillar</span><input class="ops-input" name="pillar" maxlength="80"></label>
             <button class="ops-button ops-button--primary" type="submit">Save item</button><p class="ops-form-status" id="content-item-create-status" role="status"></p>
           </form>
-          <form class="ops-card ops-card__body ops-admin-form" id="content-item-status-form">
+          <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="content-item-status-form">
             <div class="dashboard-card-title"><h2>Move item status</h2></div>
             <label class="ops-field"><span class="ops-legend">Item ID</span><input class="ops-input" name="itemId" required></label>
             <label class="ops-field"><span class="ops-legend">New status</span><select class="ops-input" name="status"><option value="researched">Researched</option><option value="verified">Verified</option><option value="drafting">Drafting</option><option value="design_ready">Design ready</option><option value="e4la_review">E4LA review</option><option value="e4la_approved">E4LA approved</option><option value="client_review">Client review</option><option value="approved">Approved</option><option value="scheduled">Scheduled</option><option value="publishing">Publishing</option><option value="published">Published</option><option value="verified_live">Verified live</option><option value="rejected">Rejected</option><option value="revision_requested">Revision requested</option><option value="blocked">Blocked</option><option value="publishing_failed">Publishing failed</option><option value="withdrawn">Withdrawn</option><option value="archived">Archived</option></select></label>
@@ -354,7 +365,7 @@
           </form>
         </div>
         <div class="ops-grid ops-grid--2 dashboard-section">
-          <form class="ops-card ops-card__body ops-admin-form" id="content-source-create-form">
+          <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="content-source-create-form">
             <div class="dashboard-card-title"><h2>Attach a source</h2><span class="ops-status">Evidence for claims</span></div>
             <label class="ops-field"><span class="ops-legend">Client ID</span><input class="ops-input" name="clientId" required></label>
             <label class="ops-field"><span class="ops-legend">Source type</span><select class="ops-input" name="sourceType"><option value="internal_expert">Internal expert</option><option value="search_demand">Search demand</option><option value="customer_question">Customer question</option><option value="current_verified_source">Current verified source</option><option value="url_reference">URL reference</option></select></label>
@@ -365,7 +376,7 @@
             <label class="ops-field"><span class="ops-legend">Insight / note</span><textarea class="ops-input" name="insight" rows="2" maxlength="4000"></textarea></label>
             <button class="ops-button ops-button--secondary" type="submit">Save source</button><p class="ops-form-status" id="content-source-create-status" role="status"></p>
           </form>
-          <form class="ops-card ops-card__body ops-admin-form" id="content-claim-create-form">
+          <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="content-claim-create-form">
             <div class="dashboard-card-title"><h2>Log a claim</h2><span class="ops-status">Starts unverified</span></div>
             <label class="ops-field"><span class="ops-legend">Item ID</span><input class="ops-input" name="itemId" required></label>
             <label class="ops-field"><span class="ops-legend">Claim text</span><textarea class="ops-input" name="claimText" rows="2" required maxlength="2000"></textarea></label>
@@ -375,7 +386,7 @@
             </div>
             <button class="ops-button ops-button--secondary" type="submit">Save claim</button><p class="ops-form-status" id="content-claim-create-status" role="status"></p>
           </form>
-          <form class="ops-card ops-card__body ops-admin-form" id="content-source-verify-form">
+          <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="content-source-verify-form">
             <div class="dashboard-card-title"><h2>Verify a source</h2><span class="ops-status ops-status--attention">Required before a claim can cite it</span></div>
             <p class="ops-hint">A claim can only be marked Verified against a source that (a) belongs to the same client and (b) has itself already been marked Verified here.</p>
             <label class="ops-field"><span class="ops-legend">Source ID</span><input class="ops-input" name="sourceId" required></label>
@@ -384,7 +395,7 @@
           </form>
         </div>
         <div class="ops-grid ops-grid--2 dashboard-section">
-          <form class="ops-card ops-card__body ops-admin-form" id="content-claim-verify-form">
+          <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="content-claim-verify-form">
             <div class="dashboard-card-title"><h2>Verify a claim</h2><span class="ops-status ops-status--attention">RED/YELLOW claims block approval</span></div>
             <p class="ops-hint">A claim can only be set to Verified if it carries a source that is itself already Verified. An unresolved RED- or YELLOW-risk claim blocks the content item from reaching Approved.</p>
             <label class="ops-field"><span class="ops-legend">Claim ID</span><input class="ops-input" name="claimId" required></label>
@@ -394,7 +405,7 @@
             </div>
             <button class="ops-button ops-button--primary" type="submit">Save verification</button><p class="ops-form-status" id="content-claim-verify-status" role="status"></p>
           </form>
-          <form class="ops-card ops-card__body ops-admin-form" id="content-asset-request-form">
+          <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="content-asset-request-form">
             <div class="dashboard-card-title"><h2>Request creative</h2><span class="ops-status">Adobe or manual upload</span></div>
             <label class="ops-field"><span class="ops-legend">Item ID</span><input class="ops-input" name="itemId" required></label>
             <div class="ops-grid ops-grid--2">
@@ -405,7 +416,7 @@
             <button class="ops-button ops-button--secondary" type="submit">Save asset request</button><p class="ops-form-status" id="content-asset-request-status" role="status"></p>
           </form>
         </div>
-        <form class="ops-card ops-card__body ops-admin-form dashboard-section" id="content-asset-render-form">
+        <form class="ops-card ops-card__body ops-admin-form admin-form-card dashboard-section" id="content-asset-render-form">
           <div class="dashboard-card-title"><h2>Render requested asset</h2><span class="ops-status">Adobe-provider assets only</span></div>
           <label class="ops-field"><span class="ops-legend">Asset ID</span><input class="ops-input" name="assetId" required></label>
           <label class="ops-field"><span class="ops-legend">Template fields (optional JSON)</span><textarea class="ops-input" name="fields" rows="2" placeholder="{&quot;headline&quot;: &quot;...&quot;}"></textarea></label>
@@ -416,12 +427,12 @@
       <section id="admin-calendar" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Scheduling</p><h1>Content calendar</h1><p>All clients, or filter to one. Visual status at a glance.</p></div></div>
         <label class="ops-field admin-search"><span class="ops-legend">Filter by client ID</span><input class="ops-input" id="calendar-client-filter" type="search" placeholder="Leave blank for all clients"></label>
-        <section class="ops-card dashboard-section"><div class="ops-card__body dashboard-card-title"><h2>Scheduled &amp; recent</h2></div><ul class="ops-list" id="admin-calendar-list"></ul></section>
+        <section class="ops-card admin-surface-raised dashboard-section"><div class="ops-card__body dashboard-card-title"><h2>Scheduled &amp; recent</h2></div><ul class="ops-list" id="admin-calendar-list"></ul></section>
       </section>
 
       <section id="admin-approvals" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Decisions</p><h1>Approvals</h1><p>E4LA-internal and client approval history. Plan approval never auto-approves individual posts.</p></div></div>
-        <form class="ops-card ops-card__body ops-admin-form" id="content-approval-form">
+        <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="content-approval-form">
           <div class="dashboard-card-title"><h2>Record an E4LA-internal decision</h2><span class="ops-status">Moves the item's status</span></div>
           <p class="ops-hint">Recording a decision here moves the content item to the matching status (this must be a legal transition from its current status — typically from E4LA review or Client review). Client decisions are recorded from the client portal, not from admin.</p>
           <div class="ops-grid ops-grid--2">
@@ -435,7 +446,7 @@
 
       <section id="admin-publishing" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Distribution</p><h1>Publishing</h1><p>Direct publishing only where a platform account is connected and authorized. Otherwise, a manual export package.</p></div></div>
-        <form class="ops-card ops-card__body ops-admin-form" id="platform-variant-form">
+        <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="platform-variant-form">
           <div class="dashboard-card-title"><h2>Create platform variant</h2></div>
           <div class="ops-grid ops-grid--2">
             <label class="ops-field"><span class="ops-legend">Item ID</span><input class="ops-input" name="itemId" required></label>
@@ -444,13 +455,13 @@
           <label class="ops-field"><span class="ops-legend">Caption</span><textarea class="ops-input" name="caption" rows="2"></textarea></label>
           <button class="ops-button ops-button--secondary" type="submit">Save variant</button><p class="ops-form-status" id="platform-variant-status" role="status"></p>
         </form>
-        <form class="ops-card ops-card__body ops-admin-form dashboard-section" id="publish-variant-form">
+        <form class="ops-card ops-card__body ops-admin-form admin-form-card dashboard-section" id="publish-variant-form">
           <div class="dashboard-card-title"><h2>Publish</h2><span class="ops-status ops-status--attention">Requires approved/scheduled status</span></div>
           <label class="ops-field"><span class="ops-legend">Variant ID</span><input class="ops-input" name="variantId" required></label>
           <button class="ops-button ops-button--primary" type="submit">Publish</button><p class="ops-form-status" id="publish-variant-status" role="status"></p>
           <pre class="ops-hint" id="publish-variant-result" hidden></pre>
         </form>
-        <form class="ops-card ops-card__body ops-admin-form dashboard-section" id="verify-job-form">
+        <form class="ops-card ops-card__body ops-admin-form admin-form-card dashboard-section" id="verify-job-form">
           <div class="dashboard-card-title"><h2>Record publication evidence</h2><span class="ops-status ops-status--attention">Not a live verification</span></div>
           <p class="ops-hint">A successful publish attempt is never automatically "live," and recording a post ID here is not an automated live check either - no platform-verification adapter exists yet. This records that a real post exists (identity evidence only) and moves the job to "verification_pending." "Verified live" is reserved for a future adapter that actually confirms the post is live with the platform itself.</p>
           <div class="ops-grid ops-grid--2">
@@ -459,15 +470,19 @@
           </div>
           <button class="ops-button ops-button--secondary" type="submit">Mark verified live</button><p class="ops-form-status" id="verify-job-status" role="status"></p>
         </form>
-        <section class="ops-card dashboard-section"><div class="ops-card__body dashboard-card-title"><h2>Recent publishing jobs</h2></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Item</th><th>Platform</th><th>Status</th><th>Failure</th></tr></thead><tbody id="admin-publishing-jobs-table"></tbody></table></div></section>
+        <section class="ops-card admin-surface-raised dashboard-section"><div class="ops-card__body dashboard-card-title"><h2>Recent publishing jobs</h2></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Item</th><th>Platform</th><th>Status</th><th>Failure</th></tr></thead><tbody id="admin-publishing-jobs-table"></tbody></table></div></section>
       </section>
 
       <section id="admin-content-analytics" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Evidence</p><h1>Content performance</h1><p>Direct, assisted, and engagement metrics stay separate — never blended into one number.</p></div></div>
-        <div class="ops-grid ops-grid--3">
-          <section class="ops-card ops-card__body"><div class="dashboard-card-title"><h3>Direct</h3></div><p class="ops-subtitle">Clicks, forms, calls, bookings, attributable conversions.</p><ul class="ops-list" id="metrics-direct-list"></ul></section>
-          <section class="ops-card ops-card__body"><div class="dashboard-card-title"><h3>Assisted</h3></div><p class="ops-subtitle">Profile visits, branded search, service-page visits.</p><ul class="ops-list" id="metrics-assisted-list"></ul></section>
-          <section class="ops-card ops-card__body"><div class="dashboard-card-title"><h3>Engagement</h3></div><p class="ops-subtitle">Reach, impressions, saves, shares, comments.</p><ul class="ops-list" id="metrics-engagement-list"></ul></section>
+        <section class="ops-card admin-surface-raised ops-card__body" aria-labelledby="content-lifecycle-title">
+          <div class="dashboard-card-title"><h2 id="content-lifecycle-title">Content lifecycle</h2><span class="ops-status" id="content-lifecycle-status">—</span></div>
+          <div id="content-lifecycle-chart"></div>
+        </section>
+        <div class="ops-grid ops-grid--3 dashboard-section">
+          <section class="ops-card admin-surface-raised ops-card__body"><div class="dashboard-card-title"><h3>Direct</h3></div><p class="ops-subtitle">Clicks, forms, calls, bookings, attributable conversions.</p><div id="metrics-direct-list"></div></section>
+          <section class="ops-card admin-surface-raised ops-card__body"><div class="dashboard-card-title"><h3>Assisted</h3></div><p class="ops-subtitle">Profile visits, branded search, service-page visits.</p><div id="metrics-assisted-list"></div></section>
+          <section class="ops-card admin-surface-raised ops-card__body"><div class="dashboard-card-title"><h3>Engagement</h3></div><p class="ops-subtitle">Reach, impressions, saves, shares, comments.</p><div id="metrics-engagement-list"></div></section>
         </div>
       </section>
 
