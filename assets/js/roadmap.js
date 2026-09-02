@@ -107,6 +107,14 @@ export function buildRoadmap(data = {}, options = {}) {
     return root;
   }
 
+  // If more than one phase is legitimately 'current' at once, say so plainly
+  // instead of letting two equally-badged "In Progress" cards look like a
+  // data error. This is a real, supported state - not an edge case to hide.
+  const currentCount = phases.filter((item) => item.status === 'current').length;
+  if (currentCount > 1) {
+    root.append(text('p', `${currentCount} phases are in progress at the same time.`, 'e4la-roadmap__multi-current-note'));
+  }
+
   const stages = el('div', 'e4la-roadmap__stages');
   stages.setAttribute('role', 'list');
   stages.append(buildConnector(phases));
@@ -117,8 +125,48 @@ export function buildRoadmap(data = {}, options = {}) {
     stages.append(buildStage(phase, phaseMilestones, phaseDeliverables, index, audience));
   });
 
-  root.append(stages);
+  root.append(buildViewport(stages));
   return root;
+}
+
+// A horizontally-scrollable track (8 real phases are too dense to squeeze
+// into equal-width columns on one screen without becoming illegible) with a
+// visible, discoverable affordance: prev/next buttons plus a background
+// panel that reads as "there's a track here, scroll it" rather than relying
+// on an undiscoverable swipe gesture alone. Mobile switches to the existing
+// vertical stack (see the 720px breakpoint in roadmap.css) where none of
+// this applies, so the buttons are simply hidden there.
+function buildViewport(stages) {
+  const viewport = el('div', 'e4la-roadmap__viewport');
+  const prevBtn = el('button', 'e4la-roadmap__nav e4la-roadmap__nav--prev');
+  prevBtn.type = 'button';
+  prevBtn.setAttribute('aria-label', 'Scroll to earlier phases');
+  prevBtn.innerHTML = '&#8249;';
+  const nextBtn = el('button', 'e4la-roadmap__nav e4la-roadmap__nav--next');
+  nextBtn.type = 'button';
+  nextBtn.setAttribute('aria-label', 'Scroll to later phases');
+  nextBtn.innerHTML = '&#8250;';
+
+  viewport.append(prevBtn, stages, nextBtn);
+
+  const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const step = () => Math.max(240, stages.clientWidth * 0.8);
+  prevBtn.addEventListener('click', () => stages.scrollBy({ left: -step(), behavior: reducedMotion ? 'auto' : 'smooth' }));
+  nextBtn.addEventListener('click', () => stages.scrollBy({ left: step(), behavior: reducedMotion ? 'auto' : 'smooth' }));
+
+  const updateNav = () => {
+    const max = stages.scrollWidth - stages.clientWidth;
+    const overflows = max > 4;
+    viewport.classList.toggle('e4la-roadmap__viewport--scrollable', overflows);
+    prevBtn.disabled = !overflows || stages.scrollLeft <= 4;
+    nextBtn.disabled = !overflows || stages.scrollLeft >= max - 4;
+  };
+  stages.addEventListener('scroll', updateNav, { passive: true });
+  // Layout isn't settled yet on the same tick the nodes are created; defer
+  // one frame so scrollWidth/clientWidth reflect the just-inserted content.
+  requestAnimationFrame(updateNav);
+
+  return viewport;
 }
 
 // ---------------------------------------------------------------------
@@ -238,6 +286,14 @@ function buildStage(phase, phaseMilestones, phaseDeliverables, index, audience) 
     card.append(progressWrap);
   }
 
+  // Summary-first: the card above this point is everything shown by default
+  // (status, name, dates, progress). Milestones, deliverables and the next-
+  // action note are real detail a client needs, but not at a glance across
+  // 8 phases at once - they live behind a native <details> disclosure so the
+  // default view stays scannable and the full picture is one click away.
+  // "Awaiting Client" already surfaced as a badge above, so urgency is still
+  // visible before anyone expands anything.
+
   // Audience density difference #1: the client view hides cancelled
   // milestones (dead ends aren't meaningful to a client reading their
   // journey); admin sees everything, including what got cancelled.
@@ -248,19 +304,32 @@ function buildStage(phase, phaseMilestones, phaseDeliverables, index, audience) 
   // to keep the card clean/simple per the product brief; admin sees the
   // full operational list uncapped.
   const cap = audience === 'admin' ? Infinity : 4;
-  if (visibleMilestones.length) {
-    const list = el('ul', 'e4la-roadmap__milestones');
-    visibleMilestones.slice(0, cap).forEach((item) => list.append(buildMilestoneItem(item)));
-    card.append(list);
-    const remaining = visibleMilestones.length - cap;
-    if (remaining > 0) card.append(text('p', `+${remaining} more milestone${remaining === 1 ? '' : 's'}`, 'e4la-roadmap__milestones-more'));
-  }
-
   const shownDeliverables = visibleDeliverables(phaseDeliverables, audience);
-  if (shownDeliverables.length) card.append(buildDeliverablesList(shownDeliverables));
-
   const action = buildNextAction(phase);
-  if (action) card.append(action);
+
+  if (visibleMilestones.length || shownDeliverables.length || action) {
+    const details = el('details', 'e4la-roadmap__details');
+    // The current phase is the one a client is most likely to want open
+    // immediately; everything else starts collapsed to keep the track scannable.
+    if (status === 'current') details.open = true;
+    const summaryLabel = visibleMilestones.length
+      ? `${visibleMilestones.length} milestone${visibleMilestones.length === 1 ? '' : 's'}`
+      : 'Details';
+    details.append(text('summary', summaryLabel, 'e4la-roadmap__details-summary'));
+
+    if (visibleMilestones.length) {
+      const list = el('ul', 'e4la-roadmap__milestones');
+      visibleMilestones.slice(0, cap).forEach((item) => list.append(buildMilestoneItem(item)));
+      details.append(list);
+      const remaining = visibleMilestones.length - cap;
+      if (remaining > 0) details.append(text('p', `+${remaining} more milestone${remaining === 1 ? '' : 's'}`, 'e4la-roadmap__milestones-more'));
+    }
+
+    if (shownDeliverables.length) details.append(buildDeliverablesList(shownDeliverables));
+    if (action) details.append(action);
+
+    card.append(details);
+  }
 
   stage.append(card);
   return stage;

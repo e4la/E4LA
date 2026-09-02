@@ -211,7 +211,7 @@ function renderProgressOverview(progress) {
   // visually identical to the one this replaces. `size: 120` is passed explicitly to
   // match the fixed 120x120 box the existing .portal-progress__ring CSS still expects.
   renderProgressRing(document.querySelector('#portal-progress-ring'), {
-    percentComplete: progress.percentComplete, label: progress.qualitativeState || 'In progress',
+    percentComplete: progress.percentComplete, label: 'of milestones',
   }, { radius: 52, strokeWidth: 10, size: 120 });
   setText('progress-current-phase', progress.currentPhaseName || 'To be confirmed');
   setText('progress-phase-count', `${progress.completedPhaseCount ?? 0} of ${progress.totalPhaseCount ?? 0}`);
