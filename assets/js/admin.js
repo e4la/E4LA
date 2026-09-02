@@ -380,7 +380,11 @@ function buildServicesSection() {
 }
 
 function buildAgreementSection(client) {
-  const card = sectionCard('Agreement', client.agreement);
+  // Commercial group (Agreement + the Financial/Quotes/Invoices/Payments cards
+  // further down) shares the same warm violet/orange surface so the eye can group
+  // "everything about money and contracts" at a glance, distinct from the plum/purple
+  // "Progress" card and the plain-neutral Identity/Content/Portal/Activity cards.
+  const card = sectionCard('Agreement', client.agreement, 'admin-kpi-glow');
   const body = card.querySelector('.client-section-body'); body.append(textElement('p', `Status: ${client.agreement}. Client-signed evidence is immutable once sent.`, 'ops-hint'));
   const button = textElement('button', 'Open in Agreements panel', 'ops-link-button'); button.type = 'button';
   button.addEventListener('click', () => { const form = document.querySelector('#agreement-create-form'); if (form) { form.elements.clientId.value = client.id; form.elements.clientId.dispatchEvent(new Event('change')); } activateView('agreements'); });
@@ -388,7 +392,9 @@ function buildAgreementSection(client) {
 }
 
 function buildProjectsSection(client) {
-  const card = sectionCard('Projects', client.project);
+  // Project/Engagement group: charcoal-elevated, distinct from the plain Identity
+  // card above it and the warm Commercial cards below it.
+  const card = sectionCard('Projects', client.project, 'admin-surface-raised');
   const body = card.querySelector('.client-section-body'); body.append(textElement('p', `Current project: ${client.project}.`, 'ops-hint'));
   const button = textElement('button', 'Open Projects panel', 'ops-link-button'); button.type = 'button'; button.addEventListener('click', () => activateView('projects')); body.append(button);
   return card;
@@ -433,8 +439,8 @@ function buildActivitySection(client) {
   body.append(list); return card;
 }
 
-function buildLoadingCard(title, note) {
-  const card = sectionCard(title, note); card.querySelector('.client-section-body').append(textElement('p', 'Loading…', 'ops-hint')); return card;
+function buildLoadingCard(title, note, surfaceClass) {
+  const card = sectionCard(title, note, surfaceClass); card.querySelector('.client-section-body').append(textElement('p', 'Loading…', 'ops-hint')); return card;
 }
 
 function renderQuotesCard(card, quotes, client) {
@@ -499,11 +505,13 @@ function renderContentCard(card, plans, items, client) {
 async function loadClientDetailSections(client) {
   const container = document.querySelector('#client-detail-sections'); if (!container) return;
   container.replaceChildren(buildContactsSection(), buildServicesSection(), buildAgreementSection(client), buildProjectsSection(client), buildProgressSection(client), buildPortalSection(client));
-  const quotesCard = buildLoadingCard('Quotes', 'Client-specific pricing');
-  const invoicesCard = buildLoadingCard('Invoices', 'Billing');
-  const financialCard = sectionCard('Financial summary', 'Quotes + invoices', 'admin-surface-raised');
+  // Same Commercial surface as the Agreement card above - Quotes/Invoices/Financial
+  // summary/Recurring billing all belong to the same "money" group at a glance.
+  const quotesCard = buildLoadingCard('Quotes', 'Client-specific pricing', 'admin-kpi-glow');
+  const invoicesCard = buildLoadingCard('Invoices', 'Billing', 'admin-kpi-glow');
+  const financialCard = sectionCard('Financial summary', 'Quotes + invoices', 'admin-kpi-glow');
   const financialMount = element('div'); financialCard.querySelector('.client-section-body').append(financialMount);
-  const paymentsCard = buildLoadingCard('Recurring billing', 'Payments');
+  const paymentsCard = buildLoadingCard('Recurring billing', 'Payments', 'admin-kpi-glow');
   const contentCard = buildLoadingCard('Content', 'Content Intelligence');
   container.append(quotesCard, invoicesCard, financialCard, paymentsCard, contentCard, buildActivitySection(client));
   loadClientProgress(client, container);
