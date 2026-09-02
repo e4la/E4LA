@@ -10,6 +10,40 @@ let adminData = null;
 let csrfToken = '';
 let currentAgreementId = '';
 let allContentItems = [];
+// Admin nav consolidation lookup tables (see activateView()'s own comment further down
+// for full context) - declared here, not next to their usage, for the same reason
+// PROJECT_AUTOFILL_TARGETS is: render()/boot() run at module load and would otherwise
+// reference these before their own declaration line executes.
+const STANDALONE_PANEL_ID = { dashboard: 'admin-dashboard', settings: 'admin-settings' };
+const PANEL_ID_BY_TAB = {
+  'projects:overview': 'admin-projects-overview',
+  'projects:clients': 'admin-clients',
+  'projects:services': 'admin-services',
+  'projects:quotes': 'admin-quotes',
+  'projects:agreements': 'admin-agreements',
+  'projects:details': 'admin-projects',
+  'content:content': 'admin-content',
+  'content:calendar': 'admin-calendar',
+  'content:approvals': 'admin-approvals',
+  'content:publishing': 'admin-publishing',
+  'content:analytics': 'admin-content-analytics',
+  'payments:overview': 'admin-payments-overview',
+  'payments:invoices': 'admin-invoices',
+  'payments:recurring': 'admin-payments',
+  'activity:feed': 'admin-activity',
+  'activity:portals': 'admin-portals',
+};
+const FLAT_VIEW_ALIASES = {
+  dashboard: 'dashboard', settings: 'settings',
+  clients: 'projects:clients', services: 'projects:services', quotes: 'projects:quotes',
+  agreements: 'projects:agreements', projects: 'projects:overview', progress: 'projects:details',
+  invoices: 'payments:invoices', payments: 'payments:recurring', 'payments-overview': 'payments:overview',
+  content: 'content:content', calendar: 'content:calendar', approvals: 'content:approvals',
+  publishing: 'content:publishing', 'content-analytics': 'content:analytics',
+  portals: 'activity:portals', activity: 'activity:feed',
+};
+const FLAT_VIEW_BY_COMPOSITE = Object.fromEntries(Object.entries(FLAT_VIEW_ALIASES).map(([flat, composite]) => [composite, flat]));
+
 let servicesCache = [];
 let quotePickersWired = false;
 // Client-select -> auto-derived Project-display targets (see updateProjectAutofillDisplay
@@ -121,10 +155,47 @@ function render(data) {
   renderPayments(data.clients); renderActivity(data.activity || []); renderPreviewClients(data.clients); renderProgressClientSelect(data.clients);
   renderQuoteClientPickers(data.clients);
   populateCalendarClientFilter();
+  renderDashboardProgressSummary(data.clients);
   if (!data.clients.length) {
     document.querySelector('#admin-recent-clients').closest('.ops-card').replaceChildren(emptyState('No clients yet', 'Create the first fictional preview client to validate the operational workflow.'));
   }
 }
+
+// -------------------------------------------------------------------------------------
+// Dashboard progress summary: a compact card (not the full roadmap component) showing
+// real client/phase/milestone data for the same default client the global Progress tab
+// itself defaults to (clients[0] - see renderProgressClientSelect/loadGlobalProgress),
+// reusing the same loadProgressData() this file already uses for the Progress tab and
+// the Unified Client Record. No numbers here are invented: if loadProgressData returns
+// nothing (no published roadmap yet), this renders the same honest empty state pattern
+// used throughout this file rather than fabricating a status.
+// -------------------------------------------------------------------------------------
+async function renderDashboardProgressSummary(clients) {
+  const container = document.querySelector('#dashboard-progress-summary');
+  const status = document.querySelector('#dashboard-progress-status');
+  if (!container) return;
+  const client = clients[0];
+  if (!client) { container.replaceChildren(emptyState('No clients yet', 'A compact progress summary will appear here once a client and project exist.')); if (status) status.textContent = '—'; return; }
+  if (status) status.textContent = client.name;
+  const data = await loadProgressData(client);
+  container.replaceChildren();
+  if (!data || !(data.phases || []).length) { container.append(emptyState('No published progress yet', `E4LA has not published roadmap progress for ${client.name}.`)); return; }
+  const currentPhases = data.phases.filter((phase) => phase.status === 'current');
+  const upcomingMilestones = (data.milestones || []).filter((milestone) => ['planned', 'in_progress'].includes(milestone.status)).slice(0, 3);
+  const grid = element('div', 'client-detail-grid');
+  [
+    ['Client', client.name],
+    ['Current phase', currentPhases.length ? currentPhases.map((phase) => phase.name).join(', ') : 'No phase currently active'],
+    ['Overall progress', data.percentComplete != null ? `${data.percentComplete}%` : 'Not available'],
+  ].forEach(([label, value]) => { const card = element('div', 'client-detail-item'); card.append(textElement('span', label), textElement('strong', value)); grid.append(card); });
+  container.append(grid);
+  if (upcomingMilestones.length) {
+    const list = element('ul', 'ops-list ops-mt-18');
+    upcomingMilestones.forEach((milestone) => { const li = element('li', 'ops-list__item'); const copy = document.createElement('div'); copy.append(textElement('p', milestone.title, 'ops-list__title'), textElement('p', `${client.name} · upcoming milestone`, 'ops-list__meta')); li.append(copy, textElement('time', milestone.target_date ? formatDate(milestone.target_date) : 'Date pending', 'ops-status')); list.append(li); });
+    container.append(list);
+  }
+}
+document.querySelector('#dashboard-progress-link')?.addEventListener('click', () => activateView('progress'));
 
 function renderKpis(counts) {
   const container = document.querySelector('#admin-kpis'); container.replaceChildren();
@@ -1119,7 +1190,40 @@ async function loadContentIntelligence() {
 loadServices();
 
 function showInvite(url) { const output = document.querySelector('#invite-output'); output.hidden = false; output.querySelector('textarea').value = url; }
-function activateView(name, focus = true) { if (!document.querySelector(`#admin-${name}`)) name = 'dashboard'; document.querySelectorAll('[data-admin-panel]').forEach((panel) => { panel.hidden = panel.id !== `admin-${name}`; }); document.querySelectorAll('[data-admin-view]').forEach((link) => link.toggleAttribute('aria-current', link.dataset.adminView === name)); history.replaceState(null, '', `#${name}`); if (focus) { const heading = document.querySelector(`#admin-${name} h1`); if (heading) { heading.tabIndex = -1; heading.focus(); } } }
+// -------------------------------------------------------------------------------------
+// Admin nav consolidation: the sidebar now exposes 5 top-level workspaces (Dashboard,
+// Projects, Content, Payments, Activity) plus standalone Settings, each holding its
+// original flat panels as sub-tabs. Every panel keeps its original `admin-X` id and
+// internal markup/JS untouched - this is purely a navigation layer on top of them.
+//
+// PANEL_ID_BY_TAB maps a "workspace:tab" composite key to the panel id that composite
+// key shows. FLAT_VIEW_ALIASES maps every ORIGINAL flat view name (the ones every
+// existing activateView('quotes')/('agreements')/etc. call site throughout this file
+// already passes) to its new composite key, so none of those call sites need to change -
+// activateView() below resolves a flat name through this table automatically. A caller
+// may also pass a composite key directly (e.g. 'projects:quotes'), which resolves without
+// needing an alias entry at all, since PANEL_ID_BY_TAB is keyed by composite strings.
+// (STANDALONE_PANEL_ID / PANEL_ID_BY_TAB / FLAT_VIEW_ALIASES / FLAT_VIEW_BY_COMPOSITE
+// themselves are declared at the top of the file - see their own comment there.)
+// -------------------------------------------------------------------------------------
+function resolveView(name) {
+  const key = FLAT_VIEW_ALIASES[name] || name;
+  if (STANDALONE_PANEL_ID[key]) return { workspace: key, tab: null, panelId: STANDALONE_PANEL_ID[key], hashName: key };
+  const [workspace, tab] = String(key).split(':');
+  const panelId = PANEL_ID_BY_TAB[key];
+  if (!workspace || !tab || !panelId) return resolveView('dashboard');
+  return { workspace, tab, panelId, hashName: FLAT_VIEW_BY_COMPOSITE[key] || key };
+}
+
+function activateView(name, focus = true) {
+  const { workspace, tab, panelId, hashName } = resolveView(name);
+  document.querySelectorAll('.admin-workspace').forEach((wrap) => { wrap.hidden = wrap.dataset.workspace !== workspace; });
+  document.querySelectorAll('[data-admin-panel]').forEach((panel) => { panel.hidden = panel.id !== panelId; });
+  document.querySelectorAll('.admin-nav [data-admin-view]').forEach((link) => { link.toggleAttribute('aria-current', resolveView(link.dataset.adminView).workspace === workspace); });
+  document.querySelectorAll('.ops-tabs [data-admin-view]').forEach((btn) => { const target = resolveView(btn.dataset.adminView); btn.setAttribute('aria-selected', String(target.workspace === workspace && target.tab === tab)); });
+  history.replaceState(null, '', `#${hashName}`);
+  if (focus) { const heading = document.querySelector(`#${panelId} h1`) || document.querySelector(`#${panelId} h2`); if (heading) { heading.tabIndex = -1; heading.focus(); } }
+}
 function applyDemoState(data, state) { if (state === 'zero') { data.clients = []; data.milestones = []; data.activity = []; data.counts = { activeClients: 0, awaitingSignature: 0, awaitingPayment: 0, actionsRequired: 0 }; } else if (state === 'single') { data.clients = data.clients.slice(0, 1); data.milestones = data.milestones.slice(0, 1); data.counts = { activeClients: 1, awaitingSignature: 0, awaitingPayment: 0, actionsRequired: 1 }; } }
 function normalizeAdmin(data) { const clients = data.clients.map((client) => { const project = data.projects.find((item) => item.client_id === client.id); const agreement = data.agreements.find((item) => item.client_id === client.id); const enrollment = data.enrollments?.find((item) => item.client_id === client.id); return { id: client.id, name: client.display_name || client.legal_name, legalName: client.legal_name, billingEmail: client.billing_email, phone: client.phone, lifecycleCode: client.lifecycle_status, lifecycle: humanize(client.lifecycle_status), project: project?.name || 'Not assigned', projectId: project?.id, agreement: humanize(agreement?.status || 'not prepared'), agreementId: agreement?.id, payment: humanize(enrollment?.status || 'not started'), plan: enrollment?.payment_plan_name || 'Not selected', paid: Number(enrollment?.paid_amount || 0), total: Number(enrollment?.total_contract_value || 0), nextPayment: enrollment?.next_payment_due_at ? formatDate(enrollment.next_payment_due_at) : '—', portal: enrollment?.portal_activated_at ? 'Active' : 'Pending', enrollmentId: enrollment?.id, action: deriveAction(client, agreement, enrollment) }; }); return { counts: { activeClients: clients.filter((client) => ['Active','Project Active','Work In Progress'].includes(client.lifecycle)).length, awaitingSignature: data.agreements.filter((agreement) => ['sent','viewed'].includes(agreement.status)).length, awaitingPayment: (data.enrollments || []).filter((enrollment) => !['paid','activated','completed','schedule_active'].includes(enrollment.status)).length, actionsRequired: clients.filter((client) => client.action !== 'None').length }, clients, milestones: (data.milestones || []).map((item) => ({ title: item.title, client: item.client_name || 'Client', date: item.target_date ? formatDate(item.target_date) : 'Date pending' })), activity: (data.activity || []).map((item) => ({ type: item.event_type, client: item.client_name, date: formatDate(item.created_at), detail: 'Recorded operational event' })) }; }
 function deriveAction(client, agreement, enrollment) { if (!agreement) return 'Prepare agreement'; if (['sent','viewed'].includes(agreement.status)) return 'Agreement follow-up'; if (enrollment && ['payment_failed','payment_action_required','attention_required'].includes(enrollment.status)) return 'Payment needs attention'; if (enrollment && !enrollment.portal_activated_at && ['paid','first_payment_confirmed','schedule_active'].includes(enrollment.status)) return 'Review portal activation'; return 'None'; }

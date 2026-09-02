@@ -1,0 +1,156 @@
+/* ==========================================================================
+   Client Portal — light theme retune.
+
+   Scoped entirely to `body[data-ops-surface="portal"]` (already set in
+   client-portal/index.html, previously unused by any CSS) so this file can
+   never affect Admin (`data-ops-surface="admin"`) or the Agreement flow
+   (`data-ops-surface="agreement"`), which keep the original dark shell.
+
+   Strategy: redefine the shared --ops-* custom properties for this one
+   surface first - every component built with var(--ops-text)/var(--ops-muted)/
+   var(--ops-card)/var(--ops-line)/etc. (the large majority of operations.css,
+   operations-dashboard.css, roadmap.css and reporting-charts.css) re-themes
+   automatically with zero further changes. What follows the token block is
+   only the residual hardcoded rgba(255,255,255,...) / #fff literals that
+   don't route through a variable, plus the handful of accent text colors
+   (green/amber/red/pink used as small status TEXT, not just a dot/border/
+   background tint) that need a darker "on-light" shade to keep AA contrast
+   on white - the accent HUES themselves are unchanged, only their lightness
+   for direct-text use.
+
+   Load this AFTER operations.css, operations-dashboard.css, roadmap.css and
+   reporting-charts.css (client-portal/index.html already loads all four
+   before this file).
+   ========================================================================== */
+
+body[data-ops-surface="portal"] {
+  color-scheme: light;
+  --ops-bg: #faf8f5;
+  --ops-bg-raised: #ffffff;
+  --ops-card: #ffffff;
+  --ops-card-strong: #ffffff;
+  --ops-text: #171225;
+  --ops-muted: rgba(23, 18, 37, 0.62);
+  --ops-subtle: rgba(23, 18, 37, 0.42);
+  --ops-line: rgba(23, 18, 37, 0.10);
+  --ops-line-strong: rgba(23, 18, 37, 0.2);
+  --ops-shadow: 0 20px 48px rgba(23, 18, 37, 0.08);
+
+  /* Same hue families as the dark shell, re-lit for a white page: light
+     lavender/neutral fills instead of near-black plum/charcoal, and much
+     softer glows so "current phase" still reads as elevated without a giant
+     dark surface. */
+  --ops-surface-plum: #f3edfc;
+  --ops-surface-charcoal: #f7f6f3;
+  --ops-surface-violet: #f5f0fb;
+  --ops-glow-current: radial-gradient(circle at 25% 15%, rgba(124, 58, 237, 0.1), transparent 65%);
+  --ops-glow-progress: radial-gradient(circle at 85% 0%, rgba(249, 115, 22, 0.08), transparent 60%);
+
+  /* Darker "on-light" text shades for the semantic accent colors - used only
+     where that color is the actual TEXT color of small type (status labels,
+     badges, trend indicators). Dots/borders/background tints keep using the
+     original --ops-green/--ops-amber/--ops-red/--ops-pink hues unchanged;
+     only text-on-white needs the darker step for real contrast. */
+  --ops-green-text: #15803d;
+  --ops-amber-text: #b45309;
+  --ops-red-text: #be123c;
+  --ops-pink-text: #be185d;
+}
+
+/* Page chroma: soft pastel washes instead of glows meant for a near-black
+   page; the pixel-grid texture is a dark-theme-only detail, switched off
+   rather than inverted into visible lines on white. */
+body[data-ops-surface="portal"] {
+  background:
+    radial-gradient(circle at 82% 2%, rgba(124, 58, 237, 0.05), transparent 28rem),
+    radial-gradient(circle at 4% 18%, rgba(219, 39, 119, 0.04), transparent 24rem),
+    var(--ops-bg);
+}
+body[data-ops-surface="portal"]::before { background-image: none; }
+
+/* Header / chrome */
+body[data-ops-surface="portal"] .ops-header { border-bottom-color: var(--ops-line); background: rgba(255, 255, 255, 0.88); }
+body[data-ops-surface="portal"] .ops-icon-button { background: rgba(23, 18, 37, 0.035); color: rgba(23, 18, 37, 0.72); }
+body[data-ops-surface="portal"] .ops-icon-button:hover { color: var(--ops-text); }
+body[data-ops-surface="portal"] .ops-back,
+body[data-ops-surface="portal"] .ops-link-button { background: rgba(23, 18, 37, 0.03); color: rgba(23, 18, 37, 0.72); }
+body[data-ops-surface="portal"] .ops-back:hover,
+body[data-ops-surface="portal"] .ops-link-button:hover { color: var(--ops-text); }
+body[data-ops-surface="portal"] .ops-eyebrow { color: rgba(23, 18, 37, 0.62); }
+body[data-ops-surface="portal"] .ops-skip { border: 1px solid var(--ops-line); }
+body[data-ops-surface="portal"] .ops-preview-notice { color: rgba(23, 18, 37, 0.68); }
+body[data-ops-surface="portal"] .ops-preview-notice strong { color: #9a3412; }
+
+/* Checkboxes (none currently rendered in the portal today, kept for parity) */
+body[data-ops-surface="portal"] .ops-check { background: rgba(23, 18, 37, 0.02); color: rgba(23, 18, 37, 0.72); }
+body[data-ops-surface="portal"] .ops-check:hover { border-color: var(--ops-line-strong); background: rgba(23, 18, 37, 0.035); }
+body[data-ops-surface="portal"] .ops-check:has(input:checked) { color: var(--ops-text); }
+
+/* Buttons: primary keeps the exact gradient/white-text treatment (reads great
+   on white); secondary needs a light fill + dark text instead of the
+   dark-shell's white-on-transparent. */
+body[data-ops-surface="portal"] .ops-button--secondary { background: rgba(23, 18, 37, 0.04); color: var(--ops-text); }
+body[data-ops-surface="portal"] .ops-button--secondary:hover { background: rgba(23, 18, 37, 0.065); }
+body[data-ops-surface="portal"] .ops-button:disabled,
+body[data-ops-surface="portal"] .ops-button:disabled:hover { background: rgba(23, 18, 37, 0.05); color: rgba(23, 18, 37, 0.32); }
+
+/* Status pills */
+body[data-ops-surface="portal"] .ops-status { border-color: var(--ops-line); background: rgba(23, 18, 37, 0.035); color: rgba(23, 18, 37, 0.68); }
+body[data-ops-surface="portal"] .ops-status--active,
+body[data-ops-surface="portal"] .ops-status--complete { color: var(--ops-green-text); }
+body[data-ops-surface="portal"] .ops-status--attention,
+body[data-ops-surface="portal"] .ops-status--pending { color: var(--ops-amber-text); }
+body[data-ops-surface="portal"] .ops-status--error { color: var(--ops-red-text); }
+
+body[data-ops-surface="portal"] .ops-alert { color: var(--ops-text); }
+body[data-ops-surface="portal"] .ops-toast { background: #ffffff; border-color: rgba(219, 39, 119, 0.3); color: var(--ops-text); box-shadow: var(--ops-shadow); }
+body[data-ops-surface="portal"] .ops-spinner { border-color: rgba(23, 18, 37, 0.12); }
+body[data-ops-surface="portal"] .ops-timeline::before { background: rgba(23, 18, 37, 0.13); }
+body[data-ops-surface="portal"] .ops-timeline__dot { background: rgba(23, 18, 37, 0.18); box-shadow: 0 0 0 1px rgba(23, 18, 37, 0.08); }
+body[data-ops-surface="portal"] .ops-tabs--sticky { border-color: var(--ops-line); background: rgba(255, 255, 255, 0.92); }
+body[data-ops-surface="portal"] .ops-tab[aria-selected='true'] { background: rgba(23, 18, 37, 0.06); color: var(--ops-text); }
+
+/* Dashboard / feature cards + billing */
+body[data-ops-surface="portal"] .dashboard-work__item { background: rgba(23, 18, 37, 0.02); }
+body[data-ops-surface="portal"] .dashboard-work__meta span { color: var(--ops-pink-text); }
+body[data-ops-surface="portal"] .dashboard-doc { background: rgba(23, 18, 37, 0.02); }
+body[data-ops-surface="portal"] .dashboard-doc:hover { background: rgba(219, 39, 119, 0.045); }
+body[data-ops-surface="portal"] .billing-bar,
+body[data-ops-surface="portal"] .billing-bar::-webkit-progress-bar { background: rgba(23, 18, 37, 0.08); }
+body[data-ops-surface="portal"] .portal-action .ops-eyebrow { color: var(--ops-pink-text); }
+
+/* Engagement Health / roadmap phase chart cards */
+body[data-ops-surface="portal"] .portal-progress__track { stroke: rgba(23, 18, 37, 0.1); }
+body[data-ops-surface="portal"] .portal-roadmap__phase { background: var(--ops-surface-charcoal); }
+body[data-ops-surface="portal"] .portal-roadmap__index { background: rgba(23, 18, 37, 0.06); }
+body[data-ops-surface="portal"] .portal-roadmap__phase--completed { opacity: 1; }
+body[data-ops-surface="portal"] .portal-roadmap__phase--completed .portal-roadmap__name,
+body[data-ops-surface="portal"] .portal-roadmap__phase--completed .portal-roadmap__meta { color: var(--ops-text); }
+body[data-ops-surface="portal"] .portal-metric__trend--up { color: var(--ops-green-text); }
+body[data-ops-surface="portal"] .portal-metric__trend--down { color: var(--ops-red-text); }
+body[data-ops-surface="portal"] .portal-roadmap__action { color: var(--ops-amber-text); }
+body[data-ops-surface="portal"] .portal-chart__bar-track { background: rgba(23, 18, 37, 0.05); }
+
+/* Roadmap V2 (assets/css/roadmap.css) - same architecture/interaction model,
+   only the residual hardcoded white-opacity values need a light equivalent;
+   everything already on an --ops-* token re-themed automatically above. */
+body[data-ops-surface="portal"] .e4la-roadmap__empty { background: rgba(23, 18, 37, 0.02); }
+body[data-ops-surface="portal"] .e4la-roadmap__marker { color: rgba(23, 18, 37, 0.68); }
+body[data-ops-surface="portal"] .e4la-roadmap__stage--not-started .e4la-roadmap__marker { color: var(--ops-subtle); }
+body[data-ops-surface="portal"] .e4la-roadmap__badge { border-color: rgba(23, 18, 37, 0.14); background: rgba(23, 18, 37, 0.04); color: rgba(23, 18, 37, 0.66); }
+body[data-ops-surface="portal"] .e4la-roadmap__badge--completed { color: var(--ops-green-text); }
+body[data-ops-surface="portal"] .e4la-roadmap__badge--blocked { color: var(--ops-red-text); }
+body[data-ops-surface="portal"] .e4la-roadmap__badge--awaiting-client { color: var(--ops-amber-text); }
+/* Completed stays legible, current still visually dominant (bolder purple
+   border/glow from the token overrides above), everything else clearly
+   distinguishable - same hierarchy the dark theme used, just re-lit. */
+body[data-ops-surface="portal"] .e4la-roadmap__stage--completed .e4la-roadmap__card { background: rgba(23, 18, 37, 0.015); }
+body[data-ops-surface="portal"] .e4la-roadmap__milestone { color: rgba(23, 18, 37, 0.78); }
+body[data-ops-surface="portal"] .e4la-roadmap__milestone-dot { background: rgba(23, 18, 37, 0.2); }
+body[data-ops-surface="portal"] .e4la-roadmap__progress-track { background: rgba(23, 18, 37, 0.08); }
+body[data-ops-surface="portal"] .e4la-roadmap__deliverables-list { color: rgba(23, 18, 37, 0.78); }
+
+/* Reporting charts */
+body[data-ops-surface="portal"] .rpt-bar { background: rgba(23, 18, 37, 0.06); }
+body[data-ops-surface="portal"] .rpt-ring__track { stroke: rgba(23, 18, 37, 0.1); }
+body[data-ops-surface="portal"] .rpt-money-bar { background: rgba(23, 18, 37, 0.08); }

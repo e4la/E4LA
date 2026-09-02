@@ -22,26 +22,13 @@
   </header>
   <div class="admin-layout">
     <nav class="admin-nav" aria-label="Admin sections">
-      <p class="admin-nav__label">Operations</p>
+      <p class="admin-nav__label">Workspaces</p>
       <a href="#dashboard" aria-current="page" data-admin-view="dashboard">Dashboard</a>
-      <a href="#clients" data-admin-view="clients">Clients</a>
-      <a href="#services" data-admin-view="services">Services</a>
-      <a href="#quotes" data-admin-view="quotes">Quotes</a>
-      <a href="#agreements" data-admin-view="agreements">Agreements</a>
       <a href="#projects" data-admin-view="projects">Projects</a>
-      <a href="#progress" data-admin-view="progress">Progress</a>
-      <a href="#invoices" data-admin-view="invoices">Invoices</a>
-      <a href="#payments" data-admin-view="payments">Payments</a>
-      <p class="admin-nav__label">Content</p>
-      <a href="#content" data-admin-view="content">Content Intelligence</a>
-      <a href="#calendar" data-admin-view="calendar">Calendar</a>
-      <a href="#approvals" data-admin-view="approvals">Approvals</a>
-      <a href="#publishing" data-admin-view="publishing">Publishing</a>
-      <a href="#content-analytics" data-admin-view="content-analytics">Analytics</a>
-      <p class="admin-nav__label">Client Experience</p>
-      <a href="#portals" data-admin-view="portals">Portals</a>
-      <p class="admin-nav__label">System</p>
+      <a href="#content" data-admin-view="content">Content</a>
+      <a href="#payments-overview" data-admin-view="payments-overview">Payments</a>
       <a href="#activity" data-admin-view="activity">Activity</a>
+      <p class="admin-nav__label">System</p>
       <a href="#settings" data-admin-view="settings">Settings</a>
     </nav>
     <main id="admin-main" class="admin-content">
@@ -53,9 +40,27 @@
           <section class="ops-card ops-card__body" aria-labelledby="milestones-title"><div class="dashboard-card-title"><h2 id="milestones-title">Upcoming milestones</h2><span class="ops-status">Next 14 days</span></div><ul class="ops-list" id="admin-milestones"></ul></section>
         </div>
         <section class="ops-card dashboard-section" aria-labelledby="recent-clients-title"><div class="ops-card__body dashboard-card-title"><h2 id="recent-clients-title">Client lifecycle</h2><button class="ops-link-button" type="button" data-open-admin="clients">View all clients</button></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Client</th><th>Lifecycle</th><th>Agreement</th><th>Payment</th><th>Next action</th></tr></thead><tbody id="admin-recent-clients"></tbody></table></div></section>
+      
+        <section class="ops-card dashboard-section" id="dashboard-progress-card" aria-labelledby="dashboard-progress-title">
+          <div class="ops-card__body dashboard-card-title"><div><p class="ops-eyebrow">Client visibility layer</p><h2 id="dashboard-progress-title">Progress</h2></div><span class="ops-status" id="dashboard-progress-status">—</span></div>
+          <div class="ops-card__body" id="dashboard-progress-summary"></div>
+          <div class="ops-card__body dashboard-card-title"><button class="ops-link-button" type="button" id="dashboard-progress-link">View full progress</button></div>
+        </section>
       </section>
-
-      <section id="admin-clients" data-admin-panel hidden>
+      <div class="admin-workspace" data-workspace="projects" hidden>
+        <nav class="ops-tabs" role="tablist" aria-label="Projects sections">
+          <button class="ops-tab" type="button" role="tab" aria-selected="true" data-admin-view="projects:overview">Overview</button>
+          <button class="ops-tab" type="button" role="tab" aria-selected="false" data-admin-view="projects:clients">Clients</button>
+          <button class="ops-tab" type="button" role="tab" aria-selected="false" data-admin-view="projects:services">Services</button>
+          <button class="ops-tab" type="button" role="tab" aria-selected="false" data-admin-view="projects:quotes">Quotes</button>
+          <button class="ops-tab" type="button" role="tab" aria-selected="false" data-admin-view="projects:agreements">Agreements</button>
+          <button class="ops-tab" type="button" role="tab" aria-selected="false" data-admin-view="projects:details">Project Details</button>
+        </nav>
+        <section id="admin-projects-overview" data-admin-panel hidden>
+        <div class="dashboard-hero"><div><p class="ops-eyebrow">Client visibility layer</p><h1>Projects</h1><p>Notion remains the internal operating system. Only reviewed, approved, and published information reaches the portal.</p></div></div>
+        <section class="ops-card dashboard-section"><div class="ops-card__body dashboard-card-title"><div><p class="ops-eyebrow">Client-facing layer</p><h2>Active projects</h2></div><span class="ops-status">Notion stays internal</span></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Client</th><th>Project</th><th>Lifecycle</th><th>Portal</th><th>Next action</th></tr></thead><tbody id="admin-project-table"></tbody></table></div></section>
+      </section>
+        <section id="admin-clients" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Client management</p><h1>Clients</h1><p>Manage lifecycle state without combining client, project, agreement, and billing records.</p></div></div>
         <div class="admin-toolbar"><label class="ops-field admin-search"><span class="ops-legend">Search clients</span><input class="ops-input" id="admin-client-search" type="search" placeholder="Search clients"></label><button class="ops-button ops-button--primary" type="button" id="show-client-create">Create client</button></div>
         <form class="ops-card ops-card__body ops-admin-form" id="client-project-form" hidden novalidate>
@@ -76,8 +81,7 @@
         <div class="ops-card admin-table-wrap dashboard-section"><table class="admin-table"><thead><tr><th>Client</th><th>Lifecycle</th><th>Project</th><th>Agreement</th><th>Payment</th><th>Portal</th></tr></thead><tbody id="admin-client-table"></tbody></table></div>
         <section class="ops-card ops-card__body dashboard-section admin-client-detail" id="admin-client-detail" hidden aria-labelledby="client-detail-title"><div class="dashboard-card-title"><div><p class="ops-eyebrow">Unified client record</p><h2 id="client-detail-title">Client</h2></div><button class="ops-icon-button" id="close-client-detail" type="button">Close</button></div><p class="ops-subtitle">Lifecycle, project, agreement, portal, billing, and next-action status in one client record — the operational center for this client, not just a lifecycle summary.</p><div class="client-detail-grid" id="client-detail-content"></div><div class="dashboard-section" id="client-detail-sections"></div></section>
       </section>
-
-      <section id="admin-services" data-admin-panel hidden>
+        <section id="admin-services" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Extensible catalog</p><h1>Services</h1><p>Create, price, and retire services without a deployment. Any quote can still override a price or add a fully custom line item.</p></div></div>
         <div class="ops-grid ops-grid--2">
           <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="service-category-form">
@@ -108,8 +112,7 @@
           <div class="ops-form-actions"><button class="ops-button ops-button--secondary" type="submit">Update default price</button><p class="ops-form-status" id="service-price-status" role="status"></p></div>
         </form>
       </section>
-
-      <section id="admin-quotes" data-admin-panel hidden>
+        <section id="admin-quotes" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Client-specific pricing</p><h1>Quotes</h1><p>Every quote is priced from scratch — catalog services, overridden prices, or fully custom line items. Work through the steps below in order.</p></div></div>
         <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="quote-create-form">
           <div class="dashboard-card-title"><div><p class="ops-eyebrow">Step 1</p><h2>Select client</h2></div><span class="ops-status">Starts as draft</span></div>
@@ -190,8 +193,7 @@
           <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Save payment schedule</button><p class="ops-form-status" id="payment-options-status" role="status"></p></div>
         </form>
       </section>
-
-      <section id="admin-agreements" data-admin-panel hidden>
+        <section id="admin-agreements" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Contract operations</p><h1>Agreements</h1><p>Agreement versions become immutable when sent; material changes create a new version.</p></div></div>
         <form class="ops-card ops-card__body ops-admin-form" id="agreement-create-form" novalidate>
           <div class="dashboard-card-title"><div><p class="ops-eyebrow">Step 2</p><h2>Prepare immutable Version 1</h2></div><span class="ops-status ops-status--attention">Legal placeholder</span></div>
@@ -219,15 +221,9 @@
         </section>
         <section class="ops-card dashboard-section" aria-labelledby="agreement-status-list-title"><div class="ops-card__body dashboard-card-title"><div><p class="ops-eyebrow">Lifecycle tracking</p><h2 id="agreement-status-list-title">Agreement status</h2></div><span class="ops-status">Immutable versions</span></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Client</th><th>Program</th><th>Status</th><th>Payment</th><th>Next action</th></tr></thead><tbody id="admin-agreement-table"></tbody></table></div></section>
       </section>
-
-      <section id="admin-projects" data-admin-panel hidden>
-        <div class="dashboard-hero"><div><p class="ops-eyebrow">Client visibility layer</p><h1>Projects</h1><p>Notion remains the internal operating system. Only reviewed, approved, and published information reaches the portal.</p></div></div>
-        <section class="ops-card dashboard-section"><div class="ops-card__body dashboard-card-title"><div><p class="ops-eyebrow">Client-facing layer</p><h2>Active projects</h2></div><span class="ops-status">Notion stays internal</span></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Client</th><th>Project</th><th>Lifecycle</th><th>Portal</th><th>Next action</th></tr></thead><tbody id="admin-project-table"></tbody></table></div></section>
+        <section id="admin-projects" data-admin-panel hidden>
+        <div class="dashboard-hero"><div><p class="ops-eyebrow">Client visibility layer</p><h1>Project Details</h1><p>Roadmap phases, weekly progress snapshots, performance metrics, and the publication workflow for client-facing project items. All start Internal and follow the same publish/withdraw flow.</p></div></div>
         <div class="ops-grid ops-grid--2"><section class="ops-card ops-card__body"><div class="dashboard-card-title"><h2>Publication boundary</h2><span class="ops-status">Human controlled</span></div><ol class="ops-timeline"><li class="ops-timeline__item ops-timeline__item--done"><span class="ops-timeline__dot"></span><div><h3>Internal work</h3><p>Private E4LA operations and research.</p></div></li><li class="ops-timeline__item ops-timeline__item--done"><span class="ops-timeline__dot"></span><div><h3>Reviewed</h3><p>Checked for accuracy, sensitivity, and client relevance.</p></div></li><li class="ops-timeline__item ops-timeline__item--active"><span class="ops-timeline__dot"></span><div><h3>Approved for client</h3><p>Explicit human approval before publication.</p></div></li><li class="ops-timeline__item"><span class="ops-timeline__dot"></span><div><h3>Published to portal</h3><p>Visible to authorized client users only.</p></div></li></ol></section><form class="ops-card ops-card__body ops-admin-form" id="project-item-form"><div class="dashboard-card-title"><h2>Create client-facing item</h2><span class="ops-status">Starts internal</span></div><label class="ops-field"><span class="ops-legend">Client</span><select class="ops-input admin-client-select" id="project-item-client-select" required><option value="">Select a client…</option></select></label><div class="ops-field"><span class="ops-legend">Project</span><p class="ops-static-value" id="project-item-project-display">Select a client to see their project</p><input type="hidden" name="projectId" id="project-item-project-id"></div><label class="ops-field"><span class="ops-legend">Item type</span><select class="ops-input" name="entityType"><option value="update">Project update</option><option value="milestone">Milestone</option><option value="deliverable">Deliverable</option></select></label><label class="ops-field"><span class="ops-legend">Title</span><input class="ops-input" name="title" required maxlength="180"></label><label class="ops-field"><span class="ops-legend">Client-facing description</span><textarea class="ops-input" name="body" required maxlength="2000" rows="4"></textarea></label><label class="ops-field"><span class="ops-legend">Target / completion date</span><input class="ops-input" name="date" type="date"></label><div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Save as internal</button><p class="ops-form-status" id="project-item-status" role="status"></p></div></form></div><form class="ops-card ops-card__body ops-admin-form" id="publication-form"><div class="dashboard-card-title"><h2>Review &amp; publish item</h2><span class="ops-status ops-status--attention">Explicit action</span></div><div class="ops-grid ops-grid--2"><label class="ops-field"><span class="ops-legend">Client</span><select class="ops-input admin-client-select" id="publication-client-select" required><option value="">Select a client…</option></select></label><div class="ops-field"><span class="ops-legend">Project</span><p class="ops-static-value" id="publication-project-display">Select a client to see their project</p><input type="hidden" name="projectId" id="publication-project-id"></div><label class="ops-field"><span class="ops-legend">Item type</span><select class="ops-input" name="entityType"><option value="update">Project update</option><option value="milestone">Milestone</option><option value="deliverable">Deliverable</option><option value="document">Portal document</option><option value="phase">Roadmap phase</option><option value="progress_snapshot">Weekly progress snapshot</option><option value="performance_metric">Performance metric</option></select></label><!-- Item ID spans 6+ entity types (updates, milestones, deliverables, documents, phases, snapshots, metrics) with no single unified list-back endpoint across them, so this stays a typed id - documented gap, not fixed in this pass. --><label class="ops-field"><span class="ops-legend">Item ID</span><input class="ops-input" name="entityId" required></label><label class="ops-field"><span class="ops-legend">Publication state</span><select class="ops-input" name="status"><option value="reviewed">Reviewed</option><option value="approved">Approved for client</option><option value="published">Published</option><option value="withdrawn">Withdrawn</option></select></label></div><div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Update publication state</button><p class="ops-form-status" id="publication-status" role="status"></p></div></form>
-      </section>
-
-      <section id="admin-progress" data-admin-panel hidden>
-        <div class="dashboard-hero"><div><p class="ops-eyebrow">Client visibility layer</p><h1>Progress</h1><p>Roadmap phases, weekly progress snapshots, and performance metrics. All start Internal and follow the same publish/withdraw flow as every other client-facing item — use the publication form on the Projects panel.</p></div></div>
         <section class="ops-card admin-surface-accent ops-card__body" aria-labelledby="progress-roadmap-title">
           <div class="dashboard-card-title"><div><p class="ops-eyebrow">Client journey</p><h2 id="progress-roadmap-title">Roadmap</h2></div><label class="ops-field admin-search"><span class="ops-legend">Client</span><select class="ops-input" id="progress-client-select"></select></label></div>
           <div class="ops-grid ops-grid--3" id="progress-charts-row">
@@ -297,56 +293,16 @@
           </form>
         </div>
       </section>
-
-      <section id="admin-portals" data-admin-panel hidden>
-        <div class="dashboard-hero"><div><p class="ops-eyebrow">Portal oversight</p><h1>Client portals</h1><p>Preview the exact client-visible state without silently impersonating a client.</p></div></div>
-        <div class="ops-grid ops-grid--2"><section class="ops-card ops-card__body"><div class="dashboard-card-title"><div><h2>Client-visible portal dataset</h2><p class="ops-subtitle">Preview uses admin authorization and never creates a client identity.</p></div><span class="ops-status ops-status--active">Admin Preview</span></div><label class="ops-field"><span class="ops-legend">Client</span><select class="ops-input" id="preview-client-select"></select></label><a class="ops-button ops-button--primary ops-mt-18" id="admin-preview-link" href="/client-portal/?preview=admin">Open Admin Preview — Client View</a></section><form class="ops-card ops-card__body ops-admin-form" id="activation-form"><div class="dashboard-card-title"><h2>Portal activation</h2><span class="ops-status">Policy driven</span></div><label class="ops-field"><span class="ops-legend">Client</span><select class="ops-input admin-client-select" id="activation-client-select" required><option value="">Select a client…</option></select></label><div class="ops-field"><span class="ops-legend">Enrollment</span><p class="ops-static-value" id="activation-enrollment-display">Select a client to see their enrollment</p><input type="hidden" name="enrollmentId" id="activation-enrollment-id"></div><label class="ops-field"><span class="ops-legend">Activation policy</span><select class="ops-input" name="activationMode"><option value="manual">Manual</option><option value="automatic">Automatic when eligible</option><option value="scheduled">Scheduled</option></select></label><label class="ops-check"><input type="checkbox" name="onboardingReady"><span>Onboarding is ready</span></label><label class="ops-check"><input type="checkbox" name="activateNow"><span>Activate now if all eligibility requirements are satisfied</span></label><label class="ops-field"><span class="ops-legend">Scheduled activation (if applicable)</span><input class="ops-input" name="activationScheduledAt" type="datetime-local"></label><div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Save activation policy</button><p class="ops-form-status" id="activation-status" role="status"></p></div></form></div>
-      </section>
-
-      <section id="admin-invoices" data-admin-panel hidden>
-        <div class="dashboard-hero"><div><p class="ops-eyebrow">Billing</p><h1>Invoices</h1><p>Create from an approved quote or stand alone. Line items lock once an invoice is sent.</p></div></div>
-        <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="invoice-create-form">
-          <div class="dashboard-card-title"><h2>Create invoice</h2><span class="ops-status">Starts as draft</span></div>
-          <div class="ops-grid ops-grid--2">
-            <label class="ops-field"><span class="ops-legend">Client</span><select class="ops-input admin-client-select" name="clientId" id="invoice-create-client" required><option value="">Select a client…</option></select></label>
-            <label class="ops-field"><span class="ops-legend">Quote (optional)</span><select class="ops-input" name="quoteId" id="invoice-create-quote"><option value="">Select a client first…</option></select></label>
-            <div class="ops-field"><span class="ops-legend">Project (optional)</span><p class="ops-static-value" id="invoice-create-project-display">Select a client to see their project</p><input type="hidden" name="projectId" id="invoice-create-project-id"></div>
-            <label class="ops-field"><span class="ops-legend">Due date</span><input class="ops-input" name="dueDate" type="date"></label>
-          </div>
-          <div class="ops-grid ops-grid--2">
-            <label class="ops-field"><span class="ops-legend">Service (optional)</span><select class="ops-input quote-service-select" name="serviceId"><option value="">Custom item (type a label below)</option></select></label>
-            <label class="ops-field"><span class="ops-legend">Line item label</span><input class="ops-input" name="label" required></label>
-            <label class="ops-field"><span class="ops-legend">Quantity</span><input class="ops-input" name="quantity" type="number" min="1" value="1"></label>
-            <label class="ops-field"><span class="ops-legend">Unit price (USD)</span><input class="ops-input" name="unitPrice" type="number" step="0.01" min="0" required></label>
-          </div>
-          <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Save invoice</button><p class="ops-form-status" id="invoice-create-status" role="status"></p></div>
-        </form>
-        <form class="ops-card ops-card__body ops-admin-form admin-form-card dashboard-section" id="invoice-send-form">
-          <div class="dashboard-card-title"><h2>Send invoice</h2></div>
-          <div class="ops-grid ops-grid--2">
-            <label class="ops-field"><span class="ops-legend">Client</span><select class="ops-input admin-client-select" id="invoice-send-client" required><option value="">Select a client…</option></select></label>
-            <label class="ops-field"><span class="ops-legend">Invoice</span><select class="ops-input" name="invoiceId" id="invoice-send-invoice" required><option value="">Select a client first…</option></select></label>
-          </div>
-          <div class="ops-form-actions"><button class="ops-button ops-button--secondary" type="submit">Send payment request</button><p class="ops-form-status" id="invoice-send-status" role="status"></p></div>
-        </form>
-      </section>
-
-      <section id="admin-payments" data-admin-panel hidden><div class="dashboard-hero"><div><p class="ops-eyebrow">Commercial status</p><h1>Payments</h1><p>Webhook-authoritative enrollment and payment states. No card credentials are stored by E4LA.</p></div></div><div class="ops-card admin-table-wrap"><table class="admin-table"><thead><tr><th>Client</th><th>Plan</th><th>Status</th><th>Paid</th><th>Contract</th><th>Next payment</th></tr></thead><tbody id="admin-payment-table"></tbody></table></div>
-        <form class="ops-card ops-card__body ops-admin-form dashboard-section" id="recurring-offer-form">
-          <div class="dashboard-card-title"><h2>Prepare a recurring service offer</h2><span class="ops-status ops-status--pending">Preview only — nothing is saved</span></div>
-          <p class="ops-hint">This returns a normalized preview for you to relay to the client. Only the client (as client owner or authorized signer) can approve recurring billing, from their own portal session — there is deliberately no admin-side approval control here.</p>
-          <div class="ops-grid ops-grid--2">
-            <label class="ops-field"><span class="ops-legend">Service</span><select class="ops-input quote-service-select" name="serviceId" data-placeholder="Select a service…" required><option value="">Select a service…</option></select></label>
-            <label class="ops-field"><span class="ops-legend">Billing amount (USD)</span><input class="ops-input" name="billingAmount" type="number" step="0.01" min="0.01" required></label>
-            <label class="ops-field"><span class="ops-legend">Billing frequency</span><select class="ops-input" name="billingFrequency"><option value="weekly">Weekly</option><option value="biweekly">Biweekly</option><option value="monthly" selected>Monthly</option><option value="quarterly">Quarterly</option><option value="annual">Annual</option></select></label>
-            <label class="ops-field"><span class="ops-legend">Start date</span><input class="ops-input" name="startDate" type="date" required></label>
-            <label class="ops-field"><span class="ops-legend">Renewal behavior</span><select class="ops-input" name="renewalBehavior"><option value="auto_renew_until_cancelled">Auto-renew until cancelled</option><option value="fixed_term_then_stop">Fixed term, then stop</option></select></label>
-          </div>
-          <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Preview offer</button><p class="ops-form-status" id="recurring-offer-status" role="status"></p></div>
-          <pre class="ops-hint" id="recurring-offer-result" hidden></pre>
-        </form>
-      </section>
-      <section id="admin-content" data-admin-panel hidden>
+      </div>
+      <div class="admin-workspace" data-workspace="content" hidden>
+        <nav class="ops-tabs" role="tablist" aria-label="Content sections">
+          <button class="ops-tab" type="button" role="tab" aria-selected="true" data-admin-view="content:content">Content Intelligence</button>
+          <button class="ops-tab" type="button" role="tab" aria-selected="false" data-admin-view="content:calendar">Calendar</button>
+          <button class="ops-tab" type="button" role="tab" aria-selected="false" data-admin-view="content:approvals">Approvals</button>
+          <button class="ops-tab" type="button" role="tab" aria-selected="false" data-admin-view="content:publishing">Publishing</button>
+          <button class="ops-tab" type="button" role="tab" aria-selected="false" data-admin-view="content:analytics">Analytics</button>
+        </nav>
+        <section id="admin-content" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Content Intelligence</p><h1>What needs review.</h1><p>Every asset moves through E4LA review, and client review where the client's automation policy requires it, before it can ever be scheduled.</p></div></div>
         <div class="ops-grid ops-grid--4" id="content-queue-counts"></div>
         <section class="ops-card admin-surface-raised dashboard-section"><div class="ops-card__body dashboard-card-title"><h2>Review queue</h2><span class="ops-status" id="content-queue-status">—</span></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Client</th><th>Topic</th><th>Platform(s)</th><th>Status</th><th>Risk</th><th></th></tr></thead><tbody id="admin-content-queue-table"></tbody></table></div></section>
@@ -451,14 +407,12 @@
           <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Request render</button><p class="ops-form-status" id="content-asset-render-status" role="status"></p></div>
         </form>
       </section>
-
-      <section id="admin-calendar" data-admin-panel hidden>
+        <section id="admin-calendar" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Scheduling</p><h1>Content calendar</h1><p>All clients, or filter to one. Visual status at a glance.</p></div></div>
         <label class="ops-field admin-search"><span class="ops-legend">Filter by client</span><select class="ops-input" id="calendar-client-filter"><option value="">All clients</option></select></label>
         <section class="ops-card admin-surface-raised dashboard-section"><div class="ops-card__body dashboard-card-title"><h2>Scheduled &amp; recent</h2></div><ul class="ops-list" id="admin-calendar-list"></ul></section>
       </section>
-
-      <section id="admin-approvals" data-admin-panel hidden>
+        <section id="admin-approvals" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Decisions</p><h1>Approvals</h1><p>E4LA-internal and client approval history. Plan approval never auto-approves individual posts.</p></div></div>
         <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="content-approval-form">
           <div class="dashboard-card-title"><h2>Record an E4LA-internal decision</h2><span class="ops-status">Moves the item's status</span></div>
@@ -471,8 +425,7 @@
           <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Save decision</button><p class="ops-form-status" id="content-approval-status" role="status"></p></div>
         </form>
       </section>
-
-      <section id="admin-publishing" data-admin-panel hidden>
+        <section id="admin-publishing" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Distribution</p><h1>Publishing</h1><p>Direct publishing only where a platform account is connected and authorized. Otherwise, a manual export package.</p></div></div>
         <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="platform-variant-form">
           <div class="dashboard-card-title"><h2>Create platform variant</h2></div>
@@ -502,8 +455,7 @@
         </form>
         <section class="ops-card admin-surface-raised dashboard-section"><div class="ops-card__body dashboard-card-title"><h2>Recent publishing jobs</h2></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Item</th><th>Platform</th><th>Status</th><th>Failure</th></tr></thead><tbody id="admin-publishing-jobs-table"></tbody></table></div></section>
       </section>
-
-      <section id="admin-content-analytics" data-admin-panel hidden>
+        <section id="admin-content-analytics" data-admin-panel hidden>
         <div class="dashboard-hero"><div><p class="ops-eyebrow">Evidence</p><h1>Content performance</h1><p>Direct, assisted, and engagement metrics stay separate — never blended into one number.</p></div></div>
         <section class="ops-card admin-surface-raised ops-card__body" aria-labelledby="content-lifecycle-title">
           <div class="dashboard-card-title"><h2 id="content-lifecycle-title">Content lifecycle</h2><span class="ops-status" id="content-lifecycle-status">—</span></div>
@@ -515,8 +467,71 @@
           <section class="ops-card admin-surface-raised ops-card__body"><div class="dashboard-card-title"><h3>Engagement</h3></div><p class="ops-subtitle">Reach, impressions, saves, shares, comments.</p><div id="metrics-engagement-list"></div></section>
         </div>
       </section>
-
-      <section id="admin-activity" data-admin-panel hidden><div class="dashboard-hero"><div><p class="ops-eyebrow">Append-only audit trail</p><h1>Activity</h1><p>Important contractual, billing, portal, and administrative events.</p></div></div><div class="ops-card ops-card__body"><ul class="ops-list" id="admin-activity-list"></ul></div></section>
+      </div>
+      <div class="admin-workspace" data-workspace="payments" hidden>
+        <nav class="ops-tabs" role="tablist" aria-label="Payments sections">
+          <button class="ops-tab" type="button" role="tab" aria-selected="true" data-admin-view="payments:overview">Overview</button>
+          <button class="ops-tab" type="button" role="tab" aria-selected="false" data-admin-view="payments:invoices">Invoices</button>
+          <button class="ops-tab" type="button" role="tab" aria-selected="false" data-admin-view="payments:recurring">Recurring Offers</button>
+        </nav>
+        <section id="admin-payments-overview" data-admin-panel hidden>
+        <div class="dashboard-hero"><div><p class="ops-eyebrow">Commercial status</p><h1>Payments</h1><p>Webhook-authoritative enrollment and payment states. No card credentials are stored by E4LA.</p></div></div><div class="ops-card admin-table-wrap"><table class="admin-table"><thead><tr><th>Client</th><th>Plan</th><th>Status</th><th>Paid</th><th>Contract</th><th>Next payment</th></tr></thead><tbody id="admin-payment-table"></tbody></table></div>
+      </section>
+        <section id="admin-invoices" data-admin-panel hidden>
+        <div class="dashboard-hero"><div><p class="ops-eyebrow">Billing</p><h1>Invoices</h1><p>Create from an approved quote or stand alone. Line items lock once an invoice is sent.</p></div></div>
+        <form class="ops-card ops-card__body ops-admin-form admin-form-card" id="invoice-create-form">
+          <div class="dashboard-card-title"><h2>Create invoice</h2><span class="ops-status">Starts as draft</span></div>
+          <div class="ops-grid ops-grid--2">
+            <label class="ops-field"><span class="ops-legend">Client</span><select class="ops-input admin-client-select" name="clientId" id="invoice-create-client" required><option value="">Select a client…</option></select></label>
+            <label class="ops-field"><span class="ops-legend">Quote (optional)</span><select class="ops-input" name="quoteId" id="invoice-create-quote"><option value="">Select a client first…</option></select></label>
+            <div class="ops-field"><span class="ops-legend">Project (optional)</span><p class="ops-static-value" id="invoice-create-project-display">Select a client to see their project</p><input type="hidden" name="projectId" id="invoice-create-project-id"></div>
+            <label class="ops-field"><span class="ops-legend">Due date</span><input class="ops-input" name="dueDate" type="date"></label>
+          </div>
+          <div class="ops-grid ops-grid--2">
+            <label class="ops-field"><span class="ops-legend">Service (optional)</span><select class="ops-input quote-service-select" name="serviceId"><option value="">Custom item (type a label below)</option></select></label>
+            <label class="ops-field"><span class="ops-legend">Line item label</span><input class="ops-input" name="label" required></label>
+            <label class="ops-field"><span class="ops-legend">Quantity</span><input class="ops-input" name="quantity" type="number" min="1" value="1"></label>
+            <label class="ops-field"><span class="ops-legend">Unit price (USD)</span><input class="ops-input" name="unitPrice" type="number" step="0.01" min="0" required></label>
+          </div>
+          <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Save invoice</button><p class="ops-form-status" id="invoice-create-status" role="status"></p></div>
+        </form>
+        <form class="ops-card ops-card__body ops-admin-form admin-form-card dashboard-section" id="invoice-send-form">
+          <div class="dashboard-card-title"><h2>Send invoice</h2></div>
+          <div class="ops-grid ops-grid--2">
+            <label class="ops-field"><span class="ops-legend">Client</span><select class="ops-input admin-client-select" id="invoice-send-client" required><option value="">Select a client…</option></select></label>
+            <label class="ops-field"><span class="ops-legend">Invoice</span><select class="ops-input" name="invoiceId" id="invoice-send-invoice" required><option value="">Select a client first…</option></select></label>
+          </div>
+          <div class="ops-form-actions"><button class="ops-button ops-button--secondary" type="submit">Send payment request</button><p class="ops-form-status" id="invoice-send-status" role="status"></p></div>
+        </form>
+      </section>
+        <section id="admin-payments" data-admin-panel hidden>
+        <div class="dashboard-hero"><div><p class="ops-eyebrow">Commercial status</p><h1>Recurring Offers</h1><p>Prepare a normalized recurring-billing offer to relay to the client. Only the client can approve recurring billing, from their own portal session.</p></div></div>
+        <form class="ops-card ops-card__body ops-admin-form dashboard-section" id="recurring-offer-form">
+          <div class="dashboard-card-title"><h2>Prepare a recurring service offer</h2><span class="ops-status ops-status--pending">Preview only — nothing is saved</span></div>
+          <p class="ops-hint">This returns a normalized preview for you to relay to the client. Only the client (as client owner or authorized signer) can approve recurring billing, from their own portal session — there is deliberately no admin-side approval control here.</p>
+          <div class="ops-grid ops-grid--2">
+            <label class="ops-field"><span class="ops-legend">Service</span><select class="ops-input quote-service-select" name="serviceId" data-placeholder="Select a service…" required><option value="">Select a service…</option></select></label>
+            <label class="ops-field"><span class="ops-legend">Billing amount (USD)</span><input class="ops-input" name="billingAmount" type="number" step="0.01" min="0.01" required></label>
+            <label class="ops-field"><span class="ops-legend">Billing frequency</span><select class="ops-input" name="billingFrequency"><option value="weekly">Weekly</option><option value="biweekly">Biweekly</option><option value="monthly" selected>Monthly</option><option value="quarterly">Quarterly</option><option value="annual">Annual</option></select></label>
+            <label class="ops-field"><span class="ops-legend">Start date</span><input class="ops-input" name="startDate" type="date" required></label>
+            <label class="ops-field"><span class="ops-legend">Renewal behavior</span><select class="ops-input" name="renewalBehavior"><option value="auto_renew_until_cancelled">Auto-renew until cancelled</option><option value="fixed_term_then_stop">Fixed term, then stop</option></select></label>
+          </div>
+          <div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Preview offer</button><p class="ops-form-status" id="recurring-offer-status" role="status"></p></div>
+          <pre class="ops-hint" id="recurring-offer-result" hidden></pre>
+        </form>
+      </section>
+      </div>
+      <div class="admin-workspace" data-workspace="activity" hidden>
+        <nav class="ops-tabs" role="tablist" aria-label="Activity sections">
+          <button class="ops-tab" type="button" role="tab" aria-selected="true" data-admin-view="activity:feed">Activity Feed</button>
+          <button class="ops-tab" type="button" role="tab" aria-selected="false" data-admin-view="activity:portals">Portals</button>
+        </nav>
+        <section id="admin-activity" data-admin-panel hidden><div class="dashboard-hero"><div><p class="ops-eyebrow">Append-only audit trail</p><h1>Activity</h1><p>Important contractual, billing, portal, and administrative events.</p></div></div><div class="ops-card ops-card__body"><ul class="ops-list" id="admin-activity-list"></ul></div></section>
+        <section id="admin-portals" data-admin-panel hidden>
+        <div class="dashboard-hero"><div><p class="ops-eyebrow">Portal oversight</p><h1>Client portals</h1><p>Preview the exact client-visible state without silently impersonating a client.</p></div></div>
+        <div class="ops-grid ops-grid--2"><section class="ops-card ops-card__body"><div class="dashboard-card-title"><div><h2>Client-visible portal dataset</h2><p class="ops-subtitle">Preview uses admin authorization and never creates a client identity.</p></div><span class="ops-status ops-status--active">Admin Preview</span></div><label class="ops-field"><span class="ops-legend">Client</span><select class="ops-input" id="preview-client-select"></select></label><a class="ops-button ops-button--primary ops-mt-18" id="admin-preview-link" href="/client-portal/?preview=admin">Open Client Portal Preview</a></section><form class="ops-card ops-card__body ops-admin-form" id="activation-form"><div class="dashboard-card-title"><h2>Portal activation</h2><span class="ops-status">Policy driven</span></div><label class="ops-field"><span class="ops-legend">Client</span><select class="ops-input admin-client-select" id="activation-client-select" required><option value="">Select a client…</option></select></label><div class="ops-field"><span class="ops-legend">Enrollment</span><p class="ops-static-value" id="activation-enrollment-display">Select a client to see their enrollment</p><input type="hidden" name="enrollmentId" id="activation-enrollment-id"></div><label class="ops-field"><span class="ops-legend">Activation policy</span><select class="ops-input" name="activationMode"><option value="manual">Manual</option><option value="automatic">Automatic when eligible</option><option value="scheduled">Scheduled</option></select></label><label class="ops-check"><input type="checkbox" name="onboardingReady"><span>Onboarding is ready</span></label><label class="ops-check"><input type="checkbox" name="activateNow"><span>Activate now if all eligibility requirements are satisfied</span></label><label class="ops-field"><span class="ops-legend">Scheduled activation (if applicable)</span><input class="ops-input" name="activationScheduledAt" type="datetime-local"></label><div class="ops-form-actions"><button class="ops-button ops-button--primary" type="submit">Save activation policy</button><p class="ops-form-status" id="activation-status" role="status"></p></div></form></div>
+      </section>
+      </div>
       <section id="admin-settings" data-admin-panel hidden><div class="dashboard-hero"><div><p class="ops-eyebrow">Environment</p><h1>Settings</h1><p>Configuration visibility without exposing secrets.</p></div></div><div class="ops-grid ops-grid--2"><section class="ops-card ops-card__body"><div class="dashboard-card-title"><h2>Preview services</h2><span class="ops-status ops-status--pending">Configuration gate</span></div><ul class="ops-list"><li class="ops-list__item"><div><p class="ops-list__title">Cloudflare Access</p><p class="ops-list__meta">Server-backed admin and client identity</p></div><span class="ops-status ops-status--attention">Account setup</span></li><li class="ops-list__item"><div><p class="ops-list__title">Stripe Sandbox</p><p class="ops-list__meta">Checkout, webhooks, schedules, Customer Portal</p></div><span class="ops-status ops-status--attention">Credentials needed</span></li><li class="ops-list__item"><div><p class="ops-list__title">Resend</p><p class="ops-list__meta">Transactional email remains inert</p></div><span class="ops-status">Not configured</span></li></ul></section><section class="ops-card ops-card__body"><div class="dashboard-card-title"><h2>Product safeguards</h2><span class="ops-status ops-status--complete">Active</span></div><ul class="ops-list"><li class="ops-list__item"><span>Private routes excluded from indexing</span><span class="ops-status ops-status--complete">Yes</span></li><li class="ops-list__item"><span>Immutable agreement evidence</span><span class="ops-status ops-status--complete">Yes</span></li><li class="ops-list__item"><span>Published-only portal boundary</span><span class="ops-status ops-status--complete">Yes</span></li></ul></section></div></section>
     </main>
   </div>
