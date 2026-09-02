@@ -499,28 +499,40 @@ function computeProgressSummary(project, phases, milestones, updates) {
 async function adminSummary({ request, env }) {
   const session = await authenticate(request, env, ['e4la_admin','e4la_collaborator']);
   const isAdmin = session.role === 'e4la_admin';
+  // Archived clients (clients.archived_at set) are excluded from every admin
+  // summary list below - this is the sanctioned "isolate, don't invent, don't
+  // silently delete" mechanism for retiring fixture/demo business records
+  // from the authenticated admin view without a destructive multi-table
+  // delete. A collaborator's own admin_project_access-scoped view already
+  // can't reach an archived client's project unless explicitly granted, so
+  // no separate filter is needed on that branch.
   const clientStatement = isAdmin
-    ? env.ENROLLMENT_DB.prepare(`SELECT id, display_name, legal_name, billing_email, phone, lifecycle_status, updated_at FROM clients ORDER BY updated_at DESC LIMIT 50`)
+    ? env.ENROLLMENT_DB.prepare(`SELECT id, display_name, legal_name, billing_email, phone, lifecycle_status, updated_at FROM clients WHERE archived_at IS NULL ORDER BY updated_at DESC LIMIT 50`)
     : env.ENROLLMENT_DB.prepare(`SELECT DISTINCT c.id, c.display_name, c.legal_name, c.billing_email, c.phone, c.lifecycle_status, c.updated_at
         FROM clients c JOIN projects p ON p.client_id = c.id JOIN admin_project_access apa ON apa.project_id = p.id
-        WHERE apa.admin_user_id = ? ORDER BY c.updated_at DESC LIMIT 50`).bind(session.actor_id);
+        WHERE apa.admin_user_id = ? AND c.archived_at IS NULL ORDER BY c.updated_at DESC LIMIT 50`).bind(session.actor_id);
   const agreementStatement = isAdmin
-    ? env.ENROLLMENT_DB.prepare(`SELECT id, client_id, program_name, status, expires_at, updated_at FROM agreements ORDER BY updated_at DESC LIMIT 50`)
+    ? env.ENROLLMENT_DB.prepare(`SELECT a.id, a.client_id, a.program_name, a.status, a.expires_at, a.updated_at FROM agreements a
+        JOIN clients c ON c.id = a.client_id WHERE c.archived_at IS NULL ORDER BY a.updated_at DESC LIMIT 50`)
     : env.ENROLLMENT_DB.prepare(`SELECT a.id, a.client_id, a.program_name, a.status, a.expires_at, a.updated_at
         FROM agreements a JOIN admin_project_access apa ON apa.project_id = a.project_id
-        WHERE apa.admin_user_id = ? ORDER BY a.updated_at DESC LIMIT 50`).bind(session.actor_id);
+        JOIN clients c ON c.id = a.client_id
+        WHERE apa.admin_user_id = ? AND c.archived_at IS NULL ORDER BY a.updated_at DESC LIMIT 50`).bind(session.actor_id);
   const projectStatement = isAdmin
-    ? env.ENROLLMENT_DB.prepare(`SELECT id, client_id, name, status, current_phase, target_end_date FROM projects ORDER BY updated_at DESC LIMIT 50`)
+    ? env.ENROLLMENT_DB.prepare(`SELECT p.id, p.client_id, p.name, p.status, p.current_phase, p.target_end_date FROM projects p
+        JOIN clients c ON c.id = p.client_id WHERE c.archived_at IS NULL ORDER BY p.updated_at DESC LIMIT 50`)
     : env.ENROLLMENT_DB.prepare(`SELECT p.id, p.client_id, p.name, p.status, p.current_phase, p.target_end_date
         FROM projects p JOIN admin_project_access apa ON apa.project_id = p.id
-        WHERE apa.admin_user_id = ? ORDER BY p.updated_at DESC LIMIT 50`).bind(session.actor_id);
+        JOIN clients c ON c.id = p.client_id
+        WHERE apa.admin_user_id = ? AND c.archived_at IS NULL ORDER BY p.updated_at DESC LIMIT 50`).bind(session.actor_id);
   const enrollmentStatement = isAdmin
     ? env.ENROLLMENT_DB.prepare(`SELECT e.id, e.client_id, e.project_id, e.agreement_id, e.status, e.next_payment_due_at,
         e.activation_mode, e.onboarding_ready, e.portal_activated_at, pp.display_name AS payment_plan_name,
         aa.total_contract_value,
         COALESCE((SELECT SUM(pi.amount) FROM payment_installments pi WHERE pi.enrollment_id = e.id AND pi.status = 'paid'), 0) AS paid_amount
         FROM enrollments e JOIN payment_plans pp ON pp.id = e.payment_plan_id
-        JOIN agreement_acceptances aa ON aa.id = e.acceptance_id ORDER BY e.updated_at DESC LIMIT 50`)
+        JOIN agreement_acceptances aa ON aa.id = e.acceptance_id
+        JOIN clients c ON c.id = e.client_id WHERE c.archived_at IS NULL ORDER BY e.updated_at DESC LIMIT 50`)
     : env.ENROLLMENT_DB.prepare(`SELECT e.id, e.client_id, e.project_id, e.agreement_id, e.status, e.next_payment_due_at,
         e.activation_mode, e.onboarding_ready, e.portal_activated_at, pp.display_name AS payment_plan_name,
         aa.total_contract_value,
