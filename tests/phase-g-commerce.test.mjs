@@ -222,6 +222,33 @@ test('quote status state machine: full valid path sent -> viewed -> approved -> 
   database.close();
 });
 
+test('quote status state machine: sent -> rejected and sent -> expired are both valid, and both are terminal', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  // quo_preview_a is already 'sent' in the fixture.
+  let response = await commerceRequest(env, 'POST', '/api/commerce/quotes/quo_preview_a/status', admin, { status: 'rejected' }, admin.csrfToken);
+  assert.equal(response.status, 200);
+  // rejected is terminal - no further transition is allowed.
+  response = await commerceRequest(env, 'POST', '/api/commerce/quotes/quo_preview_a/status', admin, { status: 'viewed' }, admin.csrfToken);
+  assert.equal(response.status, 409);
+  database.close();
+});
+
+test('quote status state machine: viewed -> expired is valid and terminal', async () => {
+  const database = previewDatabase();
+  const env = operationsEnvironment(database);
+  const admin = await adminSession(env);
+  let response = await commerceRequest(env, 'POST', '/api/commerce/quotes/quo_preview_a/status', admin, { status: 'viewed' }, admin.csrfToken);
+  assert.equal(response.status, 200);
+  response = await commerceRequest(env, 'POST', '/api/commerce/quotes/quo_preview_a/status', admin, { status: 'expired' }, admin.csrfToken);
+  assert.equal(response.status, 200);
+  // expired is terminal - no further transition is allowed.
+  response = await commerceRequest(env, 'POST', '/api/commerce/quotes/quo_preview_a/status', admin, { status: 'approved' }, admin.csrfToken);
+  assert.equal(response.status, 409);
+  database.close();
+});
+
 // -----------------------------------------------------------------------------------
 // Payment options
 // -----------------------------------------------------------------------------------

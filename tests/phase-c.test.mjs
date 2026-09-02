@@ -91,6 +91,28 @@ test('Cloudflare Access JWT validation checks signature, issuer, audience, expir
     const noSlashIssuerToken = await signJwt(keys.privateKey, { alg: 'RS256', kid: jwk.kid }, { ...claims, iss: 'https://phase-c-team.example' });
     const noSlashIdentity = await verifyCloudflareAccess(new Request(request.url, { headers: { 'Cf-Access-Jwt-Assertion': noSlashIssuerToken } }), { ACCESS_TEAM_DOMAIN: 'https://phase-c-team.example', ADMIN_ACCESS_AUD: 'admin-audience' }, 'ADMIN_ACCESS_AUD');
     assert.equal(noSlashIdentity.email, 'phase-c-admin@example.test');
+
+    // A missing Cf-Access-Jwt-Assertion header (no token presented at all) must fail closed
+    // with a distinct, honest "sign in" code - not silently pass, not a generic 401.
+    const noTokenRequest = new Request(request.url);
+    await assert.rejects(verifyCloudflareAccess(noTokenRequest, { ACCESS_TEAM_DOMAIN: 'https://phase-c-team.example', ADMIN_ACCESS_AUD: 'admin-audience' }, 'ADMIN_ACCESS_AUD'), (error) => error.code === 'identity_required');
+
+    // An actually-expired token (real exp in the past, not just an audience mismatch) must
+    // be rejected - this is a gap a mismatched-audience test alone doesn't cover, since
+    // both map to the same 'identity_expired' code but through different branches.
+    const expiredToken = await signJwt(keys.privateKey, { alg: 'RS256', kid: jwk.kid }, { ...claims, exp: now - 300 });
+    await assert.rejects(verifyCloudflareAccess(new Request(request.url, { headers: { 'Cf-Access-Jwt-Assertion': expiredToken } }), { ACCESS_TEAM_DOMAIN: 'https://phase-c-team.example', ADMIN_ACCESS_AUD: 'admin-audience' }, 'ADMIN_ACCESS_AUD'), (error) => error.code === 'identity_expired');
+
+    // A tampered signature (valid-looking token, but the signature doesn't match the
+    // payload - e.g. a forged/edited claims section) must be rejected as invalid, not
+    // silently accepted because the header/claims still parse as valid JSON.
+    const [tokenHeader, , tokenSignature] = token.split('.');
+    const forgedPayload = Buffer.from(JSON.stringify({ ...claims, email: 'attacker@example.test' })).toString('base64url');
+    const tamperedToken = `${tokenHeader}.${forgedPayload}.${tokenSignature}`;
+    await assert.rejects(verifyCloudflareAccess(new Request(request.url, { headers: { 'Cf-Access-Jwt-Assertion': tamperedToken } }), { ACCESS_TEAM_DOMAIN: 'https://phase-c-team.example', ADMIN_ACCESS_AUD: 'admin-audience' }, 'ADMIN_ACCESS_AUD'), (error) => error.code === 'identity_invalid');
+
+    // A malformed token (not a 3-part JWT at all) must also fail closed.
+    await assert.rejects(verifyCloudflareAccess(new Request(request.url, { headers: { 'Cf-Access-Jwt-Assertion': 'not-a-real-jwt' } }), { ACCESS_TEAM_DOMAIN: 'https://phase-c-team.example', ADMIN_ACCESS_AUD: 'admin-audience' }, 'ADMIN_ACCESS_AUD'), (error) => error.code === 'identity_invalid');
   } finally { globalThis.fetch = originalFetch; }
 });
 

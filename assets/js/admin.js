@@ -12,6 +12,20 @@ let currentAgreementId = '';
 let allContentItems = [];
 let servicesCache = [];
 let quotePickersWired = false;
+// Client-select -> auto-derived Project-display targets (see updateProjectAutofillDisplay
+// below) - declared here, not next to its usage, because render() runs at module load via
+// boot() and would otherwise reference this `const` before its own line executes (a real
+// "Cannot access before initialization" crash found and fixed during this pass).
+const PROJECT_AUTOFILL_TARGETS = [
+  ['agreement-create-client', 'agreement-create-project-display', 'agreement-create-project-id'],
+  ['project-item-client-select', 'project-item-project-display', 'project-item-project-id'],
+  ['publication-client-select', 'publication-project-display', 'publication-project-id'],
+  ['phase-client-select', 'phase-project-display', 'phase-project-id'],
+  ['snapshot-client-select', 'snapshot-project-display', 'snapshot-project-id'],
+  ['metric-client-select', 'metric-project-display', 'metric-project-id'],
+  ['invoice-create-client', 'invoice-create-project-display', 'invoice-create-project-id'],
+  ['content-plan-client', 'content-plan-project-display', 'content-plan-project-id'],
+];
 
 // Fictional preview-only service catalog and per-client quotes, used only when
 // isSafeProductPreview() is true - mirrors DEMO_PROGRESS_BY_PROJECT below: no live
@@ -106,6 +120,7 @@ function render(data) {
   renderLifecycleTable('admin-agreement-table', data.clients, 'agreement'); renderLifecycleTable('admin-project-table', data.clients, 'project');
   renderPayments(data.clients); renderActivity(data.activity || []); renderPreviewClients(data.clients); renderProgressClientSelect(data.clients);
   renderQuoteClientPickers(data.clients);
+  populateCalendarClientFilter();
   if (!data.clients.length) {
     document.querySelector('#admin-recent-clients').closest('.ops-card').replaceChildren(emptyState('No clients yet', 'Create the first fictional preview client to validate the operational workflow.'));
   }
@@ -297,7 +312,7 @@ function buildAgreementSection(client) {
   const card = sectionCard('Agreement', client.agreement);
   const body = card.querySelector('.client-section-body'); body.append(textElement('p', `Status: ${client.agreement}. Client-signed evidence is immutable once sent.`, 'ops-hint'));
   const button = textElement('button', 'Open in Agreements panel', 'ops-link-button'); button.type = 'button';
-  button.addEventListener('click', () => { const form = document.querySelector('#agreement-create-form'); if (form) { form.elements.clientId.value = client.id; if (client.projectId) form.elements.projectId.value = client.projectId; } activateView('agreements'); });
+  button.addEventListener('click', () => { const form = document.querySelector('#agreement-create-form'); if (form) { form.elements.clientId.value = client.id; form.elements.clientId.dispatchEvent(new Event('change')); } activateView('agreements'); });
   body.append(button); return card;
 }
 
@@ -316,7 +331,7 @@ function buildProgressSection(client) {
   chartsRow.append(ringMount, phaseMount, milestoneMount); body.append(chartsRow);
   body.append(element('div', 'client-progress-roadmap ops-mt-18'));
   const button = textElement('button', 'Open Progress panel', 'ops-link-button'); button.type = 'button';
-  button.addEventListener('click', () => { if (client.projectId) { ['#phase-create-form', '#snapshot-create-form', '#metric-create-form'].forEach((selector) => { const form = document.querySelector(selector); if (form?.elements.projectId) form.elements.projectId.value = client.projectId; }); } activateView('progress'); });
+  button.addEventListener('click', () => { if (client.projectId) { ['#phase-client-select', '#snapshot-client-select', '#metric-client-select'].forEach((selector) => { const select = document.querySelector(selector); if (select) { select.value = client.id; select.dispatchEvent(new Event('change')); } }); } activateView('progress'); });
   body.append(button); return card;
 }
 
@@ -333,7 +348,7 @@ function buildPortalSection(client) {
   const card = sectionCard('Portal', client.portal || 'Not active');
   const body = card.querySelector('.client-section-body'); body.append(textElement('p', 'Preview this client’s exact client-visible portal state, or manage its activation policy.', 'ops-hint'));
   const button = textElement('button', 'Open Portals panel', 'ops-link-button'); button.type = 'button';
-  button.addEventListener('click', () => { const select = document.querySelector('#preview-client-select'); if (select) { select.value = client.id; updatePreviewLink(); } if (client.enrollmentId) { const form = document.querySelector('#activation-form'); if (form?.elements.enrollmentId) form.elements.enrollmentId.value = client.enrollmentId; } activateView('portals'); });
+  button.addEventListener('click', () => { const select = document.querySelector('#preview-client-select'); if (select) { select.value = client.id; updatePreviewLink(); } if (client.enrollmentId) { const clientSelect = document.querySelector('#activation-client-select'); if (clientSelect) { clientSelect.value = client.id; clientSelect.dispatchEvent(new Event('change')); } } activateView('portals'); });
   body.append(button); return card;
 }
 
@@ -373,7 +388,7 @@ function renderInvoicesCard(card, invoices, client) {
     body.append(list);
   }
   const button = textElement('button', 'Create an invoice for this client', 'ops-link-button'); button.type = 'button';
-  button.addEventListener('click', () => { const form = document.querySelector('#invoice-create-form'); if (form?.elements.clientId) form.elements.clientId.value = client.id; activateView('invoices'); });
+  button.addEventListener('click', () => { const form = document.querySelector('#invoice-create-form'); if (form?.elements.clientId) { form.elements.clientId.value = client.id; form.elements.clientId.dispatchEvent(new Event('change')); } activateView('invoices'); });
   body.append(button);
 }
 
@@ -403,8 +418,8 @@ function renderContentCard(card, plans, items, client) {
   }
   const button = textElement('button', 'Open Content Intelligence', 'ops-link-button'); button.type = 'button';
   button.addEventListener('click', () => {
-    const planForm = document.querySelector('#content-plan-create-form'); if (planForm?.elements.clientId) planForm.elements.clientId.value = client.id;
-    const sourceForm = document.querySelector('#content-source-create-form'); if (sourceForm?.elements.clientId) sourceForm.elements.clientId.value = client.id;
+    const planForm = document.querySelector('#content-plan-create-form'); if (planForm?.elements.clientId) { planForm.elements.clientId.value = client.id; planForm.elements.clientId.dispatchEvent(new Event('change')); }
+    const sourceForm = document.querySelector('#content-source-create-form'); if (sourceForm?.elements.clientId) { sourceForm.elements.clientId.value = client.id; sourceForm.elements.clientId.dispatchEvent(new Event('change')); }
     activateView('content');
   });
   body.append(button);
@@ -463,8 +478,19 @@ document.querySelector('#show-client-create').addEventListener('click', () => { 
 document.querySelector('#client-project-form').addEventListener('submit', async (event) => {
   event.preventDefault(); const form = event.currentTarget; const status = document.querySelector('#client-create-status'); if (!form.reportValidity()) return;
   const values = Object.fromEntries(new FormData(form)); setStatus(status, 'Creating client and project…');
-  if (isPreview) { const client = { id: `client_preview_${Date.now()}`, name: values.displayName, lifecycle: 'Qualified Client', project: values.projectName, projectId: `prj_preview_${Date.now()}`, agreement: 'Not prepared', payment: 'Not started', portal: 'Not eligible', action: 'Prepare agreement', paid: 0, total: 0 }; adminData.clients.unshift(client); render(adminData); document.querySelector('#agreement-create-form [name="clientId"]').value = client.id; document.querySelector('#agreement-create-form [name="projectId"]').value = client.projectId; setStatus(status, 'Fictional preview client created. Continue to agreement preparation.'); activateView('agreements'); return; }
-  try { const created = await api('/api/ops/admin/clients-projects', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify(values) }); document.querySelector('#agreement-create-form [name="clientId"]').value = created.clientId; document.querySelector('#agreement-create-form [name="projectId"]').value = created.projectId; setStatus(status, 'Client and project created. Continue with Agreement Version 1.'); activateView('agreements'); document.querySelector('#agreement-create-form [name="programName"]').focus(); } catch (error) { setStatus(status, error.message, true); }
+  if (isPreview) { const client = { id: `client_preview_${Date.now()}`, name: values.displayName, lifecycle: 'Qualified Client', project: values.projectName, projectId: `prj_preview_${Date.now()}`, agreement: 'Not prepared', payment: 'Not started', portal: 'Not eligible', action: 'Prepare agreement', paid: 0, total: 0 }; adminData.clients.unshift(client); render(adminData); const clientSelect = document.querySelector('#agreement-create-client'); clientSelect.value = client.id; clientSelect.dispatchEvent(new Event('change')); setStatus(status, 'Fictional preview client created. Continue to agreement preparation.'); activateView('agreements'); return; }
+  // The Agreements panel's Client select can only offer clients already in adminData.clients
+  // (see populateClientSelect), so the newly created client is added to that local cache
+  // (same minimal shape the preview branch above already uses) and re-rendered before the
+  // select can be set to it - the admin summary itself isn't re-fetched here, matching this
+  // handler's prior behavior of not doing a full reload after creation.
+  try {
+    const created = await api('/api/ops/admin/clients-projects', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify(values) });
+    adminData.clients.unshift({ id: created.clientId, name: values.displayName, lifecycle: 'Qualified Client', project: values.projectName, projectId: created.projectId, agreement: 'Not prepared', payment: 'Not started', portal: 'Not eligible', action: 'Prepare agreement', paid: 0, total: 0 });
+    render(adminData);
+    const clientSelect = document.querySelector('#agreement-create-client'); clientSelect.value = created.clientId; clientSelect.dispatchEvent(new Event('change'));
+    setStatus(status, 'Client and project created. Continue with Agreement Version 1.'); activateView('agreements'); document.querySelector('#agreement-create-form [name="programName"]').focus();
+  } catch (error) { setStatus(status, error.message, true); }
 });
 
 document.querySelector('#agreement-create-form').addEventListener('submit', async (event) => {
@@ -481,7 +507,18 @@ document.querySelector('#generate-invite').addEventListener('click', async () =>
   try { const created = await api(`/api/ops/admin/agreements/${encodeURIComponent(currentAgreementId)}/invites`, { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify({ expiresInHours: 72 }) }); showInvite(created.invitationUrl); setStatus(status, 'Invitation generated for fictional preview testing. It has not been emailed.'); } catch (error) { setStatus(status, error.message, true); }
 });
 
-document.querySelector('#project-item-form').addEventListener('submit', async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.currentTarget)); const status = document.querySelector('#project-item-status'); if (!event.currentTarget.reportValidity()) return; if (isPreview) { const id = `${data.entityType}_preview_${Date.now()}`; document.querySelector('#publication-form [name="projectId"]').value = data.projectId; document.querySelector('#publication-form [name="entityType"]').value = data.entityType; document.querySelector('#publication-form [name="entityId"]').value = id; return setStatus(status, `Fictional ${humanize(data.entityType)} saved as Internal. Continue through review and publication below.`); } try { const result = await api(`/api/ops/admin/projects/${encodeURIComponent(data.projectId)}/items`, { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify(data) }); document.querySelector('#publication-form [name="projectId"]').value = result.projectId; document.querySelector('#publication-form [name="entityType"]').value = result.entityType; document.querySelector('#publication-form [name="entityId"]').value = result.id; setStatus(status, `${humanize(result.entityType)} saved as Internal. Continue through review and publication below.`); } catch (error) { setStatus(status, error.message, true); } });
+// applyToPublicationForm mirrors the same client (via the Projects panel's own client
+// select, read at submit time) into the publication-form's client select so its
+// auto-derived Project display stays correct, instead of poking its now-hidden
+// projectId input directly - entityType/entityId are untouched regular fields.
+function applyToPublicationForm(entityType, entityId) {
+  const sourceClientId = document.querySelector('#project-item-client-select')?.value;
+  const pubClientSelect = document.querySelector('#publication-client-select');
+  if (pubClientSelect && sourceClientId) { pubClientSelect.value = sourceClientId; pubClientSelect.dispatchEvent(new Event('change')); }
+  document.querySelector('#publication-form [name="entityType"]').value = entityType;
+  document.querySelector('#publication-form [name="entityId"]').value = entityId;
+}
+document.querySelector('#project-item-form').addEventListener('submit', async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.currentTarget)); const status = document.querySelector('#project-item-status'); if (!event.currentTarget.reportValidity()) return; if (isPreview) { const id = `${data.entityType}_preview_${Date.now()}`; applyToPublicationForm(data.entityType, id); return setStatus(status, `Fictional ${humanize(data.entityType)} saved as Internal. Continue through review and publication below.`); } try { const result = await api(`/api/ops/admin/projects/${encodeURIComponent(data.projectId)}/items`, { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify(data) }); applyToPublicationForm(result.entityType, result.id); setStatus(status, `${humanize(result.entityType)} saved as Internal. Continue through review and publication below.`); } catch (error) { setStatus(status, error.message, true); } });
 document.querySelector('#publication-form').addEventListener('submit', async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.currentTarget)); const status = document.querySelector('#publication-status'); if (!event.currentTarget.reportValidity()) return; const payload = { entityType: data.entityType, entityId: data.entityId, publicationStatus: data.status }; if (isPreview) return setStatus(status, `Fictional preview: item moved to ${humanize(data.status)}. No database record changed.`); try { await api('/api/ops/admin/publication', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify(payload) }); setStatus(status, `Publication state updated to ${humanize(data.status)}.`); } catch (error) { setStatus(status, error.message, true); } });
 document.querySelector('#activation-form').addEventListener('submit', async (event) => { event.preventDefault(); const data = new FormData(event.currentTarget); const enrollmentId = data.get('enrollmentId'); const payload = { activationMode: data.get('activationMode'), onboardingReady: data.has('onboardingReady'), activateNow: data.has('activateNow'), scheduledAt: data.get('activationScheduledAt') ? new Date(data.get('activationScheduledAt')).toISOString() : null }; const status = document.querySelector('#activation-status'); if (!event.currentTarget.reportValidity()) return; if (isPreview) return setStatus(status, `Fictional preview: ${humanize(payload.activationMode)} activation policy saved; no database record changed.`); try { const result = await api(`/api/ops/admin/enrollments/${encodeURIComponent(enrollmentId)}/activate`, { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify(payload) }); setStatus(status, result.portalActivated ? 'Portal activated.' : 'Policy saved. Portal remains pending until eligibility requirements are met.'); } catch (error) { setStatus(status, error.message, true); } });
 
@@ -560,7 +597,13 @@ async function loadServices() {
 function populateServiceSelects() {
   document.querySelectorAll('.quote-service-select').forEach((select) => {
     const previous = select.value;
-    const customOption = textElement('option', 'Custom item (type a label below)'); customOption.value = '';
+    // Most reuses of this select support a custom/label-only line item alongside a real
+    // catalog service (Quotes, Invoices); a couple (changing a service's own default
+    // price, preparing a recurring offer) require a real existing service and have no
+    // label field at all - those opt out via data-placeholder so the empty option never
+    // dangles a "type a label below" instruction with no label field anywhere nearby.
+    const placeholderText = select.dataset.placeholder || 'Custom item (type a label below)';
+    const customOption = textElement('option', placeholderText); customOption.value = '';
     select.replaceChildren(customOption);
     servicesCache.forEach((service) => {
       const opt = textElement('option', service.default_price != null ? `${service.name} — ${formatMoney(service.default_price)}` : service.name);
@@ -577,24 +620,68 @@ function populateServiceSelects() {
 // ('quoteId')/('qi_serviceId')), so none of that commercial/API logic changes at all.
 // -------------------------------------------------------------------------------------
 
+// One shared client-select population, reused by every "<select> of clients" across the
+// whole admin UI (Quotes, Agreements, Projects, Progress, Portals, Invoices, Content
+// Intelligence) - a single implementation instead of one copy per panel. The option value
+// is always the real client id; the visible text is always the human-readable name.
+function populateClientSelect(select) {
+  if (!select) return;
+  const previous = select.value;
+  const clients = adminData?.clients || [];
+  select.replaceChildren(emptyOption('Select a client…'));
+  clients.forEach((client) => { const opt = textElement('option', client.name); opt.value = client.id; select.append(opt); });
+  if (clients.some((client) => client.id === previous)) select.value = previous;
+}
+
+// Generic client-select -> auto-derived read-only Project display, the same pattern as
+// Quotes' updateQuoteCreateProjectDisplay, reused by every other form that used to ask for
+// a typed Project ID. normalizeAdmin()'s client.projectId is a single derived value (one
+// project per client, by design - see updateQuoteCreateProjectDisplay's own usage), so this
+// generic version reads the same single field every one of those forms already relies on.
+// (PROJECT_AUTOFILL_TARGETS itself is declared at the top of the file - see its own comment.)
+function updateProjectAutofillDisplay(clientSelectId, displayId, hiddenInputId) {
+  const clientSelect = document.querySelector(`#${clientSelectId}`);
+  const display = document.querySelector(`#${displayId}`);
+  const hiddenInput = document.querySelector(`#${hiddenInputId}`);
+  if (!clientSelect || !display || !hiddenInput) return;
+  const client = (adminData?.clients || []).find((item) => item.id === clientSelect.value);
+  if (!client) { display.textContent = 'Select a client to see their project'; display.dataset.filled = 'false'; hiddenInput.value = ''; return; }
+  display.textContent = client.project || 'No project on file yet'; display.dataset.filled = 'true'; hiddenInput.value = client.projectId || '';
+}
+function refreshAllProjectAutofills() { PROJECT_AUTOFILL_TARGETS.forEach(([clientSelectId, displayId, hiddenId]) => updateProjectAutofillDisplay(clientSelectId, displayId, hiddenId)); }
+function wireProjectAutofillListeners() { PROJECT_AUTOFILL_TARGETS.forEach(([clientSelectId, displayId, hiddenId]) => document.querySelector(`#${clientSelectId}`)?.addEventListener('change', () => updateProjectAutofillDisplay(clientSelectId, displayId, hiddenId))); }
+
+// Same pattern again, for the Portals panel's Enrollment ID (client.enrollmentId is the
+// single derived enrollment for that client, from the same normalizeAdmin() shape).
+function updateActivationEnrollmentDisplay() {
+  const clientSelect = document.querySelector('#activation-client-select');
+  const display = document.querySelector('#activation-enrollment-display');
+  const hiddenInput = document.querySelector('#activation-enrollment-id');
+  if (!clientSelect || !display || !hiddenInput) return;
+  const client = (adminData?.clients || []).find((item) => item.id === clientSelect.value);
+  if (!client || !client.enrollmentId) { display.textContent = client ? 'No enrollment on file yet' : 'Select a client to see their enrollment'; display.dataset.filled = 'false'; hiddenInput.value = ''; return; }
+  display.textContent = `Enrollment on file${client.plan ? ` (${client.plan})` : ''}`; display.dataset.filled = 'true'; hiddenInput.value = client.enrollmentId;
+}
+
+// Calendar panel's client filter: a plain <select> (real client ids), first option "All
+// clients" (empty value) rather than Quotes' "Select a client…", since leaving it blank is
+// a valid, common choice here rather than an incomplete one.
+function populateCalendarClientFilter() {
+  const select = document.querySelector('#calendar-client-filter'); if (!select) return;
+  const previous = select.value; const clients = adminData?.clients || [];
+  select.replaceChildren(emptyOption('All clients'));
+  clients.forEach((client) => { const opt = textElement('option', client.name); opt.value = client.id; select.append(opt); });
+  if (clients.some((client) => client.id === previous)) select.value = previous;
+}
+
 function renderQuoteClientPickers(clients) {
   const createSelect = document.querySelector('#quote-create-client');
-  if (createSelect) {
-    const previous = createSelect.value;
-    const placeholder = textElement('option', 'Select a client…'); placeholder.value = '';
-    createSelect.replaceChildren(placeholder);
-    clients.forEach((client) => { const opt = textElement('option', client.name); opt.value = client.id; createSelect.append(opt); });
-    if (clients.some((client) => client.id === previous)) createSelect.value = previous;
-  }
-  document.querySelectorAll('.quote-picker-client').forEach((select) => {
-    if (select === createSelect) return;
-    const previous = select.value;
-    const placeholder = textElement('option', 'Select a client…'); placeholder.value = '';
-    select.replaceChildren(placeholder);
-    clients.forEach((client) => { const opt = textElement('option', client.name); opt.value = client.id; select.append(opt); });
-    if (clients.some((client) => client.id === previous)) select.value = previous;
-  });
+  populateClientSelect(createSelect);
+  document.querySelectorAll('.quote-picker-client, .admin-client-select').forEach((select) => populateClientSelect(select));
   updateQuoteCreateProjectDisplay();
+  refreshAllProjectAutofills();
+  updateActivationEnrollmentDisplay();
+  populateContentItemSelects();
   if (quotePickersWired) return;
   quotePickersWired = true;
 
@@ -606,6 +693,12 @@ function renderQuoteClientPickers(clients) {
   wireQuotePicker('quote-status-client', 'quote-status-quote');
   wireQuotePicker('payment-options-client', 'payment-options-quote');
   document.querySelector('#payment-options-quote')?.addEventListener('change', fetchQuoteTotal);
+
+  wireQuotePicker('invoice-create-client', 'invoice-create-quote');
+  wireInvoicePicker('invoice-send-client', 'invoice-send-invoice');
+
+  wireProjectAutofillListeners();
+  document.querySelector('#activation-client-select')?.addEventListener('change', updateActivationEnrollmentDisplay);
 }
 
 // A plain text input filters a companion <select>'s options as the user types - a
@@ -667,6 +760,32 @@ function quoteOptionLabel(quote) {
 async function loadClientQuotes(clientId) {
   if (isPreview) return DEMO_QUOTES_BY_CLIENT[clientId] || [];
   try { const result = await api(`/api/commerce/clients/${encodeURIComponent(clientId)}/quotes`); return result.quotes || []; } catch { return []; }
+}
+
+// Same client -> list cascade as wireQuotePicker/refreshQuoteOptions/loadClientQuotes just
+// above, mirrored for the Invoices panel's "Send invoice" form against the same per-client
+// invoices endpoint the Unified Client Record already calls (renderInvoicesCard /
+// loadClientDetailSections): GET /api/commerce/clients/:id/invoices. Options are labeled by
+// status + due date + total, the same fields renderInvoicesCard already reads off each row.
+function wireInvoicePicker(clientSelectId, invoiceSelectId) {
+  const clientSelect = document.querySelector(`#${clientSelectId}`); const invoiceSelect = document.querySelector(`#${invoiceSelectId}`);
+  if (!clientSelect || !invoiceSelect) return;
+  clientSelect.addEventListener('change', () => refreshInvoiceOptions(clientSelect.value, invoiceSelect));
+}
+async function refreshInvoiceOptions(clientId, invoiceSelect) {
+  invoiceSelect.replaceChildren(emptyOption(clientId ? 'Loading invoices…' : 'Select a client first…'));
+  if (!clientId) return;
+  const invoices = await loadClientInvoices(clientId);
+  invoiceSelect.replaceChildren(emptyOption(invoices.length ? 'Select an invoice…' : 'This client has no invoices yet'));
+  invoices.forEach((invoice) => { const opt = textElement('option', invoiceOptionLabel(invoice)); opt.value = invoice.id; invoiceSelect.append(opt); });
+  invoiceSelect.dispatchEvent(new Event('change'));
+}
+function invoiceOptionLabel(invoice) {
+  return `${humanize(invoice.status)} · due ${invoice.due_date || '—'} · ${formatMoney(invoice.total || 0)}`;
+}
+async function loadClientInvoices(clientId) {
+  if (isPreview) return [];
+  try { const result = await api(`/api/commerce/clients/${encodeURIComponent(clientId)}/invoices`); return result.invoices || []; } catch { return []; }
 }
 document.querySelector('#quote-create-form')?.addEventListener('submit', async (event) => {
   event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
@@ -895,6 +1014,19 @@ document.querySelector('#verify-job-form')?.addEventListener('submit', async (ev
 
 function clientNameById(clientId) { const client = (adminData?.clients || []).find((c) => c.id === clientId); return client ? client.name : clientId; }
 
+// Same "pick by name, id travels in the option value" pattern as populateServiceSelects,
+// applied to every Item ID field that used to be typed by hand across Content
+// Intelligence, Approvals, and Publishing - all backed by the one real, already-fetched
+// allContentItems list (see loadContentIntelligence() below).
+function populateContentItemSelects() {
+  document.querySelectorAll('.content-item-select').forEach((select) => {
+    const previous = select.value;
+    select.replaceChildren(emptyOption(allContentItems.length ? 'Select a content item…' : 'No content items yet'));
+    allContentItems.forEach((item) => { const opt = textElement('option', `${clientNameById(item.client_id)} — ${item.topic}`); opt.value = item.id; select.append(opt); });
+    if (allContentItems.some((item) => item.id === previous)) select.value = previous;
+  });
+}
+
 function renderContentQueueCounts(items) {
   const container = document.querySelector('#content-queue-counts'); if (!container) return; container.replaceChildren();
   [
@@ -931,7 +1063,7 @@ function renderCalendar(items, filterText = '') {
   if (!scheduled.length) list.append(emptyState('Nothing scheduled', needle ? 'No scheduled or published items match this filter.' : 'Scheduled and recently published content will appear here.'));
 }
 
-document.querySelector('#calendar-client-filter')?.addEventListener('input', (event) => renderCalendar(allContentItems, event.target.value));
+document.querySelector('#calendar-client-filter')?.addEventListener('change', (event) => renderCalendar(allContentItems, event.target.value));
 
 function renderPublishingJobsPlaceholder() {
   const tbody = document.querySelector('#admin-publishing-jobs-table'); if (!tbody) return; tbody.replaceChildren();
@@ -965,6 +1097,7 @@ async function loadContentIntelligence() {
     document.querySelector('#admin-calendar-list')?.replaceChildren(emptyState('Fictional preview only', 'The content calendar loads from the live API.'));
     setText('content-lifecycle-status', 'Fictional preview data');
     renderContentLifecycle(document.querySelector('#content-lifecycle-chart'), []);
+    populateContentItemSelects();
     return;
   }
   const clients = adminData?.clients || []; if (!clients.length) return;
@@ -972,6 +1105,7 @@ async function loadContentIntelligence() {
     try { const result = await api(`/api/content/clients/${encodeURIComponent(client.id)}/items`); return result.items || []; } catch { return []; }
   }));
   allContentItems = perClient.flat();
+  populateContentItemSelects();
   renderContentQueueCounts(allContentItems);
   renderContentQueue(allContentItems);
   renderCalendar(allContentItems, document.querySelector('#calendar-client-filter')?.value || '');
