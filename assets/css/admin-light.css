@@ -1,0 +1,127 @@
+/* ==========================================================================
+   Admin — light workspace retune.
+
+   Scoped to `.admin-content` (the main working area) only - `.admin-nav`
+   (sidebar) and `.ops-header` (top bar) are siblings of `.admin-content`,
+   not descendants, so they keep the original dark :root tokens and the
+   E4LA gradient/premium identity untouched, exactly as requested: dark
+   nav/header for hierarchy, light workspace for daily scanning.
+
+   Same mechanism as assets/css/portal-light.css: redefine the shared
+   --ops-* tokens on the scoping element so every component built with
+   var(--ops-text)/var(--ops-card)/var(--ops-line)/etc. re-themes
+   automatically, then patch the residual hardcoded white-opacity rules
+   and darken accent text colors for AA contrast on white. Reuses the
+   exact palette already validated in portal-light.css rather than
+   inventing a second light theme.
+
+   Load this AFTER operations.css, operations-dashboard.css, roadmap.css
+   and reporting-charts.css on admin/index.html.
+   ========================================================================== */
+
+.admin-content {
+  color-scheme: light;
+  /* `color` is inherited, not re-derived per element like background/border-color -
+     redefining --ops-text above alone would leave every plain-text descendant
+     (h1/h2/p/etc with no explicit color: var(--ops-text) of their own) still
+     inheriting the dark shell's white body { color } down through the DOM. Setting
+     color explicitly here re-establishes the correct dark baseline for this
+     subtree, exactly like the original body { color: var(--ops-text) } rule does
+     for the whole (dark) page. Found and fixed by visually verifying, not assumed. */
+  color: #171225;
+  --ops-bg: #faf8f5;
+  --ops-bg-raised: #ffffff;
+  --ops-card: #ffffff;
+  --ops-card-strong: #ffffff;
+  --ops-text: #171225;
+  --ops-muted: rgba(23, 18, 37, 0.62);
+  --ops-subtle: rgba(23, 18, 37, 0.42);
+  --ops-line: rgba(23, 18, 37, 0.10);
+  --ops-line-strong: rgba(23, 18, 37, 0.2);
+  --ops-shadow: 0 20px 48px rgba(23, 18, 37, 0.08);
+
+  --ops-surface-plum: #f3edfc;
+  --ops-surface-charcoal: #f7f6f3;
+  --ops-surface-violet: #f5f0fb;
+  --ops-glow-current: radial-gradient(circle at 25% 15%, rgba(124, 58, 237, 0.1), transparent 65%);
+  --ops-glow-progress: radial-gradient(circle at 85% 0%, rgba(249, 115, 22, 0.08), transparent 60%);
+
+  --ops-green-text: #15803d;
+  --ops-amber-text: #b45309;
+  --ops-red-text: #be123c;
+  --ops-pink-text: #be185d;
+
+  background:
+    radial-gradient(circle at 82% 2%, rgba(124, 58, 237, 0.04), transparent 28rem),
+    radial-gradient(circle at 4% 18%, rgba(219, 39, 119, 0.03), transparent 24rem),
+    var(--ops-bg);
+}
+.admin-content::before { display: none; }
+
+/* Chrome inside the light workspace */
+.admin-content .ops-icon-button { background: rgba(23, 18, 37, 0.035); color: rgba(23, 18, 37, 0.72); }
+.admin-content .ops-icon-button:hover { color: var(--ops-text); }
+.admin-content .ops-back,
+.admin-content .ops-link-button { background: rgba(23, 18, 37, 0.03); color: rgba(23, 18, 37, 0.72); }
+.admin-content .ops-back:hover,
+.admin-content .ops-link-button:hover { color: var(--ops-text); }
+.admin-content .ops-eyebrow { color: rgba(23, 18, 37, 0.62); }
+
+.admin-content .ops-check { background: rgba(23, 18, 37, 0.02); color: rgba(23, 18, 37, 0.72); }
+.admin-content .ops-check:hover { border-color: var(--ops-line-strong); background: rgba(23, 18, 37, 0.035); }
+.admin-content .ops-check:has(input:checked) { color: var(--ops-text); }
+
+.admin-content .ops-button--secondary { background: rgba(23, 18, 37, 0.04); color: var(--ops-text); }
+.admin-content .ops-button--secondary:hover { background: rgba(23, 18, 37, 0.065); }
+.admin-content .ops-button:disabled,
+.admin-content .ops-button:disabled:hover { background: rgba(23, 18, 37, 0.05); color: rgba(23, 18, 37, 0.32); }
+
+.admin-content .ops-status { border-color: var(--ops-line); background: rgba(23, 18, 37, 0.035); color: rgba(23, 18, 37, 0.68); }
+.admin-content .ops-status--active,
+.admin-content .ops-status--complete { color: var(--ops-green-text); }
+.admin-content .ops-status--attention,
+.admin-content .ops-status--pending { color: var(--ops-amber-text); }
+.admin-content .ops-status--error { color: var(--ops-red-text); }
+
+.admin-content .ops-alert { color: var(--ops-text); }
+.admin-content .ops-toast { background: #ffffff; border-color: rgba(219, 39, 119, 0.3); color: var(--ops-text); box-shadow: var(--ops-shadow); }
+.admin-content .ops-spinner { border-color: rgba(23, 18, 37, 0.12); }
+.admin-content .ops-timeline::before { background: rgba(23, 18, 37, 0.13); }
+.admin-content .ops-timeline__dot { background: rgba(23, 18, 37, 0.18); box-shadow: 0 0 0 1px rgba(23, 18, 37, 0.08); }
+.admin-content .ops-tabs--sticky { border-color: var(--ops-line); background: rgba(255, 255, 255, 0.92); }
+.admin-content .ops-tab[aria-selected='true'] { background: rgba(23, 18, 37, 0.06); color: var(--ops-text); }
+
+/* Dashboard / client-detail / admin-specific components */
+.admin-content .dashboard-work__item { background: rgba(23, 18, 37, 0.02); }
+.admin-content .dashboard-work__meta span { color: var(--ops-pink-text); }
+.admin-content .dashboard-doc { background: rgba(23, 18, 37, 0.02); }
+.admin-content .dashboard-doc:hover { background: rgba(219, 39, 119, 0.045); }
+.admin-content .billing-bar,
+.admin-content .billing-bar::-webkit-progress-bar { background: rgba(23, 18, 37, 0.08); }
+.admin-content .admin-table td { color: rgba(23, 18, 37, 0.72); border-bottom-color: rgba(23, 18, 37, 0.07); }
+.admin-content .admin-table td:first-child { color: var(--ops-text); }
+.admin-content .admin-table tbody tr[role='button']:hover { background: rgba(23, 18, 37, 0.025); }
+.admin-content .client-detail-item,
+.admin-content .dashboard-work__item { background: rgba(23, 18, 37, 0.02); }
+.admin-content .client-detail-item span { color: rgba(23, 18, 37, 0.5); }
+.admin-content .admin-preview-banner button,
+.admin-content .admin-preview-banner a { color: #fff; }
+
+/* Roadmap V2 + reporting charts inside the light workspace (same residual
+   hardcoded-white patches as portal-light.css) */
+.admin-content .e4la-roadmap__empty { background: rgba(23, 18, 37, 0.02); }
+.admin-content .e4la-roadmap__marker { color: rgba(23, 18, 37, 0.68); }
+.admin-content .e4la-roadmap__stage--not-started .e4la-roadmap__marker { color: var(--ops-subtle); }
+.admin-content .e4la-roadmap__badge { border-color: rgba(23, 18, 37, 0.14); background: rgba(23, 18, 37, 0.04); color: rgba(23, 18, 37, 0.66); }
+.admin-content .e4la-roadmap__badge--completed { color: var(--ops-green-text); }
+.admin-content .e4la-roadmap__badge--blocked { color: var(--ops-red-text); }
+.admin-content .e4la-roadmap__badge--awaiting-client { color: var(--ops-amber-text); }
+.admin-content .e4la-roadmap__stage--completed .e4la-roadmap__card { background: rgba(23, 18, 37, 0.015); }
+.admin-content .e4la-roadmap__milestone { color: rgba(23, 18, 37, 0.78); }
+.admin-content .e4la-roadmap__milestone-dot { background: rgba(23, 18, 37, 0.2); }
+.admin-content .e4la-roadmap__progress-track { background: rgba(23, 18, 37, 0.08); }
+.admin-content .e4la-roadmap__deliverables-list { color: rgba(23, 18, 37, 0.78); }
+.admin-content .rpt-bar { background: rgba(23, 18, 37, 0.06); }
+.admin-content .rpt-ring__track { stroke: rgba(23, 18, 37, 0.1); }
+.admin-content .rpt-money-bar { background: rgba(23, 18, 37, 0.08); }
+.admin-content .portal-progress__track { stroke: rgba(23, 18, 37, 0.1); }

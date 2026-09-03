@@ -634,6 +634,36 @@ safety checks directly (production-hostname guard, test-mode-key guard,
 livemode guard, database-identity guard, recipient-allowlist guard) - 87/87
 across the whole suite as of this pass.
 
+## Y. Future product backlog (not built - documented so it doesn't disappear)
+
+**E4LA Financial Reconciliation Agent** (requested 2026-09-03, during the Mortgage
+Bankers $8,000 billing correction - the correction itself was done manually against
+Nasim's own reconciled bank records, exposing the real need for this). Not built in
+this pass; captured here as a standing requirement for a future session:
+
+- Connect a business bank account (read-only) as a real data source.
+- Detect incoming client payments (deposits, checks, mobile check deposits, etc. -
+  not just Stripe) as they land.
+- Attempt to identify the likely client/invoice a deposit belongs to.
+- Compare the detected payment against existing Client Operations records
+  (invoices, quotes, enrollments).
+- **Flag ambiguous transactions instead of guessing** - e.g. two clients with
+  same-amount deposits on nearby dates (this exact ambiguity is why the first
+  correction pass on this data got Mortgage Bankers' attribution wrong).
+- Require explicit human confirmation before attributing any ambiguous deposit to
+  a client - never silently assign one.
+- Once confirmed, update the real payment/invoice history and write a real
+  `audit_events` row for the attribution decision (who confirmed it, when, which
+  transaction, which client/invoice).
+- Never invent a Stripe object for a non-Stripe (check/deposit/wire) payment - the
+  existing `stripe_objects` table should stay empty for anything that didn't
+  actually go through Stripe, exactly as it already correctly does today for both
+  real clients' historical payments.
+
+This is a meaningful build (new bank-data connector, matching heuristics, a
+confirmation UI, new audit-event types) - do not attempt it opportunistically
+inside an unrelated pass. Scope it as its own project when prioritized.
+
 ## Z. Claude's immediate next action
 
 Do not add features. Read `CLAUDE-RESUME-PROMPT.md`, verify `npm test`, then

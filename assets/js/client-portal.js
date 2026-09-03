@@ -102,6 +102,7 @@ function renderPortal(data) {
   renderDocuments('reports-all', data.reports || [], Infinity, true);
   renderAgreement(data.agreement);
   renderHistoricalAgreement();
+  renderWeHoGrillProgram();
   renderBilling(data.billing || {});
   renderInvoices(data.invoices || []);
   renderProgressOverview(data.progress || {});
@@ -201,6 +202,19 @@ function renderHistoricalAgreement() {
     textElement('p', 'Independent Contractor Agreement — Commercial & Residential Lending Business Development & Digital Marketing Services', 'ops-list__title'),
     textElement('p', 'Effective May 1, 2026 · Signed April 27, 2026 · E&E Mortgage Bankers Corp and E4LA LLC · 12-month term · Governed by California law.', 'ops-list__meta'),
   );
+  // Human-readable summary, not the full legal text - the signed document itself
+  // remains the authoritative reference for exact terms.
+  mount.append(textElement('p', 'What this covers:', 'ops-list__title ops-mt-18'));
+  const scope = element('ul', 'e4la-roadmap__deliverables-list');
+  ['Facebook and Instagram content management', 'Google Business Profile management', 'Inbound lead generation', 'Prospective-client communication', 'Initial intake and qualification', 'Lead screening based on Mortgage Bankers criteria', 'Coordination with commercial real estate agents', 'Forwarding qualified leads to Mortgage Bankers']
+    .forEach((item) => scope.append(textElement('li', item)));
+  mount.append(scope);
+  mount.append(textElement('p', 'E4LA does not perform underwriting, loan structuring, loan approval, or closing.', 'ops-hint ops-mt-12'));
+  mount.append(textElement('p', 'Lending focus:', 'ops-list__title ops-mt-18'));
+  const focus = element('ul', 'e4la-roadmap__deliverables-list');
+  ['Commercial: $1M–$3M+ business-purpose and investment-property lending', 'Residential Investment: 1–4 unit, apartment/multi-unit, stated-income programs where applicable']
+    .forEach((item) => focus.append(textElement('li', item)));
+  mount.append(focus);
   const terms = element('dl', 'billing-summary ops-mt-18');
   [
     ['Base payment', '$2,000 / month, upfront'],
@@ -210,6 +224,26 @@ function renderHistoricalAgreement() {
   ].forEach(([label, value]) => { const row = document.createElement('div'); row.append(textElement('dt', label), textElement('dd', value)); terms.append(row); });
   mount.append(terms);
   mount.append(textElement('p', 'This is the original signed engagement. Current work is tracked separately below under the active digital growth engagement.', 'ops-hint ops-mt-18'));
+}
+
+// WeHo Grill: real, verified engagement summary (not electronic-flow-backed, same
+// reasoning as Mortgage Bankers' historical block above) - the program's own
+// documented commercial terms, kept distinct from actual billing/payment history
+// (no payments have been verified/reconciled for this client yet).
+function renderWeHoGrillProgram() {
+  const mount = document.querySelector('#portal-weho-program');
+  if (!mount || portalClientId !== 'clt_weho_grill') { if (mount) mount.hidden = true; return; }
+  mount.hidden = false;
+  mount.replaceChildren();
+  mount.append(
+    (() => { const row = element('div', 'dashboard-card-title'); row.append(textElement('h3', 'Program & commercial terms'), textElement('span', 'Active', 'ops-status ops-status--complete')); return row; })(),
+    textElement('p', '90-Day Brand Visibility & Local Growth Program', 'ops-list__title'),
+    textElement('p', 'Started August 6, 2026', 'ops-list__meta'),
+  );
+  const terms = element('dl', 'billing-summary ops-mt-18');
+  [['Program value', '$1,200 / month · $3,600 total'], ['Payment structure', '$600 initial, then $600 biweekly']]
+    .forEach(([label, value]) => { const row = document.createElement('div'); row.append(textElement('dt', label), textElement('dd', value)); terms.append(row); });
+  mount.append(terms);
 }
 
 function renderBilling(billing) {

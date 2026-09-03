@@ -440,20 +440,29 @@ async function loadClientProgress(client, container) {
 // already inserted; this is a documented, honest stopgap, not a fabrication.
 const KNOWN_PORTAL_USERS = {
   clt_mortgage_bankers: { name: 'Sean Elyaszadeh', email: 'sean@mtgbankers.com', role: 'Client Owner', status: 'invited' },
+  // No verified authorized-contact email exists yet for WeHo Grill - explicitly "not
+  // provisioned" rather than a guessed address. Never invent one; never send an
+  // invitation to an unverified email.
+  clt_weho_grill: null,
 };
 function buildPortalSection(client) {
   const card = sectionCard('Portal', client.portal || 'Not active');
   const body = card.querySelector('.client-section-body'); body.append(textElement('p', 'Preview this client’s exact client-visible portal state, or manage its activation policy.', 'ops-hint'));
-  const knownUser = KNOWN_PORTAL_USERS[client.id];
-  if (knownUser) {
-    const grid = element('div', 'client-detail-grid ops-mt-18');
-    [['Portal user', knownUser.name], ['Email', knownUser.email], ['Role', knownUser.role], ['Access', `${client.name} only`], ['Status', knownUser.status === 'active' ? 'Active' : 'Not yet activated — no invitation sent']]
-      .forEach(([label, value]) => { const item = element('div', 'client-detail-item'); item.append(textElement('span', label), textElement('strong', value)); grid.append(item); });
-    body.append(grid);
-    const previewBtn = textElement('button', 'Preview Client Portal', 'ops-button ops-button--primary ops-mt-18'); previewBtn.type = 'button';
-    previewBtn.addEventListener('click', () => { const select = document.querySelector('#preview-client-select'); if (select) { select.value = client.id; updatePreviewLink(); } window.open(document.querySelector('#admin-preview-link')?.href, '_blank'); });
-    body.append(previewBtn);
-    body.append(textElement('p', 'Activating or resending access requires a real invitation flow, which is intentionally not triggered automatically — send/activate controls are prepared but require your explicit action once the Client Access configuration gate is complete.', 'ops-hint ops-mt-12'));
+  if (client.id in KNOWN_PORTAL_USERS) {
+    const knownUser = KNOWN_PORTAL_USERS[client.id];
+    if (knownUser) {
+      const grid = element('div', 'client-detail-grid ops-mt-18');
+      [['Portal user', knownUser.name], ['Email', knownUser.email], ['Role', knownUser.role], ['Access', `${client.name} only`], ['Status', knownUser.status === 'active' ? 'Active' : 'Not yet activated — no invitation sent']]
+        .forEach(([label, value]) => { const item = element('div', 'client-detail-item'); item.append(textElement('span', label), textElement('strong', value)); grid.append(item); });
+      body.append(grid);
+      const previewBtn = textElement('button', 'Preview Client Portal', 'ops-button ops-button--primary ops-mt-18'); previewBtn.type = 'button';
+      previewBtn.addEventListener('click', () => { const select = document.querySelector('#preview-client-select'); if (select) { select.value = client.id; updatePreviewLink(); } window.open(document.querySelector('#admin-preview-link')?.href, '_blank'); });
+      body.append(previewBtn);
+      body.append(textElement('p', 'Activating or resending access requires a real invitation flow, which is intentionally not triggered automatically — send/activate controls are prepared but require your explicit action once the Client Access configuration gate is complete.', 'ops-hint ops-mt-12'));
+    } else {
+      body.append(textElement('p', 'Portal Access: Not provisioned', 'ops-status ops-status--pending ops-mt-18'));
+      body.append(textElement('p', 'No verified authorized-contact email is on file for this client yet. Access creation is intentionally pending — add a real, verified email before provisioning a portal user.', 'ops-hint ops-mt-12'));
+    }
   }
   const button = textElement('button', 'Open Portals panel', 'ops-link-button'); button.type = 'button';
   button.addEventListener('click', () => { const select = document.querySelector('#preview-client-select'); if (select) { select.value = client.id; updatePreviewLink(); } if (client.enrollmentId) { const clientSelect = document.querySelector('#activation-client-select'); if (clientSelect) { clientSelect.value = client.id; clientSelect.dispatchEvent(new Event('change')); } } activateView('portals'); });
