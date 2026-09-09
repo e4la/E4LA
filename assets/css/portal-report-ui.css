@@ -1,0 +1,286 @@
+/* E4LA Client Portal — report-inspired senior UI layer.
+   Visual-only overrides. All selectors are scoped to the client portal surface. */
+body[data-ops-surface="portal"] {
+  --e4la-gold:#fbbf24;
+  --e4la-orange:#f97316;
+  --e4la-pink:#db2777;
+  --e4la-purple:#7c3aed;
+  --e4la-deep:#4c1d95;
+  --e4la-lav:#f5f1fb;
+  --e4la-blush:#fff4f8;
+  --e4la-gradient:linear-gradient(100deg,var(--e4la-gold) 0%,var(--e4la-orange) 28%,var(--e4la-pink) 58%,var(--e4la-purple) 100%);
+  --ops-bg:#f7f5f3;
+  --ops-card:#fff;
+  --ops-card-strong:#fff;
+  --ops-text:#171225;
+  --ops-muted:rgba(23,18,37,.64);
+  --ops-subtle:rgba(23,18,37,.44);
+  --ops-line:rgba(23,18,37,.09);
+  --ops-line-strong:rgba(23,18,37,.17);
+  --ops-shadow:0 18px 48px rgba(23,18,37,.07);
+}
+
+/* Header and page frame */
+body[data-ops-surface="portal"] .ops-header {
+  min-height:70px;
+  border-bottom:1px solid var(--ops-line);
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(18px);
+}
+body[data-ops-surface="portal"] .ops-brand__label { color:var(--e4la-purple); }
+body[data-ops-surface="portal"] .ops-main { padding-block:34px 80px; }
+body[data-ops-surface="portal"] .ops-shell { width:min(1160px,calc(100% - 48px)); }
+
+/* E4LA accent system */
+body[data-ops-surface="portal"] .ops-eyebrow {
+  color:var(--e4la-pink);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.14em;
+}
+body[data-ops-surface="portal"] .ops-eyebrow::before { background:var(--e4la-gradient); }
+body[data-ops-surface="portal"] .ops-gradient-text {
+  background:var(--e4la-gradient);
+  background-clip:text;
+  -webkit-background-clip:text;
+  color:transparent;
+  -webkit-text-fill-color:transparent;
+}
+
+/* Hero matches the closeout-report editorial language */
+body[data-ops-surface="portal"] .portal-hero {
+  position:relative;
+  align-items:flex-start;
+  margin-bottom:18px;
+  padding:34px 38px 36px;
+  border:1px solid var(--ops-line);
+  border-radius:24px;
+  background:linear-gradient(145deg,#fff 0%,#fff 70%,rgba(124,58,237,.055) 100%);
+  box-shadow:var(--ops-shadow);
+  overflow:hidden;
+}
+body[data-ops-surface="portal"] .portal-hero::after {
+  content:"";
+  position:absolute;
+  width:220px;
+  height:220px;
+  right:-90px;
+  top:-100px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(124,58,237,.12),rgba(219,39,119,.025) 60%,transparent 74%);
+  pointer-events:none;
+}
+body[data-ops-surface="portal"] .portal-hero > * { position:relative; z-index:1; }
+body[data-ops-surface="portal"] .portal-hero h1 {
+  max-width:760px;
+  margin:6px 0 12px;
+  color:var(--e4la-deep);
+  font-size:clamp(2.35rem,4.1vw,4rem);
+  font-weight:800;
+  line-height:.99;
+  letter-spacing:-.055em;
+}
+body[data-ops-surface="portal"] .portal-hero > div > p:last-child {
+  max-width:720px;
+  margin-top:0;
+  font-size:1rem;
+  line-height:1.65;
+}
+body[data-ops-surface="portal"] .portal-hero .dashboard-action {
+  margin-top:3px;
+  border-color:rgba(124,58,237,.16);
+  background:rgba(124,58,237,.055);
+}
+
+/* Navigation becomes a compact report chapter selector */
+body[data-ops-surface="portal"] .ops-tabs--sticky {
+  top:74px;
+  gap:4px;
+  margin:0 0 30px;
+  padding:7px;
+  border:1px solid var(--ops-line);
+  border-radius:16px;
+  background:rgba(255,255,255,.96);
+  box-shadow:0 8px 24px rgba(23,18,37,.04);
+  backdrop-filter:blur(16px);
+}
+body[data-ops-surface="portal"] .ops-tab {
+  min-height:38px;
+  border:0;
+  border-radius:10px;
+  padding:0 13px;
+  color:var(--e4la-purple);
+  font-size:.79rem;
+  font-weight:800;
+}
+body[data-ops-surface="portal"] .ops-tab[aria-selected='true'] {
+  background:rgba(124,58,237,.075);
+  color:var(--e4la-deep);
+  box-shadow:none;
+}
+
+/* Chapter rhythm: large areas feel like report sections, not dashboard widgets */
+body[data-ops-surface="portal"] .dashboard-section {
+  position:relative;
+  margin-top:28px;
+}
+body[data-ops-surface="portal"] .dashboard-section__head {
+  align-items:flex-start;
+  margin-bottom:16px;
+  padding-bottom:14px;
+  border-bottom:1px solid rgba(124,58,237,.10);
+}
+body[data-ops-surface="portal"] .dashboard-section__head h2,
+body[data-ops-surface="portal"] .dashboard-card-title h2,
+body[data-ops-surface="portal"] .portal-section-intro h2 {
+  color:var(--e4la-deep);
+  font-weight:800;
+  letter-spacing:-.035em;
+}
+body[data-ops-surface="portal"] .dashboard-section__head h2 { font-size:1.45rem; }
+body[data-ops-surface="portal"] .portal-section-intro {
+  margin-bottom:18px;
+  padding:26px 28px;
+  border:1px solid rgba(124,58,237,.11);
+  border-radius:20px;
+  background:linear-gradient(145deg,#fff,var(--e4la-lav));
+}
+body[data-ops-surface="portal"] .portal-section-intro h2 {
+  margin:2px 0 6px;
+  font-size:clamp(1.5rem,2.3vw,2rem);
+}
+body[data-ops-surface="portal"] .portal-section-intro p:last-child { max-width:720px; margin:0; color:var(--ops-muted); }
+
+/* Primary feature blocks */
+body[data-ops-surface="portal"] .dashboard-feature,
+body[data-ops-surface="portal"] .portal-progress {
+  border:1px solid rgba(124,58,237,.11);
+  border-radius:22px;
+  background:#fff;
+  box-shadow:0 12px 34px rgba(23,18,37,.04);
+}
+body[data-ops-surface="portal"] .dashboard-feature { padding:28px; }
+body[data-ops-surface="portal"] .dashboard-feature__top h2 { color:var(--e4la-deep); font-weight:800; }
+body[data-ops-surface="portal"] .dashboard-feature__meta {
+  gap:10px;
+  margin-top:22px;
+}
+body[data-ops-surface="portal"] .dashboard-feature__meta > div {
+  padding:14px;
+  border:1px solid var(--ops-line);
+  border-radius:13px;
+  background:#faf9fb;
+}
+body[data-ops-surface="portal"] .dashboard-feature__meta dd { color:var(--e4la-deep); font-weight:800; }
+
+/* Cards become quieter than sections */
+body[data-ops-surface="portal"] .ops-card {
+  border:1px solid rgba(23,18,37,.075);
+  border-radius:16px;
+  background:rgba(255,255,255,.92);
+  box-shadow:none;
+}
+body[data-ops-surface="portal"] .ops-card__body { padding:21px; }
+body[data-ops-surface="portal"] .dashboard-card-title h3,
+body[data-ops-surface="portal"] .ops-card h3 {
+  color:var(--e4la-purple);
+  font-weight:800;
+}
+body[data-ops-surface="portal"] .dashboard-work__item,
+body[data-ops-surface="portal"] .dashboard-doc {
+  border:1px solid rgba(124,58,237,.08);
+  border-radius:12px;
+  background:#fbfaff;
+}
+
+/* Roadmap chapter */
+body[data-ops-surface="portal"] #portal-roadmap-section {
+  padding:28px;
+  border:1px solid rgba(124,58,237,.11);
+  border-radius:22px;
+  background:var(--e4la-lav);
+}
+body[data-ops-surface="portal"] #portal-roadmap-section::before {
+  content:"";
+  position:absolute;
+  top:-1px;
+  left:28px;
+  width:72px;
+  height:4px;
+  border-radius:0 0 8px 8px;
+  background:var(--e4la-gradient);
+}
+body[data-ops-surface="portal"] .e4la-roadmap__card,
+body[data-ops-surface="portal"] .portal-roadmap__phase {
+  border-radius:14px;
+  border-color:rgba(124,58,237,.10);
+  background:rgba(255,255,255,.82);
+  box-shadow:none;
+}
+
+/* Report/performance regions gain chapter separation */
+body[data-ops-surface="portal"] #portal-overview > .dashboard-section[aria-labelledby="reports-charts-title"] {
+  padding:28px;
+  border:1px solid rgba(219,39,119,.10);
+  border-radius:22px;
+  background:var(--e4la-blush);
+}
+body[data-ops-surface="portal"] #portal-overview > .dashboard-section[aria-labelledby="reports-charts-title"]::before {
+  content:"";
+  position:absolute;
+  top:-1px;
+  left:28px;
+  width:72px;
+  height:4px;
+  border-radius:0 0 8px 8px;
+  background:var(--e4la-gradient);
+}
+body[data-ops-surface="portal"] .portal-metric strong,
+body[data-ops-surface="portal"] .rpt-kpi__value { color:var(--e4la-purple); }
+
+/* Agreements, billing, deliverables and reports read as clean report chapters */
+body[data-ops-surface="portal"] #portal-project,
+body[data-ops-surface="portal"] #portal-deliverables,
+body[data-ops-surface="portal"] #portal-reports,
+body[data-ops-surface="portal"] #portal-agreements,
+body[data-ops-surface="portal"] #portal-billing,
+body[data-ops-surface="portal"] #portal-content {
+  padding-top:2px;
+}
+body[data-ops-surface="portal"] #portal-agreements > .ops-card,
+body[data-ops-surface="portal"] #portal-billing > .ops-card,
+body[data-ops-surface="portal"] #portal-project > .ops-grid,
+body[data-ops-surface="portal"] #portal-reports > .ops-grid,
+body[data-ops-surface="portal"] #portal-deliverables > .ops-grid {
+  margin-top:14px;
+}
+
+/* Buttons */
+body[data-ops-surface="portal"] .ops-button--primary {
+  border:0;
+  background:var(--e4la-gradient);
+  box-shadow:0 8px 22px rgba(124,58,237,.16);
+}
+body[data-ops-surface="portal"] .ops-button--secondary,
+body[data-ops-surface="portal"] .ops-link-button {
+  border-color:rgba(124,58,237,.12);
+  background:rgba(124,58,237,.045);
+  color:var(--e4la-purple);
+}
+
+/* Mobile */
+@media (max-width:900px) {
+  body[data-ops-surface="portal"] .ops-shell { width:min(100% - 30px,1160px); }
+  body[data-ops-surface="portal"] .portal-hero { display:block; padding:28px 24px; }
+  body[data-ops-surface="portal"] .portal-hero .dashboard-action { margin-top:18px; }
+}
+@media (max-width:640px) {
+  body[data-ops-surface="portal"] .ops-main { padding-top:24px; }
+  body[data-ops-surface="portal"] .portal-hero { padding:25px 20px; border-radius:19px; }
+  body[data-ops-surface="portal"] .portal-hero h1 { font-size:2.45rem; }
+  body[data-ops-surface="portal"] .ops-tabs--sticky { overflow-x:auto; flex-wrap:nowrap; }
+  body[data-ops-surface="portal"] .ops-tab { white-space:nowrap; }
+  body[data-ops-surface="portal"] #portal-roadmap-section,
+  body[data-ops-surface="portal"] #portal-overview > .dashboard-section[aria-labelledby="reports-charts-title"] { padding:22px 17px; border-radius:18px; }
+  body[data-ops-surface="portal"] .portal-section-intro { padding:22px 18px; border-radius:18px; }
+}
