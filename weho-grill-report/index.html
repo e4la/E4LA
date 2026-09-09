@@ -5,261 +5,132 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
   <meta name="referrer" content="no-referrer">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'">
   <title>WeHo Grill — E4LA Engagement Closeout Report</title>
   <link rel="icon" href="/assets/e4la-logo-palm2.png">
-  <link rel="stylesheet" href="/assets/css/operations.css">
-  <link rel="stylesheet" href="/assets/css/operations-dashboard.css">
-  <link rel="stylesheet" href="/assets/css/weho-closeout-report.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --purple:#7c3aed;--deep:#4c1d95;--plum:#35175f;--pink:#db2777;--orange:#f97316;--gold:#fbbf24;
+      --ink:#171225;--muted:#6f6978;--line:rgba(23,18,37,.10);--bg:#f7f5f3;--card:#fff;
+      --lav:#f5f1fb;--blush:#fff4f8;--shadow:0 18px 48px rgba(23,18,37,.07)
+    }
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 88% 2%,rgba(124,58,237,.05),transparent 28rem),var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+    header{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:70px;padding:12px clamp(22px,5vw,70px);border-bottom:1px solid var(--line);background:rgba(255,255,255,.94);backdrop-filter:blur(16px)}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--purple);font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.brand img{width:76px;height:38px;object-fit:contain}.history{display:inline-flex;align-items:center;gap:7px;padding:5px 10px;border:1px solid rgba(124,58,237,.16);border-radius:999px;background:rgba(124,58,237,.05);color:var(--purple);font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}.history:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+    main{max-width:1160px;margin:0 auto;padding:34px 24px 84px}.eyebrow{margin:0 0 8px;color:var(--pink);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.eyebrow:before{content:"";display:inline-block;width:22px;height:1px;margin:0 9px 3px 0;background:linear-gradient(90deg,var(--orange),var(--pink),var(--purple))}
+    .hero{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(270px,.62fr);gap:18px;margin-bottom:18px}.hero-main,.hero-side{border:1px solid var(--line);border-radius:24px;background:#fff;box-shadow:var(--shadow)}.hero-main{position:relative;overflow:hidden;padding:34px 38px 36px}.hero-main:after{content:"";position:absolute;width:220px;height:220px;right:-90px;top:-100px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.12),rgba(219,39,119,.025) 60%,transparent 74%)}
+    h1{position:relative;z-index:1;margin:6px 0 13px;max-width:760px;color:#7c3aed!important;font-size:clamp(2.45rem,4.35vw,4.1rem);font-weight:800;line-height:.98;letter-spacing:-.055em}.lead{max-width:730px;margin:0;color:var(--muted);font-size:1rem;line-height:1.68}.hero-side{display:flex;flex-direction:column;justify-content:space-between;gap:22px;padding:26px;background:linear-gradient(150deg,var(--lav),#fff 64%)}.label{color:var(--pink);font-size:.68rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase}.big{margin-top:8px;color:var(--purple);font-size:3.15rem;font-weight:800;line-height:.95;letter-spacing:-.065em}.side-copy{margin:14px 0 0;color:var(--muted);font-size:.9rem;line-height:1.56}.progress{height:7px;overflow:hidden;border-radius:999px;background:rgba(23,18,37,.07)}.progress span{display:block;width:33.333%;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--orange),var(--pink),var(--purple))}
+    .summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:20px}.stat{min-height:138px;padding:17px 18px;border:1px solid var(--line);border-radius:17px;background:#fff}.stat strong{display:block;margin-top:5px;color:var(--deep);font-size:1.14rem;font-weight:800;line-height:1.2;letter-spacing:-.03em}.stat p{margin:7px 0 0;color:var(--muted);font-size:.79rem;line-height:1.45}
+    nav{position:sticky;top:74px;z-index:20;display:flex;gap:4px;overflow-x:auto;margin:0 0 30px;padding:7px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.96);box-shadow:0 8px 24px rgba(23,18,37,.04);backdrop-filter:blur(16px)}nav a{white-space:nowrap;padding:8px 12px;border-radius:10px;color:var(--purple);font-size:.79rem;font-weight:800;text-decoration:none}nav a:hover{background:rgba(124,58,237,.065);color:var(--pink)}
+    .chapter{position:relative;scroll-margin-top:140px;margin-bottom:28px;padding:30px;border:1px solid rgba(124,58,237,.11);border-radius:24px;background:#fff;box-shadow:0 12px 34px rgba(23,18,37,.035)}.chapter.alt{background:var(--lav)}.chapter.blush{background:var(--blush)}.chapter:before{content:"";position:absolute;top:-1px;left:30px;width:72px;height:4px;border-radius:0 0 8px 8px;background:linear-gradient(90deg,var(--orange),var(--pink),var(--purple))}.chapter-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.72fr);gap:34px;align-items:start;margin-bottom:22px;padding-bottom:20px;border-bottom:1px solid rgba(124,58,237,.11)}h2{margin:2px 0 0;color:var(--deep)!important;font-size:clamp(1.55rem,2.35vw,2.05rem);font-weight:800;line-height:1.12;letter-spacing:-.04em}.chapter-head>p{margin:2px 0 0;color:var(--muted);font-size:.9rem;line-height:1.58}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card{padding:21px;border:1px solid rgba(23,18,37,.075);border-radius:16px;background:rgba(255,255,255,.9)}.wide{grid-column:1/-1}.top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:9px}h3{margin:0;color:var(--purple)!important;font-size:1rem;font-weight:800;line-height:1.3;letter-spacing:-.02em}.card p,.note p{margin:0;color:var(--muted);font-size:.9rem;line-height:1.6}.card strong{color:var(--purple)}ul{margin:12px 0 0;padding-left:19px;color:var(--muted);font-size:.88rem;line-height:1.58}li::marker{color:var(--pink)}li+li{margin-top:4px}.pill{display:inline-flex;align-items:center;gap:6px;min-height:25px;padding:4px 8px;border-radius:999px;font-size:.64rem;font-weight:800;white-space:nowrap}.pill:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}.done{color:#15803d;background:rgba(22,163,74,.08)}.partial{color:#a16207;background:rgba(245,158,11,.10)}.stopped{color:#9f1239;background:rgba(225,29,72,.08)}.prepared{color:#6d28d9;background:rgba(124,58,237,.08)}
+    .metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:16px}.metric{padding:13px;border:1px solid rgba(124,58,237,.09);border-radius:12px;background:#faf8ff}.metric strong{display:block;color:var(--purple);font-size:1.08rem;font-weight:800;letter-spacing:-.035em}.metric span{display:block;margin-top:4px;color:var(--muted);font-size:.7rem;line-height:1.35}.note{padding:22px;border:1px solid rgba(124,58,237,.17);border-radius:16px;background:linear-gradient(135deg,rgba(124,58,237,.065),rgba(219,39,119,.025))}.note h3{margin-bottom:7px}.budgets{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.budget{min-width:170px;flex:1;padding:15px;border:1px solid rgba(124,58,237,.1);border-radius:13px;background:#fff}.budget span{color:var(--muted);font-size:.75rem}.budget strong{display:block;margin:3px 0;color:var(--pink);font-size:1.3rem;font-weight:800;letter-spacing:-.04em}
+    footer{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-top:38px;padding-top:24px;border-top:1px solid var(--line);color:var(--muted);font-size:.77rem}footer strong{color:var(--purple)}
+    @media(max-width:900px){.hero{grid-template-columns:1fr}.summary,.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.chapter-head{grid-template-columns:1fr;gap:10px}}
+    @media(max-width:640px){header{padding-inline:16px}.history{display:none}main{padding:24px 14px 58px}.hero-main{padding:27px 22px}.hero-side{padding:21px}h1{font-size:2.55rem}.summary,.metrics,.grid{grid-template-columns:1fr}.stat{min-height:0}.wide{grid-column:auto}.chapter{margin-bottom:20px;padding:23px 17px;border-radius:19px}.chapter:before{left:17px}.chapter-head{display:block;padding-bottom:16px}.chapter-head>p{margin-top:10px}.top{display:block}.pill{margin-top:7px}footer{flex-direction:column;align-items:flex-start}}
+  </style>
 </head>
-<body data-ops-surface="weho-closeout">
-  <header class="ops-header">
-    <a class="ops-brand" href="/" aria-label="E4LA home">
-      <img src="/assets/e4la-logo-palm-light.png" alt="E4LA">
-      <span class="ops-brand__label">Client Report</span>
-    </a>
-    <div class="ops-header__actions">
-      <span class="ops-status">Historical engagement record</span>
+<body>
+<header>
+  <a class="brand" href="/" aria-label="E4LA home"><img src="/assets/e4la-logo-palm-light.png" alt="E4LA"><span>Client Report</span></a>
+  <span class="history">Historical Engagement Record</span>
+</header>
+<main>
+  <section class="hero">
+    <div class="hero-main">
+      <p class="eyebrow">E4LA · Evolve for Los Angeles</p>
+      <h1>WeHo Grill<br>Engagement Closeout Report</h1>
+      <p class="lead">A client-facing record of the strategy, production, optimization, and implementation work completed or materially advanced during the active portion of WeHo Grill’s 90-Day Brand Visibility &amp; Local Growth Roadmap.</p>
     </div>
-  </header>
+    <aside class="hero-side">
+      <div><span class="label">Roadmap status</span><div class="big">30 / 90</div><p class="side-copy">The program was discontinued during approximately the first 30 days of a planned 90-day roadmap. Later optimization, scaling, and measurement phases were therefore not reached.</p></div>
+      <div class="progress"><span></span></div>
+    </aside>
+  </section>
 
-  <main class="closeout-wrap">
-    <section class="closeout-hero" aria-labelledby="report-title">
-      <div class="closeout-hero__main">
-        <p class="ops-eyebrow">E4LA · Evolve for Los Angeles</p>
-        <h1 id="report-title">WeHo Grill<br>Engagement Closeout Report</h1>
-        <p class="closeout-hero__lead">A client-facing record of the strategy, production, optimization, and implementation work completed or materially advanced during the active portion of WeHo Grill’s 90-Day Brand Visibility &amp; Local Growth Roadmap.</p>
-      </div>
-      <aside class="closeout-hero__side" aria-label="Engagement duration">
-        <div>
-          <span class="closeout-label">Roadmap status</span>
-          <div class="closeout-big">30 / 90</div>
-          <p class="closeout-side-copy">The program was discontinued during approximately the first 30 days of a planned 90-day roadmap. Later optimization, scaling, and measurement phases were therefore not reached.</p>
-        </div>
-        <div>
-          <div class="closeout-progress" aria-label="Approximately one-third of roadmap elapsed"><span></span></div>
-        </div>
-      </aside>
-    </section>
+  <section class="summary">
+    <article class="stat"><span class="label">Program</span><strong>90-Day Growth Roadmap</strong><p>Brand visibility, local growth, customer acquisition, catering and content.</p></article>
+    <article class="stat"><span class="label">Positioning</span><strong>Modern Persian Hospitality</strong><p>Working brand direction for Los Angeles visibility and commercial messaging.</p></article>
+    <article class="stat"><span class="label">Status</span><strong>Closed Early</strong><p>Client relationship ended before the second and third roadmap phases were completed.</p></article>
+    <article class="stat"><span class="label">Closeout</span><strong>September 2026</strong><p>This report records work completed, launched, prepared, or actively underway before cancellation.</p></article>
+  </section>
 
-    <section class="closeout-summary-grid" aria-label="Engagement summary">
-      <article class="closeout-stat"><span class="closeout-label">Program</span><strong>90-Day Growth Roadmap</strong><span>Brand visibility, local growth, customer acquisition, catering and content.</span></article>
-      <article class="closeout-stat"><span class="closeout-label">Positioning</span><strong>Modern Persian Hospitality</strong><span>Working brand direction for Los Angeles visibility and commercial messaging.</span></article>
-      <article class="closeout-stat"><span class="closeout-label">Status</span><strong>Closed Early</strong><span>Client relationship ended before the second and third roadmap phases were completed.</span></article>
-      <article class="closeout-stat"><span class="closeout-label">Closeout</span><strong>September 2026</strong><span>This page records work completed, launched, prepared, or actively underway before cancellation.</span></article>
-    </section>
+  <nav aria-label="Report sections"><a href="#foundation">Foundation</a><a href="#google">Google</a><a href="#social">Instagram</a><a href="#catering">Catering</a><a href="#content">Content</a><a href="#platforms">Platforms</a><a href="#reputation">Reputation</a><a href="#closeout">Closeout</a></nav>
 
-    <nav class="closeout-nav" aria-label="Report sections">
-      <a href="#foundation">Foundation</a>
-      <a href="#google">Google</a>
-      <a href="#social">Instagram</a>
-      <a href="#catering">Catering</a>
-      <a href="#content">Content</a>
-      <a href="#platforms">Platforms</a>
-      <a href="#reputation">Reputation</a>
-      <a href="#closeout">Closeout</a>
-    </nav>
+  <section class="chapter" id="foundation">
+    <div class="chapter-head"><div><p class="eyebrow">01 · Foundation</p><h2>Business assessment &amp; brand direction</h2></div><p>The first month focused on diagnosis, correcting inefficient activity, offer development, content preparation, and building the foundation required for later optimization.</p></div>
+    <div class="grid">
+      <article class="card"><div class="top"><h3>Business &amp; digital assessment</h3><span class="pill done">Completed</span></div><p>E4LA reviewed WeHo Grill as a connected customer-acquisition ecosystem rather than a social-media-only account.</p><ul><li>Website and menu alignment</li><li>Google Business Profile and local discovery</li><li>Google Ads and Meta/Instagram advertising</li><li>OpenTable, ezCater, DoorDash and Uber Eats</li><li>Reviews, catering, group ordering and digital customer journey</li></ul></article>
+      <article class="card"><div class="top"><h3>Strategic positioning</h3><span class="pill done">Established</span></div><p>The working direction became <strong>Modern Persian Hospitality in Los Angeles</strong>, extending the restaurant beyond a generic Persian/Mediterranean category label.</p><ul><li>Persian hospitality and cultural authenticity</li><li>Grilled specialties and regional Persian cuisine</li><li>Quality, freshness and local relevance</li><li>Catering and group-ordering visibility</li></ul></article>
+    </div>
+  </section>
 
-    <section class="closeout-section" id="foundation">
-      <div class="closeout-section__head">
-        <div><p class="ops-eyebrow">01 · Foundation</p><h2>Business assessment &amp; brand direction</h2></div>
-        <p>The first month focused primarily on diagnosis, correction of inefficient activity, offer development, content preparation, and building the commercial foundation required for later optimization.</p>
-      </div>
-      <div class="closeout-grid">
-        <article class="closeout-card">
-          <div class="closeout-card__top"><h3>Business &amp; digital assessment</h3><span class="state-pill state-pill--done">Completed</span></div>
-          <p>E4LA reviewed WeHo Grill as a connected customer-acquisition ecosystem rather than as a social-media-only account.</p>
-          <ul>
-            <li>Website and menu alignment</li><li>Google Business Profile and local discovery</li><li>Google Ads and Meta/Instagram advertising</li><li>OpenTable, ezCater, DoorDash and Uber Eats</li><li>Reviews, catering, group ordering and digital customer journey</li>
-          </ul>
-        </article>
-        <article class="closeout-card">
-          <div class="closeout-card__top"><h3>Strategic positioning</h3><span class="state-pill state-pill--done">Established</span></div>
-          <p>The working direction became <strong>Modern Persian Hospitality in Los Angeles</strong>, extending the restaurant’s positioning beyond a generic Persian/Mediterranean category label.</p>
-          <ul>
-            <li>Persian hospitality and cultural authenticity</li><li>Grilled specialties and regional Persian cuisine</li><li>Quality, freshness and local relevance</li><li>Catering and group-ordering visibility</li>
-          </ul>
-        </article>
-      </div>
-    </section>
+  <section class="chapter alt" id="google">
+    <div class="chapter-head"><div><p class="eyebrow">02 · Search &amp; acquisition</p><h2>Google Business Profile, local search &amp; advertising</h2></div><p>Work began on both organic local visibility and paid acquisition, but the full 90-day testing and optimization cycle was not available before cancellation.</p></div>
+    <div class="grid">
+      <article class="card"><div class="top"><h3>Google Business Profile &amp; local search</h3><span class="pill partial">In progress</span></div><p>E4LA worked on business-profile consistency, local intent, Google Updates, menu/product visibility, review signals, catering discovery and cross-platform alignment.</p><ul><li>Persian food / Persian restaurant</li><li>Halal food / Halal Persian food</li><li>Koobideh / kabob / Persian kabob</li><li>Persian catering / corporate catering / group meals</li><li>Specific Persian dishes, menu products and nearby restaurant intent</li></ul></article>
+      <article class="card"><div class="top"><h3>Existing Google Ads audit</h3><span class="pill done">Completed</span></div><p>The existing campaign relied heavily on direction actions as reported conversions, limiting confidence that platform conversion volume represented equivalent revenue outcomes.</p><div class="metrics"><div class="metric"><strong>171,856</strong><span>Impressions</span></div><div class="metric"><strong>~7,900</strong><span>Interactions</span></div><div class="metric"><strong>~2,426</strong><span>Reported conversions</span></div><div class="metric"><strong>~2,368</strong><span>Direction actions</span></div><div class="metric"><strong>35</strong><span>Phone-call leads</span></div><div class="metric"><strong>~$2,299.91</strong><span>Spend reviewed</span></div><div class="metric"><strong>~$2,370</strong><span>Reported value</span></div><div class="metric"><strong>97%+</strong><span>Approx. direction-action share</span></div></div></article>
+      <article class="card wide"><div class="top"><h3>Advertising reset</h3><span class="pill partial">Launched, not fully optimized</span></div><p>E4LA stopped the previous Google advertising approach and began rebuilding paid acquisition around more commercially meaningful customer intent, including catering, group ordering, menu offers and new-customer demand. The revised Google budget was approximately <strong>$600</strong>. The relationship ended before the replacement campaign received the planned testing and optimization period.</p></article>
+    </div>
+  </section>
 
-    <section class="closeout-section" id="google">
-      <div class="closeout-section__head">
-        <div><p class="ops-eyebrow">02 · Search &amp; acquisition</p><h2>Google Business Profile, local search &amp; advertising</h2></div>
-        <p>Work began on both organic local visibility and paid acquisition, but the full 90-day testing and optimization cycle was not available before cancellation.</p>
-      </div>
-      <div class="closeout-grid">
-        <article class="closeout-card">
-          <div class="closeout-card__top"><h3>Google Business Profile &amp; local search</h3><span class="state-pill state-pill--partial">In progress</span></div>
-          <p>E4LA worked on business-profile consistency, local intent, Google Updates, menu/product visibility, review signals, catering discovery and cross-platform alignment.</p>
-          <ul>
-            <li>Persian food / Persian restaurant</li><li>Halal food / Halal Persian food</li><li>Koobideh / kabob / Persian kabob</li><li>Persian catering / corporate catering / group meals</li><li>Specific Persian dishes, menu products and nearby restaurant intent</li>
-          </ul>
-        </article>
-        <article class="closeout-card">
-          <div class="closeout-card__top"><h3>Existing Google Ads audit</h3><span class="state-pill state-pill--done">Completed</span></div>
-          <p>The existing campaign was audited and found to rely heavily on direction actions as reported conversions, limiting confidence that platform conversion volume represented equivalent revenue outcomes.</p>
-          <div class="closeout-metrics">
-            <div class="closeout-metric"><strong>171,856</strong><span>Impressions reviewed</span></div>
-            <div class="closeout-metric"><strong>~7,900</strong><span>Interactions</span></div>
-            <div class="closeout-metric"><strong>~2,426</strong><span>Reported conversions</span></div>
-            <div class="closeout-metric"><strong>~2,368</strong><span>Direction actions</span></div>
-            <div class="closeout-metric"><strong>35</strong><span>Phone-call lead conversions</span></div>
-            <div class="closeout-metric"><strong>~$2,299.91</strong><span>Spend reviewed</span></div>
-            <div class="closeout-metric"><strong>~$2,370</strong><span>Reported conversion value</span></div>
-            <div class="closeout-metric"><strong>97%+</strong><span>Approx. share of reported conversions represented by direction actions</span></div>
-          </div>
-        </article>
-        <article class="closeout-card closeout-card--wide">
-          <div class="closeout-card__top"><h3>Advertising reset</h3><span class="state-pill state-pill--partial">Launched, not fully optimized</span></div>
-          <p>E4LA stopped the previous Google advertising approach and began rebuilding paid acquisition around more commercially meaningful customer intent, including catering, group ordering, menu offers and new-customer demand. The revised Google budget was approximately <strong>$600</strong>. The engagement ended before the replacement campaign received the planned multi-cycle testing and optimization period.</p>
-        </article>
-      </div>
-    </section>
+  <section class="chapter blush" id="social">
+    <div class="chapter-head"><div><p class="eyebrow">03 · Social &amp; paid media</p><h2>Instagram strategy &amp; early creative testing</h2></div><p>The project ended before a full sequential Instagram program could be deployed. Only a limited number of planned pieces were published and promoted.</p></div>
+    <div class="grid">
+      <article class="card"><div class="top"><h3>Meta / Instagram advertising review</h3><span class="pill done">Previous spend stopped</span></div><p>The prior ongoing Instagram advertising level was approximately <strong>$2,000 per month</strong>. E4LA canceled that approach and shifted toward smaller controlled creative tests tied to specific content and commercial objectives.</p></article>
+      <article class="card"><div class="top"><h3>Three initial promoted creatives</h3><span class="pill partial">Early test only</span></div><p>Approximately <strong>$80 total</strong> was allocated to three initial promoted pieces.</p><ul><li><strong>Appetizer series:</strong> photo-led introduction to WeHo Grill appetizers</li><li><strong>Sambuseh:</strong> short-form video using a fun concept</li><li><strong>Kabob Torsh:</strong> culturally driven video centered on Gilan / Northern Iran and regional authenticity</li></ul></article>
+      <article class="card wide"><div class="top"><h3>Publishing &amp; responsibility model</h3><span class="pill prepared">Defined</span></div><p>E4LA established a working division between strategic/revenue-focused campaign activity and the restaurant’s day-to-day organic social activity to reduce conflicting promotion decisions and preserve clearer campaign attribution.</p></article>
+    </div>
+  </section>
 
-    <section class="closeout-section" id="social">
-      <div class="closeout-section__head">
-        <div><p class="ops-eyebrow">03 · Social &amp; paid media</p><h2>Instagram strategy &amp; early creative testing</h2></div>
-        <p>The project ended before a full sequential Instagram program could be deployed. Only a limited number of planned pieces were published and promoted.</p>
-      </div>
-      <div class="closeout-grid">
-        <article class="closeout-card">
-          <div class="closeout-card__top"><h3>Meta / Instagram advertising review</h3><span class="state-pill state-pill--done">Previous spend stopped</span></div>
-          <p>The prior ongoing Instagram advertising level was approximately <strong>$2,000 per month</strong>. E4LA canceled that approach and shifted toward smaller, controlled creative tests tied to specific content and commercial objectives.</p>
-        </article>
-        <article class="closeout-card">
-          <div class="closeout-card__top"><h3>Three initial promoted creatives</h3><span class="state-pill state-pill--partial">Early test only</span></div>
-          <p>Approximately <strong>$80 total</strong> was allocated to three initial promoted pieces before the relationship ended.</p>
-          <ul>
-            <li><strong>Appetizer series:</strong> photo-led introduction to WeHo Grill appetizers</li>
-            <li><strong>Sambuseh:</strong> short-form video using a lighter, fun concept</li>
-            <li><strong>Kabob Torsh:</strong> culturally driven video centered on Gilan / Northern Iran and regional authenticity</li>
-          </ul>
-        </article>
-        <article class="closeout-card closeout-card--wide">
-          <div class="closeout-card__top"><h3>Publishing &amp; responsibility model</h3><span class="state-pill state-pill--prepared">Defined</span></div>
-          <p>E4LA established a working division between strategic/revenue-focused campaign activity and the restaurant’s day-to-day organic social activity. This was intended to reduce conflicting promotion decisions and preserve clearer campaign attribution.</p>
-        </article>
-      </div>
-    </section>
+  <section class="chapter" id="catering">
+    <div class="chapter-head"><div><p class="eyebrow">04 · Commercial offer development</p><h2>Catering strategy, menu architecture &amp; visual system</h2></div><p>Catering became one of the strongest commercial opportunities identified during the first phase and received significant strategy, menu, packaging and visual-development work.</p></div>
+    <div class="grid">
+      <article class="card"><div class="top"><h3>Catering architecture</h3><span class="pill done">Developed</span></div><p>The customer-facing structure was reorganized around a clearer group-ordering hierarchy.</p><ul><li>Catering packages</li><li>Boxed lunches</li><li>Sandwich boxes</li><li>Group trays</li><li>Rice, salads and Persian sides</li><li>Mezze, desserts and service items</li></ul></article>
+      <article class="card"><div class="top"><h3>Menu development</h3><span class="pill done">Multiple rounds completed</span></div><p>E4LA worked through package architecture, product combinations, portion structures, quantities, naming, descriptions, boxed-meal formats, sandwich formats, trays, operational considerations and platform presentation.</p></article>
+      <article class="card"><div class="top"><h3>Pricing dependency</h3><span class="pill stopped">Blocked at closeout</span></div><p>Final revised restaurant pricing was requested but was not received before the engagement ended. Some catering materials therefore remained based on previously supplied pricing and final synchronization could not be completed.</p></article>
+      <article class="card"><div class="top"><h3>Sandwich-box product development</h3><span class="pill done">Developed</span></div><p>Dedicated group-order concepts were prepared for Koobideh, Juicy Chicken and Falafel sandwiches, with organized sides such as Shirazi Salad, pickles and sauce for convenient 10-, 20-, 30-person and larger orders.</p></article>
+      <article class="card wide"><div class="top"><h3>Catering &amp; food visual production</h3><span class="pill done">Substantial production completed</span></div><p>Multiple visual iterations were produced for kabobs, Juicy Chicken, mixed grill, premium kabob, falafel, rice, salads, hummus, Persian appetizers, desserts, boxed meals and sandwich boxes, emphasizing recognizable, brand-faithful food presentation and practical catering packaging.</p></article>
+    </div>
+  </section>
 
-    <section class="closeout-section" id="catering">
-      <div class="closeout-section__head">
-        <div><p class="ops-eyebrow">04 · Commercial offer development</p><h2>Catering strategy, menu architecture &amp; visual system</h2></div>
-        <p>Catering became one of the strongest commercial opportunities identified during the first phase and received significant strategy, menu, packaging and visual-development work.</p>
-      </div>
-      <div class="closeout-grid">
-        <article class="closeout-card">
-          <div class="closeout-card__top"><h3>Catering architecture</h3><span class="state-pill state-pill--done">Developed</span></div>
-          <p>The customer-facing structure was reorganized around a clearer group-ordering hierarchy:</p>
-          <ul><li>Catering packages</li><li>Boxed lunches</li><li>Sandwich boxes</li><li>Group trays</li><li>Rice, salads and Persian sides</li><li>Mezze, desserts and service items</li></ul>
-        </article>
-        <article class="closeout-card">
-          <div class="closeout-card__top"><h3>Menu development</h3><span class="state-pill state-pill--done">Multiple rounds completed</span></div>
-          <p>E4LA worked through package architecture, product combinations, portion structures, quantities, naming, descriptions, boxed-meal formats, sandwich formats, trays, operational considerations and platform presentation.</p>
-        </article>
-        <article class="closeout-card">
-          <div class="closeout-card__top"><h3>Pricing dependency</h3><span class="state-pill state-pill--stopped">Blocked at closeout</span></div>
-          <p>Final revised restaurant pricing was requested but was not received before the engagement ended. As a result, some catering materials remained based on previously supplied pricing and final synchronization could not be completed.</p>
-        </article>
-        <article class="closeout-card">
-          <div class="closeout-card__top"><h3>Sandwich-box product development</h3><span class="state-pill state-pill--done">Developed</span></div>
-          <p>Dedicated group-order concepts were prepared for Koobideh, Juicy Chicken and Falafel sandwiches, with organized sides such as Shirazi Salad, pickles and sauce for convenient 10-, 20-, 30-person and larger orders.</p>
-        </article>
-        <article class="closeout-card closeout-card--wide">
-          <div class="closeout-card__top"><h3>Catering &amp; food visual production</h3><span class="state-pill state-pill--done">Substantial production completed</span></div>
-          <p>Multiple visual iterations were produced for kabobs, Juicy Chicken, mixed grill, premium kabob, falafel, rice, salads, hummus, Persian appetizers, desserts, boxed meals and sandwich boxes. The work emphasized recognizable, brand-faithful food presentation and practical catering packaging.</p>
-        </article>
-      </div>
-    </section>
+  <section class="chapter alt" id="content">
+    <div class="chapter-head"><div><p class="eyebrow">05 · Production</p><h2>Prepared content inventory at cancellation</h2></div><p>Content had been prepared in advance for the next phase, with paid distribution intended to follow a staged rather than random posting sequence.</p></div>
+    <div class="grid">
+      <article class="card"><div class="top"><h3>Edited video inventory</h3><span class="pill prepared">Prepared, unpublished</span></div><p>Approximately <strong>5–6 edited video assets</strong> remained prepared for later publication and advertising when the engagement ended.</p></article>
+      <article class="card"><div class="top"><h3>Photo / content inventory</h3><span class="pill prepared">Prepared, unpublished</span></div><p>More than <strong>10 photo/content assets</strong> had also been prepared in anticipation of continuing the roadmap into the following month.</p></article>
+      <article class="card wide"><div class="top"><h3>Roadmap dependency</h3><span class="pill stopped">Sequence interrupted</span></div><p>The unpublished inventory was created as part of a connected content-and-advertising sequence. Cancellation occurred before those assets could be deployed, tested and evaluated within the planned campaign cycle.</p></article>
+    </div>
+  </section>
 
-    <section class="closeout-section" id="content">
-      <div class="closeout-section__head">
-        <div><p class="ops-eyebrow">05 · Production</p><h2>Prepared content inventory at cancellation</h2></div>
-        <p>Content had been prepared in advance for the next phase of the roadmap, with paid distribution intended to follow a staged rather than random posting sequence.</p>
-      </div>
-      <div class="closeout-grid">
-        <article class="closeout-card">
-          <div class="closeout-card__top"><h3>Edited video inventory</h3><span class="state-pill state-pill--prepared">Prepared, unpublished</span></div>
-          <p>Approximately <strong>5–6 edited video assets</strong> remained prepared for later publication and advertising when the engagement ended.</p>
-        </article>
-        <article class="closeout-card">
-          <div class="closeout-card__top"><h3>Photo / content inventory</h3><span class="state-pill state-pill--prepared">Prepared, unpublished</span></div>
-          <p>More than <strong>10 photo/content assets</strong> had also been prepared in anticipation of continuing the roadmap into the following month.</p>
-        </article>
-        <article class="closeout-card closeout-card--wide">
-          <div class="closeout-card__top"><h3>Roadmap dependency</h3><span class="state-pill state-pill--stopped">Sequence interrupted</span></div>
-          <p>The unpublished inventory was created as part of a connected content-and-advertising sequence. Cancellation occurred before those assets could be deployed, tested and evaluated within the planned campaign cycle.</p>
-        </article>
-      </div>
-    </section>
+  <section class="chapter blush" id="platforms">
+    <div class="chapter-head"><div><p class="eyebrow">06 · Platform alignment</p><h2>ezCater, Toast preparation &amp; customer touchpoints</h2></div><p>Platform work was underway but should not be represented as fully completed because final pricing and later roadmap implementation were still outstanding.</p></div>
+    <div class="grid">
+      <article class="card"><div class="top"><h3>ezCater restructuring</h3><span class="pill partial">Partially implemented</span></div><p>E4LA reviewed and reorganized the catering structure around packages, boxes, trays and sides, including descriptions, customer-ordering flow, minimum-order considerations and delivery logic. Final updating remained incomplete because current pricing was not supplied before closeout.</p></article>
+      <article class="card"><div class="top"><h3>Toast Catering &amp; Events</h3><span class="pill prepared">Training completed</span></div><p>E4LA completed the training/research required to incorporate Toast Catering &amp; Events into the following month of the roadmap. The engagement was canceled before implementation began.</p></article>
+      <article class="card wide"><div class="top"><h3>Cross-platform alignment</h3><span class="pill partial">In progress</span></div><p>The roadmap included consistency work across Google Business Profile, Google Ads, website, Instagram, ezCater, Toast, DoorDash, Uber Eats, catering materials and online ordering. Work began on naming, pricing, descriptions, photography, offers and customer pathways, but full synchronization was not reached.</p></article>
+    </div>
+  </section>
 
-    <section class="closeout-section" id="platforms">
-      <div class="closeout-section__head">
-        <div><p class="ops-eyebrow">06 · Platform alignment</p><h2>ezCater, Toast preparation &amp; customer touchpoints</h2></div>
-        <p>Platform work was underway but should not be represented as fully completed because final pricing and later roadmap implementation were still outstanding.</p>
-      </div>
-      <div class="closeout-grid">
-        <article class="closeout-card">
-          <div class="closeout-card__top"><h3>ezCater restructuring</h3><span class="state-pill state-pill--partial">Partially implemented</span></div>
-          <p>E4LA reviewed and reorganized the catering structure around packages, boxes, trays and sides, including descriptions, customer-ordering flow, minimum-order considerations and delivery logic. Final updating remained incomplete because current pricing was not supplied before closeout.</p>
-        </article>
-        <article class="closeout-card">
-          <div class="closeout-card__top"><h3>Toast Catering &amp; Events</h3><span class="state-pill state-pill--prepared">Training completed</span></div>
-          <p>E4LA completed the training/research required to incorporate Toast Catering &amp; Events into the following month of the roadmap. The engagement was canceled before implementation began.</p>
-        </article>
-        <article class="closeout-card closeout-card--wide">
-          <div class="closeout-card__top"><h3>Cross-platform alignment</h3><span class="state-pill state-pill--partial">In progress</span></div>
-          <p>The roadmap included consistency work across Google Business Profile, Google Ads, website, Instagram, ezCater, Toast, DoorDash, Uber Eats, catering materials and online ordering. Work began on naming, pricing, descriptions, photography, offers and customer pathways but the full synchronization phase was not reached.</p>
-        </article>
-      </div>
-    </section>
+  <section class="chapter" id="reputation">
+    <div class="chapter-head"><div><p class="eyebrow">07 · Authority &amp; relationships</p><h2>Reviews, reputation &amp; creator direction</h2></div><p>These areas were initiated during the first phase, while deeper outreach and the longer-term reputation cycle had not yet been completed.</p></div>
+    <div class="grid">
+      <article class="card"><div class="top"><h3>Review &amp; reputation strategy</h3><span class="pill partial">Initiated</span></div><p>E4LA worked on Google review strategy, authentic customer-feedback direction, local trust signals, reputation consistency and the relationship between reviews and local-search visibility.</p></article>
+      <article class="card"><div class="top"><h3>Creator / influencer direction</h3><span class="pill prepared">Introductions provided</span></div><p>Near the end of the engagement, E4LA introduced several potential Los Angeles food creators/influencers. Had the program continued, E4LA was expected to act as a third-party communication and negotiation representative to simplify collaboration for the restaurant, without taking a percentage of influencer compensation or deals.</p></article>
+    </div>
+  </section>
 
-    <section class="closeout-section" id="reputation">
-      <div class="closeout-section__head">
-        <div><p class="ops-eyebrow">07 · Authority &amp; relationships</p><h2>Reviews, reputation &amp; creator direction</h2></div>
-        <p>These areas were initiated during the first phase, while the deeper outreach and longer-term reputation cycle had not yet been completed.</p>
-      </div>
-      <div class="closeout-grid">
-        <article class="closeout-card">
-          <div class="closeout-card__top"><h3>Review &amp; reputation strategy</h3><span class="state-pill state-pill--partial">Initiated</span></div>
-          <p>E4LA worked on Google review strategy, authentic customer-feedback direction, local trust signals, reputation consistency and the relationship between reviews and local-search visibility.</p>
-        </article>
-        <article class="closeout-card">
-          <div class="closeout-card__top"><h3>Creator / influencer direction</h3><span class="state-pill state-pill--prepared">Introductions provided</span></div>
-          <p>Near the end of the engagement, E4LA introduced several potential Los Angeles food creators/influencers for WeHo Grill to consider. Had the program continued, E4LA was expected to act as a third-party communication and negotiation representative to simplify collaboration for the restaurant, without taking a percentage of influencer compensation or deals.</p>
-        </article>
-      </div>
-    </section>
+  <section class="chapter alt" id="closeout">
+    <div class="chapter-head"><div><p class="eyebrow">08 · Closeout</p><h2>What the 90-day roadmap did not reach</h2></div><p>The engagement ended approximately one-third of the way through the intended program, before sufficient time existed for repeated measurement, iteration and scaling.</p></div>
+    <div class="note"><h3>Important reporting context</h3><p>This engagement should not be evaluated as a completed 90-day growth program. Cancellation occurred before later phases involving sustained performance measurement, multi-cycle campaign optimization, full content rollout, accumulated local-search improvement, extended Google Business Profile testing, catering performance analysis, full cross-platform synchronization, creator-collaboration execution and longer-term reputation development.</p></div>
+    <div class="budgets"><div class="budget"><span>Revised Google advertising</span><strong>~$600</strong><span>Replacement budget after prior campaign audit</span></div><div class="budget"><span>Previous Instagram advertising</span><strong>~$2,000/mo</strong><span>Prior ongoing approach canceled</span></div><div class="budget"><span>Initial Instagram test</span><strong>~$80</strong><span>Across three promoted creative pieces</span></div></div>
+    <div class="grid" style="margin-top:12px"><article class="card wide"><div class="top"><h3>Final engagement status</h3><span class="pill stopped">Closed</span></div><p>WeHo Grill is no longer an active E4LA client. This report records only work that was completed, launched, substantially prepared, or actively underway before cancellation. No future roadmap results, optimization outcomes or projected deliverables are represented as completed E4LA work.</p></article></div>
+  </section>
 
-    <section class="closeout-section" id="closeout">
-      <div class="closeout-section__head">
-        <div><p class="ops-eyebrow">08 · Closeout</p><h2>What the 90-day roadmap did not reach</h2></div>
-        <p>The engagement ended approximately one-third of the way through the intended program, before sufficient time existed for repeated measurement, iteration and scaling.</p>
-      </div>
-      <div class="closeout-note">
-        <h3>Important reporting context</h3>
-        <p>This engagement should not be evaluated as a completed 90-day growth program. The cancellation occurred before later phases involving sustained performance measurement, multi-cycle campaign optimization, full content rollout, accumulated local-search improvement, extended Google Business Profile testing, catering performance analysis, full cross-platform synchronization, creator-collaboration execution and longer-term reputation development.</p>
-      </div>
-
-      <div class="closeout-budget" aria-label="Advertising position at closeout">
-        <div class="closeout-budget__item"><span>Revised Google advertising</span><strong>~$600</strong><span>Replacement budget after prior campaign audit</span></div>
-        <div class="closeout-budget__item"><span>Previous Instagram advertising</span><strong>~$2,000/mo</strong><span>Prior ongoing approach canceled</span></div>
-        <div class="closeout-budget__item"><span>Initial Instagram test</span><strong>~$80</strong><span>Across three promoted creative pieces</span></div>
-      </div>
-
-      <div class="closeout-grid" style="margin-top:16px">
-        <article class="closeout-card closeout-card--wide">
-          <div class="closeout-card__top"><h3>Final engagement status</h3><span class="state-pill state-pill--stopped">Closed</span></div>
-          <p>WeHo Grill is no longer an active E4LA client. This report records only work that was completed, launched, substantially prepared, or actively underway before cancellation. No future roadmap results, optimization outcomes or projected deliverables are represented as completed E4LA work.</p>
-        </article>
-      </div>
-    </section>
-
-    <footer class="closeout-footer">
-      <div><strong>E4LA — Evolve for Los Angeles</strong><br>Strategic Growth Through Human Creativity + AI</div>
-      <div>WeHo Grill · Historical Engagement Closeout Report · September 2026</div>
-    </footer>
-  </main>
+  <footer><div><strong>E4LA — Evolve for Los Angeles</strong><br>Strategic Growth Through Human Creativity + AI</div><div>WeHo Grill · Historical Engagement Closeout Report · September 2026</div></footer>
+</main>
 </body>
 </html>
