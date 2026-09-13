@@ -1,11 +1,11 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "e4la-client-operations-production",
+  "name": "e4la",
   "pages_build_output_dir": ".",
   "compatibility_date": "2026-08-20",
   "vars": {
     "ENVIRONMENT": "production",
-    "PUBLIC_SITE_URL": "https://e4la-client-operations-production.pages.dev"
+    "PUBLIC_SITE_URL": "https://www.e4la.org"
   },
   "d1_databases": [
     {
