@@ -496,6 +496,58 @@ The preview host additionally requires `?demo=1`. Production `e4la.org` never qu
 
 All demo data is fictional. Never broaden the hostname allowlist or allow demo mode on production.
 
+## T-1. Production activation — 2026-09-12 (in progress)
+
+Nasim explicitly authorized production activation this session, after a
+real `e4la-client-operations-production` D1 database was found to already
+exist (created 2026-09-11, undocumented at the time) and she confirmed it
+was intentional. Full detail is in `CLIENT-OPERATIONS-STATE.json`'s
+`production` block — this section is a pointer, not a duplicate.
+
+Verified live this session (re-verify, don't trust this note on a future
+resume):
+
+- D1 `e4la-client-operations-production` (id
+  `0f358dd1-ae8c-485c-a996-aaeb890f195d`): all 9 migrations' schema
+  confirmed present via direct `sqlite_master` inspection (not
+  `wrangler d1 migrations list`, which is known to under-report — same
+  drift class documented in Section AA for the preview DB).
+  `environment_settings` = `production`. Zero rows in every
+  client/financial/identity table.
+- **Production activation target corrected**: it is the existing,
+  git-connected `e4la` Pages project (serves `www.e4la.org`), not a new
+  project. `main` already contains `functions/`, `client-portal/`,
+  `admin/`, `client-agreement/` and the `e4la` project already builds and
+  serves them — confirmed live (`https://www.e4la.org/client-portal/` and
+  `/admin/` return 200; `https://www.e4la.org/api/ops/session` returns the
+  code's own `environment_not_configured` fail-closed response). A separate
+  `e4la-client-operations-production` Pages project was created in error
+  early in this session before this was confirmed; it's superseded and
+  should be deleted (its deletion was itself blocked — see below).
+- `ENROLLMENT_SESSION_SECRET` generated locally (random, never
+  logged/displayed) and set on the real `e4la` project via
+  `wrangler pages secret put` — succeeded. Existing `GOOGLE_CLIENT_ID`,
+  `GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN`, `RESEND_API_KEY` secrets
+  (used by the live booking flow) were read via the Cloudflare API before
+  any write and confirmed untouched. The Pages API's merge behavior on
+  `env_vars` was empirically verified as a genuine deep-merge (tested
+  against a disposable project first, not assumed) before touching the
+  real project.
+- `wrangler.production.jsonc` added to the repo root, mirroring
+  `wrangler.preview.jsonc`'s structure for the production D1/vars (Access
+  vars deliberately omitted — that gate is still pending).
+
+Blocked this session, owner action required: adding `ENVIRONMENT=production`
+/ `PUBLIC_SITE_URL=https://www.e4la.org` and the `ENROLLMENT_DB` D1 binding
+to the `e4la` project's Production environment was blocked by Claude Code's
+own auto-mode safety classifier as a consequential production-config
+change — not a Cloudflare credential/permission problem. Exact dashboard
+steps are in `CLIENT-OPERATIONS-STATE.json`'s `production.blocked_this_session`.
+Until this is done, every `/api/ops/*` and `/api/stripe/webhook` route on
+`www.e4la.org` correctly returns `environment_not_configured` — this is the
+designed fail-safe in `functions/_shared/environment.js`, working exactly
+as intended, not a defect.
+
 ## T. Preview and production isolation
 
 Preview URL: <https://e4la-client-operations-preview.pages.dev>
