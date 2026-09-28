@@ -11,13 +11,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root{--ink:#171428;--muted:#6e6979;--line:rgba(23,20,40,.10);--bg:#f7f6f3;--purple:#6d28d9;--deep:#3d176f;--pink:#d72a78;--lav:#f4effb;--mint:#edf8f4;--shadow:0 18px 48px rgba(23,20,40,.07);--gradient:linear-gradient(110deg,#f2b84b 0%,#f97316 30%,#d72a78 58%,#6d28d9 100%)}
-    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-    header{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:72px;padding:14px clamp(18px,5vw,70px);border-bottom:1px solid var(--line);background:#fff}.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--purple);font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.brand img{width:76px;height:38px;object-fit:contain}.status{padding:7px 10px;border:1px solid rgba(109,40,217,.17);border-radius:999px;background:rgba(109,40,217,.05);color:var(--purple);font-size:10px;font-weight:800;text-transform:uppercase}
-    main{max-width:980px;margin:0 auto;padding:36px 20px 80px}.panel,.section{border:1px solid var(--line);border-radius:24px;background:#fff;box-shadow:var(--shadow)}.hero{padding:38px}.eyebrow{margin:0 0 10px;color:var(--pink);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.eyebrow:before{display:inline-block;width:24px;height:1px;margin:0 9px 3px 0;background:var(--gradient);content:""}h1{margin:0 0 14px;background:var(--gradient);background-clip:text;-webkit-background-clip:text;color:transparent;font-size:clamp(2.2rem,5vw,4rem);line-height:1;letter-spacing:-.05em}.lead{margin:0;color:var(--muted);font-size:1rem;line-height:1.7}.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px}.meta div{padding:15px;border:1px solid var(--line);border-radius:14px;background:var(--lav)}.meta span{display:block;color:var(--pink);font-size:.68rem;font-weight:800;text-transform:uppercase}.meta strong{display:block;margin-top:5px;color:var(--deep);font-size:.95rem}
-    .section{margin-top:20px;padding:28px}.section h2{margin:0 0 6px;color:var(--deep);font-size:1.45rem}.section>p{margin:0 0 18px;color:var(--muted);line-height:1.65}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{padding:20px;border:1px solid var(--line);border-radius:16px;background:#fff}.card span{display:block;color:var(--pink);font-size:.68rem;font-weight:800;text-transform:uppercase}.card strong{display:block;margin:6px 0;color:var(--deep);font-size:1.55rem}.card p{margin:0;color:var(--muted);font-size:.84rem;line-height:1.55}.terms{display:grid;gap:10px}.term{padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:#fff}.term strong{display:block;margin-bottom:5px;color:var(--deep);font-size:.9rem}.term p{margin:0;color:var(--muted);font-size:.83rem;line-height:1.55}.check{display:flex;align-items:flex-start;gap:10px;margin:18px 0}.check input{width:18px;height:18px;margin-top:2px;accent-color:var(--purple)}.check span{font-size:.88rem;line-height:1.55}
-    .slide-wrap{position:relative;height:64px;border:1px solid rgba(109,40,217,.16);border-radius:999px;background:#eeeaf4;overflow:hidden;user-select:none;touch-action:none;opacity:.55;transition:.2s}.slide-wrap.ready{opacity:1;background:linear-gradient(90deg,rgba(109,40,217,.08),rgba(215,42,120,.08))}.slide-label{position:absolute;inset:0;display:grid;place-items:center;padding-left:56px;color:var(--deep);font-size:.88rem;font-weight:800;pointer-events:none}.handle{position:absolute;left:5px;top:5px;width:54px;height:54px;border:0;border-radius:50%;background:var(--gradient);color:#fff;font-size:1.4rem;font-weight:800;cursor:grab;box-shadow:0 8px 22px rgba(109,40,217,.25)}.status-msg{margin-top:12px;padding:12px 14px;border-radius:12px;background:#fff7ed;color:#7c2d12;font-size:.8rem;line-height:1.5;border:1px solid rgba(249,115,22,.18)}footer{margin-top:28px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:.8rem}
-    @media(max-width:760px){.meta,.grid{grid-template-columns:1fr}.hero,.section{padding:22px}}
+    :root{--ink:#171428;--muted:#6e6979;--line:rgba(23,20,40,.10);--bg:#f7f6f3;--purple:#6d28d9;--deep:#3d176f;--pink:#d72a78;--lav:#f4effb;--mint:#edf8f4;--rose:#fff0f5;--shadow:0 18px 48px rgba(23,20,40,.07);--gradient:linear-gradient(110deg,#f2b84b 0%,#f97316 30%,#d72a78 58%,#6d28d9 100%)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 90% 0,rgba(109,40,217,.07),transparent 30rem),var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+    header{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:72px;padding:14px clamp(18px,5vw,70px);border-bottom:1px solid var(--line);background:rgba(255,255,255,.96);backdrop-filter:blur(14px)}.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--purple);font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.brand img{width:76px;height:38px;object-fit:contain}.status{padding:7px 10px;border:1px solid rgba(109,40,217,.17);border-radius:999px;background:rgba(109,40,217,.05);color:var(--purple);font-size:10px;font-weight:800;text-transform:uppercase}
+    main{max-width:1080px;margin:0 auto;padding:36px 20px 80px}.panel,.section{border:1px solid var(--line);border-radius:24px;background:#fff;box-shadow:var(--shadow)}.hero{padding:38px}.eyebrow{margin:0 0 10px;color:var(--pink);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.eyebrow:before{display:inline-block;width:24px;height:1px;margin:0 9px 3px 0;background:var(--gradient);content:""}h1{margin:0 0 14px;background:var(--gradient);background-clip:text;-webkit-background-clip:text;color:transparent;font-size:clamp(2.2rem,5vw,4rem);line-height:1;letter-spacing:-.05em}.lead{margin:0;color:var(--muted);font-size:1rem;line-height:1.7}.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px}.meta div{padding:15px;border:1px solid var(--line);border-radius:14px;background:var(--lav)}.meta span{display:block;color:var(--pink);font-size:.68rem;font-weight:800;text-transform:uppercase}.meta strong{display:block;margin-top:5px;color:var(--deep);font-size:.95rem}
+    nav{display:flex;gap:6px;overflow-x:auto;margin:18px 0 0;padding:7px;border:1px solid var(--line);border-radius:14px;background:#fff}nav a{white-space:nowrap;padding:8px 11px;border-radius:9px;color:var(--purple);font-size:.74rem;font-weight:800;text-decoration:none}nav a:hover{background:var(--lav)}
+    .section{scroll-margin-top:96px;margin-top:20px;padding:28px}.section.alt{background:var(--lav)}.section.mint{background:var(--mint)}.section.rose{background:var(--rose)}.section h2{margin:0 0 6px;color:var(--deep);font-size:1.5rem;letter-spacing:-.025em}.section>p{margin:0 0 18px;color:var(--muted);line-height:1.65}.subhead{margin:22px 0 10px;color:var(--purple);font-size:1rem}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.grid.two{grid-template-columns:repeat(2,1fr)}.card{padding:20px;border:1px solid var(--line);border-radius:16px;background:#fff}.card span{display:block;color:var(--pink);font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em}.card strong{display:block;margin:6px 0;color:var(--deep);font-size:1.25rem}.card p{margin:0;color:var(--muted);font-size:.84rem;line-height:1.55}.card ul{margin:10px 0 0;padding-left:18px;color:var(--muted);font-size:.82rem;line-height:1.58}.card li+li{margin-top:5px}.terms{display:grid;gap:10px}.term{padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:#fff}.term strong{display:block;margin-bottom:5px;color:var(--deep);font-size:.9rem}.term p{margin:0;color:var(--muted);font-size:.83rem;line-height:1.55}.term ul{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:.82rem;line-height:1.58}.term li+li{margin-top:4px}
+    .timeline{display:grid;gap:12px}.phase{padding:22px;border:1px solid var(--line);border-radius:18px;background:#fff}.phase-top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.phase .kicker{color:var(--pink);font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em}.phase h3{margin:5px 0 6px;color:var(--deep);font-size:1.12rem}.phase .price{color:var(--deep);font-size:1.35rem;font-weight:800;white-space:nowrap}.phase p{margin:0;color:var(--muted);font-size:.85rem;line-height:1.6}.phase ul{columns:2;column-gap:32px;margin:14px 0 0;padding-left:18px;color:var(--muted);font-size:.82rem;line-height:1.55}.phase li{break-inside:avoid;margin-bottom:6px}
+    .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.flow div{position:relative;padding:16px 12px;border:1px solid var(--line);border-radius:14px;background:#fff;text-align:center}.flow div:not(:last-child):after{content:"→";position:absolute;right:-15px;top:50%;transform:translateY(-50%);color:var(--pink);font-weight:800}.flow span{display:block;color:var(--pink);font-size:.65rem;font-weight:800;text-transform:uppercase}.flow strong{display:block;margin-top:4px;color:var(--deep);font-size:.9rem}
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi{padding:18px;border:1px solid var(--line);border-radius:14px;background:#fff}.kpi span{display:block;color:var(--pink);font-size:.67rem;font-weight:800;text-transform:uppercase}.kpi strong{display:block;margin-top:5px;color:var(--deep);font-size:1rem}.note{padding:14px 16px;border:1px solid rgba(109,40,217,.13);border-radius:13px;background:linear-gradient(135deg,rgba(109,40,217,.05),rgba(215,42,120,.025));color:var(--muted);font-size:.8rem;line-height:1.55}.note strong{color:var(--deep)}
+    .check{display:flex;align-items:flex-start;gap:10px;margin:18px 0}.check input{width:18px;height:18px;margin-top:2px;accent-color:var(--purple)}.check span{font-size:.88rem;line-height:1.55}.slide-wrap{position:relative;height:64px;border:1px solid rgba(109,40,217,.16);border-radius:999px;background:#eeeaf4;overflow:hidden;user-select:none;touch-action:none;opacity:.55;transition:.2s}.slide-wrap.ready{opacity:1;background:linear-gradient(90deg,rgba(109,40,217,.08),rgba(215,42,120,.08))}.slide-label{position:absolute;inset:0;display:grid;place-items:center;padding-left:56px;color:var(--deep);font-size:.88rem;font-weight:800;pointer-events:none}.handle{position:absolute;left:5px;top:5px;width:54px;height:54px;border:0;border-radius:50%;background:var(--gradient);color:#fff;font-size:1.4rem;font-weight:800;cursor:grab;box-shadow:0 8px 22px rgba(109,40,217,.25)}.status-msg{margin-top:12px;padding:12px 14px;border-radius:12px;background:#fff7ed;color:#7c2d12;font-size:.8rem;line-height:1.5;border:1px solid rgba(249,115,22,.18)}
+    footer{margin-top:28px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:.8rem}
+    @media(max-width:850px){.meta,.grid,.grid.two,.kpis,.flow{grid-template-columns:1fr 1fr}.phase ul{columns:1}.flow div:after{display:none}}@media(max-width:620px){header{padding-inline:14px}.status{display:none}.hero,.section{padding:22px}.meta,.grid,.grid.two,.kpis,.flow{grid-template-columns:1fr}.phase-top{display:block}.phase .price{margin-top:8px}.slide-label{font-size:.78rem;padding-left:48px}}
   </style>
 </head>
 <body>
@@ -25,84 +30,282 @@
   <a class="brand" href="/" aria-label="E4LA home"><img src="/assets/e4la-logo-palm-light.png" alt="E4LA"><span>Client Agreement</span></a>
   <span class="status">Prepared for Omid Daragahi · BPM Real Estate</span>
 </header>
+
 <main>
   <section class="panel hero">
-    <p class="eyebrow">E4LA · Growth Partnership Agreement</p>
+    <p class="eyebrow">E4LA · Scope of Work & Service Agreement</p>
     <h1>BPM Real Estate — 12-Month Owner Acquisition & Growth Partnership</h1>
-    <p class="lead">This agreement covers the commercial structure, responsibilities, billing schedule and acceptance terms for E4LA's 12-month growth partnership with BPM Real Estate.</p>
+    <p class="lead">This agreement defines the full scope of work, launch roadmap, ongoing growth operations, reporting expectations, responsibilities, commercial terms and acceptance terms for E4LA's partnership with BPM Real Estate.</p>
     <div class="meta">
       <div><span>Client</span><strong>BPM Real Estate</strong></div>
       <div><span>Prepared for</span><strong>Omid Daragahi</strong></div>
       <div><span>Primary Objective</span><strong>Grow managed properties</strong></div>
     </div>
+    <nav aria-label="Agreement sections">
+      <a href="#objective">Objective</a>
+      <a href="#scope">Scope</a>
+      <a href="#leads">Lead Generation</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#ongoing">Monthly Operations</a>
+      <a href="#measurement">Measurement</a>
+      <a href="#commercial">Commercial Terms</a>
+      <a href="#terms">Terms</a>
+      <a href="#accept">Accept & Pay</a>
+    </nav>
   </section>
 
-  <section class="section">
-    <h2>Commercial Structure</h2>
-    <p>The first six weeks are the launch period. After launch, the partnership moves into ongoing growth operations through the remainder of the 12-month term.</p>
-    <div class="grid">
-      <div class="card"><span>Phase 1 · Weeks 1–3</span><strong>$2,400</strong><p>Strategy, audits, owner/investor journey, competitive research, lead-generation architecture, SEO/GEO opportunity research, CRM/attribution design, social strategy and Growth Blueprint.</p></div>
-      <div class="card"><span>Phase 2 · Weeks 4–6</span><strong>$2,400</strong><p>Implementation and launch: priority website work, Rental Analysis funnel, tracking, Google/SEO/GEO foundation, CRM, email foundation, social launch system, video plan, AI Agent V1 and QA.</p></div>
-      <div class="card"><span>Phase 3 · After Week 6</span><strong>$2,900/month</strong><p>Ongoing owner acquisition, website optimization, SEO/GEO, Google, Instagram, Facebook, short-form video, email, reviews, CRM, AI monitoring, competitor intelligence and quarterly reviews.</p></div>
+  <section id="objective" class="section mint">
+    <h2>1. Partnership Objective</h2>
+    <p>The engagement is designed around one commercial result: increasing the number of qualified property owners who become long-term BPM property-management clients.</p>
+    <div class="flow">
+      <div><span>Find</span><strong>Right Owners</strong></div>
+      <div><span>Capture</span><strong>Qualified Lead</strong></div>
+      <div><span>Consult</span><strong>Owner Conversation</strong></div>
+      <div><span>Convert</span><strong>Management Agreement</strong></div>
+      <div><span>Grow</span><strong>Managed Portfolio</strong></div>
+    </div>
+    <div class="note" style="margin-top:14px"><strong>Primary KPI:</strong> New Managed Properties. Rankings, impressions, traffic, social reach and email engagement are supporting metrics, not the main definition of success.</div>
+  </section>
+
+  <section id="scope" class="section">
+    <h2>2. Full Scope of Work</h2>
+    <p>E4LA will build and operate an integrated owner-acquisition system across strategy, website, search, social, lead generation, CRM, email, reputation, automation and measurement.</p>
+
+    <div class="grid two">
+      <article class="card"><span>Strategy & Positioning</span><strong>Owner-first growth strategy</strong><ul><li>Business and growth audit</li><li>Owner/investor audience definition</li><li>Positioning and messaging</li><li>Competitive research</li><li>Offer and CTA strategy</li><li>Quarterly strategic reevaluation</li></ul></article>
+      <article class="card"><span>Website & Conversion</span><strong>Owner acquisition experience</strong><ul><li>UX/UI and conversion audit</li><li>Owner-first information architecture</li><li>Investor journey</li><li>Switch-to-BPM journey</li><li>Out-of-area owner journey</li><li>Rental Analysis / Consultation funnel</li><li>Mobile optimization</li><li>Ongoing CTA, copy and form-friction improvements</li></ul></article>
+
+      <article class="card"><span>SEO & Local Search</span><strong>High-intent owner discovery</strong><ul><li>Search Console and query analysis</li><li>Owner-intent keyword research</li><li>Priority-page optimization</li><li>Technical SEO monitoring</li><li>Metadata and headings</li><li>Internal linking</li><li>Indexation/canonical review</li><li>Local-search expansion</li></ul></article>
+      <article class="card"><span>GEO & AI Search</span><strong>AI-ready business visibility</strong><ul><li>Entity clarity</li><li>Structured answers and FAQs</li><li>Business-information consistency</li><li>Expert/authority signals</li><li>Structured data where appropriate</li><li>AI-search visibility monitoring</li></ul></article>
+
+      <article class="card"><span>Google Business Profile</span><strong>Local trust & conversion</strong><ul><li>Category/service review</li><li>Description and business-information optimization</li><li>Photo/content opportunities</li><li>Owner-focused links and CTAs</li><li>Review strategy</li><li>Review-response workflow</li><li>Local visibility monitoring</li></ul></article>
+      <article class="card"><span>Omid Authority</span><strong>Trust through expertise</strong><ul><li>Broker/expert positioning</li><li>Professional authority content</li><li>Owner education</li><li>Investor education</li><li>Maintenance/problem-solving content</li><li>Difficult tenant-situation content framed as operational experience, not legal representation</li></ul></article>
+
+      <article class="card"><span>Instagram & Facebook</span><strong>Social acquisition & trust</strong><ul><li>Profile positioning and bio/CTA optimization</li><li>Content pillars and calendar</li><li>Reels, carousels, educational and authority content</li><li>Review/social-proof content</li><li>Publishing workflow</li><li>Platform-specific caption adaptation</li><li>Performance review and topic refinement</li></ul></article>
+      <article class="card"><span>Short-Form Video</span><strong>Structured video system</strong><ul><li>Topic research</li><li>Hooks</li><li>Scripts/talking points</li><li>Filming briefs</li><li>Shot guidance</li><li>CTA planning</li><li>Caption and cover direction</li><li>Publishing and repurposing strategy</li><li>Performance review</li></ul></article>
+
+      <article class="card"><span>CRM & Lead Pipeline</span><strong>Track every opportunity</strong><ul><li>Source tracking</li><li>Property count</li><li>Current manager</li><li>Timeline/urgency</li><li>Pain point</li><li>Lead stage</li><li>Next action</li><li>Consultation status</li><li>Agreement status</li><li>Outcome/lost reason</li></ul></article>
+      <article class="card"><span>Email & Lead Nurture</span><strong>Follow-up that supports conversion</strong><ul><li>Inquiry confirmation</li><li>Consultation follow-up</li><li>Reminder/reconnect</li><li>Not-ready-yet nurture</li><li>Owner/investor education emails</li><li>Seasonal or market-relevant touchpoints</li></ul></article>
+
+      <article class="card"><span>Reviews & Reputation</span><strong>Turn proof into trust</strong><ul><li>Review-request workflow</li><li>Response strategy</li><li>Website testimonial use</li><li>Social-proof use</li><li>Reputation monitoring</li></ul></article>
+      <article class="card"><span>AI Growth & Revenue Agent V1</span><strong>Monitoring & opportunity detection</strong><ul><li>Website health</li><li>Search opportunity</li><li>Lead follow-up monitoring</li><li>Competitor intelligence</li><li>Growth summaries</li><li>Narrow/least-privilege access and approval controls for high-impact actions</li></ul></article>
     </div>
   </section>
 
-  <section class="section">
-    <h2>Core Scope</h2>
-    <p>E4LA will operate an integrated owner-acquisition system focused on qualified property owners and new managed properties.</p>
+  <section id="leads" class="section alt">
+    <h2>3. Owner Lead Generation System</h2>
+    <p>E4LA will not rely on one lead source. The acquisition system will combine multiple channels so BPM can identify which sources produce qualified owners and new managed properties.</p>
+    <div class="grid two">
+      <article class="card"><span>Channel 1</span><strong>High-Intent Google Search</strong><p>Target owners actively searching for property management, rental management, switching managers, landlord help and out-of-area management in Bakersfield.</p></article>
+      <article class="card"><span>Channel 2</span><strong>Rental Analysis Funnel</strong><p>Capture property address, property type, current rent, occupancy, current management situation, owner concern, timeline and contact information to generate and pre-qualify leads.</p></article>
+      <article class="card"><span>Channel 3</span><strong>Switch-to-BPM Campaigns</strong><p>Target owners dissatisfied with communication, maintenance, reporting, responsiveness or tenant-problem handling from their current manager.</p></article>
+      <article class="card"><span>Channel 4</span><strong>Investor & Landlord Communities</strong><p>Build useful presence through education, Q&A, networking, market insight and relationship building rather than mass promotion.</p></article>
+      <article class="card"><span>Channel 5</span><strong>Out-of-Area / Absentee Owners</strong><p>Identify and reach owners who hold Bakersfield rental property but live elsewhere, using appropriate public or licensed data sources and targeted outreach.</p></article>
+      <article class="card"><span>Channel 6</span><strong>Professional Referral Partners</strong><p>Develop referral relationships with Realtors, investment agents, lenders, mortgage professionals, CPAs, insurance professionals, contractors, 1031-exchange professionals and other owner-facing partners.</p></article>
+      <article class="card"><span>Channel 7</span><strong>Instagram + Facebook Acquisition</strong><p>Use owner/investor education, Omid authority, reviews and short-form video to move qualified audiences toward Rental Analysis, Consultation, website conversion or direct inquiry.</p></article>
+      <article class="card"><span>Channel 8</span><strong>Existing Lead Reactivation</strong><p>Where usable records exist, re-engage prior inquiries, old prospects, former opportunities and relevant brokerage relationships that did not convert.</p></article>
+    </div>
+
+    <h3 class="subhead">Lead Qualification</h3>
     <div class="terms">
-      <div class="term"><strong>Lead Generation</strong><p>High-intent Google search, Rental Analysis funnel, switch-manager campaigns, investor/landlord communities, out-of-area owners, professional referral partners, Instagram/Facebook acquisition and existing-lead reactivation where usable records exist.</p></div>
-      <div class="term"><strong>Website & Conversion</strong><p>Owner-first UX, investor journey, mobile optimization, conversion paths, Rental Analysis, CTA optimization and ongoing conversion improvements.</p></div>
-      <div class="term"><strong>Search & Visibility</strong><p>SEO, Local Search, Google Business Profile and GEO/AI-search optimization focused on owner intent and qualified demand.</p></div>
-      <div class="term"><strong>Instagram, Facebook & Short-Form Video</strong><p>Owner/investor content strategy, approximately 12 primary social assets per month as a working cadence, and typically 6–8 short-form video topics/productions per month depending on footage, availability and priorities.</p></div>
-      <div class="term"><strong>CRM, Email & Follow-Up</strong><p>Lead source tracking, qualification, pipeline stages, next actions, nurture/follow-up sequences and monitoring of stalled opportunities.</p></div>
-      <div class="term"><strong>AI Growth & Revenue Agent</strong><p>Website health, search opportunity, lead follow-up, competitor intelligence and growth summary monitoring.</p></div>
-      <div class="term"><strong>Measurement</strong><p>Primary reporting order: New Managed Properties → Signed Management Agreements → Qualified Owner Leads → Consultations. Marketing metrics are secondary diagnostics.</p></div>
+      <div class="term"><strong>Qualification criteria</strong><p>Service area, ownership status, property count, property type, current manager, urgency/timeline, primary pain point, readiness for consultation and economic fit.</p></div>
+      <div class="term"><strong>Lead stages</strong><p>Hot, Qualified, Nurture and Low Priority, with next-action tracking so Omid and BPM can focus effort on the most valuable opportunities.</p></div>
     </div>
   </section>
 
-  <section class="section">
-    <h2>Terms & Conditions</h2>
+  <section id="roadmap" class="section">
+    <h2>4. Six-Week Launch Roadmap</h2>
+    <p>The first six weeks are divided into two implementation phases. The objective is to move from audit and strategy into a measurable, operating acquisition system without turning launch into an unnecessary full-platform rebuild.</p>
+
+    <div class="timeline">
+      <div class="phase">
+        <div class="phase-top">
+          <div><span class="kicker">Phase 1 · Weeks 1–3</span><h3>Strategy, Audit & Growth Architecture</h3></div>
+          <div class="price">$2,400</div>
+        </div>
+        <p>Establish the baseline, define the acquisition architecture and decide exactly what will be implemented during launch.</p>
+        <ul>
+          <li>Day-0 business and growth baseline</li>
+          <li>Website UX/UI and conversion audit</li>
+          <li>Owner and investor journey mapping</li>
+          <li>Information architecture review</li>
+          <li>Local competitor research</li>
+          <li>Website/investor-experience benchmark review</li>
+          <li>BPM positioning and messaging</li>
+          <li>SEO and owner-intent search opportunity audit</li>
+          <li>GEO / AI-search audit</li>
+          <li>Google Business Profile review</li>
+          <li>Lead-generation channel architecture</li>
+          <li>Rental Analysis funnel requirements</li>
+          <li>CRM and attribution architecture</li>
+          <li>Lead qualification model</li>
+          <li>Instagram/Facebook audit and strategy</li>
+          <li>Short-form video strategy</li>
+          <li>Email follow-up/nurture architecture</li>
+          <li>AI Growth Agent V1 requirements</li>
+          <li>Growth Blueprint for Phase 2</li>
+        </ul>
+      </div>
+
+      <div class="phase">
+        <div class="phase-top">
+          <div><span class="kicker">Phase 2 · Weeks 4–6</span><h3>Build, Implement & Launch</h3></div>
+          <div class="price">$2,400</div>
+        </div>
+        <p>Turn the Growth Blueprint into a functioning owner-acquisition and measurement system.</p>
+        <ul>
+          <li>Implement or redesign priority owner/investor pages</li>
+          <li>Target up to approximately five priority owner/investor routes based on audit findings</li>
+          <li>Mobile UX optimization</li>
+          <li>Rental Analysis / Consultation funnel</li>
+          <li>Conversion-event tracking</li>
+          <li>Technical SEO foundation on priority pages</li>
+          <li>GEO / AI-search foundation on priority pages</li>
+          <li>Google Business Profile optimization</li>
+          <li>CRM / lead-pipeline setup</li>
+          <li>Lead-source and attribution tracking</li>
+          <li>Email confirmation/follow-up foundation</li>
+          <li>Instagram/Facebook launch framework</li>
+          <li>Content calendar and CTA framework</li>
+          <li>Initial 6–8 short-form video topics/scripts</li>
+          <li>Omid authority content framework</li>
+          <li>Review/reputation workflow</li>
+          <li>AI Growth & Revenue Agent V1 setup</li>
+          <li>QA for website, forms, mobile, analytics, CRM and conversion tracking</li>
+          <li>Launch readiness review</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:14px"><strong>Launch principle:</strong> E4LA will prioritize changes that directly improve owner acquisition, trust, conversion, attribution and measurement. A full rebuild or unrelated custom software project is not automatically included unless it becomes necessary and is separately approved.</div>
+  </section>
+
+  <section id="ongoing" class="section mint">
+    <h2>5. Ongoing Growth Operations — After Week 6</h2>
+    <p>After launch, E4LA will operate and improve the owner-acquisition system through the remainder of the 12-month term at $2,900 per month.</p>
+
+    <div class="grid two">
+      <article class="card"><span>Instagram Management</span><strong>Planned monthly cadence</strong><ul><li>Approximately 12 primary social assets per month as a working cadence</li><li>Reels, carousels, educational posts, authority/review content and market/property topics</li><li>Topic planning from owner questions, search demand, market conditions and competitor gaps</li><li>Captions, CTAs, publishing and performance review</li><li>Cadence may be adjusted based on performance and priorities</li></ul></article>
+      <article class="card"><span>Short-Form Video</span><strong>Typical 6–8 videos/month</strong><ul><li>Topic research</li><li>Hooks</li><li>Scripts/talking points</li><li>Filming brief</li><li>CTA planning</li><li>Caption and cover direction</li><li>Publishing and performance review</li><li>Volume depends on available footage, filming access and priorities</li></ul></article>
+
+      <article class="card"><span>Facebook Management</span><strong>Platform-adapted distribution</strong><ul><li>Adapted captions and content</li><li>Owner/investor education</li><li>Local credibility and reviews</li><li>Video distribution</li><li>Website traffic and CTA support</li></ul></article>
+      <article class="card"><span>SEO Growth</span><strong>Continuous search improvement</strong><ul><li>Search Console review</li><li>Query and ranking-opportunity analysis</li><li>Page improvements</li><li>Metadata/internal-linking updates</li><li>Technical monitoring</li><li>Owner-intent expansion</li><li>Priority optimizations selected from actual data</li></ul></article>
+
+      <article class="card"><span>GEO / AI Search</span><strong>Ongoing AI visibility</strong><ul><li>Entity consistency</li><li>FAQ and structured-answer improvements</li><li>Expert-content improvements</li><li>Business-information consistency</li><li>AI-search opportunity monitoring</li></ul></article>
+      <article class="card"><span>Website Conversion</span><strong>Continuous optimization</strong><ul><li>CTA improvements</li><li>Page-copy refinements</li><li>Form-friction reduction</li><li>Owner-journey improvements</li><li>Navigation and trust-element improvements</li></ul></article>
+
+      <article class="card"><span>Google Business Profile</span><strong>Local growth & trust</strong><ul><li>Profile-health monitoring</li><li>Services and business-information updates</li><li>Photo/content opportunities</li><li>Review workflow and responses</li><li>Owner-focused CTA improvements</li><li>Local visibility monitoring</li></ul></article>
+      <article class="card"><span>Reviews & Reputation</span><strong>Proof that supports conversion</strong><ul><li>Review-request workflow</li><li>Review-response strategy</li><li>Testimonial reuse on website/social</li><li>Reputation monitoring</li></ul></article>
+
+      <article class="card"><span>Email Marketing & Nurture</span><strong>1–2 strategic touchpoints/month</strong><ul><li>Owner/investor education</li><li>Market or seasonal updates</li><li>Follow-up and reconnect messages</li><li>Nurture-sequence optimization</li></ul></article>
+      <article class="card"><span>CRM & Lead Monitoring</span><strong>Weekly pipeline attention</strong><ul><li>New lead review</li><li>Source and qualification</li><li>Response status</li><li>Next action</li><li>Consultation status</li><li>Agreement status</li><li>Lost/stalled opportunity review</li></ul></article>
+
+      <article class="card"><span>Competitor Intelligence</span><strong>Meaningful changes only</strong><ul><li>Local competitor offers</li><li>New landing pages</li><li>Search changes</li><li>Messaging changes</li><li>Digital-experience changes</li><li>Content opportunities</li></ul></article>
+      <article class="card"><span>AI Growth Agent Monitoring</span><strong>Operational support</strong><ul><li>Website health alerts</li><li>Search opportunity alerts</li><li>Lead-follow-up flags</li><li>Competitor-change flags</li><li>Growth summaries</li></ul></article>
+    </div>
+  </section>
+
+  <section id="measurement" class="section">
+    <h2>6. Measurement, Reporting & Reviews</h2>
+    <p>Business outcomes are reviewed before marketing diagnostics so the program remains tied to managed-property growth.</p>
+
+    <div class="kpis">
+      <div class="kpi"><span>Primary KPI</span><strong>New Managed Properties</strong></div>
+      <div class="kpi"><span>Business KPI</span><strong>Signed Management Agreements</strong></div>
+      <div class="kpi"><span>Pipeline KPI</span><strong>Qualified Owner Leads</strong></div>
+      <div class="kpi"><span>Pipeline KPI</span><strong>Owner Consultations</strong></div>
+    </div>
+
+    <h3 class="subhead">Supporting Business Metrics</h3>
+    <div class="terms">
+      <div class="term"><strong>Attribution</strong><p>Where technically possible, E4LA will identify whether leads and clients originated from Google, SEO, social, email, referral, direct outreach or another tracked source.</p></div>
+      <div class="term"><strong>Efficiency</strong><p>Cost per signed managed property and estimated recurring management revenue added may be calculated when sufficient cost and property-economics data are available.</p></div>
+      <div class="term"><strong>Diagnostic metrics</strong><p>Rankings, impressions, clicks, traffic, social reach, followers, content performance, email opens and similar marketing indicators are used to explain performance—not as substitutes for business outcomes.</p></div>
+    </div>
+
+    <h3 class="subhead">Review Cadence</h3>
+    <div class="grid">
+      <article class="card"><span>Month 3</span><strong>Day 0 vs. Day 90</strong><p>Review qualified owners, consultations, agreements, new properties, lead sources and early funnel performance.</p></article>
+      <article class="card"><span>Month 6</span><strong>Channel Efficiency</strong><p>Identify which channels, audiences and messages deserve more or less investment.</p></article>
+      <article class="card"><span>Month 9</span><strong>Scale Readiness</strong><p>Assess which owner segments and acquisition systems are compounding and where bottlenecks remain.</p></article>
+      <article class="card"><span>Month 12</span><strong>Annual Growth Review</strong><p>Determine what actually grew the managed portfolio and what should scale in the next period.</p></article>
+    </div>
+  </section>
+
+  <section class="section rose">
+    <h2>7. BPM Responsibilities</h2>
+    <p>The growth system depends on reasonable client cooperation and timely access.</p>
+    <div class="terms">
+      <div class="term"><strong>Access</strong><p>BPM will provide reasonable access to the website/CMS, Google Business Profile, analytics/search accounts, social accounts, CRM or lead records, email platform and other agreed systems needed for the work.</p></div>
+      <div class="term"><strong>Business information</strong><p>BPM is responsible for providing accurate service, pricing, team, licensing, operational and property-management information used in public content.</p></div>
+      <div class="term"><strong>Approvals</strong><p>BPM will provide reasonably timely approvals for material public-facing content, filming, claims, offers and operational changes when approval is required.</p></div>
+      <div class="term"><strong>Lead handling</strong><p>BPM/Omid remains responsible for sales conversations, consultations, management proposals, final pricing, management agreements and operational onboarding unless another workflow is separately agreed.</p></div>
+      <div class="term"><strong>Filming availability</strong><p>Video output depends on Omid/team availability, usable footage and timely participation in agreed filming or content-capture sessions.</p></div>
+    </div>
+  </section>
+
+  <section id="commercial" class="section alt">
+    <h2>8. Commercial Structure</h2>
+    <p>This is a 12-month partnership with a six-week launch period followed by ongoing monthly growth operations.</p>
+
+    <div class="grid">
+      <div class="card"><span>Phase 1 · Weeks 1–3</span><strong>$2,400</strong><p>Due at acceptance. Covers Strategy, Audit & Growth Architecture.</p></div>
+      <div class="card"><span>Phase 2 · Weeks 4–6</span><strong>$2,400</strong><p>Scheduled 21 days after the project start date. Covers Build, Implementation & Launch.</p></div>
+      <div class="card"><span>Phase 3 · After Week 6</span><strong>$2,900/month</strong><p>Begins 42 days after the project start date and continues monthly through the remainder of the 12-month term.</p></div>
+    </div>
+
+    <div class="note" style="margin-top:14px"><strong>Performance Commission:</strong> Negotiable and separate. Any commission related to attributable new managed properties requires a separate written addendum defining attribution, exclusions, multi-property owners, commission basis and payment timing before any commission is due.</div>
+    <div class="note" style="margin-top:10px"><strong>External costs:</strong> Paid advertising, premium software, licensed data, significant API costs, SMS/calling services and other material third-party expenses are separate when needed and require BPM approval before purchase.</div>
+  </section>
+
+  <section id="terms" class="section">
+    <h2>9. Terms & Conditions</h2>
     <div class="terms">
       <div class="term"><strong>1. Term</strong><p>The engagement is a 12-month partnership beginning on the date Phase 1 is accepted and the initial payment is successfully processed.</p></div>
-      <div class="term"><strong>2. Billing Schedule</strong><p>$2,400 is due at acceptance. A second $2,400 payment is scheduled 21 days after the project start date. Beginning 42 days after the project start date, billing changes to $2,900 per month through the remainder of the 12-month term.</p></div>
-      <div class="term"><strong>3. Scope & Prioritization</strong><p>E4LA will perform the services described in this agreement and may adjust the mix or cadence of individual deliverables when needed to prioritize quality, performance and business impact while preserving the overall scope and objective.</p></div>
-      <div class="term"><strong>4. Client Access & Approvals</strong><p>BPM will provide reasonably timely access to required accounts, business information, approvals, brand assets and subject-matter input. Delays may shift implementation timing.</p></div>
-      <div class="term"><strong>5. Third-Party Costs</strong><p>Paid media, premium software, data providers, substantial API usage, SMS/calling services and other material third-party expenses are separate unless specifically stated and require approval before purchase.</p></div>
-      <div class="term"><strong>6. Performance</strong><p>E4LA does not guarantee a specific ranking, lead count, client count or revenue result. E4LA is responsible for building, operating, measuring and improving the agreed growth system using reasonable professional judgment and available data.</p></div>
-      <div class="term"><strong>7. Performance Commission</strong><p>Any performance commission for attributable new managed properties will be governed by a separate written addendum defining attribution, exclusions, multi-property owners, commission basis and payment timing. No performance commission is charged until that addendum is agreed in writing.</p></div>
-      <div class="term"><strong>8. Intellectual Property</strong><p>Upon payment of applicable fees, BPM may use final client-specific deliverables created for BPM. E4LA retains ownership of its pre-existing tools, templates, frameworks, methodologies, reusable systems and general know-how.</p></div>
-      <div class="term"><strong>9. Confidentiality</strong><p>Both parties will use reasonable care to protect non-public business information received during the engagement and use it only for legitimate partnership work.</p></div>
-      <div class="term"><strong>10. Change Requests</strong><p>Material work outside the agreed scope, including extensive custom software, major unrelated platform builds or substantial paid-media expansion, requires separate written approval and may require additional fees.</p></div>
-      <div class="term"><strong>11. Payment Authorization</strong><p>By accepting this agreement and completing Stripe Checkout, BPM authorizes the billing schedule described above using the payment method supplied to Stripe, subject to Stripe authentication requirements.</p></div>
-      <div class="term"><strong>12. Failed Payments / Early Termination</strong><p>If a scheduled payment fails or requires additional authentication, work may be paused until resolved. Any refund, cancellation or early-termination arrangement must be documented in writing by both parties.</p></div>
+      <div class="term"><strong>2. Billing Authorization</strong><p>By accepting this agreement and completing Stripe Checkout, BPM authorizes the billing schedule stated in Section 8 using the payment method supplied to Stripe, subject to Stripe authentication requirements.</p></div>
+      <div class="term"><strong>3. Scope & Prioritization</strong><p>E4LA may adjust the mix, sequencing or cadence of individual deliverables when needed to prioritize quality, performance, business impact, platform constraints or changing evidence, while preserving the overall scope and objective of the engagement.</p></div>
+      <div class="term"><strong>4. Deliverable Cadence</strong><p>References such as approximately 12 social assets per month and typically 6–8 short-form videos are working targets rather than rigid minimum guarantees. Output may vary based on footage, approvals, platform performance, campaign needs and strategic priorities.</p></div>
+      <div class="term"><strong>5. Third-Party Platforms</strong><p>E4LA is not responsible for outages, algorithm changes, platform policy changes, account suspensions, rejected content, ranking volatility or limitations imposed by Google, Meta, email providers, AI/search platforms, Stripe or other third parties.</p></div>
+      <div class="term"><strong>6. Performance</strong><p>E4LA does not guarantee a specific ranking, lead count, client count, managed-property count or revenue result. E4LA's obligation is to perform the agreed services, monitor results and make reasonable evidence-based improvements.</p></div>
+      <div class="term"><strong>7. No Legal Representation</strong><p>E4LA provides growth, digital, marketing and automation services only. Content relating to tenant issues, notices, disputes or court-related property-management processes will be framed as BPM's operational experience and will not present E4LA or Omid as providing legal advice unless independently authorized to do so.</p></div>
+      <div class="term"><strong>8. Performance Commission</strong><p>No performance commission is due until a separate written addendum is accepted by both parties.</p></div>
+      <div class="term"><strong>9. Intellectual Property</strong><p>Upon payment of applicable fees, BPM may use final client-specific deliverables created for BPM. E4LA retains ownership of its pre-existing tools, templates, frameworks, reusable systems, methodologies, prompts, automation architecture and general know-how.</p></div>
+      <div class="term"><strong>10. Confidentiality</strong><p>Both parties will use reasonable care to protect non-public business information received during the engagement and use it only for legitimate partnership work.</p></div>
+      <div class="term"><strong>11. Data & Security</strong><p>E4LA will use reasonable access controls and least-privilege practices. BPM should not provide unnecessary sensitive tenant, legal or financial data. High-impact automated actions require appropriate authorization.</p></div>
+      <div class="term"><strong>12. Change Requests</strong><p>Material work outside this scope—including extensive custom software, a full unrelated platform rebuild, substantial paid-media expansion, unrelated business projects or major new integrations—requires separate written approval and may require additional fees.</p></div>
+      <div class="term"><strong>13. Delays</strong><p>Delays caused by missing access, missing client information, delayed approvals, unavailable filming participants or third-party platform issues may shift timelines without changing payment obligations for work already scheduled or performed.</p></div>
+      <div class="term"><strong>14. Failed Payments</strong><p>If a scheduled payment fails or requires additional authentication, E4LA may pause work until the payment issue is resolved.</p></div>
+      <div class="term"><strong>15. Cancellation / Early Termination</strong><p>Any cancellation, refund or early-termination arrangement must be documented in writing by both parties. Unless otherwise agreed in writing, completed work and amounts already earned for performed services are not reversed solely because the engagement ends early.</p></div>
+      <div class="term"><strong>16. Entire Scope</strong><p>This agreement and any written addenda accepted by both parties define the operative scope for this engagement. Material changes should be documented in writing.</p></div>
     </div>
   </section>
 
-  <section class="section">
-    <h2>Acceptance & Payment</h2>
-    <p>Acceptance is separate from payment processing. Payment will only be completed through secure Stripe Checkout once the production billing connection is active.</p>
+  <section id="accept" class="section mint">
+    <h2>10. Acceptance & Payment</h2>
+    <p>Review the full scope, roadmap, commercial structure and terms above. Card information will be entered directly with Stripe once the production billing connection is activated and verified.</p>
 
     <label class="check">
-      <input id="terms" type="checkbox">
-      <span>I have reviewed and agree to this agreement, the 12-month partnership term, the scope, and the billing schedule of <strong>$2,400 at acceptance</strong>, <strong>$2,400 after 21 days</strong>, and <strong>$2,900/month beginning after 42 days</strong>.</span>
+      <input id="terms-check" type="checkbox">
+      <span>I have reviewed and agree to this Scope of Work & Service Agreement, including the 12-month term, full scope, roadmap, responsibilities, Terms & Conditions, and billing schedule of <strong>$2,400 at acceptance</strong>, <strong>$2,400 after 21 days</strong>, and <strong>$2,900/month beginning after 42 days</strong>.</span>
     </label>
 
     <div class="slide-wrap" id="slider" aria-disabled="true">
       <div class="slide-label" id="label">Check the box, then slide to accept & pay $2,400</div>
       <button class="handle" id="handle" type="button" aria-label="Slide to accept and pay">→</button>
     </div>
-    <div class="status-msg" id="msg"><strong>Stripe is not connected yet.</strong> This control is intentionally prevented from charging or redirecting until the verified production Stripe Checkout/Billing Schedule is connected.</div>
+
+    <div class="status-msg" id="msg"><strong>Stripe payment is not active on this contract yet.</strong> The acceptance control is intentionally prevented from charging or redirecting until the verified production Stripe Checkout and billing schedule are connected.</div>
   </section>
 
   <footer>
     <strong>E4LA — Evolve for Los Angeles</strong><br>
-    BPM Real Estate · 12-Month Owner Acquisition & Growth Partnership Agreement · September 2026
+    BPM Real Estate · Scope of Work & Service Agreement · Version BPM-2026-09 · September 2026
   </footer>
 </main>
+
 <script>
 (function(){
-  const cb=document.getElementById('terms'), wrap=document.getElementById('slider'), handle=document.getElementById('handle'), label=document.getElementById('label'), msg=document.getElementById('msg');
+  const cb=document.getElementById('terms-check'), wrap=document.getElementById('slider'), handle=document.getElementById('handle'), label=document.getElementById('label'), msg=document.getElementById('msg');
   let dragging=false,startX=0,startLeft=5,max=0;
   function reset(){dragging=false;handle.style.left='5px'}
   function sync(){wrap.classList.toggle('ready',cb.checked);wrap.setAttribute('aria-disabled',cb.checked?'false':'true');label.textContent=cb.checked?'Slide to accept & pay $2,400':'Check the box, then slide to accept & pay $2,400';if(!cb.checked)reset()}
