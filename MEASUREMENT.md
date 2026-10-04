@@ -9,7 +9,7 @@ Last updated: 2026-10-04. Last live verification: **NOT YET (code deployed; GTM/
 | Repo instrumentation (`measurement.js`, `script.js` hooks) | Implemented, locally verified 2026-10-04 | dataLayer events fire once per interaction, no PII |
 | GTM container | **NOT CONFIGURED** | None exists under nasim@e4la.org (checked 2026-10-04). Creation needs ToS acceptance by the account owner. |
 | GA4 property / web stream | **NOT CONFIGURED** | None exists under nasim@e4la.org. Create via GTM after the container exists. |
-| Search Console | **NOT CONFIGURED** | `sc-domain:e4la.org` and `https://www.e4la.org/` both return "no access" for nasim@e4la.org. (Only `sc-domain:paint.events` exists — separate brand.) |
+| Search Console | **CONFIGURED (domain property verified, sitemap submitted 2026-10-04)** | Domain property `sc-domain:e4la.org` auto-verified for nasim@e4la.org via the pre-existing DNS TXT record (an earlier "no access" was only because the property had never been added to this account). Sitemap `https://www.e4la.org/sitemap.xml` (4 URLs, HTTP 200 application/xml) submitted; Google processing pending, no data yet. |
 | Google Ads | **NOT CONFIGURED** | No account under nasim@e4la.org. No campaigns planned → nothing to import. |
 
 **To activate:** set `CFG.gtmId` in `measurement.js` to the container ID. Until then the layer only buffers dataLayer events and loads no third-party script.
@@ -63,7 +63,7 @@ Local verification on 2026-10-04 (localhost with a debug host, stubbed `/api/boo
 
 ## Access dependencies
 
-- Nasim (nasim@e4la.org): accept GTM/GA4 Terms of Service and create the GTM account/container + GA4 property; verify www.e4la.org in Search Console (DNS TXT or HTML tag). Provide the GTM ID and GA4 Measurement ID.
+- Nasim (nasim@e4la.org): accept the GTM and GA4 Terms of Service dialogs (account/container forms were pre-filled 2026-10-04: GTM account `E4LA` / container `E4LA Website` Web; GA4 account `E4LA`, property `E4LA`, data-sharing options all off). Then the GTM ID and GA4 Measurement ID can be wired in.
 
 ## Baseline
 
