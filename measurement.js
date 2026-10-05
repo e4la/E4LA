@@ -7,7 +7,7 @@
   'use strict';
 
   var CFG = {
-    gtmId: '',                       // GTM-XXXXXXX. Empty = dataLayer only, no network tag load.
+    gtmId: 'GTM-KMJ83Q66',                       // GTM-XXXXXXX. Empty = dataLayer only, no network tag load.
     hosts: ['www.e4la.org', 'e4la.org'],
     pathAllowlist: ['/', '/index.html', '/services', '/services.html', '/our-work', '/our-work.html', '/about', '/about.html'],
     analyticsConsentDefault: 'granted', // flip to 'denied' + call e4laConsent.grant() once a CMP/banner exists
