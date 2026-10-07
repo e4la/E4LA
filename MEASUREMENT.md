@@ -8,7 +8,7 @@ Last updated: 2026-10-06. Last live verification: **2026-10-06 on https://www.e4
 |---|---|---|
 | GTM account / container | Account `E4LA` (6380561827); container named `www.e4la.org`, public ID **`GTM-KMJ83Q66`** (internal 266075324), Web. Published Version 2 "v1 E4LA GA4 + Vision Session events" on 2026-10-04 | LIVE VERIFIED (loads once per page) |
 | GA4 | Account `E4LA` (410664670), property `E4LA` (557331300), web stream `https://www.e4la.org` (16042040199), Measurement ID **`G-SKDGBTXKH1`** | LIVE VERIFIED (Realtime received page_view + all custom events) |
-| Search Console | Domain property `sc-domain:e4la.org`, verified (existing DNS TXT); sitemap `https://www.e4la.org/sitemap.xml` submitted 2026-10-04 — Status **Success**, 4 pages discovered, last read 2026-10-06. Page indexing report: "Processing data, check again in a day or so" | Configured; indexing data pending (normal Google delay) |
+| Search Console | Domain property `sc-domain:e4la.org`, verified (existing DNS TXT); sitemap `https://www.e4la.org/sitemap.xml` submitted 2026-10-04 — Status **Success**, 4 pages discovered, last read 2026-10-06. Page indexing report: "Processing data, check again in a day or so". **Linked to GA4 property 557331300 / stream 16042040199 on 2026-10-06** (GA4 Admin → Product links → Search Console links; only `e4la.org`, not `paint.events`) | Configured and linked; indexing data pending (normal Google delay) |
 | GA4 Key Events | **`vision_session_submit` only** (primary). `vision_session_start` and all other events are ordinary events. Default `close_convert_lead` / `qualify_lead` unmarked 2026-10-06 (unused). `purchase` is an unmarked placeholder. | LIVE VERIFIED in GA4 Events admin |
 | Google Ads | Intentionally not configured; no Ads link, no remarketing, Google Signals off | NOT REQUIRED |
 | Consent | ad_storage / ad_user_data / ad_personalization denied in code; analytics_storage `granted` by default; `e4laConsent` hook for future CMP | LIVE VERIFIED in dataLayer defaults |
@@ -40,7 +40,7 @@ Last updated: 2026-10-06. Last live verification: **2026-10-06 on https://www.e4
 
 Never sent: name, email, phone, company, role, goal/challenge/notes text, uploaded files. Newsletter form (`#js-nl`) is not instrumented.
 
-## GTM setup to create (once the container exists)
+## GTM setup (as built — historical plan, now complete except where noted)
 
 - Variables: Data Layer Variables for `page_type`, `entry_point`, `session_type`, `step_number`, `step_name`, `service_interest`, `steps_completed`, `link_location`.
 - Tag: one GA4 Configuration/Google tag (Measurement ID from the new stream), All Pages. `send_page_view` default; do not add a second page_view.
@@ -48,7 +48,7 @@ Never sent: name, email, phone, company, role, goal/challenge/notes text, upload
 - Cross-domain: none required (single domain; booking is in-page modal, `/api/book` same origin).
 - Internal traffic: define Nasim's IP/office in GA4 Admin → Data filters before reading baselines.
 - GA4 Key Events: `vision_session_submit` only. `vision_session_start` stays an ordinary high-intent event (decided 2026-10-06 to avoid inflating conversion counts).
-- Link Search Console ↔ GA4 once both exist (property must be verified under the same Google account).
+- Search Console ↔ GA4 link: **done 2026-10-06**.
 - Google Ads: only when an account exists and campaigns are planned; import GA4 `vision_session_submit` as the conversion OR use a direct tag — never both.
 
 ## Verification procedure
@@ -64,11 +64,7 @@ Local verification on 2026-10-04 (localhost with a debug host, stubbed `/api/boo
 
 ## Access dependencies
 
-- Nasim (nasim@e4la.org): accept the GTM and GA4 Terms of Service dialogs (account/container forms were pre-filled 2026-10-04: GTM account `E4LA` / container `E4LA Website` Web; GA4 account `E4LA`, property `E4LA`, data-sharing options all off). Then the GTM ID and GA4 Measurement ID can be wired in.
-
-## Baseline
-
-Not recorded. Baselines (users, sessions, organic, landing pages, sources, VSS starts/completions) will be captured only after LIVE VERIFIED.
+None outstanding. GTM and GA4 Terms were accepted and both are live (see Status summary). Remaining optional owner actions: define an internal-traffic filter in GA4 (Admin → Data filters) once the office/home IP is chosen; decide on a consent banner before any advertising or EU/UK targeting.
 
 ## GTM container contents (Version 2)
 
@@ -106,3 +102,6 @@ Modal steps: 1 goals → 2 contact → 3 details → 4 priorities → 5 files �
 - **Real-booking validation: PENDING first legitimate booking.** The server-success → `vision_session_submit` → GA4 chain has been verified only with a stubbed `/api/book`. On the first real booking, confirm one `vision_session_submit` in GA4 Realtime/Events and that a Key Event count appears. Not a blocker.
 - Known production state unrelated to measurement: `/api/ops/*` returns 503 `database_not_configured` on www.e4la.org (Client Operations D1 not bound to the public site; pre-existing, tracked in the Client Operations handoff) and `/api/stripe/webhook` returns 503 `stripe_not_configured`. Resend/Google Calendar delivery is only exercisable by a real booking and was not tested.
 - GA4 "Key events" over the last 7 days shows 0 because the star was applied after the only test submit; this is expected.
+- **Additional checks, 2026-10-06 (second pass):** GA4 Admin → Data collection verified in the UI: Google signals data collection is **off** ("Turn on" offered) and user-provided data collection is **off**. Google Ads links: none (Product links → no Ads link; no ad-network requests observed). A real-browser load of `/services` shows exactly one `gtm.js`, one `gtag/js`, one `page_view` request, and requests only to `googletagmanager.com` / `google-analytics.com` among Google domains; `gcs=G101` (ads denied, analytics granted). The site also loads Cloudflare Web Analytics (`/cdn-cgi/rum`, `static.cloudflareinsights.com`), a separate first-party-style beacon that is not part of GA4/GTM.
+- Regression, second pass: `npm test` in the repo = 211/211 passing; production deployment is the latest `main` commit; Pages secrets present by name for the booking path (`GOOGLE_CLIENT_ID/SECRET/REFRESH_TOKEN`, `RESEND_API_KEY`, `ENROLLMENT_SESSION_SECRET`) — presence only, delivery still unverified without a real booking; `/portal` redirects unauthenticated users to `/sign-in?redirect=portal`.
+- GA4 Key events (UI): `vision_session_submit` is marked; `close_convert_lead` and `qualify_lead` are gone; `purchase` remains as the default placeholder with no data.
