@@ -1,6 +1,6 @@
 # E4LA Measurement — Source of Truth
 
-Last updated: 2026-10-04. Last live verification: **2026-10-04 on https://www.e4la.org** (details below).
+Last updated: 2026-10-06. Last live verification: **2026-10-06 on https://www.e4la.org** (initial activation verification 2026-10-04; details below).
 
 ## Status summary
 
@@ -8,8 +8,8 @@ Last updated: 2026-10-04. Last live verification: **2026-10-04 on https://www.e4
 |---|---|---|
 | GTM account / container | Account `E4LA` (6380561827); container named `www.e4la.org`, public ID **`GTM-KMJ83Q66`** (internal 266075324), Web. Published Version 2 "v1 E4LA GA4 + Vision Session events" on 2026-10-04 | LIVE VERIFIED (loads once per page) |
 | GA4 | Account `E4LA` (410664670), property `E4LA` (557331300), web stream `https://www.e4la.org` (16042040199), Measurement ID **`G-SKDGBTXKH1`** | LIVE VERIFIED (Realtime received page_view + all custom events) |
-| Search Console | Domain property `sc-domain:e4la.org`, verified (existing DNS TXT); sitemap `https://www.e4la.org/sitemap.xml` submitted 2026-10-04 (processing pending, no data yet) | Configured; no data yet |
-| GA4 Key Events | Target: `vision_session_submit` (primary), `vision_session_start` (high intent) | **PENDING** — GA4 only lists an event for starring after it is processed (up to 24h). Events were received in Realtime 2026-10-04; star both in GA4 Admin → Events once listed. |
+| Search Console | Domain property `sc-domain:e4la.org`, verified (existing DNS TXT); sitemap `https://www.e4la.org/sitemap.xml` submitted 2026-10-04 — Status **Success**, 4 pages discovered, last read 2026-10-06. Page indexing report: "Processing data, check again in a day or so" | Configured; indexing data pending (normal Google delay) |
+| GA4 Key Events | **`vision_session_submit` only** (primary). `vision_session_start` and all other events are ordinary events. Default `close_convert_lead` / `qualify_lead` unmarked 2026-10-06 (unused). `purchase` is an unmarked placeholder. | LIVE VERIFIED in GA4 Events admin |
 | Google Ads | Intentionally not configured; no Ads link, no remarketing, Google Signals off | NOT REQUIRED |
 | Consent | ad_storage / ad_user_data / ad_personalization denied in code; analytics_storage `granted` by default; `e4laConsent` hook for future CMP | LIVE VERIFIED in dataLayer defaults |
 
@@ -47,7 +47,7 @@ Never sent: name, email, phone, company, role, goal/challenge/notes text, upload
 - Tags: one GA4 Event tag per event above, trigger = Custom Event with the same name.
 - Cross-domain: none required (single domain; booking is in-page modal, `/api/book` same origin).
 - Internal traffic: define Nasim's IP/office in GA4 Admin → Data filters before reading baselines.
-- GA4 Key Events: `vision_session_submit`, `vision_session_start`.
+- GA4 Key Events: `vision_session_submit` only. `vision_session_start` stays an ordinary high-intent event (decided 2026-10-06 to avoid inflating conversion counts).
 - Link Search Console ↔ GA4 once both exist (property must be verified under the same Google account).
 - Google Ads: only when an account exists and campaigns are planned; import GA4 `vision_session_submit` as the conversion OR use a direct tag — never both.
 
@@ -97,3 +97,12 @@ Modal steps: 1 goals → 2 contact → 3 details → 4 priorities → 5 files �
 ## Baseline
 
 **Measurement activation date: 2026-10-04** (GTM published, `GTM-KMJ83Q66` live on www.e4la.org). The trustworthy baseline begins here. Traffic from 2026-10-04 includes controlled test sessions (≈2 homepage loads, 2 modal runs, 1 `click_email`, 1 stubbed `vision_session_submit`) — exclude them when reporting; define an internal-traffic filter in GA4 (Admin → Data filters) once Nasim's IP is chosen. No prior history exists and none is inferred. GA4 does not know proposals, contracts or revenue; those require separate integration.
+
+## Closure audit, 2026-10-06
+
+- Re-verified on production (`/our-work`): one `gtm.js`, one `gtag.js`; IDs `GTM-KMJ83Q66`, `G-SKDGBTXKH1` only; consent default `ad_storage`/`ad_user_data`/`ad_personalization` = denied; zero requests to doubleclick/googleadservices/googlesyndication; no `_gcl_*` cookie (only `_ga`, `_ga_SKDGBTXKH1`). Google Signals off.
+- Private routes re-tested in a real browser (not HTML only): `/client-agreement/`, `/balensed-proposal/`, `/bpm-real-estate-proposal/`, `/dr-kevin-sadati-proposal/`, `/weho-grill-report/`, `/client-portal/`, `/admin/`, `/bpm-real-estate-contract/`, `/portal.html` (→ `/sign-in`): zero GTM/GA requests, no `dataLayer`, no `e4laTrack`.
+- Non-destructive regression: `POST /api/book` with an empty body returns the expected 400 validation errors. Measurement commits changed only static files (HTML includes, `measurement.js`, `script.js`); no `functions/` changes.
+- **Real-booking validation: PENDING first legitimate booking.** The server-success → `vision_session_submit` → GA4 chain has been verified only with a stubbed `/api/book`. On the first real booking, confirm one `vision_session_submit` in GA4 Realtime/Events and that a Key Event count appears. Not a blocker.
+- Known production state unrelated to measurement: `/api/ops/*` returns 503 `database_not_configured` on www.e4la.org (Client Operations D1 not bound to the public site; pre-existing, tracked in the Client Operations handoff) and `/api/stripe/webhook` returns 503 `stripe_not_configured`. Resend/Google Calendar delivery is only exercisable by a real booking and was not tested.
+- GA4 "Key events" over the last 7 days shows 0 because the star was applied after the only test submit; this is expected.
