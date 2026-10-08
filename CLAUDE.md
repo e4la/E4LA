@@ -35,6 +35,12 @@ Project rules for working on this codebase. These are permanent and apply to eve
 - After changes: test both desktop and mobile behavior (the site has pinned-scroll and breakpoint-dependent behavior that silently falls back to simpler layouts below certain widths — verify both states).
 - Prefer editing existing files over creating new ones.
 
+## Lean execution: files, tokens, and verification
+- **One source of truth.** Search for the existing owner file before creating anything. Update it in place; add a file only when code, an existing workflow, or a clearly distinct reusable function requires one. No duplicate briefs, `-v2`/`-final` copies, speculative documentation, or committed temporary logs.
+- **Smallest useful context.** Read relevant paths and diffs first; avoid repeated full-repo dumps, redundant research, and reopening unchanged large files. Reuse previously verified findings when still current.
+- **Smallest safe change.** Make focused edits and run proportionate tests; do not sacrifice functional, mobile, accessibility, or production verification to save tokens. Keep required build outputs only where workflows need them.
+- **Concise reporting.** State what changed, test evidence, and remaining blockers without repeating project history. Before removing apparent duplicates, check references, automation consumers, and needed history.
+
 ## Reference
 
 See [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) for a summary of the current site structure, pages, and interactions.
